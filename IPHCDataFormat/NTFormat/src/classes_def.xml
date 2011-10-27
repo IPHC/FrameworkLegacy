@@ -1,0 +1,76 @@
+<lcgdict>
+
+  // STL containers 
+  <class pattern="edm::Wrapper<*>"/>
+  <class name="std::map<int,std::vector<int> >"/>
+  <class name="std::pair<float, std::string>"/>
+  <class name="std::vector<std::pair<float, std::string> >"/>
+  <class name="std::set<std::string>"/>                       
+  <class name="std::vector<TLorentzVector>" />
+  <class name="std::map<UInt_t,std::vector<Int_t> >" />
+  <class name="std::pair<Char_t,Char_t>" />
+
+  // IPHC containers
+  <class pattern="IPHCTree::KeyedCollection<*>"/>
+  <class name="IPHCTree::KeyedCollection<TLorentzVector>"/>
+
+  // General
+  <class name="IPHCTree::NTEvent"/>
+  <class name="IPHCTree::NTGeneral"/>
+  <class name="IPHCTree::NTTrigger"/>
+  <class name="IPHCTree::TransientData"/>
+  <class name="IPHCTree::NTPileUp"/>
+
+  // Monte Carlo
+  <class name="IPHCTree::NTMonteCarlo"/>
+  <class name="IPHCTree::TopDecaysMC"/>
+  <class name="IPHCTree::WDecaysMC"/>
+  <class name="IPHCTree::ZDecaysMC"/>
+
+  // Particle
+  <class name="IPHCTree::NTParticle"/>
+  <class name="IPHCTree::NTLepton"/>
+  <class name="IPHCTree::NTElectron"/>
+  <class name="IPHCTree::NTMuon"/>
+  <class name="IPHCTree::NTTau"/>
+  <class name="IPHCTree::NTJet"/>
+  <class name="IPHCTree::NTMET"/>
+  <class name="IPHCTree::NTJetMet"/>
+  <class name="IPHCTree::NTPhoton"/>
+
+  // Reconstructed objects
+  <class name="IPHCTree::NTVertex"/>
+  <class name="IPHCTree::NTTrack"/>
+
+  // Vectors
+  <class name="std::vector<IPHCTree::NTJetMet>"/>
+  <class name="std::vector<IPHCTree::NTElectron>"/>
+  <class name="std::vector<IPHCTree::NTMuon>"/>
+  <class name="std::vector<IPHCTree::NTTau>"/>
+  <class name="std::vector<IPHCTree::NTPhoton>"/>
+  <class name="std::vector<IPHCTree::NTTrack>"/>
+  <class name="std::vector<IPHCTree::NTVertex>"/>
+  <class name="std::vector<IPHCTree::TopDecaysMC>"/>
+  <class name="std::vector<IPHCTree::WDecaysMC>"/>
+  <class name="std::vector<IPHCTree::ZDecaysMC>"/>
+
+  // Vector of Vector
+  <class name="std::vector<std::vector<IPHCTree::NTJetMet> >"/>
+  <class name="std::vector<std::vector<IPHCTree::NTElectron> >"/>
+  <class name="std::vector<std::vector<IPHCTree::NTMuon> >"/>
+  <class name="std::vector<std::vector<IPHCTree::NTTau> >"/>
+  <class name="std::vector<std::vector<IPHCTree::NTPhoton> >"/>
+  <class name="std::vector<std::vector<IPHCTree::NTTrack> >"/>
+  <class name="std::vector<std::vector<IPHCTree::NTVertex> >"/>
+
+  // MultiCollection
+  <class name="IPHCTree::MultiCollection<IPHCTree::NTJetMet>"/>
+  <class name="IPHCTree::MultiCollection<IPHCTree::NTElectron>"/>
+  <class name="IPHCTree::MultiCollection<IPHCTree::NTMuon>"/>
+  <class name="IPHCTree::MultiCollection<IPHCTree::NTTau>"/>
+  <class name="IPHCTree::MultiCollection<IPHCTree::NTPhoton>"/>
+  <class name="IPHCTree::MultiCollection<IPHCTree::NTTrack>"/>
+  <class name="IPHCTree::MultiCollection<IPHCTree::NTVertex>"/>
+
+  
+</lcgdict>
