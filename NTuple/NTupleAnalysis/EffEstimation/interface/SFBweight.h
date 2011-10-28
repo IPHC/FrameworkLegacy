@@ -1,7 +1,7 @@
 #ifndef SFBweight_h
 #define SFBweight_h
 
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTEvent.h"
+#include "../../../../IPHCDataFormat/NTFormat/interface/NTEvent.h"
 
 // system include files
 #include <memory>
@@ -16,7 +16,7 @@
 
 
 using namespace std;
-using namespace TopTree;
+using namespace IPHCTree;
 
 class SFBweight {
 

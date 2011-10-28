@@ -21,7 +21,8 @@ void LoadBWeight(Selection& sel, vector<float>& weightb, const vector<NTJet>& th
 		
 Selection::Selection(){
       JetType = "";
-      jets.clear();
+      TauType = "";
+/*      jets.clear();
       jetmets.clear();
       electrons.clear();
       muons.clear();
@@ -37,6 +38,7 @@ Selection::Selection(){
       runNumber = 0;
       tmeme = -1;
       eleHLTMatch = false;
+*/
       JetPtThreshold_     = 0.;
       JetEtaThreshold_    = 999.;
       MuonPtThreshold_    = 0.;
@@ -69,7 +71,10 @@ Selection::Selection(){
 }
 
 void Selection::LoadEvent(const NTEvent* event){
-      jetmets      = event->jetMetVec;
+
+     evt_ = *event;
+     
+/*      jetmets      = event->jetMetVec;
       electrons    = event->electrons;
       muons        = event->muons;
       tausVec      = event->tausVec;
@@ -89,11 +94,12 @@ void Selection::LoadEvent(const NTEvent* event){
       npu  = event->num_pileup_bc0; 
       wAndDecays = event->wAndDecays;
       zAndDecays = event->zAndDecays;
-      
+*/
+           
 }
 
 void Selection::Reset(){
-      met = NTMET();
+/*      met = NTMET();
       jets.clear();
       jetmets.clear();
       electrons.clear();
@@ -103,11 +109,13 @@ void Selection::Reset(){
       triggerList.clear();
       triggerPrescaleList.clear();
       genTaus.clear();
-      genATaus.clear();
+      genATaus.clear();*/
+      
+      evt_.Reset();
 }
 
-Selection::Selection(const Selection & s){
-      jets      = s.jets;
+Selection::Selection(const Selection & s):evt_(s.evt_){
+/*      jets      = s.jets;
       met       = s.met;
       jetmets   = s.jetmets;
       electrons = s.electrons;
@@ -123,7 +131,11 @@ Selection::Selection(const Selection & s){
       eleHLTMatch  = s.eleHLTMatch;
       eventNumber    = s.eventNumber;
       runNumber    = s.runNumber;
-      tmeme        = s.tmeme;
+      tmeme        = s.tmeme;*/
+      
+      JetType   = s.JetType;
+      TauType   = s.TauType;      
+      
       JetPtThreshold_         = s.JetPtThreshold_;
       JetEtaThreshold_        = s.JetEtaThreshold_;
       MuonPtThreshold_        = s.MuonPtThreshold_;
@@ -168,7 +180,7 @@ Selection::Selection(const Selection & s){
 Selection::~Selection(){}
 
 
-void Selection::AddCollection(std::vector<NTElectron> elec){
+/*void Selection::AddCollection(std::vector<NTElectron> elec){
 	electrons = electrons;
 }
 
@@ -200,7 +212,7 @@ void Selection::AddCollection(std::vector<std::pair<string, int> >  tpl){
 	triggerPrescaleList = tpl;
 }
 
-
+*/
 
 void Selection::AddMET(NTMET me){
 	met = me;

@@ -3,7 +3,7 @@
 
 #include "Selection.h"
 #include "SelectionTable.h"
-#include "DiLeptonChannel.h"
+//#include "DiLeptonChannel.h"
 #include "SSDiLeptonSelection.h"
 #include "../../Tools/interface/Dataset.h"
 
@@ -15,7 +15,7 @@
 
 
 using namespace std;
-using namespace TopTree;
+using namespace IPHCTree;
 
 /**
 	Steps of the selection: (integer returned by doFullSelection() or FillTable(...))
@@ -50,7 +50,7 @@ class SSDiLeptonSelection: public Selection{
       std::vector<NTElectron> GetElectronsForAna() const { return electronsAna;};
       std::vector<NTMuon> GetMuonsForAna() const {return muonsAna;};
 
-      bool GetLeptonPair(std::vector<NTMuon> muon_in,std::vector<TopTree::NTElectron> elec_in, std::vector<NTMuon>& muon_out,std::vector<NTElectron>& elec_out,  string& CandPairType);
+      bool GetLeptonPair(std::vector<NTMuon> muon_in,std::vector<IPHCTree::NTElectron> elec_in, std::vector<NTMuon>& muon_out,std::vector<NTElectron>& elec_out,  string& CandPairType);
       /** muon_out & elec_out will be filled with the 2 di-leptons candidates \n Returns true if a lepton pair is found \n
       	  CandPairType = "ee" or "emu" or "mumu" or "false"
 	*/
@@ -61,7 +61,7 @@ class SSDiLeptonSelection: public Selection{
 event of weight "weight" of a given dataset idataset - Returns the integer of doFullSelection() */
 
 
-     bool TestIsolationOfPair(float iso1_in , float iso2_in, std::vector<NTMuon> muon_in,std::vector<TopTree::NTElectron> elec_in); /** It allows to test the isolation of the pair of leptons selected by GetLeptonPairForMM (or by GetLeptonPair).*/
+     bool TestIsolationOfPair(float iso1_in , float iso2_in, std::vector<NTMuon> muon_in,std::vector<IPHCTree::NTElectron> elec_in); /** It allows to test the isolation of the pair of leptons selected by GetLeptonPairForMM (or by GetLeptonPair).*/
 
 
       float DiLeptonMass(const std::vector<NTMuon>& muons_cand, const std::vector<NTElectron>& electrons_cand); /** Return the mass of the di-lepton candidate */
@@ -133,7 +133,7 @@ event of weight "weight" of a given dataset idataset - Returns the integer of do
       double getLeptonScaleFactorError(double pt1, double eta1, double pt2, double eta2, string channel);
 
     private:
-      DiLeptonChannel channel_;
+//      DiLeptonChannel channel_;
       float MinMassCut_;
       pair<float,float> ZMassWindow_;
       pair<float,float> METCuts_;

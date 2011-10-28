@@ -1,7 +1,7 @@
 #ifndef Selection_h
 #define Selection_h
 
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTEvent.h"
+#include "../../../../IPHCDataFormat/NTFormat/interface/NTEvent.h"
 #include "../../EffEstimation/interface/SFBweight.h"
 
 
@@ -13,7 +13,7 @@
 
 
 using namespace std;
-using namespace TopTree;
+using namespace IPHCTree;
 
 
 struct HighestPt{
@@ -39,16 +39,16 @@ class Selection{
       void LoadEvent(const NTEvent*event); /** collections of objects are updated */
   
       //Add objects collection
-      void AddCollection(std::vector<NTElectron> electrons);/** will also remove old collection */
-      void AddCollection(std::vector<NTMuon> muons);/** will also remove old collection */
-      void AddCollection(std::vector<NTCollection<NTTau> > tausVec);/** will also remove old collection */
-      void AddCollection(std::vector<NTTau> taus);/** will also remove old collection */
-      void AddCollection(std::vector<NTJetMet> jetmets);/** will also remove old collection */
-      void AddCollection(std::vector<NTJet> jets);/** will also remove old collection */
-      void AddCollection(std::vector<NTVertex> vertex);/** will also remove old collection */
-      void AddCollection(std::vector<std::pair<string, bool> >  triggerList);/** will also remove old collection */
-      void AddCollection(std::vector<std::pair<string, int> >  triggerPrescaleList);/** will also remove old collection */
-      void AddMET(NTMET met);/** will replace actual MET */
+//      void AddCollection(std::vector<NTElectron> electrons);/** will also remove old collection */
+//      void AddCollection(std::vector<NTMuon> muons);/** will also remove old collection */
+//      void AddCollection(std::vector<NTCollection<NTTau> > tausVec);/** will also remove old collection */
+//      void AddCollection(std::vector<NTTau> taus);/** will also remove old collection */
+//      void AddCollection(std::vector<NTJetMet> jetmets);/** will also remove old collection */
+//      void AddCollection(std::vector<NTJet> jets);/** will also remove old collection */
+//      void AddCollection(std::vector<NTVertex> vertex);/** will also remove old collection */
+//      void AddCollection(std::vector<std::pair<string, bool> >  triggerList);/** will also remove old collection */
+//      void AddCollection(std::vector<std::pair<string, int> >  triggerPrescaleList);/** will also remove old collection */
+//      void AddMET(NTMET met);/** will replace actual MET */
 
       //Parameters
       bool SetDefaultJetCollection(string jetCollName) ; /** Returns true if a JetMet object of type jetCollName is found */
@@ -164,17 +164,18 @@ class Selection{
       TH2F * scaleFactEl;
       TH2F * scaleFactMu;
       
+      NTEvent evt_;
       
-      
-      int npu; 
+/*      int npu; 
       std::vector<NTJetMet> jetmets;
-      string JetType; /** correspond to the jet algo of the NTJetMT object chosen as default*/
+      string JetType; // correspond to the jet algo of the NTJetMT object chosen as default//
       std::vector<NTJet> jets; //chosen collection
       NTMET met;
       std::vector<NTElectron> electrons;
       std::vector<NTMuon>     muons;
       std::vector<NTCollection<NTTau> > tausVec;
-      string TauType; /** correspond to the tau algo of the NTCollection<NTTau> object chosen as default*/
+      string TauType; /// correspond to the tau algo of the NTCollection<NTTau> object chosen as
+      default//
       std::vector<NTTau>      taus;
       std::vector<NTVertex>   vertex; 
       std::vector<TLorentzVector> genTaus;
@@ -182,7 +183,7 @@ class Selection{
       
       std::vector<WDecaysMC>   wAndDecays;
       std::vector<ZDecaysMC>   zAndDecays;
-      
+ */     
       
       //jets
       float JetPtThreshold_;

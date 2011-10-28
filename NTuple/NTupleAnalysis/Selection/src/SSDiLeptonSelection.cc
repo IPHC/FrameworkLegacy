@@ -39,7 +39,7 @@ int SSDiLeptonSelection::GetChannel (string & CandPairType)
 SSDiLeptonSelection::SSDiLeptonSelection (const SSDiLeptonSelection & s):Selection (s)
 {
   selCode_ = s.selCode_;
-  channel_ = s.channel_;	//
+//  channel_ = s.channel_;	//
   MinMassCut_ = s.MinMassCut_;
   METCuts_ = s.METCuts_;
   ZMassWindow_ = s.ZMassWindow_;
@@ -71,10 +71,10 @@ void SSDiLeptonSelection::SetParameters (float MinValue, pair < float, float >ME
 void SSDiLeptonSelection::LoadEvent (const NTEvent * event)
 {
   Selection::LoadEvent (event);
-  channel_.LoadEvent (event);
+//  channel_.LoadEvent (event);
 }
 
-bool SSDiLeptonSelection::GetLeptonPair (std::vector < NTMuon > muon_in, std::vector < TopTree::NTElectron > elec_in, std::vector < NTMuon > &muon_out, std::vector < NTElectron > &elec_out,
+bool SSDiLeptonSelection::GetLeptonPair (std::vector < NTMuon > muon_in, std::vector < IPHCTree::NTElectron > elec_in, std::vector < NTMuon > &muon_out, std::vector < NTElectron > &elec_out,
 				       string & CandPairType)
 {
 
@@ -192,7 +192,7 @@ bool SSDiLeptonSelection::GetLeptonPair (std::vector < NTMuon > &muon_out, std::
 }
 
 
-bool SSDiLeptonSelection::TestIsolationOfPair (float iso1_in, float iso2_in, std::vector < NTMuon > muon_in, std::vector < TopTree::NTElectron > elec_in)
+bool SSDiLeptonSelection::TestIsolationOfPair (float iso1_in, float iso2_in, std::vector < NTMuon > muon_in, std::vector < IPHCTree::NTElectron > elec_in)
 {
 
   bool pass_elec = false;
@@ -330,7 +330,7 @@ int SSDiLeptonSelection::doFullSelection (Dataset * dataset, string channelName,
   ostringstream eventNumber_oss;
   runNumber_oss << runNumber;
   eventNumber_oss << eventNumber;
-  dump = channel_.ChannelName () + string (" | ") + runNumber_oss.str () + string (" | ") + eventNumber_oss.str () + string (" | ");
+//  dump = channel_.ChannelName () + string (" | ") + runNumber_oss.str () + string (" | ") + eventNumber_oss.str () + string (" | ");
   //dump+=string("")+runNumberS;  
 
   //double METEMu = METCuts_.first;
