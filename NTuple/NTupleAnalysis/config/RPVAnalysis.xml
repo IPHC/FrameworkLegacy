@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<!-- ex with eqlumi <d name="ttJets" add="1" color="4" ls="1" lw="1" normf="0.000437334" xsection="414" filenames="/user/echabert/TopTree_Prod229/TopTree_TTJets.root" EqLumi="2287."/> -->
+<!-- ex with NofEvts <d name="ttJets" add="1" color="4" ls="1" lw="1" normf="0.000437334" xsection="414" filenames="/user/echabert/TopTree_Prod229/TopTree_TTJets.root" NofEvts="946644"/> -->
+<!-- ex with PreselEff NofPSEvts <d name="ttJets" add="1" color="4" ls="1" lw="1" normf="0.000437334" xsection="414" filenames="/user/echabert/TopTree_Prod229/TopTree_TTJets.root" PreselEff="0.2307" NofEvts="218404"/> -->
+
+<Datasets>
+<!-- add = 1 : run on the sample
+     add = 0 : do not run on the sample
+     isData = 1 for data; = 0  for MC
+     ls = lineStyle //not yet used
+     lw = lineWidth //not yet used
+     !! important:
+	2 of the 3 information need to be filled
+		- normf (normalisation factor - default = 1)
+		- xsection (cross-section of the processus if it's MC - default = 1)
+		- NofEvts (could be lower than the size of the file. If it's higher or equal to the size, the program will run on the full sample)
+     Preselection
+	if a preselection has been applied before use
+		- PreselEff
+		- NofPSEvts instead of NofEvts 
+ -->
+
+<!--
+<d name="DataMu" add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1" filenames="/opt/sbg/data/data1/cms/gele/MCData/CMSSW_4_2_3/V1/DiLeptonDataDoubleMu/DoubleMuNTuple.root" />
+<d name="DataEG" add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1" filenames="/opt/sbg/data/data1/cms/gele/MCData/CMSSW_4_2_3/V1/DiLeptonDataDoubleElectron/DoubleEGNTuple.root" />
+<d name="DataMuEG" add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1" filenames="/opt/sbg/data/data1/cms/gele/MCData/CMSSW_4_2_3/V1/DiLeptonDataMuEG/DoubleMuEGNTuple.root" />
+-->
+
+<d name="LM1" add="1" isData="0" color="5" ls="1" lw="2" normf="1" xsection="2.4" filenames="/opt/sbg/cms/ui3_data3/econte/public/forJLandPierre/NTuple_JL1_425.root" /> 
+<!--d name="TTbar" add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="157.5" filenames="/opt/sbg/data/data1/cms/gele/MCData/CMSSW_4_2_3/V1/TTbar/TTbar.root" /-->
+
+<!--
+<d name="DYToMuMu_M-20"       add="1" isData="0" color="4" ls="1" lw="2" normf="1" xsection="1666" filenames="/opt/sbg/data/data1/cms/gele/MCData/CMSSW_4_2_3/V1/DYToMuMu_M-20_CT10/DYToMuMu_M-20.root" />
+<d name="DYToTauTau_M-20"     add="1" isData="0" color="4" ls="1" lw="2" normf="1" xsection="1666" filenames="/opt/sbg/data/data1/cms/gele/MCData/CMSSW_4_2_3/V1/DYToTauTau_M-20_CT10/DYToTauTau_M-20.root" />
+<d name="DYToEE_M-20"	      add="1" isData="0" color="4" ls="1" lw="2" normf="1" xsection="1666" filenames="/opt/sbg/data/data1/cms/jandrea/425MC/DYToEE_M-20_CT10/DYToEE_M-20_CT10/NTuple_DYToEE_M-20_CT10_tot.root" />
+
+<d name="DYToMuMu_M-10To20"       add="1" isData="0" color="4" ls="1" lw="2" normf="1" xsection="3457" filenames="/opt/sbg/data/data1/cms/jandrea/425MC/DYToMuMu_M-10To20/DYToMuMu_M-10To20/DYToMuMu_M-10To20_tot.root" />
+<d name="DYToEE_M-10To20"	  add="1" isData="0" color="4" ls="1" lw="2" normf="1" xsection="3457" filenames="/opt/sbg/data/data1/cms/jandrea/425MC/DYToEE_M-10To20/DYToEE_M-10To20/NTuple_DYToEE_M-10To20.root" />
+<d name="DYToTauTau_M-10To20"     add="1" isData="0" color="4" ls="1" lw="2" normf="1" xsection="3457" filenames="/opt/sbg/data/data1/cms/jandrea/425MC/DYToTauTau_M-10To20/DYToTauTau_M-10To20/DYToTauTau_M-10To20_tot.root" />
+
+<d name="Wjets"  add="1" isData="0" color="4" ls="1" lw="2" normf="1" xsection="31314" filenames="/opt/sbg/data/data1/cms/jandrea/425MC/WJetsToLNu_TuneZ2/WJetsToLNu_TuneZ2/NTuple_WJetsToLNu_tot.root"/>
+<d name="Zjets"  add="1" isData="0" color="4" ls="1" lw="2" normf="1" xsection="3048" filenames="/opt/sbg/data/data1/cms/jandrea/425MC/DYJetsToLL_TuneZ2_M-50/DYJetsToLL_TuneZ2_M-50/NTuple_DYJetsToLL_tot.root"/>
+
+<d name="TtW" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.87" filenames="/opt/sbg/data/data1/cms/gele/MCData/CMSSW_4_2_3/V1/T/Ttw.root" />
+<d name="TbartW" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.87" filenames="/opt/sbg/data/data1/cms/gele/MCData/CMSSW_4_2_3/V1/Tbar/Tbartw.root" />
+
+-->
+<d name="WZ" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.61" filenames="/opt/sbg/data/data1/cms/jandrea/425MC/WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/WZTo3LNu_tot.root" />
+<!--<d name="ZZ" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.4" filenames="/opt/sbg/data/data1/cms/jandrea/425MC/ZZTo2L2Nu_TuneZ2/ZZTo2L2Nu_TuneZ2/ZZTo2L2Nu_tot.root" />
+<d name="WW" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="4.51" filenames="/opt/sbg/data/data1/cms/jandrea/425MC/WWTo2L2Nu_TuneZ2_7TeV/WWTo2L2Nu_TuneZ2_7TeV/WWTo2L2Nu_tot.root" />
+-->
+
+<!-- Samples QCD -->
+<!--
+<d name="QCD1" add="0" isData="0"  color="4" ls="1" lw="2" normf="1" xsection="8.159e+08" filenames="/opt/sbg/data/data1/cms/echabert/NTuples/415_v1/Skim2Lept/QCD_Pt_15to30_TuneZ2_7TeV_pythia6/*.root" />
+<d name="QCD2" add="0" isData="0"  color="4" ls="1" lw="2" normf="1" xsection="5.312e+07" filenames="/opt/sbg/data/data1/cms/echabert/NTuples/415_v1/Skim2Lept/QCD_Pt_30to50_TuneZ2_7TeV_pythia6/*.root" />
+<d name="QCD3" add="0" isData="0"  color="4" ls="1" lw="2" normf="1" xsection="6.359e+06" filenames="/opt/sbg/data/data1/cms/echabert/NTuples/415_v1/Skim2Lept/QCD_Pt_50to80_TuneZ2_7TeV_pythia6/*.root" />
+<d name="QCD4" add="0" isData="0"  color="4" ls="1" lw="2" normf="1" xsection="7.843e+05" filenames="/opt/sbg/data/data1/cms/echabert/NTuples/415_v1/Skim2Lept/QCD_Pt_80to120_TuneZ2_7TeV_pythia6/*.root" />
+<d name="QCD5" add="0" isData="0"  color="4" ls="1" lw="2" normf="1" xsection="1.151e+05" filenames="/opt/sbg/data/data1/cms/echabert/NTuples/415_v1/Skim2Lept/QCD_Pt_120to170_TuneZ2_7TeV_pythia6/*.root" />
+<d name="QCD6" add="0" isData="0"  color="4" ls="1" lw="2" normf="1" xsection="2.426e+04" filenames="/opt/sbg/data/data1/cms/echabert/NTuples/415_v1/Skim2Lept/QCD_Pt_170to300_TuneZ2_7TeV_pythia6/*.root" />
+<d name="QCD7" add="0" isData="0"  color="4" ls="1" lw="2" normf="1" xsection="1.168e+03" filenames="/opt/sbg/data/data1/cms/echabert/NTuples/415_v1/Skim2Lept/QCD_Pt_300to470_TuneZ2_7TeV_pythia6/*.root" />
+<d name="QCD8" add="0" isData="0"  color="4" ls="1" lw="2" normf="1" xsection="7.022e+01" filenames="/opt/sbg/data/data1/cms/echabert/NTuples/415_v1/Skim2Lept/QCD_Pt_470to600_TuneZ2_7TeV_pythia6/*.root" />
+<d name="QCD9" add="0" isData="0"  color="4" ls="1" lw="2" normf="1" xsection="1.555e+01" filenames="/opt/sbg/data/data1/cms/echabert/NTuples/415_v1/Skim2Lept/QCD_Pt_600to800_TuneZ2_7TeV_pythia6/*.root" />
+<d name="QCD10" add="0" isData="0" color="4" ls="1" lw="2" normf="1" xsection="1.844e+00" filenames="/opt/sbg/data/data1/cms/echabert/NTuples/415_v1/Skim2Lept/QCD_Pt_800to1000_TuneZ2_7TeV_pythia6/*.root" />
+<d name="QCD11" add="0" isData="0" color="4" ls="1" lw="2" normf="1" xsection="3.321e-01" filenames="/opt/sbg/data/data1/cms/echabert/NTuples/415_v1/Skim2Lept/QCD_Pt_1000to1400_TuneZ2_7TeV_pythia6/*.root" />
+<d name="QCD12" add="0" isData="0" color="4" ls="1" lw="2" normf="1" xsection="1.087e-02" filenames="/opt/sbg/data/data1/cms/echabert/NTuples/415_v1/Skim2Lept/QCD_Pt_1400to1800_TuneZ2_7TeV_pythia6/*.root" />
+<d name="QCD13" add="0" isData="0" color="4" ls="1" lw="2" normf="1" xsection="3.575e-04" filenames="/opt/sbg/data/data1/cms/echabert/NTuples/415_v1/Skim2Lept/QCD_Pt_1800_TuneZ2_7TeV_pythia6/*.root" />
+-->
+
+</Datasets>
+
+<Analysis>
+<!--
+	DataType = 0: MC
+	DataType = 1: Data
+	DataType = 2: Data & MC
+	Luminosity in in pb-1
+-->
+<!--a type="General" Verbosity="3" DataType="0" Luminosity="38.35"/>
+<a type="General" Verbosity="3" DataType="0" Luminosity="204.2" LumiError="12." PUWeightFile="/opt/sbg/data/data1/cms/echabert/TopDilep/CMSSW_4_1_4/src/MiniTreeAnalysis/NTupleAnalysis/macros/pudist_200pb.root" />
+-->
+<a type="General" Verbosity="3" DataType="0" Luminosity="881.8" LumiError="53." PUWeightFile="/opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root2011/pileup_160404_167151.root" />
+</Analysis>
+
+<Selection>
+<s type="Electron" PtThreshold="10." EtaThreshold="2.5" RelIso="0.17" D0Cut="0.04" VertexMatchThr="1." DElectronETSCThr="15" RemuThr="0.1"/>
+<s type="Muon"     PtThreshold="10." EtaThreshold="2.4" RelIso="0.20" D0Cut="0.02" VertexMatchThr="1." NofValidHits="0"  NofValidTkHits="10" NormChi2="10" />
+<s type="Tau"      Algo="selectedPatTaus" PtThreshold="20." EtaThreshold="2.5" RelIso="0.15" D0Cut="0.04" VertexMatchThr="1." TauLeadTrkPtCut="10."/>
+<s type="Vertex"   VertexNdofThr="4" VertexZThr="24."   VertexRhoThr="2." />
+<!--  
+<s type="Jet" Algo="tc" PtThreshold="30." EtaThreshold="2.5" />
+-->
+<s type="Jet" Algo="pf" PtThreshold="10." EtaThreshold="2.5" />   
+</Selection>
+
+<SSDiLeptonSelection>
+<!-- btagAlgo = 
+0 for TrackCounting
+1 for SecondarayVertex
+2 for SM
+-->
+<s MinMassCut="0." METCutsEMU="50." METCutsLL="50." ZMassWindowMin="9999." ZMassWindowMax="0." btagAlgo="0" btagDiscriCut="1.7" NofBtagJets="0" />
+</SSDiLeptonSelection>
+
