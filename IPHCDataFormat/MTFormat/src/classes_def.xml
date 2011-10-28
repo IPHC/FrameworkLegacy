@@ -1,0 +1,62 @@
+<lcgdict>
+  <class pattern="edm::Wrapper<*>" />
+
+  // General
+  <class name="IPHCTree::MTEvent"/>
+  <class name="IPHCTree::MTMonteCarlo"/>
+
+  // Pile Up
+  <class name="IPHCTree::MTPileUp"/> MTPU;
+  <class name="std::vector<std::pair<Char_t, std::vector<IPHCTree::MTInteraction> > >"/>
+  <class name="std::pair<Char_t,std::vector<IPHCTree::MTInteraction> >"/>               
+  <class name="std::vector<IPHCTree::MTInteraction>"/>                                  
+  <class name="IPHCTree::MTInteraction"/>                                               
+  <class name="std::map<Char_t,std::vector<IPHCTree::MTInteraction> >"/>
+
+  // Physics Object
+  <class name="IPHCTree::MTLepton"/>
+  <class name="IPHCTree::MTJet"/>   
+  <class name="IPHCTree::MTMET"/>   
+  <class name="IPHCTree::MTJetMet"/>
+  <class name="IPHCTree::MTPhoton"/>
+  <class name="IPHCTree::MTElectron"/>
+  <class name="IPHCTree::MTMuon"/>
+  <class name="IPHCTree::MTTau"/>
+
+  // Reconstructed objects
+  <class name="IPHCTree::MTVertex"/>
+  <class name="IPHCTree::MTBeamSpot"/>
+  <class name="IPHCTree::MTTrack"/>
+
+  // Multicollection
+  <class name="IPHCTree::MultiCollection<IPHCTree::MTJetMet>"/>
+  <class name="IPHCTree::MultiCollection<IPHCTree::MTJet>"/>   
+  <class name="IPHCTree::MultiCollection<IPHCTree::MTElectron>"/>
+  <class name="IPHCTree::MultiCollection<IPHCTree::MTMuon>"/>   
+  <class name="IPHCTree::MultiCollection<IPHCTree::MTTau>"/>    
+  <class name="IPHCTree::MultiCollection<IPHCTree::MTTrack>"/>  
+  <class name="IPHCTree::MultiCollection<IPHCTree::MTVertex>"/> 
+  <class name="IPHCTree::MultiCollection<IPHCTree::MTPhoton>"/> 
+
+  // Vector
+  <class name="std::vector<IPHCTree::MTJetMet>"/>   VMTJetMet;
+  <class name="std::vector<IPHCTree::MTJet>"/>      VMTJet; 
+  <class name="std::vector<IPHCTree::MTElectron>"/> VMTElectron;
+  <class name="std::vector<IPHCTree::MTMuon>"/>     VMTMuon;
+  <class name="std::vector<IPHCTree::MTTau>"/>      VMTTau;
+  <class name="std::vector<IPHCTree::MTPhoton>"/>   VMTPhoton;
+  <class name="std::vector<IPHCTree::MTVertex>"/>   VMTVertex;
+  <class name="std::vector<IPHCTree::MTTrack>"/>    VMTTrack;
+ 
+  // Vector of vector
+  <class name="std::vector<std::vector<IPHCTree::MTJetMet> >"/>    VVMTJetMet;
+  <class name="std::vector<std::vector<IPHCTree::MTJet> >"/>       VVMTJet; 
+  <class name="std::vector<std::vector<IPHCTree::MTElectron> >"/>  VVMTElectron;
+  <class name="std::vector<std::vector<IPHCTree::MTMuon> >"/>      VVMTMuon;
+  <class name="std::vector<std::vector<IPHCTree::MTTau> >"/>       VVMTTau;
+  <class name="std::vector<std::vector<IPHCTree::MTPhoton> >"/>    VVMTPhoton;
+  <class name="std::vector<std::vector<IPHCTree::MTVertex> >"/>    VVMTVertex;
+  <class name="std::vector<std::vector<IPHCTree::MTTrack> >"/>     VVMTTrack;
+ 
+</lcgdict>
+

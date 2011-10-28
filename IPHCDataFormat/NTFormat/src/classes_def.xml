@@ -12,7 +12,6 @@
 
   // IPHC containers
   <class pattern="IPHCTree::KeyedCollection<*>"/>
-  <class name="IPHCTree::KeyedCollection<TLorentzVector>"/>
 
   // General
   <class name="IPHCTree::NTEvent"/>
