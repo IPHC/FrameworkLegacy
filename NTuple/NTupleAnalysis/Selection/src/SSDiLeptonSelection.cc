@@ -1,15 +1,20 @@
-#include "../interface/SSDiLeptonSelection.h"
+#include "Selection/interface/SSDiLeptonSelection.h"
+using namespace std;
 
 
+// ----------------------------------------------------------------------------
+// Default constructor
+// ----------------------------------------------------------------------------
 SSDiLeptonSelection::SSDiLeptonSelection ()
 {
-  selCode_ = -1;
-  MinMassCut_ = 0.;
-  ZMassWindow_ = pair < float, float >(9999., 0.);
-  METCuts_ = pair < float, float >(9999., 0.);
-  btagAlgo_ = -1;
-  btagDiscriCut_ = -999.;
-  NofBtagJets_ = 0;
+  selCode_        = -1;
+  MinMassCut_     = 0.;
+  ZMassWindow_    = std::make_pair(9999., 0.);
+  METCuts_        = std::make_pair(9999., 0.);
+  btagAlgo_       = -1;
+  btagDiscriCut_  = -999.;
+  NofBtagJets_    = 0;
+
   //Fill the table of cuts
   cuts_.push_back ("All");
   cuts_.push_back ("All dilept");
@@ -19,60 +24,51 @@ SSDiLeptonSelection::SSDiLeptonSelection ()
   cuts_.push_back ("NJets cut");
   cuts_.push_back ("MET cuts");
   cuts_.push_back ("NbtagJets cut");
+
   //Fill Channels
   channels_.push_back (string ("ee"));
   channels_.push_back (string ("emu"));
   channels_.push_back (string ("mumu"));
-
 }
 
 
-int SSDiLeptonSelection::GetChannel (string & CandPairType)
+// ----------------------------------------------------------------------------
+// Copy constructor
+// ----------------------------------------------------------------------------
+SSDiLeptonSelection::SSDiLeptonSelection(const SSDiLeptonSelection & s):
+                                                                 Selection (s)
 {
-  for (unsigned int i = 0; i < channels_.size (); i++) {
-    if (channels_[i] == CandPairType)
-      return (int) i;
-  }
-  return -999;
-}
-
-SSDiLeptonSelection::SSDiLeptonSelection (const SSDiLeptonSelection & s):Selection (s)
-{
-  selCode_ = s.selCode_;
-//  channel_ = s.channel_;	//
-  MinMassCut_ = s.MinMassCut_;
-  METCuts_ = s.METCuts_;
-  ZMassWindow_ = s.ZMassWindow_;
-  cuts_ = s.cuts_;
-  channels_ = s.channels_;	//
-  btagAlgo_ = s.btagAlgo_;
+  selCode_       = s.selCode_;
+  MinMassCut_    = s.MinMassCut_;
+  METCuts_       = s.METCuts_;
+  ZMassWindow_   = s.ZMassWindow_;
+  cuts_          = s.cuts_;
+  channels_      = s.channels_;
+  btagAlgo_      = s.btagAlgo_;
   btagDiscriCut_ = s.btagDiscriCut_;
-  NofBtagJets_ = s.NofBtagJets_;
-
-}
-
-SSDiLeptonSelection::~SSDiLeptonSelection ()
-{
+  NofBtagJets_   = s.NofBtagJets_;
 }
 
 
-void SSDiLeptonSelection::SetParameters (float MinValue, pair < float, float >METCuts, pair < float, float >ZMassWindow, int btagAlgo, float btagDiscriCut, int NofBtagJets)
+// ----------------------------------------------------------------------------
+// SetParameters
+// ----------------------------------------------------------------------------
+void SSDiLeptonSelection::SetParameters(float MinValue,
+                                        std::pair<float,float> METCuts,
+                                        std::pair<float,float> ZMassWindow,
+                                        int btagAlgo,
+                                        float btagDiscriCut,
+                                        int NofBtagJets)
 {
-  MinMassCut_ = MinValue;
-  METCuts_ = METCuts;
-  ZMassWindow_ = ZMassWindow;
-  btagAlgo_ = btagAlgo;
+  MinMassCut_    = MinValue;
+  METCuts_       = METCuts;
+  ZMassWindow_   = ZMassWindow;
+  btagAlgo_      = btagAlgo;
   btagDiscriCut_ = btagDiscriCut;
-  NofBtagJets_ = NofBtagJets;
+  NofBtagJets_   = NofBtagJets;
 }
 
 
-
-void SSDiLeptonSelection::LoadEvent (const NTEvent * event)
-{
-  Selection::LoadEvent (event);
-//  channel_.LoadEvent (event);
-}
 
 bool SSDiLeptonSelection::GetLeptonPair (std::vector < NTMuon > muon_in, std::vector < IPHCTree::NTElectron > elec_in, std::vector < NTMuon > &muon_out, std::vector < NTElectron > &elec_out,
 				       string & CandPairType)
@@ -91,7 +87,7 @@ bool SSDiLeptonSelection::GetLeptonPair (std::vector < NTMuon > muon_in, std::ve
       for (unsigned int j = i + 1; j < elec_in.size (); j++) {
 	if (pass_elec)
 	  continue;
-	if ((elec_in[i].Charge == elec_in[j].Charge))
+	if ((elec_in[i].charge == elec_in[j].charge))
         {
 	  pass_elec = true;
 	  sum_pT_ee = elec_in[i].p4.Pt () + elec_in[j].p4.Pt ();
@@ -111,7 +107,7 @@ bool SSDiLeptonSelection::GetLeptonPair (std::vector < NTMuon > muon_in, std::ve
       for (unsigned int j = i + 1; j < muon_in.size (); j++) {
 	if (pass_muon)
 	  continue;
-	if ((muon_in[i].Charge == muon_in[j].Charge))
+	if ((muon_in[i].charge == muon_in[j].charge))
         {
 	  pass_muon = true;
 	  sum_pT_mumu = muon_in[i].p4.Pt () + muon_in[j].p4.Pt ();
@@ -130,7 +126,7 @@ bool SSDiLeptonSelection::GetLeptonPair (std::vector < NTMuon > muon_in, std::ve
   if (muon_in.size () >= 1 && elec_in.size () >= 1) {
     for (unsigned int i = 0; i < muon_in.size (); i++) {
       for (unsigned int j = 0; j < elec_in.size (); j++) {
-	if ((muon_in[i].Charge == elec_in[j].Charge))
+	if ((muon_in[i].charge == elec_in[j].charge))
         {
 	  sum_pT_emu = muon_in[i].p4.Pt () + elec_in[j].p4.Pt ();
 	  if (sum_pT_emu > sum_pT_emu_start) {
@@ -328,8 +324,8 @@ int SSDiLeptonSelection::doFullSelection (Dataset * dataset, string channelName,
   TString dump;
   ostringstream runNumber_oss;
   ostringstream eventNumber_oss;
-  runNumber_oss << runNumber;
-  eventNumber_oss << eventNumber;
+  runNumber_oss << getRunNumber();
+  eventNumber_oss << getEventNumber();
 //  dump = channel_.ChannelName () + string (" | ") + runNumber_oss.str () + string (" | ") + eventNumber_oss.str () + string (" | ");
   //dump+=string("")+runNumberS;  
 
@@ -362,28 +358,28 @@ int SSDiLeptonSelection::doFullSelection (Dataset * dataset, string channelName,
       ostringstream lep1RelIso_oss;
       ostringstream lep2RelIso_oss;
       if (pairType_ == "mumu") {
-	lep1PtxCharge = muon_cand[0].p4.Pt () * muon_cand[0].Charge;
-	lep2PtxCharge = muon_cand[1].p4.Pt () * muon_cand[1].Charge;
+	lep1PtxCharge = muon_cand[0].p4.Pt () * muon_cand[0].charge;
+	lep2PtxCharge = muon_cand[1].p4.Pt () * muon_cand[1].charge;
 	lep1RelIso = muon_cand[0].RelIso03PF ();
 	lep2RelIso = muon_cand[1].RelIso03PF ();
       }
       if (pairType_ == "ee") {
-	lep1PtxCharge = elec_cand[0].p4.Pt () * elec_cand[0].Charge;
-	lep2PtxCharge = elec_cand[1].p4.Pt () * elec_cand[1].Charge;
+	lep1PtxCharge = elec_cand[0].p4.Pt () * elec_cand[0].charge;
+	lep2PtxCharge = elec_cand[1].p4.Pt () * elec_cand[1].charge;
 	lep1RelIso = elec_cand[0].RelIso03PF ();
 	lep2RelIso = elec_cand[1].RelIso03PF ();
       }
       if (pairType_ == "emu") {
 	if (elec_cand[0].p4.Pt () > muon_cand[0].p4.Pt ()) {
 
-	  lep1PtxCharge = elec_cand[0].p4.Pt () * elec_cand[0].Charge;
-	  lep2PtxCharge = muon_cand[0].p4.Pt () * muon_cand[0].Charge;
+	  lep1PtxCharge = elec_cand[0].p4.Pt () * elec_cand[0].charge;
+	  lep2PtxCharge = muon_cand[0].p4.Pt () * muon_cand[0].charge;
 	  lep1RelIso = elec_cand[0].RelIso03PF ();
 	  lep2RelIso = muon_cand[0].RelIso03PF ();
 	}
 	else {
-	  lep2PtxCharge = elec_cand[0].p4.Pt () * elec_cand[0].Charge;
-	  lep1PtxCharge = muon_cand[0].p4.Pt () * muon_cand[0].Charge;
+	  lep2PtxCharge = elec_cand[0].p4.Pt () * elec_cand[0].charge;
+	  lep1PtxCharge = muon_cand[0].p4.Pt () * muon_cand[0].charge;
 	  lep2RelIso = elec_cand[0].RelIso03PF ();
 	  lep1RelIso = muon_cand[0].RelIso03PF ();
 	}
@@ -408,7 +404,7 @@ int SSDiLeptonSelection::doFullSelection (Dataset * dataset, string channelName,
 	step_jets = true;
       }
       //Step 6  MET cuts
-      if (GetMET (applyJES, JESParam, applyMETS, METScale).p4.Et () < METLL) {
+      if (GetMET(applyJES, JESParam, applyMETS, METScale).met() < METLL) {
 	  step_met = true;
       }
       //Step 7 btagging
@@ -422,30 +418,30 @@ int SSDiLeptonSelection::doFullSelection (Dataset * dataset, string channelName,
       if(step_jets){
       	jet1pt_oss << SelectedJets[0].p4.Pt ();
       	jet2pt_oss << SelectedJets[1].p4.Pt ();
-      	jet1bdisc_oss << SelectedJets[0].TCDiscri;
-      	jet2bdisc_oss << SelectedJets[1].TCDiscri;
-     	 met_oss << GetMET ().p4.Et ();
+      	jet1bdisc_oss << SelectedJets[0].bTag["TCDiscri"];
+      	jet2bdisc_oss << SelectedJets[1].bTag["TCDiscri"];
+     	 met_oss << GetMET().met();
       	dump += jet1pt_oss.str () + " , " + jet2pt_oss.str () + " | " + met_oss.str () + " | " + jet1bdisc_oss.str () + " , " + jet2bdisc_oss.str () + " | " + pairType_;
       }
 
       for (unsigned int j = 0; j < SelectedJets.size (); j++) {
 	switch (btagAlgo_) {
 	case 0:
-	  if (SelectedJets[j].TCDiscri >= btagDiscriCut_) {
+	  if (SelectedJets[j].bTag["TCDiscri"] >= btagDiscriCut_) {
 	    btagjets.push_back (SelectedJets[j]);
-	    btagDiscri.push_back (SelectedJets[j].TCDiscri);
+	    btagDiscri.push_back (SelectedJets[j].bTag["TCDiscri"]);
 	  }
 	  break;
 	case 1:
-	  if (SelectedJets[j].SVDiscri >= btagDiscriCut_) {
+	  if (SelectedJets[j].bTag["SVDiscri"] >= btagDiscriCut_) {
 	    btagjets.push_back (SelectedJets[j]);
-	    btagDiscri.push_back (SelectedJets[j].SVDiscri);
+	    btagDiscri.push_back (SelectedJets[j].bTag["SVDiscri"]);
 	  }
 	  break;
 	case 2:
-	  if (SelectedJets[j].SMDiscri >= btagDiscriCut_) {
+	  if (SelectedJets[j].bTag["SMDiscri"] >= btagDiscriCut_) {
 	    btagjets.push_back (SelectedJets[j]);
-	    btagDiscri.push_back (SelectedJets[j].SMDiscri);
+	    btagDiscri.push_back (SelectedJets[j].bTag["SMDiscri"]);
 	  }
 	  break;
 	default:
@@ -470,21 +466,21 @@ int SSDiLeptonSelection::doFullSelection (Dataset * dataset, string channelName,
       for (unsigned int j = 0; j < SelectedJets.size (); j++) {
 	switch (btagAlgo_) {
 	case 0:
-	  if (SelectedJets[j].TCDiscri >= btagDiscriCut_) {
+	  if (SelectedJets[j].bTag["TCDiscri"] >= btagDiscriCut_) {
 	    btagjets.push_back (SelectedJets[j]);
-	    btagDiscri.push_back (SelectedJets[j].TCDiscri);
+	    btagDiscri.push_back (SelectedJets[j].bTag["TCDiscri"]);
 	  }
 	  break;
 	case 1:
-	  if (SelectedJets[j].SVDiscri >= btagDiscriCut_) {
+	  if (SelectedJets[j].bTag["SVDiscri"] >= btagDiscriCut_) {
 	    btagjets.push_back (SelectedJets[j]);
-	    btagDiscri.push_back (SelectedJets[j].SVDiscri);
+	    btagDiscri.push_back (SelectedJets[j].bTag["SVDiscri"]);
 	  }
 	  break;
 	case 2:
-	  if (SelectedJets[j].SMDiscri >= btagDiscriCut_) {
+	  if (SelectedJets[j].bTag["SMDiscri"] >= btagDiscriCut_) {
 	    btagjets.push_back (SelectedJets[j]);
-	    btagDiscri.push_back (SelectedJets[j].SMDiscri);
+	    btagDiscri.push_back (SelectedJets[j].bTag["SMDiscri"]);
 	  }
 	  break;
 	default:
@@ -570,148 +566,57 @@ bool SSDiLeptonSelection::passTriggerSelection (Dataset * dataset, string channe
   //cout << " datasetName " << datasetName << endl;
   
   
-//  if(runNumber == 1){
-  if (!dataset->isData ()) {	//MC
-    //cout << " test trigger list --------------------------------" << endl;
-    for (unsigned int i = 0; i < triggerList.size (); i++) {
-
-   //   cout << "trigger list " << triggerList[i].second << " "<<triggerList[i].first << endl;
-// //2010
-//       if ((triggerList[i].first == "HLT_Mu9" && triggerList[i].second == true))
-// 	passMu = true;
-// 
-//       if ((triggerList[i].first == "HLT_Ele10_SW_L1R" && triggerList[i].second == true && eleHLTMatch > 15))
-// 	passEl = true;
-//2011
-//      if ((triggerList[i].first == "HLT_DoubleMu5_v1" && triggerList[i].second == true)) // Spring11
-      if ((triggerList[i].first == "HLT_DoubleMu6_v1" && triggerList[i].second == true))   //Summer11
-	passMu = true;
-
-//      if ((triggerList[i].first == "HLT_Ele17_SW_TightCaloEleId_Ele8HE_L1R_v2" && triggerList[i].second ==true )) //Spring11
-      if ((triggerList[i].first == "HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v2" && triggerList[i].second == true )) //Summer11
-	passEl = true;
-
-// WARNING : Ces 2 triggers sont corrompus (~ facteur 2 trop faible!!!)
-//      if (( (triggerList[i].first == "HLT_Mu8_Ele8_v1" || triggerList[i].first == "HLT_Mu11_Ele8_v1") && triggerList[i].second == true ))
-//      if (( ( triggerList[i].first.compare(0,12,"HLT_Mu8_Ele8")==0 || triggerList[i].first.compare(0,13,"HLT_Mu11_Ele8")==0) && triggerList[i].second == true ))
-      //if (( (triggerList[i].first == "HLT_Mu5_Ele13_v2" ) && triggerList[i].second == true ))
-      //if (( (triggerList[i].first == "HLT_Mu8_Ele8_v1" || triggerList[i].first == "HLT_Mu11_Ele8_v1" ) && triggerList[i].second == true ))
-
-// Spring11
-//	if( ((triggerList[i].first == "HLT_Mu5_Ele17_v2" && GetMuons().size()>0 && GetMuons()[0].p4.Pt()>8) || (triggerList[i].first == "HLT_Mu11_Ele8_v1" && GetMuons().size()>0  && GetMuons()[0].p4.Pt()>17)) && triggerList[i].second == true)
-// Summer11
-	if( ((triggerList[i].first == "HLT_Mu8_Ele17_CaloIdL_v2" ) || (triggerList[i].first == "HLT_Mu10_Ele10_CaloIdL_v3" )) && triggerList[i].second == true)
-	passElMu = true;
-
-    }
-
+  //  if(runNumber == 1){
+  if (!dataset->isData ()) 	//MC
+  {
+    passMu = GetPointer2Trigger()->IsTriggerFired("HLT_DoubleMu6_v1");
+    passEl = GetPointer2Trigger()->IsTriggerFired("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v2");
+    passElMu = GetPointer2Trigger()->IsTriggerFired("HLT_Mu8_Ele17_CaloIdL_v2");
   }
-  else {
+  else
+  {
     // DATA --> Taken from TopDileptonRefAnalysis2010Pass6
     // WARNING : COULD SOMEONE CHECK THE < AND <= FOR THE RUN NUMBER????
 
-    for (unsigned int i = 0; i < triggerList.size (); i++) {
-// //2010
-      // Muon
-//       if (runNumber < 145000 && triggerList[i].first == "HLT_Mu9" && triggerList[i].second == true)
-// 	passMu = true;
-//       else if (  145000 < runNumber  && runNumber < 147120 && triggerList[i].first == "HLT_Mu11" && triggerList[i].second == true)
-// 	passMu = true;
-//       else if ( 147120 < runNumber  && triggerList[i].first == "HLT_Mu15_v1" && triggerList[i].second == true)
-// 	passMu = true;
-//       // Electron
-//       if (runNumber < 138000 && triggerList[i].first == "HLT_Ele10_LW_L1R" && triggerList[i].second == true && eleHLTMatch > 15)
-// 	passEl = true;
-//       else if ( 138000 <= runNumber && runNumber < 141900 && triggerList[i].first == "HLT_Ele15_LW_L1R" && triggerList[i].second == true)
-// 	passEl = true;
-//       else if ( 141900 <= runNumber && runNumber < 144000 && triggerList[i].first == "HLT_Ele15_SW_L1R" && triggerList[i].second == true)
-// 	passEl = true;
-//       else if (144000 < runNumber && runNumber <= 144114 && ((triggerList[i].first == "HLT_Ele15_SW_CaloEleId_L1R" && triggerList[i].second == true)
-// 							     || (triggerList[i].first == "HLT_Ele20_SW_L1R" && triggerList[i].second == true)
-// 							     || (triggerList[i].first == "HLT_DoubleEle10_SW_L1R" && triggerList[i].second == true)))
-// 	passEl = true;
-//       else if (146000 < runNumber && runNumber < 147120 && ((triggerList[i].first == "HLT_DoubleEle10_SW_L1R" && triggerList[i].second == true)
-// 							    || (triggerList[i].first == "HLT_Ele17_SW_CaloEleId_L1R" && triggerList[i].second == true)))
-// 	passEl = true;
-//       else if (147120 < runNumber && runNumber < 148100 && ((triggerList[i].first == "HLT_DoubleEle15_SW_L1R_v1" && triggerList[i].second == true)
-// 							    || (triggerList[i].first == "HLT_Ele17_SW_TightCaloEleId_SC8HE_L1R_v1" && triggerList[i].second == true)
-// 							    || (triggerList[i].first == "HLT_Ele17_SW_TightEleId_L1R" && triggerList[i].second == true)))
-// 	passEl = true;
-//       else if (148100 < runNumber && ((triggerList[i].first == "HLT_DoubleEle17_SW_L1R_v1" && triggerList[i].second == true)
-// 				      || ((triggerList[i].first == "HLT_Ele17_SW_TightCaloEleId_Ele8HE_L1R_v2" && triggerList[i].second == true)
-// 					  || (triggerList[i].first == "HLT_Ele17_SW_TightCaloEleId_Ele8HE_L1R_v1" && triggerList[i].second == true))
-// 				      || ((triggerList[i].first == "HLT_Ele22_SW_TighterEleId_L1R_v3" && triggerList[i].second == true)
-// 					  || (triggerList[i].first == "HLT_Ele22_SW_TighterEleId_L1R_v2" && triggerList[i].second == true))
-// 				      || ((triggerList[i].first == "HLT_Ele17_SW_TighterEleIdIsol_L1R_v3" && triggerList[i].second == true)
-// 					  || (triggerList[i].first == "HLT_Ele17_SW_TighterEleIdIsol_L1R_v2" && triggerList[i].second == true))))
-// 	passEl = true;
-
-
-      //if(triggerList[i].first.find("DoubleMu")!=string::npos)  
-      //cout << "trigger list " <<triggerList[i].first<<"   "<< triggerList[i].second << endl;
-
-/* T. Speer
-
-      if ( 160329 <= runNumber && runNumber < 163262 && 
-	( triggerList[i].first.compare(0,13,"HLT_DoubleMu6")==0  && triggerList[i].second == true)  )
-	passMu = true;
-      else if ( 160329 <= runNumber && runNumber < 164237 && 
-	( triggerList[i].first.compare(0,13,"HLT_DoubleMu7")==0  && triggerList[i].second == true)  )
-	passMu = true;
-      else if ( 165088 <= runNumber && 
-	( triggerList[i].first.compare(0,13,"HLT_DoubleMu8")==0  && triggerList[i].second == true)  )
-	passMu = true;
+    // ERIC TO DO
+    /*
+      if ( 160329 <= getRunNumber() && getRunNumber() < 164237 && 
+      GetPointer2Trigger()->IsTriggerFired("HLT_DoubleMu7");
+      else if ( 165085 <= getRunNumber() && 
+      GetPointer2Trigger()->IsTriggerFired("HLT_Mu13_Mu8_vleMu7");
+      ( triggerList[i].first.compare(0,14,"HLT_Mu13_Mu8_v")==0  && triggerList[i].second == true)  )
+      passMu = true;
 
       if (( triggerList[i].first.compare(0,50,"HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL")==0  && triggerList[i].second == true)  )
-//      if ((triggerList[i].first == "HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v1" && triggerList[i].second == true))
-	passEl = true;
+      passEl = true;
 
-      if (160329 <= runNumber && runNumber < 164237 && 
-	(  triggerList[i].first.compare(0,22,"HLT_Mu10_Ele10_CaloIdL")==0  && triggerList[i].second == true))
-//      if ((triggerList[i].first == "HLT_Mu10_Ele10_CaloIdL_v2" && triggerList[i].second == true))
-	passElMu = true;
-      if (160329 <= runNumber  &&
-	( ( triggerList[i].first.compare(0,21,"HLT_Mu17_Ele8_CaloIdL")==0  && triggerList[i].second == true)
-	  || ( triggerList[i].first.compare(0,21,"HLT_Mu8_Ele17_CaloIdL")==0  && triggerList[i].second == true) ) )
-//      if ((triggerList[i].first == "HLT_Mu10_Ele10_CaloIdL_v2" && triggerList[i].second == true))
-	passElMu = true;
-*/
-
-// Caro for the top dilepton x-sect, same as for H->WW
-      if ( 160329 <= runNumber && runNumber < 164237 && 
-        ( triggerList[i].first.compare(0,13,"HLT_DoubleMu7")==0  && triggerList[i].second == true)  )
-        passMu = true;
-      else if ( 165085 <= runNumber && 
-        ( triggerList[i].first.compare(0,14,"HLT_Mu13_Mu8_v")==0  && triggerList[i].second == true)  )
-        passMu = true;
-
-      if (( triggerList[i].first.compare(0,50,"HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL")==0  && triggerList[i].second == true)  )
-        passEl = true;
-
-      if (160329 <= runNumber  &&
-        ( ( triggerList[i].first.compare(0,21,"HLT_Mu17_Ele8_CaloIdL")==0  && triggerList[i].second == true)
-          || ( triggerList[i].first.compare(0,21,"HLT_Mu8_Ele17_CaloIdL")==0  && triggerList[i].second == true) ) )
-        passElMu = true;
+      if (160329 <= getRunNumber()  &&
+      ( ( triggerList[i].first.compare(0,21,"HLT_Mu17_Ele8_CaloIdL")==0  && triggerList[i].second == true)
+      || ( triggerList[i].first.compare(0,21,"HLT_Mu8_Ele17_CaloIdL")==0  && triggerList[i].second == true) ) )
+      passElMu = true;
+    */
 	
-    }
   }
 
-  if (channelName == string ("ee")) {
+  if (channelName == string ("ee")) 
+  {
     if (passEl)
       return true;
     else
       return false;
   }
-  if (channelName == string ("mumu")) {
+  if (channelName == string ("mumu")) 
+  {
     if (passMu)
       return true;
     else
       return false;
   }
-  if (channelName == string ("emu")) {
-     bool thereturn = false;
-//     if (  (passEl && skim==1 ) || ( passMu && skim==0 && !passEl ) ) thereturn = true;
-//     if ( skim == -1 && (passEl  || passMu ) ) thereturn = true;
+  if (channelName == string ("emu")) 
+  {
+    bool thereturn = false;
+    //     if (  (passEl && skim==1 ) || ( passMu && skim==0 && !passEl ) ) thereturn = true;
+    //     if ( skim == -1 && (passEl  || passMu ) ) thereturn = true;
     if ( skim == -1 &&  passElMu) return true;
     if ( skim == 2 && (passElMu) )
       thereturn = true;
@@ -770,13 +675,13 @@ double SSDiLeptonSelection::getBtagDiscr(const NTJet & jet) const
 {
   switch (btagAlgo_) {
   case 0:
-    return jet.TCDiscri;
+    return jet.bTag["TCDiscri"];
     break;
   case 1:
-    return jet.SVDiscri;
+    return jet.bTag["SVDiscri"];
     break;
   case 2:
-    return jet.SMDiscri;
+    return jet.bTag["SMDiscri"];
     break;
   default:
     cerr << "btagAlgo doesn't exist !" << endl;

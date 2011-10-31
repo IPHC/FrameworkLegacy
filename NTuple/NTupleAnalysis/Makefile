@@ -19,7 +19,7 @@ LD		= g++
 LDFLAGS		= -g -O -Wall -fPIC
 SOFLAGS		= -shared
 
-CXXFLAGS	+= $(ROOTCFLAGS)
+CXXFLAGS	+= $(ROOTCFLAGS) -I./ -I../../IPHCDataFormat/
 LIBS		= $(ROOTLIBS)  -lEG 
 GLIBS		= $(ROOTGLIBS)
 #------------------------------------------------------------------------------

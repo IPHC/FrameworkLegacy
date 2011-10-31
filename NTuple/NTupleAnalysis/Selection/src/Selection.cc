@@ -1,470 +1,378 @@
-#include "../interface/Selection.h"
+#include "Selection/interface/Selection.h"
 
-//for b-tagging
-void InitVectorOfWeight(vector<float>& weightb){
-	    weightb.push_back (1.);
-	    weightb.push_back (0.);
-	    weightb.push_back (0.);
-	    weightb.push_back (0.);
-	    weightb.push_back (0.);
+// ----------------------------------------------------------------------------
+// Global functions
+// ----------------------------------------------------------------------------
+void InitVectorOfWeight(std::vector<float>& weightb)
+{
+  weightb.push_back (1.);
+  weightb.push_back (0.);
+  weightb.push_back (0.);
+  weightb.push_back (0.);
+  weightb.push_back (0.);
 }
 
-void LoadBWeight(Selection& sel, vector<float>& weightb, const vector<NTJet>& theselJets){
-		vector < float >weight_temp = sel.GetSFBweight ().GetWeigth4BSel (sel.GetMethodb (), sel.GetSystb (), theselJets);
-		weightb[0] = weight_temp[0];	//weight of the event
-		weightb[1] = weight_temp[1];	//proba 0 jet
-		weightb[2] = weight_temp[2];	//proba 1 jet
-		weightb[3] = weight_temp[3];	//proba 2 jets
-		weightb[4] = weight_temp[4];	//proba at least 3 jets
+void LoadBWeight(Selection& sel, 
+                 std::vector<float>& weightb,
+                 const std::vector<NTJet>& theselJets)
+{
+  std::vector<float> weight_temp = 
+           sel.GetSFBweight().GetWeigth4BSel(sel.GetMethodb(),
+                                             sel.GetSystb(),
+                                             theselJets);
+  weightb[0] = weight_temp[0];	//weight of the event
+  weightb[1] = weight_temp[1];	//proba 0 jet
+  weightb[2] = weight_temp[2];	//proba 1 jet
+  weightb[3] = weight_temp[3];	//proba 2 jets
+  weightb[4] = weight_temp[4];	//proba at least 3 jets
 }
 
-		
-Selection::Selection(){
-      JetType = "";
-      TauType = "";
-/*      jets.clear();
-      jetmets.clear();
-      electrons.clear();
-      muons.clear();
-      TauType = "";
-      taus.clear();
-      tausVec.clear();
-      vertex.clear();
-      genTaus.clear();
-      genATaus.clear();
-      triggerList.clear();
-      triggerPrescaleList.clear();
-      eventNumber = 0;
-      runNumber = 0;
-      tmeme = -1;
-      eleHLTMatch = false;
-*/
-      JetPtThreshold_     = 0.;
-      JetEtaThreshold_    = 999.;
-      MuonPtThreshold_    = 0.;
-      MuonEtaThreshold_   = 999.;
-      MuonRelIso_         = 999.;
-      MuonNofValidHits_   = 0;
-      MuonNofValidTrHits_ = 10;
-      MuonD0Cut_          = 0.;
-      MuonNormChi2_       = 0;
-      MuonVertexMatchThr_ = 999.;
-      ElectronPtThreshold_  = 0.;
-      ElectronEtaThreshold_ = 999.;
-      ElectronRelIso_       = 999.;
-      ElectronD0Cut_        = 0.;
-      ElectronVertexMatchThr_ = 999.;
-      ElectronETSCThr_        = 0;
-      DRemuThr_         = 999.;
-      TauPtThreshold_   = 0.;
-      TauEtaThreshold_  = 999.;
-      TauLeadTrkPtCut_  = 0;
-      TauVertexMatchThr_= 999.;
-      VertexNdofThr_    = 0;
-      VertexZThr_       = 999.;
-      VertexRhoThr_     = 999.;
-      METThreshold_     = 0;
-      npu=0;
-      histo_jesunc_ = 0;
-      scaleFactEl   = 0;
-      scaleFactMu   = 0;
+
+// ----------------------------------------------------------------------------
+// Constructor without arguments
+// ----------------------------------------------------------------------------
+Selection::Selection()
+{
+  // Pile-Up weights
+  PUWeights.clear();
+
+  // BTag variables
+  flag_btagweight_=0;
+  methodb_=0;
+  systb_=0;
+
+  // JES
+  histo_jesunc_ = 0;
 }
 
-void Selection::LoadEvent(const NTEvent* event){
 
-     evt_ = *event;
-     
-/*      jetmets      = event->jetMetVec;
-      electrons    = event->electrons;
-      muons        = event->muons;
-      tausVec      = event->tausVec;
-      vertex       = event->VertexVec;
-      triggerList  = event->triggers;
-      triggerPrescaleList  = event->prescales;
-      eleHLTMatch  = event->match_HLT_Ele10_LW_L1R_recoEl;
-      eventNumber  = event->eventNb;
-      runNumber    = event->runNb;
-      tmeme        = event->TMEME;
-      genTaus      = event->Generatedtaus;
-      genATaus     = event->GeneratedAtaus;
-      bool JetAlgoFound = SetDefaultJetCollection(JetType); 
-      if(!JetAlgoFound) cerr<<"The jets collection was not found !"<<endl;
-      bool TauAlgoFound = SetDefaultTauCollection(TauType); 
-      //if(!TauAlgoFound) cerr<<"The tau collection was not found !"<<endl;
-      npu  = event->num_pileup_bc0; 
-      wAndDecays = event->wAndDecays;
-      zAndDecays = event->zAndDecays;
-*/
-           
+// ----------------------------------------------------------------------------
+// Constructor without arguments
+// ----------------------------------------------------------------------------
+Selection::Selection(const Selection & s) : Event(s)
+{
+  // Pile-Up weights
+  PUWeights=s.PUWeights;
+
+  // Requirements
+  cfg = s.cfg;
+
+  // BTag variables
+  flag_btagweight_        = s.flag_btagweight_;
+  systb_                  = s.systb_;
+  methodb_                = s.methodb_;
+  sfb_                    = s.sfb_;
+
+  // JES & Scale factors
+  if (s.histo_jesunc_) histo_jesunc_  = (TH2F*) s.histo_jesunc_->Clone();
+  if (s.scaleFactEl)   scaleFactEl	  = (TH2F*) s.scaleFactEl->Clone();
+  if (s.scaleFactMu)   scaleFactMu	  = (TH2F*) s.scaleFactMu->Clone();
 }
 
-void Selection::Reset(){
-/*      met = NTMET();
-      jets.clear();
-      jetmets.clear();
-      electrons.clear();
-      muons.clear();
-      tausVec.clear();
-      vertex.clear();
-      triggerList.clear();
-      triggerPrescaleList.clear();
-      genTaus.clear();
-      genATaus.clear();*/
-      
-      evt_.Reset();
-}
-
-Selection::Selection(const Selection & s):evt_(s.evt_){
-/*      jets      = s.jets;
-      met       = s.met;
-      jetmets   = s.jetmets;
-      electrons = s.electrons;
-      muons     = s.muons;
-      tausVec   = s.tausVec;
-      vertex    = s.vertex; 
-      genTaus   = s.genTaus;
-      genATaus  = s.genATaus;
-      JetType   = s.JetType;
-      TauType   = s.TauType;
-      triggerList  = s.triggerList;
-      triggerPrescaleList  = s.triggerPrescaleList;
-      eleHLTMatch  = s.eleHLTMatch;
-      eventNumber    = s.eventNumber;
-      runNumber    = s.runNumber;
-      tmeme        = s.tmeme;*/
-      
-      JetType   = s.JetType;
-      TauType   = s.TauType;      
-      
-      JetPtThreshold_         = s.JetPtThreshold_;
-      JetEtaThreshold_        = s.JetEtaThreshold_;
-      MuonPtThreshold_        = s.MuonPtThreshold_;
-      MuonEtaThreshold_       = s.MuonEtaThreshold_;
-      MuonRelIso_             = s.MuonRelIso_;
-      MuonNofValidTrHits_     = s.MuonNofValidTrHits_;
-      MuonNofValidHits_       = s.MuonNofValidHits_;
-      MuonD0Cut_              = s.MuonD0Cut_;
-      MuonNormChi2_           = s.MuonNormChi2_;
-      MuonVertexMatchThr_     = s.MuonVertexMatchThr_;
-      ElectronPtThreshold_    = s.ElectronPtThreshold_;
-      ElectronEtaThreshold_   = s.ElectronEtaThreshold_;
-      ElectronRelIso_         = s.ElectronRelIso_;
-      ElectronD0Cut_          = s.ElectronD0Cut_;
-      ElectronVertexMatchThr_ = s.ElectronVertexMatchThr_;
-      ElectronETSCThr_        = s.ElectronETSCThr_;
-      DRemuThr_               = s.DRemuThr_;
-      TauEtaThreshold_        = s.TauEtaThreshold_;
-      TauLeadTrkPtCut_        = s.TauLeadTrkPtCut_;
-      TauVertexMatchThr_      = s.TauVertexMatchThr_;
-      VertexNdofThr_          = s.VertexNdofThr_;
-      VertexZThr_             = s.VertexZThr_;
-      VertexRhoThr_           = s.VertexRhoThr_;
-      METThreshold_           = s.METThreshold_;
-      npu    = s.npu;
-
-
-      // specific to btag weight
-     flag_btagweight_ = s.flag_btagweight_;
-     systb_ = s.systb_;
-     methodb_ = s.methodb_;
-     sfb_ = s.sfb_;
-
-     //copy of histos
-      if (s.histo_jesunc_) histo_jesunc_           = (TH2F*) s.histo_jesunc_->Clone();
-      if (s.scaleFactEl) scaleFactEl	      = (TH2F*) s.scaleFactEl->Clone();
-      if (s.scaleFactMu) scaleFactMu	      = (TH2F*) s.scaleFactMu->Clone();
-
-}
-
-     
-Selection::~Selection(){}
-
-
-/*void Selection::AddCollection(std::vector<NTElectron> elec){
-	electrons = electrons;
-}
-
-void Selection::AddCollection(std::vector<NTMuon> mu){
-	muons = mu;
-}
-
-void Selection::AddCollection(std::vector<NTCollection<NTTau> > ta){
-	tausVec = ta;
-}
-
-void Selection::AddCollection(std::vector<NTJetMet> jm){
-	jetmets = jm;
-}
-
-void Selection::AddCollection(std::vector<NTJet> je){
-	jets = je;
-}
-
-void Selection::AddCollection(std::vector<NTVertex> ve){
-	vertex = ve;
-}
-
-void Selection::AddCollection(std::vector<std::pair<string, bool> >  tl){
-	triggerList = tl;
-}
-
-void Selection::AddCollection(std::vector<std::pair<string, int> >  tpl){
-	triggerPrescaleList = tpl;
-}
-
-*/
-
-void Selection::AddMET(NTMET me){
-	met = me;
-}
-      
-bool Selection::SetDefaultJetCollection(string jetCollName) {
-	JetType = jetCollName;
-	for(unsigned int i=0;i<jetmets.size();i++){
-		if(jetmets[i].algo==JetType){
-			jets = jetmets[i].objects;
-			met = jetmets[i].met;
-			return true;
-		}
-	} 
-	return false;
-}
-
-bool Selection::SetDefaultTauCollection(string tauCollName) {
-       TauType = tauCollName;
-       for(unsigned int i=0;i<tausVec.size();i++){
-	       if(tausVec[i].algo==TauType){
-		       taus = tausVec[i].objects;
-		       return true;
-	       }
-       } 
-       return false;
-}
- 
-void Selection::SetElectronRequirements(float PtThr, float EtaThr, float RelIsoThr, float D0Thr, float VertexMatchThr, float ElectronETSCThr, float DRemuThr){
-      ElectronPtThreshold_    = PtThr;
-      ElectronEtaThreshold_   = EtaThr;
-      ElectronRelIso_         = RelIsoThr;
-      ElectronD0Cut_          = D0Thr;
-      ElectronVertexMatchThr_ = VertexMatchThr;
-      ElectronETSCThr_        = ElectronETSCThr; 
-      DRemuThr_               = DRemuThr;
-}
-
-void Selection::SetMuonRequirements(float PtThr, float EtaThr, float RelIsoThr, float D0Thr, float VertexMatchThr, float NValidHitsThr, float NValidTkHitsThr, float Chi2Thr){
-      MuonPtThreshold_    = PtThr;
-      MuonEtaThreshold_   = EtaThr;
-      MuonRelIso_         = RelIsoThr;
-      MuonNofValidTrHits_ = NValidTkHitsThr;
-      MuonNofValidHits_   = NValidHitsThr;
-      MuonD0Cut_          = D0Thr;
-      MuonNormChi2_       = Chi2Thr;
-      MuonVertexMatchThr_ = VertexMatchThr; 
-}
-
-void Selection::SetTauRequirements(float PtThr, float EtaThr, float VertexMatchThr, float LeadTrkPtThr){
-      TauPtThreshold_    = PtThr;
-      TauEtaThreshold_   = EtaThr;
-      TauLeadTrkPtCut_   = LeadTrkPtThr;
-      TauVertexMatchThr_ = VertexMatchThr; 
-}
-
-void Selection::SetVertexRequirements(float VertexNdofThr, float VertexZThr, float VertexRhoThr){
-	VertexNdofThr_ = VertexNdofThr;
-	VertexNdofThr_ = VertexNdofThr;
-	VertexRhoThr_  = VertexRhoThr;
-}
-
-void Selection::SetJetRequirements(float PtThr, float EtaThr){
-	JetPtThreshold_  = PtThr;
-	JetEtaThreshold_ = EtaThr;
-}
-
-void Selection::SetMETRequirements(float PtThr){
-}
     
-//************************************************
-//Vertex selection
-//************************************************  
+// ----------------------------------------------------------------------------
+// GetSelectedVertex
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTVertex> Selection::GetSelectedVertex() const
+{
+  // Create container for output
+  std::vector<IPHCTree::NTVertex> selectedVertex;
 
-std::vector<NTVertex> Selection::GetSelectedVertex() const{
-	vector<NTVertex> selectedVertex;
-	for(unsigned int i=0;i<vertex.size();i++){
-		if(vertex[i].isFake)                    continue;
-		if(vertex[i].ndof<= VertexNdofThr_)     continue;
-		if(fabs(vertex[i].p3.Z())> VertexZThr_) continue;
-		if(vertex[i].rho>= VertexRhoThr_)       continue;
-		selectedVertex.push_back(vertex[i]);
+  // Get pointer to data stored in MiniTree
+  const std::vector<IPHCTree::NTVertex>* vertices = GetPointer2Vertex();
+  if (vertices==0) return selectedVertex;
+
+  // Loop over stored objects
+	for(unsigned int i=0;i<vertices->size();i++)
+  {
+    const IPHCTree::NTVertex* myvertex = &((*vertices)[i]);
+		if (myvertex->isFake)                        continue;
+		if (myvertex->ndof<=cfg.VertexNdofThr_)      continue;
+		if (fabs(myvertex->p3.Z())> cfg.VertexZThr_) continue;
+		if (myvertex->Rho()>= cfg.VertexRhoThr_)     continue;
+		selectedVertex.push_back(*myvertex);
 	}
 	return selectedVertex;
 } 
     
-//************************************************
-//Jets selection
-//************************************************  
 
-std::vector<NTJet> Selection::GetScaledJets(float scale) const{
-    std::vector<NTJet> newJets = jets;
-    for (unsigned int i=0; i<newJets.size(); i++){
-       float newscale = 0;
-       float eta  = newJets[i].p4.Eta();
-       float pt  = newJets[i].p4.Pt();
-       if (pt>=300. ) pt = 300;
-       if ( scale<1.0 ) {
-          newscale = (1.- histo_jesunc_->GetBinContent(histo_jesunc_->FindBin(eta,pt)));
-       } else {
-          newscale = (1.+ histo_jesunc_->GetBinContent(histo_jesunc_->FindBin(eta,pt)));
-       }
-//       std::cout<<"eta,pt, scale, newscale "<<eta<<" "<<pt<<" "<<scale<<" "<<newscale<<std::endl;
-      double Px = 0;
-      double Py = 0;
-      double Pz = 0;
-      double E = 0;
-      Px   = newscale*newJets[i].p4.Px();
-      Py   = newscale*newJets[i].p4.Py();
-      Pz   = newscale*newJets[i].p4.Pz();
-      E    =  newscale*newJets[i].p4.E();
-      newJets[i].p4.SetPxPyPzE(Px, Py, Pz, E);
+// ----------------------------------------------------------------------------
+// GetSelectedVertex
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTJet> Selection::GetScaledJets(float scale) const
+{
+  std::vector<IPHCTree::NTJet> newJets = GetJets();
+  for (unsigned int i=0; i<newJets.size(); i++)
+  {
+    float newscale = 0;
+    float eta  = newJets[i].p4.Eta();
+    float pt   = newJets[i].p4.Pt();
+    if (pt>=300.) pt = 300;
+    if (scale<1.0)
+    {
+      newscale = (1.- histo_jesunc_->GetBinContent(
+                           histo_jesunc_->FindBin(eta,pt)));
     }
+    else
+    {
+      newscale = (1.+ histo_jesunc_->GetBinContent(
+                           histo_jesunc_->FindBin(eta,pt)));
+    }
+    newJets[i].p4.SetPxPyPzE(newscale*newJets[i].p4.Px(),
+                             newscale*newJets[i].p4.Py(),
+                             newscale*newJets[i].p4.Pz(),
+                             newscale*newJets[i].p4.E());
+  }
     
-    return newJets;
+  return newJets;
 }
 
-std::vector<NTJet>  Selection::GetSmearedJets(vector<NTJet> injets, float jetResFactor) const{
-    std::vector<NTJet> newJets = injets;
-    for (unsigned int i=0; i<newJets.size(); i++){
-      double Px = 0;
-      double Py = 0;
-      double Pz = 0;
-      double E = 0;
-      double gen_pt = newJets[i].p4Gen.Pt(); //to be changed
-      double jet_pt = newJets[i].p4.Pt();
-      double deltapt = (jet_pt - gen_pt) * jetResFactor;
-      double ptscale = ((jet_pt + deltapt) / jet_pt);
-      if(ptscale <0 ) ptscale = 0;
-      Px   = ptscale*newJets[i].p4.Px();
-      Py   = ptscale*newJets[i].p4.Py();
-      Pz   = ptscale*newJets[i].p4.Pz();
-      E   = ptscale*newJets[i].p4.E();
-      newJets[i].p4.SetPxPyPzE(Px, Py, Pz, E);
-    }
-    return newJets;
+
+// ----------------------------------------------------------------------------
+// GetSmearedJets
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTJet>  Selection::GetSmearedJets(
+                           const vector<IPHCTree::NTJet>& injets,
+                           float jetResFactor) const
+{
+  std::vector<IPHCTree::NTJet> newJets = GetJets();
+  for (unsigned int i=0; i<newJets.size(); i++)
+  {
+    double gen_pt  = newJets[i].p4Gen.Pt(); //to be changed
+    double jet_pt  = newJets[i].p4.Pt();
+    double deltapt = (jet_pt - gen_pt) * jetResFactor;
+    double ptscale = ((jet_pt + deltapt) / jet_pt);
+    if (ptscale<0) ptscale = 0;
+    newJets[i].p4.SetPxPyPzE(ptscale*newJets[i].p4.Px(),
+                             ptscale*newJets[i].p4.Py(),
+                             ptscale*newJets[i].p4.Pz(),
+                             ptscale*newJets[i].p4.E());
+  }
+  return newJets;
 }
 
- 
-NTMET Selection::GetScaledMET(float scale) const{
-    double missetX = 0.;
-    double missetY = 0.;
-    for (unsigned int i=0; i<jets.size(); i++){
-      missetX += (1-scale) * jets[i].p4.Px();
-      missetY += (1-scale) * jets[i].p4.Py();
-    }
-    NTMET newMET = met;
-    newMET.p4.SetPxPyPzE(met.p4.Px()+missetX, met.p4.Py()+missetY, 0 , sqrt(pow(met.p4.Px()+missetX,2.) + pow(met.p4.Py()+missetY,2.) + met.p4.M()));
-    return newMET;
+
+// ----------------------------------------------------------------------------
+// GetScaleMET
+// ----------------------------------------------------------------------------
+IPHCTree::NTMET Selection::GetScaledMET(float scale) const
+{
+  // Create container for output
+  IPHCTree::NTMET newMET;
+
+  // Get pointer to data stored in MiniTree
+  const IPHCTree::NTMET* met  = GetPointer2MET();
+  const std::vector<IPHCTree::NTJet>* jets = GetPointer2Jets();
+  if (jets==0 || met==0) return newMET;
+
+  double missetX = 0.;
+  double missetY = 0.;
+  for (unsigned int i=0; i<jets->size(); i++)
+  {
+    missetX += (1-scale) * (*jets)[i].p4.Px();
+    missetY += (1-scale) * (*jets)[i].p4.Py();
+  }
+
+  newMET = *met;
+  newMET.p2.Set(met->p2.Px() + missetX,
+                met->p2.Py() + missetY);
+  return newMET;
 }
 
-NTMET  Selection::GetSmearedMET(vector<NTJet> injets, float jetResFactor) const{
-    double missetX = 0.;
-    double missetY = 0.;
-    for (unsigned int i=0; i<injets.size(); i++){
-      double gen_pt = injets[i].p4Gen.Pt(); //to be changed: should be the pt of genjet !
-      double jet_pt = injets[i].p4.Pt();
-      double deltapt = (jet_pt - gen_pt) * jetResFactor;
-      double ptscale = ((jet_pt + deltapt) / jet_pt);
-      if(ptscale <0 ) ptscale = 0;
-      missetX   = (ptscale-1)*injets[i].p4.Px();
-      missetY   = (ptscale-1)*injets[i].p4.Py();
-    }
-    NTMET newMET = met;
-    newMET.p4.SetPxPyPzE(met.p4.Px()+missetX, met.p4.Py()+missetY, 0 , sqrt(pow(met.p4.Px()+missetX,2.) + pow(met.p4.Py()+missetY,2.) + met.p4.M()));
-    return newMET;
+
+// ----------------------------------------------------------------------------
+// GetSmearedMET
+// ----------------------------------------------------------------------------
+IPHCTree::NTMET Selection::GetSmearedMET(
+                         const std::vector<IPHCTree::NTJet>& injets,
+                         float jetResFactor) const
+{
+  // Create container for output
+  IPHCTree::NTMET newMET;
+
+  // Get pointer to data stored in MiniTree
+  const IPHCTree::NTMET* met  = GetPointer2MET();
+  if (met==0) return newMET;
+
+  double missetX = 0.;
+  double missetY = 0.;
+  for (unsigned int i=0; i<injets.size(); i++)
+  {
+    double gen_pt = injets[i].p4Gen.Pt(); //to be changed:
+                                          //should be the pt of genjet !
+    double jet_pt = injets[i].p4.Pt();
+    double deltapt = (jet_pt - gen_pt) * jetResFactor;
+    double ptscale = ((jet_pt + deltapt) / jet_pt);
+    if(ptscale <0 ) ptscale = 0;
+    missetX = (ptscale-1)*injets[i].p4.Px();
+    missetY = (ptscale-1)*injets[i].p4.Py();
+  }
+  newMET = *met;
+  newMET.p2.Set(met->p2.Px() + missetX,
+                met->p2.Py() + missetY);
+  return newMET;
 }
 
-NTMET Selection::GetUnclusScaledMET(bool applyUnclusScale, float scale) const{
-    double missetX = met.p4.Px();
-    double missetY = met.p4.Py();
-    for (unsigned int i=0; i<jets.size(); i++){
-      missetX -= jets[i].p4.Px();
-      missetY -= jets[i].p4.Py();
-    }
-    for (unsigned int i=0; i<electrons.size(); i++){
-      missetX -= electrons[i].p4.Px();
-      missetY -= electrons[i].p4.Py();
-    }
-    for (unsigned int i=0; i<muons.size(); i++){
-      missetX -= muons[i].p4.Px();
-      missetY -= muons[i].p4.Py();
-    }
-    for (unsigned int i=0; i<taus.size(); i++){
-      missetX -= taus[i].p4.Px();
-      missetY -= taus[i].p4.Py();
-    }
-    NTMET newMET = met;
-    newMET.p4.SetPxPyPzE(met.p4.Px()+(scale-1)*missetX, met.p4.Py()+(scale-1)*missetY, 0 , sqrt(pow(met.p4.Px()+(scale-1)*missetX,2.) + pow(met.p4.Py()+(scale-1)*missetY,2.) + met.p4.M()));
-    return newMET;
+
+// ----------------------------------------------------------------------------
+// GetUnclusScaleMET
+// ----------------------------------------------------------------------------
+IPHCTree::NTMET Selection::GetUnclusScaledMET(bool applyUnclusScale,
+                                              float scale) const
+{
+  // Create container for output
+  IPHCTree::NTMET newMET;
+
+  double missetX = 0.;
+  double missetY = 0.;
+
+  const IPHCTree::NTMET* met  = GetPointer2MET();
+  if (met!=0)
+  {
+    missetX = met->p2.Px();
+    missetY = met->p2.Py();
+  }
+
+  const std::vector<IPHCTree::NTJet>* jets  = GetPointer2Jets();
+  if (jets!=0) for (unsigned int i=0; i<jets->size(); i++)
+  {
+    missetX -= (*jets)[i].p4.Px();
+    missetY -= (*jets)[i].p4.Py();
+  }
+
+  const std::vector<IPHCTree::NTElectron>* electrons  = GetPointer2Electrons();
+  for (unsigned int i=0; i<electrons->size(); i++)
+  {
+    missetX -= (*electrons)[i].p4.Px();
+    missetY -= (*electrons)[i].p4.Py();
+  }
+
+  const std::vector<IPHCTree::NTMuon>* muons  = GetPointer2Muons();
+  for (unsigned int i=0; i<muons->size(); i++)
+  {
+    missetX -= (*muons)[i].p4.Px();
+    missetY -= (*muons)[i].p4.Py();
+  }
+
+  const std::vector<IPHCTree::NTTau>* taus = GetPointer2Taus();
+  for (unsigned int i=0; i<taus->size(); i++)
+  {
+    missetX -= (*taus)[i].p4.Px();
+    missetY -= (*taus)[i].p4.Py();
+  }
+
+  newMET = *met;
+  newMET.p2.Set(met->p2.Px()+(scale-1)*missetX,
+                met->p2.Py()+(scale-1)*missetY);
+  return newMET;
 }
 
-NTMET Selection::GetMET(bool applyJES, float scale, bool applyJER, float ResFactor) const{
-	//WARNING: force to not apply the JES - it's due to JES/JEC correction scenario in PAT
+
+// ----------------------------------------------------------------------------
+// GetMET
+// ----------------------------------------------------------------------------
+IPHCTree::NTMET Selection::GetMET(bool applyJES, float scale, 
+                                  bool applyJER, float ResFactor) const
+{
+	// WARNING: force to not apply the JES 
+  // it's due to JES/JEC correction scenario in PAT
 	applyJES = false;
-	if(applyJES){
-        	if(applyJER){
+	if(applyJES)
+  {
+    if(applyJER)
+    {
 			return GetSmearedMET(GetScaledJets(scale),ResFactor);
 		}
 		return GetScaledMET(scale); 
 	}
-        if(applyJER){
+  if(applyJER)
+  {
 		return GetSmearedMET(GetJets(), ResFactor);
 	}
-	else return met;
+	else return GetMET();
 }
 
-std::vector<NTJet> Selection::GetSelectedJets(std::vector<NTMuon> muon_cand, std::vector<NTElectron> elec_cand, bool applyJES, float scale, bool applyJER, float ResFactor) const{
-  std::vector<NTJet> selectedJets;
-  std::vector<NTJet> scaledJets;
+
+// ----------------------------------------------------------------------------
+// GetSelectedJets
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTJet> Selection::GetSelectedJets(
+            const std::vector<IPHCTree::NTMuon>& muon_cand,
+            const std::vector<IPHCTree::NTElectron>& elec_cand,
+            bool applyJES, float scale, 
+            bool applyJER, float ResFactor) const
+{
+  // Containers for output
+  std::vector<IPHCTree::NTJet> selectedJets;
+  std::vector<IPHCTree::NTJet> scaledJets;
+
+  // Get scaled jets
   if(applyJES) scaledJets = GetScaledJets(scale);
-  else scaledJets = jets;
+  else if (GetPointer2Jets()!=0) scaledJets = *GetPointer2Jets();
+
+  // Apply JER
   if(applyJER) scaledJets = GetSmearedJets(scaledJets, ResFactor);
-  for(unsigned int i=0;i<scaledJets.size();i++){
-    if(fabs(scaledJets[i].p4.Eta())> JetEtaThreshold_ ||  scaledJets[i].p4.Pt()<JetPtThreshold_) continue;
+  for(unsigned int i=0;i<scaledJets.size();i++)
+  {
+    if (fabs(scaledJets[i].p4.Eta())> cfg.JetEtaThreshold_ ||
+        scaledJets[i].p4.Pt()<cfg.JetPtThreshold_) continue;
     
     double deltaRmu = 10000;
     double deltaRel = 10000;
     
-    for(unsigned int imu=0; imu< muon_cand.size(); imu++){
+    for(unsigned int imu=0; imu< muon_cand.size(); imu++)
+    {
       double deltaR = scaledJets[i].p4.DeltaR(muon_cand[imu].p4);
       if(deltaR < deltaRmu) deltaRmu = deltaR;
     }
     
-    for(unsigned int iel=0; iel< elec_cand.size(); iel++){
+    for(unsigned int iel=0; iel< elec_cand.size(); iel++)
+    {
       double deltaR = scaledJets[i].p4.DeltaR(elec_cand[iel].p4);
       if(deltaR < deltaRel) deltaRel = deltaR;
     }
     
-    if( deltaRmu > 0.4  && deltaRel > 0.4) selectedJets.push_back(scaledJets[i]);
-    //if( deltaRmu > 0.4  ) selectedJets.push_back(scaledJets[i]);
-	
+    if( deltaRmu > 0.4  && deltaRel > 0.4) 
+                         selectedJets.push_back(scaledJets[i]);
   }
   std::sort(selectedJets.begin(),selectedJets.end(),HighestPt());
   return selectedJets;
 }
 
 
-std::vector<NTJet> Selection::GetSelectedJets(std::vector<NTMuon> muon_cand, std::vector<NTElectron> elec_cand, std::vector<NTTau> tau_cand,bool applyJES, float scale, bool applyJER, float ResFactor) const{
-  std::vector<NTJet> selectedJets;
-  std::vector<NTJet> scaledJets;
+// ----------------------------------------------------------------------------
+// GetSelectedJets
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTJet> Selection::GetSelectedJets(
+                  const std::vector<IPHCTree::NTMuon>& muon_cand,
+                  const std::vector<IPHCTree::NTElectron>& elec_cand,
+                  const std::vector<IPHCTree::NTTau>& tau_cand,
+                  bool applyJES, float scale, 
+                  bool applyJER, float ResFactor) const
+{
+
+  // Create containers for output
+  std::vector<IPHCTree::NTJet> selectedJets;
+  std::vector<IPHCTree::NTJet> scaledJets;
+
+  // Get scaled jets
   if(applyJES) scaledJets = GetScaledJets(scale);
-  else scaledJets = jets;
+  else if (GetPointer2Jets()!=0) scaledJets = *GetPointer2Jets();
+
+  // Apply JER
   if(applyJER) scaledJets = GetSmearedJets(scaledJets, ResFactor);
-  for(unsigned int i=0;i<scaledJets.size();i++){
-    if(fabs(scaledJets[i].p4.Eta())> JetEtaThreshold_ ||  scaledJets[i].p4.Pt()<JetPtThreshold_) continue;
+
+  for(unsigned int i=0;i<scaledJets.size();i++)
+  {
+    if (fabs(scaledJets[i].p4.Eta()) > cfg.JetEtaThreshold_ ||
+        scaledJets[i].p4.Pt() < cfg.JetPtThreshold_) continue;
     
     double deltaRmu  = 10000;
     double deltaRel  = 10000;
     double deltaRtau = 10000;
     
-    for(unsigned int imu=0; imu< muon_cand.size(); imu++){
+    for(unsigned int imu=0; imu< muon_cand.size(); imu++)
+    {
       double deltaR = scaledJets[i].p4.DeltaR(muon_cand[imu].p4);
       if(deltaR < deltaRmu) deltaRmu = deltaR;
     }
@@ -474,27 +382,40 @@ std::vector<NTJet> Selection::GetSelectedJets(std::vector<NTMuon> muon_cand, std
       if(deltaR < deltaRel) deltaRel = deltaR;
     }
     
-    for(unsigned int itau=0; itau< tau_cand.size(); itau++){
+    for(unsigned int itau=0; itau< tau_cand.size(); itau++)
+    {
       double deltaR = scaledJets[i].p4.DeltaR(tau_cand[itau].p4);
       if(deltaR < deltaRtau) deltaRtau = deltaR;
     }
     
-    if( deltaRmu > 0.4  && deltaRel > 0.4 && deltaRtau > 0.4) selectedJets.push_back(scaledJets[i]);
-    //if( deltaRmu > 0.4  ) selectedJets.push_back(scaledJets[i]);
-	
+    if( deltaRmu > 0.4  && deltaRel > 0.4 && deltaRtau > 0.4) 
+      selectedJets.push_back(scaledJets[i]);
   }
   std::sort(selectedJets.begin(),selectedJets.end(),HighestPt());
   return selectedJets;
 }
 
-std::vector<NTJet> Selection::GetSelectedJets(bool applyJES, float scale, bool applyJER, float ResFactor) const{
-  std::vector<NTJet> selectedJets;
-  std::vector<NTJet> scaledJets;
+
+// ----------------------------------------------------------------------------
+// GetSelectedJets
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTJet> Selection::GetSelectedJets(
+                               bool applyJES, float scale, 
+                               bool applyJER, float ResFactor) const
+{
+  // Container for output
+  std::vector<IPHCTree::NTJet> selectedJets;
+  std::vector<IPHCTree::NTJet> scaledJets;
+
+  // Get scaled jets
   if(applyJES) scaledJets = GetScaledJets(scale);
-  else scaledJets = jets;
+  else if (GetPointer2Jets()!=0) scaledJets = *GetPointer2Jets();
   if(applyJER) scaledJets = GetSmearedJets(scaledJets, ResFactor);
-  for(unsigned int i=0;i<scaledJets.size();i++){
-    if(fabs(scaledJets[i].p4.Eta())> JetEtaThreshold_ ||  scaledJets[i].p4.Pt()<JetPtThreshold_) continue;   
+
+  for(unsigned int i=0;i<scaledJets.size();i++)
+  {
+    if (fabs(scaledJets[i].p4.Eta())> cfg.JetEtaThreshold_ ||
+        scaledJets[i].p4.Pt()< cfg.JetPtThreshold_) continue;   
     selectedJets.push_back(scaledJets[i]);
 	
   }
@@ -502,197 +423,229 @@ std::vector<NTJet> Selection::GetSelectedJets(bool applyJES, float scale, bool a
   return selectedJets;
 }
 
-std::vector<NTJet> Selection::GetSelectedJets(float PtThr, float EtaThr, bool applyJES, float scale, bool applyJER, float ResFactor) const{
-  std::vector<NTJet> selectedJets;
-  std::vector<NTJet> scaledJets;
+
+// ----------------------------------------------------------------------------
+// GetSelectedJets
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTJet> Selection::GetSelectedJets(
+                                float PtThr, float EtaThr,
+                                bool applyJES, float scale,
+                                bool applyJER, float ResFactor) const
+{
+  // Container for output
+  std::vector<IPHCTree::NTJet> selectedJets;
+  std::vector<IPHCTree::NTJet> scaledJets;
+
+  // Get scaled jets
   if(applyJES) scaledJets = GetScaledJets(scale);
-  else scaledJets = jets;
+  else if (GetPointer2Jets()!=0) scaledJets = *GetPointer2Jets();
   if(applyJER) scaledJets = GetSmearedJets(scaledJets, ResFactor);
-  for(unsigned int i=0;i<scaledJets.size();i++){
-   	if(fabs(scaledJets[i].p4.Eta())<EtaThr && scaledJets[i].p4.Pt()>PtThr)
-    		selectedJets.push_back(scaledJets[i]);
+
+  for(unsigned int i=0;i<scaledJets.size();i++)
+  {
+   	if (fabs(scaledJets[i].p4.Eta())<EtaThr &&
+        scaledJets[i].p4.Pt()>PtThr)
+      selectedJets.push_back(scaledJets[i]);
   }
   std::sort(selectedJets.begin(),selectedJets.end(),HighestPt());
   return selectedJets;
 }
 
 
-//************************************************
-//Bjets selection
-//************************************************
-
-std::vector<NTJet> Selection::GetSelectedBJets(const std::vector<NTJet>& SelectedJets, const int& algo, const float & discricut ) const{
-   std::vector<NTJet> btagjets;
-   for(unsigned int j=0;j<SelectedJets.size();j++){
-         switch(algo){
-              case 0 :
-                      if(SelectedJets[j].TCDiscri>=discricut){
-                            btagjets.push_back(SelectedJets[j]);
-                      }
-                      break;
-              case 1 :
-                      if(SelectedJets[j].SVDiscri>=discricut){
-                            btagjets.push_back(SelectedJets[j]);
-                      }
-                      break;
-              case 2 :
-                      if(SelectedJets[j].SMDiscri>=discricut){
-                            btagjets.push_back(SelectedJets[j]);
-                      }
-                      break;
-              default:
-                      cerr << "btagAlgo doesn't exist !"<<endl;
-                      break;
-          }
+// ----------------------------------------------------------------------------
+// GetSelectedBJets
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTJet> Selection::GetSelectedBJets(
+                    const std::vector<IPHCTree::NTJet>& SelectedJets,
+                    const int& algo, const float & discricut ) const
+{
+  std::vector<IPHCTree::NTJet> btagjets;
+  for(unsigned int j=0;j<SelectedJets.size();j++){
+    switch(algo){
+    case 0 :
+      if(SelectedJets[j].bTag["TCDiscri"]>=discricut){
+        btagjets.push_back(SelectedJets[j]);
+      }
+      break;
+    case 1 :
+      if(SelectedJets[j].bTag["SVDiscri"]>=discricut){
+        btagjets.push_back(SelectedJets[j]);
+      }
+      break;
+    case 2 :
+      if(SelectedJets[j].bTag["SMDiscri"]>=discricut){
+        btagjets.push_back(SelectedJets[j]);
+      }
+      break;
+    default:
+      std::cerr << "btagAlgo doesn't exist !"<<endl;
+      break;
     }
-    return btagjets;
+  }
+  return btagjets;
 }
 
-//************************************************
-//Electron selection
-//************************************************
 
-std::vector<NTElectron> Selection::GetScaledElectrons(float scale) const{
-    std::vector<NTElectron> newElectrons = electrons;
+// ----------------------------------------------------------------------------
+// GetScaledElectrons
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTElectron> Selection::GetScaledElectrons
+                                                        (float scale) const
+{
+  // Container for output
+  std::vector<IPHCTree::NTElectron> newElectrons;
+
+  // Get Electrons  
+  if (GetPointer2Electrons()!=0) newElectrons = *GetPointer2Electrons();
+  else return newElectrons;
      
-    for (unsigned int i=0; i<newElectrons.size(); i++){
-      
-      if(scale > 1){
-        if(newElectrons[i].isEB == 1) scale = 1.005;
-        else scale = 1.0275;
-      }
-      //cout << "scale " << scale << endl;
-      //cout << "newElectrons[i].p4.Pt() " << newElectrons[i].p4.Pt() << endl;
-      double Px = 0;
-      double Py = 0;
-      double Pz = 0;
-      double E = 0;
-      Px   = scale*newElectrons[i].p4.Px();
-      Py   = scale*newElectrons[i].p4.Py();
-      Pz   = scale*newElectrons[i].p4.Pz();
-      E   = scale*newElectrons[i].p4.E();
-      newElectrons[i].p4.SetPxPyPzE(Px, Py, Pz, E);
-      //cout << "newElectrons[i].p4.Pt() rescaled" << newElectrons[i].p4.Pt() << endl;
+  for (unsigned int i=0; i<newElectrons.size(); i++)
+  {
+    if(scale > 1)
+    {
+      if(newElectrons[i].isEB == 1) scale = 1.005;
+      else scale = 1.0275;
     }
-    return newElectrons;
+    newElectrons[i].p4.SetPxPyPzE(scale*newElectrons[i].p4.Px(),
+                                  scale*newElectrons[i].p4.Py(),
+                                  scale*newElectrons[i].p4.Pz(),
+                                  scale*newElectrons[i].p4.E());
+  }
+  return newElectrons;
 }
 
 
-std::vector<NTElectron> Selection::GetSmearedElectrons(float resol) const{
-    std::vector<NTElectron> newElectrons = electrons;
-    
-    //cout << "############ in smeared " << endl;
-    for (unsigned int i=0; i<newElectrons.size(); i++){
-      
-      if(resol > 0){
-        if(newElectrons[i].isEB == 1) resol = 0.25;
-        else resol = 0.34;
-      }
-      
-      //cout << "resol " << resol << endl;
-      //cout << "********************newElectrons[i].p4.Pt() " << newElectrons[i].p4.Pt() << endl;
-      
-      double deltaR = -1;
-      double gen_pt = -1; //to be changed
-      for(unsigned int igenEl=0; igenEl<wAndDecays.size(); igenEl++){
-        if(abs(wAndDecays[igenEl].mcLepId) != 11  ) continue;
-	//cout << "wAndDecays[igenEl] "<< igenEl << "  pt "  << wAndDecays[igenEl].p4_Lep_gen.Pt() << endl;
-	deltaR = wAndDecays[igenEl].p4_Lep_gen.DeltaR(newElectrons[i].p4);
-	if(deltaR<0.1) gen_pt = wAndDecays[igenEl].p4_Lep_gen.Pt();
-      
-      }
-      
-      for(unsigned int igenEl=0; igenEl<zAndDecays.size(); igenEl++){
-	if(zAndDecays[igenEl].Lep1_pdgID == 11 || zAndDecays[igenEl].Lep1_pdgID == -11){
-	  deltaR = zAndDecays[igenEl].p4_Lep1_gen.DeltaR(newElectrons[i].p4);
-	  if(deltaR<0.1) gen_pt = zAndDecays[igenEl].p4_Lep1_gen.Pt();
-	}
-	if(zAndDecays[igenEl].Lep2_pdgID == 11 || zAndDecays[igenEl].Lep2_pdgID == -11){
-	  deltaR = zAndDecays[igenEl].p4_Lep2_gen.DeltaR(newElectrons[i].p4);
-	  if(deltaR<0.1) gen_pt = zAndDecays[igenEl].p4_Lep2_gen.Pt();
-	}
-      
-      }
-      
-      if( gen_pt > 0){
-      	double Px = 0;
-      	double Py = 0;
-      	double Pz = 0;
-      	double E = 0;
-      	double ele_pt = newElectrons[i].p4.Pt();
-      	double deltapt = (ele_pt - gen_pt) * resol;
-      	double ptscale = ((ele_pt + deltapt) / ele_pt);
-      	if(ptscale <0 ) ptscale = 0;
-      	Px   = ptscale*newElectrons[i].p4.Px();
-      	Py   = ptscale*newElectrons[i].p4.Py();
-      	Pz   = ptscale*newElectrons[i].p4.Pz();
-      	E   = ptscale*newElectrons[i].p4.E();
-      	newElectrons[i].p4.SetPxPyPzE(Px, Py, Pz, E);
-      }
-      //cout << "newElectrons[i].p4.Pt() smeared " << newElectrons[i].p4.Pt() << endl;
+// ----------------------------------------------------------------------------
+// GetSmearedElectrons
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTElectron> Selection::GetSmearedElectrons
+                                                        (float resol) const
+{
+  // Container for output
+  std::vector<IPHCTree::NTElectron> newElectrons;
+
+  // Get Electrons  
+  if (GetPointer2Electrons()!=0) newElectrons = *GetPointer2Electrons();
+  else return newElectrons;
+
+  // Loop over Electrons
+  for (unsigned int i=0; i<newElectrons.size(); i++)
+  {
+    if(resol > 0)
+    {
+      if (newElectrons[i].isEB == 1) resol = 0.25;
+      else resol = 0.34;
     }
-    //cout << "############ end smeared " << endl;
-    return newElectrons;
+      
+    double deltaR = -1;
+    double gen_pt = -1; //to be changed
+
+    // Look through W decays
+    for(unsigned int igenEl=0; igenEl<mc()->wAndDecays.size(); igenEl++)
+    {
+      if(abs(mc()->wAndDecays[igenEl].mcLepId) != 11  ) continue;
+      deltaR = mc()->wAndDecays[igenEl].p4_Lep_gen.DeltaR(newElectrons[i].p4);
+      if(deltaR<0.1) gen_pt = mc()->wAndDecays[igenEl].p4_Lep_gen.Pt();
+    }
+
+    // Look through Z decays
+    for(unsigned int igenEl=0; igenEl<mc()->zAndDecays.size(); igenEl++)
+      {
+        if (mc()->zAndDecays[igenEl].Lep1_pdgID == 11 || 
+            mc()->zAndDecays[igenEl].Lep1_pdgID == -11)
+        {
+          deltaR = mc()->zAndDecays[igenEl].p4_Lep1_gen.DeltaR
+                                                   (newElectrons[i].p4);
+          if(deltaR<0.1) gen_pt = mc()->zAndDecays[igenEl].p4_Lep1_gen.Pt();
+        }
+        if (mc()->zAndDecays[igenEl].Lep2_pdgID == 11 || 
+            mc()->zAndDecays[igenEl].Lep2_pdgID == -11)
+        {
+          deltaR = mc()->zAndDecays[igenEl].p4_Lep2_gen.DeltaR
+                                                    (newElectrons[i].p4);
+          if(deltaR<0.1) gen_pt = mc()->zAndDecays[igenEl].p4_Lep2_gen.Pt();
+        }
+    }
+      
+    if( gen_pt > 0)
+    {
+      double ele_pt = newElectrons[i].p4.Pt();
+      double deltapt = (ele_pt - gen_pt) * resol;
+      double ptscale = ((ele_pt + deltapt) / ele_pt);
+      if(ptscale <0 ) ptscale = 0;
+      newElectrons[i].p4.SetPxPyPzE(ptscale*newElectrons[i].p4.Px(),
+                                    ptscale*newElectrons[i].p4.Py(),
+                                    ptscale*newElectrons[i].p4.Pz(),
+                                    ptscale*newElectrons[i].p4.E() );
+    }
+  }
+
+  return newElectrons;
 }
 
 
-
-
-
-std::vector<NTElectron> Selection::GetSelectedElectronsNoIso(float PtThr, float EtaThr, bool applyLES, float scale,
-	bool applyLER, float resol) const{
-  std::vector<NTElectron> selectedElectrons;
-  vector<NTElectron> localElectrons;
+// ----------------------------------------------------------------------------
+// GetSelectedElectronsNoIso
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTElectron> Selection::GetSelectedElectronsNoIso(
+                                           float PtThr, float EtaThr,
+                                           bool applyLES, float scale,
+                         	                 bool applyLER, float resol) const
+{
+  // Containers for output
+  std::vector<IPHCTree::NTElectron> selectedElectrons;
+  std::vector<IPHCTree::NTElectron> localElectrons;
   
-  
-  if(applyLES ){ localElectrons = GetScaledElectrons(scale); }
-  else{ if(!applyLER) localElectrons = electrons;}
+  // Get new electrons
+  if (applyLES ) { localElectrons = GetScaledElectrons(scale); }
+  else { if(!applyLER) localElectrons = *GetPointer2Electrons();}
   
   if(applyLER ) { localElectrons = GetSmearedElectrons(resol); }
-  else{ if(!applyLES) localElectrons = electrons;}
+  else{ if(!applyLES) localElectrons = *GetPointer2Electrons();}
   
-  for(unsigned int i=0;i<localElectrons.size();i++){
-    NTElectron electron = localElectrons[i];// to avoid const problem while calling NTLepton methods
-    
-    
-    //cout << "electron.pT in sel " << electron.p4.Pt() << endl;
-    //bool hadId(electron.elecIdWP90_r & 0x1);
-    //bool isNotConv(electron.elecIdWP90_r & 0x4);    
-    bool hadId(electron.elecIdWP90_c & 0x1);
-    bool isNotConv(electron.elecIdWP90_c & 0x4);    
-   
+  // Loop over electrons
+  for(unsigned int i=0;i<localElectrons.size();i++)
+  {
+    bool hadId = localElectrons[i].hadId(
+        static_cast<unsigned int>(localElectrons[i].ID["elecIdWP90_c"]) & 0x1
+                                );
+  
     //useless 
-    if(!electron.isGsfElectron)                     continue; 
-    if(!hadId)                                      continue; //hadId
-    //old line: replaced by the following one
-    //if(!isNotConv)                                  continue; //isNotConv
-    if(electron.nlost >=2 || (fabs(electron.deltaCotTheta)<0.02 && fabs(electron.deltaDistance)<0.02)) continue;
-    //if(electron.nlost <=2 || fabs(electron.deltaCotTheta)<=0.02 || fabs(electron.deltaDistance)<=0.02) continue;
-    //old line:
-    //if(electron.elspike>0.95)             continue;
-    if(electron.isEcalDriven!=1)                    continue;
-    if(fabs(electron.D0)       >=ElectronD0Cut_)    continue; 
-    if(fabs(electron.p4.Eta()) >=EtaThr)            continue;
-    
-    
-    if(electron.p4.Pt()        <=PtThr)             continue;
-    if(electron.ET_SC          <=ElectronETSCThr_)  continue;
-    
-    
-    bool SharedCone = false; //DR computed between localElectrons candidates and all Global or Tracker Muon
-    for(unsigned int j=0;j<muons.size();j++){
-        //if((muons[j].MuonType-(muons[j].MuonType/10)*10) ==0) continue; //isTrackerMuon
-        if(muons[j].MuonType>=100 || (muons[j].MuonType-(muons[j].MuonType/10)*10) ==0){
-		//if(electron.p4.DeltaR(muons[j].p4)<DRemuThr_){
-		if(electron.p4.DeltaR(muons[j].p4)<0.1){
-			SharedCone = true;
-			break;
-		}
-	}
+    if (!localElectrons[i].isGsfElectron) continue; 
+    if (!hadId)                  continue;
+
+    // TO DO 
+    //    if ( electron.nlost >=2 || 
+    //         ( fabs(electron.deltaCotTheta)<0.02 && 
+    //           fabs(electron.deltaDistance)<0.02)     )   continue;
+
+    if(!localElectrons[i].isEcalDriven)                        continue;
+    if(fabs(localElectrons[i].D0)       >=cfg.ElectronD0Cut_)  continue; 
+    if(fabs(localElectrons[i].p4.Eta()) >=EtaThr)              continue;
+    if(localElectrons[i].p4.Pt()        <=PtThr)               continue;
+    if(localElectrons[i].ET_SC          <=cfg.ElectronETSCThr_)continue;
+     
+    // DR computed between localElectrons candidates
+    // and all Global or Tracker Muon
+    bool SharedCone = false;
+    const std::vector<IPHCTree::NTMuon>* muons = GetPointer2Muons();
+    for(unsigned int j=0;j<muons->size();j++)
+    {
+      if( (*muons)[j].isGlobalMuon || 
+          (*muons)[j].isTrackerMuon   )
+      {
+        if(localElectrons[i].p4.DeltaR((*muons)[j].p4)<0.1)
+        {
+          SharedCone = true;
+          break;
+        }
+      }
     }
     if(SharedCone)                      continue;
     if(GetSelectedVertex().size() == 0) continue;
-    if ( fabs( electron.vertex.Z() - GetSelectedVertex()[0].p3.Z() ) > ElectronVertexMatchThr_ ) continue;
+    if ( fabs( localElectrons[i].vertex.Z() - 
+         GetSelectedVertex()[0].p3.Z() ) > cfg.ElectronVertexMatchThr_ )
+        continue;
     selectedElectrons.push_back(localElectrons[i]);
   }
   std::sort(selectedElectrons.begin(),selectedElectrons.end(),HighestPt());
@@ -700,15 +653,24 @@ std::vector<NTElectron> Selection::GetSelectedElectronsNoIso(float PtThr, float 
 }
 
 
+// ----------------------------------------------------------------------------
+// GetSelectedElectrons
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTElectron> Selection::GetSelectedElectrons(
+                               float PtThr, float EtaThr,
+                               float ElectronRelIso, bool applyLES,
+                               float scale, bool applyLER , float resol) const
+{
+  std::vector<IPHCTree::NTElectron> selectedElectrons;
 
-std::vector<NTElectron> Selection::GetSelectedElectrons(float PtThr, float EtaThr, float ElectronRelIso, bool applyLES, float scale, 
-       bool applyLER , float resol) const{
-  std::vector<NTElectron> selectedElectrons;
-  std::vector<NTElectron> electrons = GetSelectedElectronsNoIso(PtThr,EtaThr,applyLES,scale, applyLER, resol);
-  for(unsigned int i=0;i<electrons.size();i++){
-    NTElectron electron = electrons[i];// to avoid const problem while calling NTLepton methods
-//    if((double) electron.CombinedRelIso03() > ElectronRelIso) continue;
-    if((double) electron.RelIso03PF() > ElectronRelIso) continue;
+  std::vector<IPHCTree::NTElectron> electrons = 
+              GetSelectedElectronsNoIso(PtThr, EtaThr, applyLES,
+                                        scale, applyLER, resol);
+
+  for(unsigned int i=0;i<electrons.size();i++)
+  {
+    if ( static_cast<double>(electrons[i].RelIso03PF()) 
+                                        > ElectronRelIso) continue;
     selectedElectrons.push_back(electrons[i]);
   }
   std::sort(selectedElectrons.begin(),selectedElectrons.end(),HighestPt());
@@ -716,31 +678,28 @@ std::vector<NTElectron> Selection::GetSelectedElectrons(float PtThr, float EtaTh
 }
 
 
-
-   
-
-
-
-std::vector<NTElectron> Selection::GetSelectedElectronsIsoNonID(bool applyLES, float scale,
-   bool applyLER , float resol ) const{
-  
-  std::vector<NTElectron> selectedElectrons;
-  vector<NTElectron> localElectrons;
-  
+// ----------------------------------------------------------------------------
+// GetSelectedElectronIsoNonId
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTElectron> Selection::GetSelectedElectronsIsoNonID(
+                                bool applyLES, float scale,
+                                bool applyLER , float resol) const
+{
+  std::vector<IPHCTree::NTElectron> selectedElectrons;
+  std::vector<IPHCTree::NTElectron> localElectrons;
   
   if(applyLES) localElectrons = GetScaledElectrons(scale); 
-  else localElectrons = electrons;
+  else localElectrons = *GetPointer2Electrons();
   
   if(applyLER) localElectrons = GetSmearedElectrons(resol); 
-  else localElectrons = electrons;
- 
-  
-  for(unsigned int i=0;i<localElectrons.size();i++){
-    NTElectron electron = electrons[i];// to avoid const problem while calling NTLepton methods
-    if( electron.p4.Pt() < ElectronPtThreshold_)               continue;
-    if( fabs(electron.p4.Eta() ) > ElectronEtaThreshold_)      continue;
-//    if((double) electron.CombinedRelIso03() > ElectronRelIso_) continue;
-    if((double) electron.RelIso03PF() > ElectronRelIso_) continue;
+  else localElectrons = *GetPointer2Electrons();
+   
+  for(unsigned int i=0;i<localElectrons.size();i++)
+  {
+    if(localElectrons[i].p4.Pt()        < cfg.ElectronPtThreshold_ ) continue;
+    if(fabs(localElectrons[i].p4.Eta()) > cfg.ElectronEtaThreshold_) continue;
+    if(static_cast<double>(localElectrons[i].RelIso03PF()) 
+                                            > cfg.ElectronRelIso_)  continue;
     selectedElectrons.push_back(localElectrons[i]);
   }
   std::sort(selectedElectrons.begin(),selectedElectrons.end(),HighestPt());
@@ -748,74 +707,106 @@ std::vector<NTElectron> Selection::GetSelectedElectronsIsoNonID(bool applyLES, f
 }
 
 
-
-
-
-
-
-std::vector<NTElectron> Selection::GetSelectedElectronsNoIso(bool applyLES, float scale, bool applyLER , float resol ) const{
-	return GetSelectedElectronsNoIso(ElectronPtThreshold_, ElectronEtaThreshold_, applyLES, scale);
+// ----------------------------------------------------------------------------
+// GetSelectedElectronIsoNonId
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTElectron> Selection::GetSelectedElectronsNoIso(
+                                 bool applyLES, float scale,
+                                 bool applyLER , float resol ) const
+{
+	return GetSelectedElectronsNoIso(cfg.ElectronPtThreshold_,
+                                   cfg.ElectronEtaThreshold_,
+                                   applyLES, scale);
 }
 
-std::vector<NTElectron> Selection::GetSelectedElectrons(bool applyLES, float scale, bool applyLER, float resol ) const{
-       
-	return GetSelectedElectrons(ElectronPtThreshold_, ElectronEtaThreshold_, ElectronRelIso_, applyLES, scale, applyLER, resol);
+
+// ----------------------------------------------------------------------------
+// GetSelectedElectron
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTElectron> Selection::GetSelectedElectrons(
+                              bool applyLES, float scale,
+                              bool applyLER, float resol ) const
+{
+	return GetSelectedElectrons(cfg.ElectronPtThreshold_,
+                              cfg.ElectronEtaThreshold_,
+                              cfg.ElectronRelIso_,
+                              applyLES, scale,
+                              applyLER, resol);
 }
 
 
 
 
-//************************************************
-//Muon selection
-//************************************************
-
-std::vector<NTMuon> Selection::GetScaledMuons(float scale) const{
-    std::vector<NTMuon> newMuons = muons;
-    for (unsigned int i=0; i<newMuons.size(); i++){
-      double Px = 0;
-      double Py = 0;
-      double Pz = 0;
-      double E = 0;
-      Px   = scale*newMuons[i].p4.Px();
-      Py   = scale*newMuons[i].p4.Py();
-      Pz   = scale*newMuons[i].p4.Pz();
-      E   = scale*newMuons[i].p4.E();
-      newMuons[i].p4.SetPxPyPzE(Px, Py, Pz, E);
-    }
-    return newMuons;
+// ----------------------------------------------------------------------------
+// GetScaledMuons
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTMuon> Selection::GetScaledMuons(float scale) const
+{
+  std::vector<IPHCTree::NTMuon> newMuons = *GetPointer2Muons();
+  for (unsigned int i=0; i<newMuons.size(); i++)
+  {
+    newMuons[i].p4.SetPxPyPzE(scale*newMuons[i].p4.Px(),
+                              scale*newMuons[i].p4.Py(),
+                              scale*newMuons[i].p4.Pz(),
+                              scale*newMuons[i].p4.E());
+  }
+  return newMuons;
 }
   
 
-std::vector<NTMuon> Selection::GetSelectedMuonsNoIso(float PtThr, float EtaThr, bool applyLES, float scale) const{
-  std::vector<NTMuon> selectedMuons;
-  vector<NTMuon> localMuons;
-  if(applyLES) localMuons = GetScaledMuons(scale); 
-  else localMuons = muons;
-  for(unsigned int i=0;i<localMuons.size();i++){
-    NTMuon muon = localMuons[i];// to avoid const problem while calling NTLepton methods!
-    if(muon.MuonType<100)                         continue; // isGlobalMuon
-    if((muon.MuonType-(muon.MuonType/10)*10) ==0) continue; //isTrackerMuon
-    if(muon.Chi2           >=MuonNormChi2_)         continue;
-    if(muon.NTrValidHits   <=MuonNofValidTrHits_)   continue;
-    if(muon.NValidHits     <=MuonNofValidHits_  )   continue;
-    if(fabs(muon.D0Inner)  >=MuonD0Cut_)            continue;
-    if(fabs(muon.p4.Eta()) >=EtaThr)                continue;
-    if(muon.p4.Pt()<PtThr)                          continue;
-    if(GetSelectedVertex().size() == 0)             continue;
-    if ( fabs( muon.vertex.Z() - GetSelectedVertex()[0].p3.Z() ) > MuonVertexMatchThr_ ) continue;
+// ----------------------------------------------------------------------------
+// GetScaledMuonsNoIso
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTMuon> Selection::GetSelectedMuonsNoIso(
+                                 float PtThr, float EtaThr,
+                                 bool applyLES, float scale) const
+{
+  // Containers for output
+  std::vector<IPHCTree::NTMuon> selectedMuons;
+  vector<IPHCTree::NTMuon> localMuons;
+
+  // Get muons
+  if (applyLES) localMuons = GetScaledMuons(scale); 
+  else localMuons = *GetPointer2Muons();
+
+  for(unsigned int i=0;i<localMuons.size();i++)
+  {
+    if (!localMuons[i].isGlobalMuon)  continue; // isGlobalMuon
+    if (!localMuons[i].isTrackerMuon) continue; // isTrackerMuon
+    if (localMuons[i].Chi2           >= cfg.MuonNormChi2_)       continue;
+    if (localMuons[i].NTrValidHits   <= cfg.MuonNofValidTrHits_) continue;
+    if (localMuons[i].NValidHits     <= cfg.MuonNofValidHits_  ) continue;
+    if (fabs(localMuons[i].D0Inner)  >= cfg.MuonD0Cut_)          continue;
+    if (fabs(localMuons[i].p4.Eta()) >= EtaThr)                  continue;
+    if (localMuons[i].p4.Pt()        <  PtThr)                   continue;
+    if (GetSelectedVertex().size() == 0) continue;
+    if ( fabs( localMuons[i].vertex.Z() - 
+         GetSelectedVertex()[0].p3.Z() ) > cfg.MuonVertexMatchThr_ ) continue;
     selectedMuons.push_back(localMuons[i]);
   }
+
   std::sort(selectedMuons.begin(),selectedMuons.end(),HighestPt());
   return selectedMuons;
 }
 
-std::vector<NTMuon> Selection::GetSelectedMuons(float PtThr, float EtaThr,float MuonRelIso, bool applyLES, float scale) const{
-  std::vector<NTMuon> selectedMuons;
-  std::vector<NTMuon> muons = GetSelectedMuonsNoIso(PtThr,EtaThr,applyLES,scale);
-  for(unsigned int i=0;i<muons.size();i++){
-    NTMuon muon = muons[i];// to avoid const problem while calling NTLepton methods!
-//    if((double) muon.RelIso03() > MuonRelIso) continue;
-    if((double) muon.RelIso03PF() > MuonRelIso) continue;
+
+// ----------------------------------------------------------------------------
+// GetSelectedMuons
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTMuon> Selection::GetSelectedMuons(
+                                  float PtThr, float EtaThr,
+                                  float MuonRelIso, bool applyLES,
+                                  float scale) const
+{
+  // Containers for output
+  std::vector<IPHCTree::NTMuon> selectedMuons;
+  std::vector<IPHCTree::NTMuon> muons = 
+                 GetSelectedMuonsNoIso(PtThr,EtaThr,applyLES,scale);
+
+  // Loop over muons 
+  for(unsigned int i=0;i<muons.size();i++)
+  {
+    if ( static_cast<double>(muons[i].RelIso03PF()) > MuonRelIso) continue;
     selectedMuons.push_back(muons[i]);
   }
   std::sort(selectedMuons.begin(),selectedMuons.end(),HighestPt());
@@ -823,75 +814,116 @@ std::vector<NTMuon> Selection::GetSelectedMuons(float PtThr, float EtaThr,float 
 }
 
 
-std::vector<NTMuon> Selection::GetSelectedMuonIsoNonID(bool applyLES, float scale) const{
+// ----------------------------------------------------------------------------
+// GetSelectedMuonIsoNonId
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTMuon> Selection::GetSelectedMuonIsoNonID(
+                                        bool applyLES,
+                                        float scale) const
+{
+  // Containers for output 
+  std::vector<IPHCTree::NTMuon> selectedMuons;
+  vector<IPHCTree::NTMuon> localMuons;
 
-  std::vector<NTMuon> selectedMuons;
-  vector<NTMuon> localMuons;
+  // Get muons
   if(applyLES) localMuons = GetScaledMuons(scale); 
-  else localMuons = muons;
-  for(unsigned int i=0;i<localMuons.size();i++){
-    NTMuon muon = localMuons[i];// to avoid const problem while calling NTLepton methods!
-    if( muon.p4.Pt()            < MuonPtThreshold_)  continue;
-    if( fabs(muon.p4.Eta())     > MuonEtaThreshold_) continue;
-//    if((double) muon.RelIso03() > MuonRelIso_)       continue;
-    if((double) muon.RelIso03PF() > MuonRelIso_)       continue;
+  else localMuons = *GetPointer2Muons();
+
+  // Loop over muons
+  for(unsigned int i=0;i<localMuons.size();i++)
+  {
+    if( localMuons[i].p4.Pt()              < cfg.MuonPtThreshold_)  continue;
+    if( fabs(localMuons[i].p4.Eta())       > cfg.MuonEtaThreshold_) continue;
+    if((double) localMuons[i].RelIso03PF() > cfg.MuonRelIso_)       continue;
     selectedMuons.push_back(localMuons[i]);
   }
-  std::sort(selectedMuons.begin(),selectedMuons.end(),HighestPt());
-  return selectedMuons;
-  
-}
 
-
-std::vector<NTMuon> Selection::GetSelectedMuonsNoIso(bool applyLES, float scale) const{
-	return GetSelectedMuonsNoIso(MuonPtThreshold_, MuonEtaThreshold_, applyLES, scale);
-}
-
-std::vector<NTMuon> Selection::GetSelectedMuons(bool applyLES, float scale) const{
-	return GetSelectedMuons(MuonPtThreshold_, MuonEtaThreshold_, MuonRelIso_, applyLES, scale);
-}
-
-
-
-
-//************************************************
-//Muon selection for muon+jets selection
-//************************************************
-
-
-
-
-
-std::vector<NTMuon> Selection::GetSelectedMuonsNoIsoForMuJets(float PtThr, float EtaThr, bool applyLES, float scale) const{
-  std::vector<NTMuon> selectedMuons;
-  vector<NTMuon> localMuons;
-  if(applyLES) localMuons = GetScaledMuons(scale); 
-  else localMuons = muons;
-  for(unsigned int i=0;i<localMuons.size();i++){
-    NTMuon muon = localMuons[i];// to avoid const problem while calling NTLepton methods!
-    if(muon.MuonType<100)                           continue; // isGlobalMuon
-    if((muon.MuonType-(muon.MuonType/10)*10) ==0)   continue; //isTrackerMuon
-    if(muon.Chi2           >=MuonNormChi2_)         continue;
-    if(muon.NTrValidHits   <=MuonNofValidTrHits_)   continue;
-    if(muon.NValidHits     <=MuonNofValidHits_  )   continue;
-    if(fabs(muon.D0Inner)  >=MuonD0Cut_)            continue;
-    if(fabs(muon.p4.Eta()) >=EtaThr)                continue;
-    if(muon.p4.Pt()<PtThr)                          continue;
-    if(GetSelectedVertex().size() == 0)             continue;
-    if ( fabs( muon.vertex.Z() - GetSelectedVertex()[0].p3.Z() ) > MuonVertexMatchThr_ ) continue;
-    selectedMuons.push_back(localMuons[i]);
-  }
+  // Sort muons according to PT rank
   std::sort(selectedMuons.begin(),selectedMuons.end(),HighestPt());
   return selectedMuons;
 }
 
-std::vector<NTMuon> Selection::GetSelectedMuonsForMuJets(float PtThr, float EtaThr,float MuonRelIso, bool applyLES, float scale) const{
-  std::vector<NTMuon> selectedMuons;
-  std::vector<NTMuon> muons = GetSelectedMuonsNoIso(PtThr,EtaThr,applyLES,scale);
-  for(unsigned int i=0;i<muons.size();i++){
-    NTMuon muon = muons[i];// to avoid const problem while calling NTLepton methods!
-//    if((double) muon.RelIso03() > MuonRelIso) continue;
-    if((double) muon.RelIso03PF() > MuonRelIso) continue;
+
+// ----------------------------------------------------------------------------
+// GetSelectedMuonsNoIso
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTMuon> Selection::GetSelectedMuonsNoIso(
+                                   bool applyLES, float scale) const{
+	return GetSelectedMuonsNoIso(cfg.MuonPtThreshold_,
+                               cfg.MuonEtaThreshold_,
+                               applyLES, scale);
+}
+
+
+// ----------------------------------------------------------------------------
+// GetSelectedMuons
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTMuon> Selection::GetSelectedMuons(
+                                   bool applyLES, float scale) const
+{
+	return GetSelectedMuons(cfg.MuonPtThreshold_,
+                          cfg.MuonEtaThreshold_,
+                          cfg.MuonRelIso_, applyLES, scale);
+}
+
+
+// ----------------------------------------------------------------------------
+// GetSelectedMuonsNoIsoForMuJets
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTMuon> Selection::GetSelectedMuonsNoIsoForMuJets(
+                                   float PtThr, float EtaThr,
+                                   bool applyLES, float scale) const
+{
+
+  // Containers for output 
+  std::vector<IPHCTree::NTMuon> selectedMuons;
+  std::vector<IPHCTree::NTMuon> localMuons;
+
+  // Get Muons
+  if(applyLES) localMuons = GetScaledMuons(scale); 
+  else localMuons = *GetPointer2Muons();
+
+  // Loop over muons
+  for(unsigned int i=0;i<localMuons.size();i++)
+  {
+    if(!localMuons[i].isGlobalMuon)  continue;
+    if(!localMuons[i].isTrackerMuon) continue;
+    if(localMuons[i].Chi2           >= cfg.MuonNormChi2_)        continue;
+    if(localMuons[i].NTrValidHits   <= cfg.MuonNofValidTrHits_)  continue;
+    if(localMuons[i].NValidHits     <= cfg.MuonNofValidHits_  )  continue;
+    if(fabs(localMuons[i].D0Inner)  >= cfg.MuonD0Cut_)           continue;
+    if(fabs(localMuons[i].p4.Eta()) >= EtaThr)                   continue;
+    if(localMuons[i].p4.Pt()        <PtThr)                      continue;
+    if(GetSelectedVertex().size() == 0)  continue;
+    if ( fabs( localMuons[i].vertex.Z() - 
+      GetSelectedVertex()[0].p3.Z()) > cfg.MuonVertexMatchThr_ ) continue;
+    selectedMuons.push_back(localMuons[i]);
+  }
+  std::sort(selectedMuons.begin(),selectedMuons.end(),HighestPt());
+  return selectedMuons;
+}
+
+
+// ----------------------------------------------------------------------------
+// GetSelectedMuonsForMuJets
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTMuon> Selection::GetSelectedMuonsForMuJets(
+                             float PtThr, float EtaThr,
+                             float MuonRelIso, bool applyLES,
+                             float scale) const
+{
+
+  // Container for output
+  std::vector<IPHCTree::NTMuon> selectedMuons;
+
+  // Get muons
+  std::vector<IPHCTree::NTMuon> muons = 
+            GetSelectedMuonsNoIso(PtThr,EtaThr,applyLES,scale);
+
+  // Loop over muons
+  for(unsigned int i=0;i<muons.size();i++)
+  {
+    if( static_cast<double>(muons[i].RelIso03PF()) > MuonRelIso) continue;
     selectedMuons.push_back(muons[i]);
   }
   std::sort(selectedMuons.begin(),selectedMuons.end(),HighestPt());
@@ -899,302 +931,407 @@ std::vector<NTMuon> Selection::GetSelectedMuonsForMuJets(float PtThr, float EtaT
 }
 
 
-
-std::vector<NTMuon> Selection::GetSelectedMuonsForMuJets(bool applyLES, float scale) const{
-	return GetSelectedMuonsForMuJets(MuonPtThreshold_, MuonEtaThreshold_, MuonRelIso_, applyLES, scale);
+// ----------------------------------------------------------------------------
+// GetSelectedMuonsForMuJets
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTMuon> Selection::GetSelectedMuonsForMuJets(
+                              bool applyLES, float scale) const
+{
+	return GetSelectedMuonsForMuJets(cfg.MuonPtThreshold_,
+                                   cfg.MuonEtaThreshold_,
+                                   cfg.MuonRelIso_,
+                                   applyLES, scale);
 }
 
 
+// ----------------------------------------------------------------------------
+// GetSelectedLooseMuonForMuJets
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTMuon> Selection::GetSelectedLooseMuonsForMuJets(
+                                bool applyLES, float scale) const
+{
+  // Container for output
+  std::vector<IPHCTree::NTMuon> selectedLooseMuons;
 
-
-std::vector<NTMuon>    Selection::GetSelectedLooseMuonsForMuJets(bool applyLES, float scale) const{
- std::vector<NTMuon> selectedLooseMuons;
-  vector<NTMuon> localMuons;
+  // Get muons 
+  vector<IPHCTree::NTMuon> localMuons;
   if(applyLES) localMuons = GetScaledMuons(scale); 
-  else localMuons = muons;
-  for(unsigned int i=0; i < localMuons.size();i++){
-    NTMuon muon = localMuons[i];
-//    if(fabs(muon.p4.Eta()) < 2.5 && muon.p4.Pt() > 10 && (double) muon.RelIso03() > 0.2)     
-    if(fabs(muon.p4.Eta()) < 2.5 && muon.p4.Pt() > 10 && (double) muon.RelIso03PF() > 0.2)     
-    selectedLooseMuons.push_back(localMuons[i]);
-  }
- 
- return selectedLooseMuons;
+  else localMuons = *GetPointer2Muons();
 
+  // Loop over muons
+  for(unsigned int i=0; i<localMuons.size(); i++)
+  {
+    if ( fabs(localMuons[i].p4.Eta()) < 2.5 &&
+         localMuons[i].p4.Pt() > 10         &&
+         static_cast<double>(localMuons[i].RelIso03PF()) > 0.2)     
+      selectedLooseMuons.push_back(localMuons[i]);
+  }
+  return selectedLooseMuons;
 }
 
 
-std::vector<NTElectron>    Selection::GetSelectedLooseElectronsForMuJets(bool applyLES, float scale) const{
+// ----------------------------------------------------------------------------
+// GetSelectedLooseElectronsForMuJets
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTElectron> 
+Selection::GetSelectedLooseElectronsForMuJets
+                                (bool applyLES, float scale) const
+{
+  // Container for output
+  std::vector<IPHCTree::NTElectron> selectedLooseElectrons;
 
-std::vector<NTElectron> selectedLooseElectrons;
-  vector<NTElectron> localElectrons;
+  // Get electrons
+  std::vector<IPHCTree::NTElectron> localElectrons;
   if(applyLES) localElectrons = GetScaledElectrons(scale); 
-  else localElectrons = electrons;
-  for(unsigned int i=0;i<localElectrons.size();i++){
-    NTElectron elec = localElectrons[i];
-//    if(fabs(elec.p4.Eta()) < 2.5 && elec.p4.Pt() > 15 && (double) elec.RelIso03() > 0.2)     
-    if(fabs(elec.p4.Eta()) < 2.5 && elec.p4.Pt() > 15 && (double) elec.RelIso03PF() > 0.2)     
-    selectedLooseElectrons.push_back(localElectrons[i]);
+  else localElectrons = *GetPointer2Electrons();
+
+  // Loop over electrons
+  for(unsigned int i=0;i<localElectrons.size();i++)
+  {
+    if ( fabs(localElectrons[i].p4.Eta()) < 2.5 &&
+         localElectrons[i].p4.Pt() > 15 &&
+         static_cast<double>(localElectrons[i].RelIso03PF()) > 0.2)     
+      selectedLooseElectrons.push_back(localElectrons[i]);
   }
   return selectedLooseElectrons;
 }
 
 
-
-//************************************************
-//Tau selection
-//************************************************
-
-std::vector<NTTau> Selection::GetScaledTaus(float scale) const{
-    std::vector<NTTau> newTaus = taus;
-    for (unsigned int i=0; i<newTaus.size(); i++){
-      double Px = 0;
-      double Py = 0;
-      double Pz = 0;
-      double E = 0;
-      Px   = scale*newTaus[i].p4.Px();
-      Py   = scale*newTaus[i].p4.Py();
-      Pz   = scale*newTaus[i].p4.Pz();
-      E   = scale*newTaus[i].p4.E();
-      newTaus[i].p4.SetPxPyPzE(Px, Py, Pz, E);
-    }
-    return newTaus;
+// ----------------------------------------------------------------------------
+// GetScaledTaus
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTTau> Selection::GetScaledTaus(float scale) const
+{
+  std::vector<IPHCTree::NTTau> newTaus = *GetPointer2Taus();
+  for (unsigned int i=0; i<newTaus.size(); i++)
+  {
+    newTaus[i].p4.SetPxPyPzE(scale*newTaus[i].p4.Px(),
+                             scale*newTaus[i].p4.Py(),
+                             scale*newTaus[i].p4.Pz(),
+                             scale*newTaus[i].p4.E() );
+  }
+  return newTaus;
 }
   
 
-std::vector<NTTau> Selection::GetSelectedTaus(float PtThr, float EtaThr, bool applyLES, float scale, int isoLevel, bool antiLep) const{
-  std::vector<NTTau> selectedTaus;
-  std::vector<NTTau> localTaus;
+// ----------------------------------------------------------------------------
+// GetScaledTaus
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTTau> Selection::GetSelectedTaus(
+                                float PtThr, float EtaThr, bool applyLES,
+                                float scale, int isoLevel, bool antiLep) const
+{
+  // Contaienr for output
+  std::vector<IPHCTree::NTTau> selectedTaus;
+
+  // Get taus
+  std::vector<IPHCTree::NTTau> localTaus;
   if(applyLES) localTaus = GetScaledTaus(scale);
-  else localTaus = taus;
-   
-  for(unsigned int i=0;i<localTaus.size();i++){
-    NTTau tau = localTaus[i];
-    
-    if ( tau.leadTrackPt    <= TauLeadTrkPtCut_ ) continue;
-    if ( isoLevel ==0 &&  tau.GetDiscriminator("byLooseIsolation")  != 1)   continue;
-    if ( isoLevel ==1 &&  tau.GetDiscriminator("byMediumIsolation") != 1)   continue;
-    if ( isoLevel ==2 &&  tau.GetDiscriminator("byTightIsolation")  != 1)   continue;
-    //if ( tau.discrByTaNC  != 1                ) continue;
+  else localTaus = *GetPointer2Taus();
+
+  // Loop over taus   
+  for(unsigned int i=0;i<localTaus.size();i++)
+  {
+  
+    if ( localTaus[i].leadTrackPt <= cfg.TauLeadTrkPtCut_ ) continue;
+    if ( isoLevel ==0 &&  localTaus[i].ID["byLooseIsolation"]  != 1)  continue;
+    if ( isoLevel ==1 &&  localTaus[i].ID["byMediumIsolation"] != 1)  continue;
+    if ( isoLevel ==2 &&  localTaus[i].ID["byTightIsolation"]  != 1)  continue;
     if(antiLep)
     {
-     if ( tau.GetDiscriminator("againstElectronLoose") != 1) continue;
-     if ( tau.GetDiscriminator("againstMuonLoose") != 1)     continue;
-     }
-    if(fabs(tau.p4.Eta())>=EtaThr)                continue;
-    if(tau.p4.Pt()<PtThr)                         continue;
-    //  if(GetSelectedVertex().size() == 0)           continue;
-    if ( fabs( tau.vertex.Z() - GetSelectedVertex()[0].p3.Z() ) > TauVertexMatchThr_ ) continue;
+      if ( localTaus[i].ID["againstElectronLoose"] != 1) continue;
+      if ( localTaus[i].ID["againstMuonLoose"] != 1)     continue;
+    }
+    if(fabs(localTaus[i].p4.Eta())>=EtaThr)              continue;
+    if(localTaus[i].p4.Pt()<PtThr)                       continue;
+
+    if ( fabs( localTaus[i].vertex.Z() - GetSelectedVertex()[0].p3.Z() )
+          > cfg.TauVertexMatchThr_ ) continue;
     selectedTaus.push_back(localTaus[i]);
   }
+
+  // Sort taus according to PT rank
   std::sort(selectedTaus.begin(),selectedTaus.end(),HighestPt());
   return selectedTaus;
 }
 
 
-std::vector<NTTau> Selection::GetTaus(std::vector<NTMuon> muon_cand, std::vector<NTElectron> elec_cand) const{
-  
-  std::vector<NTTau> cleanedTaus;
-   
-  for(unsigned int i=0;i<taus.size();i++){
-    //NTTau tau = taus[i];
+// ----------------------------------------------------------------------------
+// GetTaus
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTTau> Selection::GetTaus(
+                      const std::vector<IPHCTree::NTMuon>& muon_cand,
+                      const std::vector<IPHCTree::NTElectron>& elec_cand) const
+{
+  // Container for output  
+  std::vector<IPHCTree::NTTau> cleanedTaus;
+
+  // Loop over taus
+  const std::vector<IPHCTree::NTTau>* taus = GetPointer2Taus();
+  for(unsigned int i=0;i<taus->size();i++)
+  {
+    //IPHCTree::NTTau tau = taus[i];
     double deltaRmu = 10000;
     double deltaRel = 10000;
      
-    for(unsigned int imu=0; imu< muon_cand.size(); imu++){
-      double deltaR = taus[i].p4.DeltaR(muon_cand[imu].p4);
+    for(unsigned int imu=0; imu<muon_cand.size(); imu++)
+    {
+      double deltaR = (*taus)[i].p4.DeltaR(muon_cand[imu].p4);
       if(deltaR < deltaRmu) deltaRmu = deltaR;
     }
     
-    for(unsigned int iel=0; iel< elec_cand.size(); iel++){
-      double deltaR = taus[i].p4.DeltaR(elec_cand[iel].p4);
+    for(unsigned int iel=0; iel<elec_cand.size(); iel++)
+    {
+      double deltaR = (*taus)[i].p4.DeltaR(elec_cand[iel].p4);
       if(deltaR < deltaRel) deltaRel = deltaR;
     }
     
-    if( deltaRmu > 0.4  && deltaRel > 0.4) cleanedTaus.push_back(taus[i]); 
+    if( deltaRmu > 0.4  && deltaRel > 0.4)
+                       cleanedTaus.push_back((*taus)[i]); 
   }
+
+  // Sort taus according to PT rank
   std::sort(cleanedTaus.begin(),cleanedTaus.end(),HighestPt());
   return cleanedTaus;
 }
 
-std::vector<NTTau> Selection::GetSelectedTaus(bool applyLES, float scale, int isoLevel, bool antiLep) const{
-	return GetSelectedTaus(TauPtThreshold_, TauEtaThreshold_, applyLES, scale, isoLevel, antiLep);
+
+// ----------------------------------------------------------------------------
+// GetTaus
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTTau> Selection::GetSelectedTaus(
+                               bool applyLES, float scale,
+                               int isoLevel, bool antiLep) const
+{
+	return GetSelectedTaus(cfg.TauPtThreshold_, cfg.TauEtaThreshold_,
+                         applyLES, scale, isoLevel, antiLep);
 }
-std::vector<NTTau> Selection::GetSelectedTaus(std::vector<NTMuon> muon_cand, std::vector<NTElectron> elec_cand, float PtThr, float EtaThr, bool applyLES, float scale, int isoLevel, bool antiLep) const{
-  
-  std::vector<NTTau> selectedTaus = GetSelectedTaus(PtThr,EtaThr,applyLES,scale,isoLevel,antiLep);
-  std::vector<NTTau> cleanTaus;
-  
-  for(unsigned int i=0; i< selectedTaus.size(); i++){
-  
-     double deltaRmu = 10000;
-     double deltaRel = 10000;
+
+
+// ----------------------------------------------------------------------------
+// GetSelectedTaus
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTTau> Selection::GetSelectedTaus(
+                  const std::vector<IPHCTree::NTMuon>& muon_cand, 
+                  const std::vector<IPHCTree::NTElectron>& elec_cand,
+                  float PtThr, float EtaThr,
+                  bool applyLES, float scale,
+                  int isoLevel, bool antiLep) const
+{
+  // Container for output
+  std::vector<IPHCTree::NTTau> cleanTaus;
+
+  // Get taus
+  std::vector<IPHCTree::NTTau> selectedTaus = 
+            GetSelectedTaus(PtThr,EtaThr,applyLES,scale,isoLevel,antiLep);
+
+  // Loop over taus
+  for(unsigned int i=0; i< selectedTaus.size(); i++)
+  {
+    double deltaRmu = 10000;
+    double deltaRel = 10000;
      
-     for(unsigned int imu=0; imu< muon_cand.size(); imu++){
-       double deltaR = selectedTaus[i].p4.DeltaR(muon_cand[imu].p4);
-       if(deltaR < deltaRmu) deltaRmu = deltaR;
-     }
+    for(unsigned int imu=0; imu< muon_cand.size(); imu++)
+    {
+      double deltaR = selectedTaus[i].p4.DeltaR(muon_cand[imu].p4);
+      if(deltaR < deltaRmu) deltaRmu = deltaR;
+    }
      
-     for(unsigned int iel=0; iel< elec_cand.size(); iel++){
-       double deltaR = selectedTaus[i].p4.DeltaR(elec_cand[iel].p4);
-       if(deltaR < deltaRel) deltaRel = deltaR;
-     }
+    for(unsigned int iel=0; iel< elec_cand.size(); iel++)
+    {
+      double deltaR = selectedTaus[i].p4.DeltaR(elec_cand[iel].p4);
+      if(deltaR < deltaRel) deltaRel = deltaR;
+    }
      
-     if( deltaRmu > 0.4  && deltaRel > 0.4) cleanTaus.push_back(selectedTaus[i]);
+    if( deltaRmu > 0.4  && deltaRel > 0.4)
+                     cleanTaus.push_back(selectedTaus[i]);
   }
   return cleanTaus;
 }
 
-std::vector<NTTau> Selection::GetSelectedTaus(std::vector<NTMuon> muon_cand, std::vector<NTElectron> elec_cand, bool applyLES, float scale, int isoLevel, bool antiLep) const{
-        return GetSelectedTaus(muon_cand, elec_cand, TauPtThreshold_, TauEtaThreshold_, applyLES, scale, isoLevel, antiLep);
+
+// ----------------------------------------------------------------------------
+// GetSelectedTaus
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTTau> Selection::GetSelectedTaus(
+                    const std::vector<IPHCTree::NTMuon>& muon_cand,
+                    const std::vector<IPHCTree::NTElectron>& elec_cand,
+                    bool applyLES, float scale,
+                    int isoLevel, bool antiLep) const
+{
+  return GetSelectedTaus(muon_cand, elec_cand, 
+                         cfg.TauPtThreshold_, cfg.TauEtaThreshold_,
+                         applyLES, scale, isoLevel, antiLep);
 }
 
-bool Selection::isAnEventSelected(unsigned int nElectrons, unsigned int nMuons, unsigned int nTaus, unsigned int nJets){
-        std::vector<NTMuon> muon_cand     = GetSelectedMuons();
-	std::vector<NTElectron> elec_cand = GetSelectedElectrons(); 
-	
-	if(elec_cand.size() < nElectrons) return false;
-	if(muon_cand.size() < nMuons)         return false;
-	if(GetSelectedTaus().size() < nTaus)           return false;
-	if(GetSelectedJets(muon_cand, elec_cand).size() < nJets)           return false;
+
+// ----------------------------------------------------------------------------
+// IsAnEventSelected
+// ----------------------------------------------------------------------------
+bool Selection::isAnEventSelected(unsigned int nElectrons,
+                                  unsigned int nMuons,
+                                  unsigned int nTaus,
+                                  unsigned int nJets)
+{
+  std::vector<IPHCTree::NTElectron> electrons = GetSelectedElectrons();
+  std::vector<IPHCTree::NTMuon>     muons     = GetSelectedMuons();
+
+	if(electrons.size()                        < nElectrons) return false;
+	if(muons.size()                            < nMuons)     return false;
+	if(GetSelectedTaus().size()                < nTaus)      return false;
+	if(GetSelectedJets(muons,electrons).size() < nJets)      return false;
 	return true;
 }
 
 
-//************************************************
-//Weight for B-tag 
-//************************************************
-
-void Selection::InitSFBWeight (int flagb, int methodb, int systb, int btagAlgo_, float btagDiscriCut_, int NofBtagJets_)
+// ----------------------------------------------------------------------------
+// Weight for B-Tag
+// ----------------------------------------------------------------------------
+void Selection::InitSFBWeight (int flagb, int methodb,
+                               int systb, int btagAlgo_,
+                               float btagDiscriCut_, int NofBtagJets_)
 {
   flag_btagweight_ = flagb;
-  methodb_ = methodb;
-  systb_ = systb;
+  methodb_         = methodb;
+  systb_           = systb;
   sfb_.SFBinit (btagAlgo_, btagDiscriCut_, NofBtagJets_);
-  if (flagb>0) {
+  if (flagb>0)
+  {
     sfb_.LoadInfo();
     sfb_.LoadInfo2();
   }
-
 }
 
+
+// ----------------------------------------------------------------------------
+// ResetParameters4Bweight
+// ----------------------------------------------------------------------------
 void Selection::ResetParameters4Bweight (int flagb, int methodb, int systb)
 {
   flag_btagweight_ = flagb;
-  methodb_ = methodb;
-  systb_ = systb;
+  methodb_         = methodb;
+  systb_           = systb;
 
-  if (sfb_.GetHistoSFB()==0) {
+  if (sfb_.GetHistoSFB()==0)
+  {
     sfb_.LoadInfo();
     sfb_.LoadInfo2();
   }
 }
 
-int Selection::GetFlagb () const
+
+// ----------------------------------------------------------------------------
+// generate_flat10_weights
+// ----------------------------------------------------------------------------
+std::vector<double> Selection::generate_flat10_weights(
+                                                  TH1D* data_npu_estimated)
 {
-     return flag_btagweight_;
-}
-
-int Selection::GetMethodb () const
-{
-     return methodb_;
-}
-int Selection::GetSystb () const
-{
-     return systb_;
-}
-SFBweight Selection::GetSFBweight() const
-{
-     return sfb_;
-}
-
-vector<double> Selection::generate_flat10_weights(TH1D* data_npu_estimated){
-
-    // distri verte
-    // see SimGeneral/MixingModule/python/mix_E7TeV_FlatDist10_2011EarlyData_inTimeOnly_cfi.py; copy and paste from there: 
-    const double npu_probs[25] = {0.0698146584, 0.0698146584, 0.0698146584,0.0698146584,0.0698146584,0.0698146584,0.0698146584,0.0698146584,0.0698146584,0.0698146584,0.0698146584,
-           0.0630151648,0.0526654164,0.0402754482,0.0292988928,0.0194384503,0.0122016783,0.007207042,0.004003637,0.0020278322,
-           0.0010739954,0.0004595759,0.0002229748,0.0001028162,4.58337152809607E-05 };
+  // distri verte
+  // see SimGeneral/MixingModule/python/mix_E7TeV_FlatDist10_2011EarlyData_inTimeOnly_cfi.py; copy and paste from there: 
+  const double npu_probs[25] = {0.0698146584, 0.0698146584, 0.0698146584,0.0698146584,0.0698146584,0.0698146584,0.0698146584,0.0698146584,0.0698146584,0.0698146584,0.0698146584,
+                                0.0630151648,0.0526654164,0.0402754482,0.0292988928,0.0194384503,0.0122016783,0.007207042,0.004003637,0.0020278322,
+                                0.0010739954,0.0004595759,0.0002229748,0.0001028162,4.58337152809607E-05 };
 
 
-    // see SimGeneral/MixingModule/python/mix_E7TeV_Summer_2011_50ns_PoissonOOT.py for Summer11
-    // const double npu_probs[25] = {0.0400676665,0.040358009,0.0807116334,0.0924154156,0.0924154156,0.0924154156,0.0924154156,0.0924154156,0.0870356742,0.0767913175,0.0636400516,0.0494955563,0.036223831,0.0249767088,0.0162633216,0.0099919945,0.0058339324,0.0032326433,0.0017151846,0.0008505404,0.0004108859,0.0001905137,0.0000842383,0.000034939,0.0000142801};
+  // see SimGeneral/MixingModule/python/mix_E7TeV_Summer_2011_50ns_PoissonOOT.py for Summer11
+  // const double npu_probs[25] = {0.0400676665,0.040358009,0.0807116334,0.0924154156,0.0924154156,0.0924154156,0.0924154156,0.0924154156,0.0870356742,0.0767913175,0.0636400516,0.0494955563,0.036223831,0.0249767088,0.0162633216,0.0099919945,0.0058339324,0.0032326433,0.0017151846,0.0008505404,0.0004108859,0.0001905137,0.0000842383,0.000034939,0.0000142801};
 
-/*
-    // distri bleue
-    // info taken on ttbar mc (spring11 madgraph - no skim) : /opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root2011/pu_in_mc.C  
-    const double npu_probs[25] = {0.0795275, 0.0761536, 0.069365, 0.0730743, 0.0699924, 0.075654, 0.076423, 0.0684544, 0.0732846, 0.0748051, 0.0669443, 0.0582711, 0.0484596, 0.0348441, 0.0204753, 0.0157868, 0.00964813, 0.00537668, 0.00266835, 0.000791556, 0, 0, 0, 0, 0};
-*/
+  /*
+  // distri bleue
+  // info taken on ttbar mc (spring11 madgraph - no skim) : /opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root2011/pu_in_mc.C  
+  const double npu_probs[25] = {0.0795275, 0.0761536, 0.069365, 0.0730743, 0.0699924, 0.075654, 0.076423, 0.0684544, 0.0732846, 0.0748051, 0.0669443, 0.0582711, 0.0484596, 0.0348441, 0.0204753, 0.0157868, 0.00964813, 0.00537668, 0.00266835, 0.000791556, 0, 0, 0, 0, 0};
+  */
 
-    vector<double> result(25);
-    double s = 0.0;
-    for(int inpu=0; inpu<25; ++inpu){
-        double npu_estimated = data_npu_estimated->GetBinContent(data_npu_estimated->GetXaxis()->FindBin(inpu));                              
-        if (npu_probs[inpu]>0) {result[inpu] = npu_estimated / npu_probs[inpu]; }
-        else {
-          result[inpu] = 0.;
-        }
-        s += npu_estimated;
+  std::vector<double> result(25);
+  double s = 0.0;
+  for(int inpu=0; inpu<25; ++inpu)
+  {
+    double npu_estimated = data_npu_estimated->GetBinContent
+      (data_npu_estimated->GetXaxis()->FindBin(inpu));
+
+    if (npu_probs[inpu]>0) result[inpu] = npu_estimated / npu_probs[inpu]; 
+    else 
+    {
+      result[inpu] = 0.;
     }
-    // normalize weights such that the total sum of weights over thw whole sample is 1.0, i.e., sum_i  result[i] * npu_probs[i] should be 1.0 (!)
-    for(int inpu=0; inpu<25; ++inpu){
-        result[inpu] /= s;
-    }
-    return result;
+    s += npu_estimated;
+  }
+
+  // normalize weights such that the total sum of weights over thw whole sample is 1.0, i.e., sum_i  result[i] * npu_probs[i] should be 1.0 (!)
+  for(int inpu=0; inpu<25; ++inpu) result[inpu] /= s;
+
+  return result;
 }
 
 
-void Selection::GeneratePUWeight(string filename){
+// ----------------------------------------------------------------------------
+// generatePUWeight
+// ----------------------------------------------------------------------------
+void Selection::GeneratePUWeight(std::string filename)
+{
 	TFile file(filename.c_str(),"READ");
-	TH1D* histo = 0;
-	histo = (TH1D*) file.Get("pileup");
+	TH1D* histo = (TH1D*) file.Get("pileup");
 	// get TH1D* histo from the root file created by estimatePileupD above
 	PUWeights = generate_flat10_weights(histo);
 }
 
-float Selection::GetPUWeight(){
+
+// ----------------------------------------------------------------------------
+// getPUWeight
+// ----------------------------------------------------------------------------
+float Selection::GetPUWeight()
+{
 	// get the number of true pileup events from MC in n_pu
-	if(npu<(int)PUWeights.size()){
-	    return PUWeights[npu];
+	if(getNpu()<PUWeights.size())
+  {
+    return PUWeights[getNpu()];
 	}
-	else{ //should not happen as we have a weight for all simulated n_pu multiplicities!
-	   cerr<<"n_pu too big"<<endl;
-	   return 1.;
+	else
+  { 
+    // should not happen as we have a weight for
+    // all simulated n_pu multiplicities!
+    cerr<<"n_pu too big"<<endl;
+    return 1.;
 	}
 }
 
-void Selection::LoadElScaleFactors(){
-  
-  TFile *f_Data_El = new TFile("/opt/sbg/data/data1/cms/ccollard/CMSSW/CMSSW_4_2_5/src/MiniTreeAnalysis/NTupleAnalysis/macros/data/electronSF.root");
+
+// ----------------------------------------------------------------------------
+// LoadElScaleFactors
+// ----------------------------------------------------------------------------
+void Selection::LoadElScaleFactors()
+{
+  TFile *f_Data_El = new TFile("/opt/sbg/data/data1/cms/ccollard/CMSSW/CMSSW_4_2_5/src/MiniTreeAnalysis/IPHCTree::NTupleAnalysis/macros/data/electronSF.root");
   f_Data_El->cd();
   scaleFactEl = (TH2F*)gROOT->FindObject("thehistSF");
-  
-
-
-
 } 
-void Selection::LoadMuScaleFactors(){
 
 
-  TFile *f_Data_Mu = new TFile("/opt/sbg/data/data1/cms/ccollard/CMSSW/CMSSW_4_2_5/src/MiniTreeAnalysis/NTupleAnalysis/macros/data/muonSF.root"); 
+// ----------------------------------------------------------------------------
+// LoadMuScaleFactors
+// ----------------------------------------------------------------------------
+void Selection::LoadMuScaleFactors()
+{
+  TFile *f_Data_Mu = new TFile("/opt/sbg/data/data1/cms/ccollard/CMSSW/CMSSW_4_2_5/src/MiniTreeAnalysis/IPHCTree::NTupleAnalysis/macros/data/muonSF.root"); 
   f_Data_Mu->cd();
   scaleFactMu = (TH2F*)gROOT->FindObject("thehistSF");
-
-
 } 
 
-void Selection::InitJESUnc ()
+
+// ----------------------------------------------------------------------------
+// InitJESUnc
+// ----------------------------------------------------------------------------
+void Selection::InitJESUnc()
 {
-
-    TFile* f1 = new TFile("/opt/sbg/data/data1/cms/ccollard/CMSSW/CMSSW_4_2_5/src/MiniTreeAnalysis/NTupleAnalysis/macros/data/JESUncMC.root");
-    f1->cd();
-    histo_jesunc_    = (TH2F*) f1->Get("JESUncHisto")->Clone("JESUncHisto") ;
-    std::cout<<"Reading the JES Uncertainty file "<<histo_jesunc_->GetEntries()<<std::endl;
-    histo_jesunc_->SetDirectory(0); // 
-    f1->Close();
-    delete f1;
-
-
+  TFile* f1 = new TFile("/opt/sbg/data/data1/cms/ccollard/CMSSW/CMSSW_4_2_5/src/MiniTreeAnalysis/IPHCTree::NTupleAnalysis/macros/data/JESUncMC.root");
+  f1->cd();
+  histo_jesunc_    = (TH2F*) f1->Get("JESUncHisto")->Clone("JESUncHisto") ;
+  std::cout << "Reading the JES Uncertainty file " 
+            << histo_jesunc_->GetEntries()
+            << std::endl;
+  histo_jesunc_->SetDirectory(0);
+  f1->Close();
+  delete f1;
 }
 
 

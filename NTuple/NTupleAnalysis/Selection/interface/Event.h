@@ -2,7 +2,7 @@
 #define IPHC_Event_h
 
 // IPHC headers
-#include "../../../../IPHCDataFormat/NTFormat/interface/NTEvent.h"
+#include "NTFormat/interface/NTEvent.h"
 
 // STL headers
 #include <memory>
@@ -33,56 +33,50 @@ class Event
   void Reset();
 
   //! Collections of objects are updated
-  void LoadEvent(const IPHCTree::NTEvent*event);
+  bool LoadEvent(const IPHCTree::NTEvent*event);
 
 
   // ------------- accessor to collection ( copy ) ---------------
 
   //! Get a copy of the vertex collection
   std::vector<IPHCTree::NTVertex> GetVertex() const
-  { if (vertices_!=0) return (*vertices_); 
-    else return std::vector<IPHCTree::NTVertex>(); }
+  { return (*vertices_); }
 
   //! Get a copy of the track collection
   std::vector<IPHCTree::NTTrack> GetTracks() const
-  { if (tracks_!=0) return (*tracks_); 
-    else return std::vector<IPHCTree::NTTrack>(); }
+  { return (*tracks_); }
 
   //! Get a copy of the photon collection
   std::vector<IPHCTree::NTPhoton> GetPhotons() const
-  { if (photons_!=0) return (*photons_); 
-    else return std::vector<IPHCTree::NTPhoton>(); }
+  { return (*photons_); }
 
   //! Get a copy of the jet collection
   std::vector<IPHCTree::NTJet> GetJets() const
-  { if (jetmet_!=0) return (*jetmet_)[0].jets; 
-    else return std::vector<IPHCTree::NTJet>(); }
+  { return (*jetmet_)[0].jets; }
+
+  //! Get a copy of the MET collection
+  IPHCTree::NTMET GetMET() const
+  { return (*jetmet_)[0].met; }
 
   //! Get a copy of the electron collection
   std::vector<IPHCTree::NTElectron> GetElectrons() const
-  { if (electrons_!=0) return (*electrons_); 
-    else return std::vector<IPHCTree::NTElectron>(); }
+  { return (*electrons_); }
 
   //! Get a copy of the muon collection
   std::vector<IPHCTree::NTMuon> GetMuons() const   
-  { if (muons_!=0) return (*muons_); 
-    else return std::vector<IPHCTree::NTMuon>(); }
+  { return (*muons_); }
 
   //! Get a copy of the tau collection
   std::vector<IPHCTree::NTTau> GetTaus() const   
-  { if (taus_!=0) return (*taus_); 
-    else return std::vector<IPHCTree::NTTau>(); }
+  { return (*taus_); }
 
   //! Get a copy of the GenTaus collection
   std::vector<TLorentzVector> GetGenTaus() const
-  { if (mc_!=0) return mc_->Generatedtaus; 
-    else return std::vector<TLorentzVector>(); }
+  { return mc_->Generatedtaus; }
 
   //! Get a copy of the GenATaus collection
   std::vector<TLorentzVector> GetGenATaus() const
-  { if (mc_!=0) return mc_->GeneratedAtaus; 
-    else return std::vector<TLorentzVector>(); }
-
+  { return mc_->GeneratedAtaus; }
 
   // ------------- accessor to collection (pointer) --------------
 
@@ -103,6 +97,11 @@ class Event
   { if (jetmet_==0) return 0;
     else return &((*jetmet_)[0].jets); }
 
+  //! Get a const pointer to the MET collection
+  const IPHCTree::NTMET* GetPointer2MET() const
+  { if (jetmet_==0) return 0;
+    else return &((*jetmet_)[0].met); }
+
   //! Get a const pointer to the electron collection
   const std::vector<IPHCTree::NTElectron>* GetPointer2Electrons() const
   { return electrons_; }
@@ -115,16 +114,17 @@ class Event
   const std::vector<IPHCTree::NTTau>* GetPointer2Taus() const   
   { return taus_; }
 
-  //! Get a const pointer to the GenTaus collection
-  const std::vector<TLorentzVector>* GetPointer2GenTaus() const
-  { if(mc_!=0) return &(mc_->Generatedtaus); 
-    else return 0; }
+  //! Get a const pointer to Monte Carlo data
+  const IPHCTree::NTMonteCarlo* GetPointer2MC() const   
+  { return mc_; }
 
-  //! Get a const pointer to the GenATaus collection
-  const std::vector<TLorentzVector>* GetPointer2GenATaus() const
-  { if (mc_!=0) return &(mc_->GeneratedAtaus); 
-    else return 0; }
+  //! Get a const pointer to Monte Carlo data
+  const IPHCTree::NTMonteCarlo* mc() const   
+  { return mc_; }
 
+  //! Get a const pointer to Trigger data
+  const IPHCTree::NTTrigger* GetPointer2Trigger() const   
+  { return trigger_; }
 
   // ------------- mutator to collection labels ------------------
 
@@ -188,11 +188,24 @@ class Event
   { return VertexType_; }
 
 
+  UInt_t getRunNumber()   const
+  {return general_->runNb;}
+
+  UInt_t getEventNumber() const
+  {return general_->eventNb;}
+
+  UInt_t getNpu() const
+  {return pileup_->intime_npu;}
+
+
+  //  double getEleHLTMatch(){return eleHLTMatch;};
+
   // -------------------------------------------------------------
   //                        data members
   // -------------------------------------------------------------
  private:
 
+  // Pointer to stored data
   const IPHCTree::NTGeneral*               general_;
   const IPHCTree::NTMonteCarlo*            mc_;
   const IPHCTree::NTTrigger*               trigger_;
@@ -204,7 +217,8 @@ class Event
   const std::vector<IPHCTree::NTTau>*      taus_;
   const std::vector<IPHCTree::NTTrack>*    tracks_; 
   const std::vector<IPHCTree::NTVertex>*   vertices_; 
- 
+
+  // Collection name initialized by XML configurator 
   std::string PhotonType_;
   std::string JetMetType_;
   std::string ElectronType_;
@@ -213,6 +227,15 @@ class Event
   std::string TrackType_;
   std::string VertexType_;
 
+  // Static empty collection if a collection 
+  // is not stored in the NTuple
+  static const std::vector<IPHCTree::NTJetMet>   empty_jetmet_;
+  static const std::vector<IPHCTree::NTPhoton>   empty_photons_;
+  static const std::vector<IPHCTree::NTElectron> empty_electrons_;
+  static const std::vector<IPHCTree::NTMuon>     empty_muons_;
+  static const std::vector<IPHCTree::NTTau>      empty_taus_;
+  static const std::vector<IPHCTree::NTTrack>    empty_tracks_; 
+  static const std::vector<IPHCTree::NTVertex>   empty_vertices_; 
 };
 
 #endif
