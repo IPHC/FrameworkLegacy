@@ -1,12 +1,11 @@
 #ifndef MuonHistoManager_h
 #define MuonHistoManager_h
 
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTMuon.h"
+#include "NTFormat/interface/NTMuon.h"
+#include "Plots/interface/HistoManager.h"
 
-#include "HistoManager.h"
 
-
-using namespace TopTree;
+using namespace IPHCTree;
 
 class MuonHistoManager: public HistoManager{
 

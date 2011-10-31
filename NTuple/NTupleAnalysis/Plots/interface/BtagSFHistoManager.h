@@ -1,12 +1,11 @@
 #ifndef BtagSFHistoManager_h
 #define BtagSFHistoManager_h
 
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTJet.h"
+#include "NTFormat/interface/NTJet.h"
+#include "Plots/interface/HistoManager.h"
 
-#include "HistoManager.h"
 
-
-using namespace TopTree;
+using namespace IPHCTree;
 
 class BtagSFHistoManager: public HistoManager{
 

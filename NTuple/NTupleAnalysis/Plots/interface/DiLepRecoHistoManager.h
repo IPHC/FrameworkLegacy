@@ -1,13 +1,12 @@
 #ifndef DiLepRecoHistoManager_h
 #define DiLepRecoHistoManager_h
 
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTEvent.h"
+#include "NTFormat/interface/NTEvent.h"
 
-#include "../../Selection/interface/DiLeptonSelection.h"
-#include "HistoManager.h"
+#include "Plots/interface/HistoManager.h"
 
 
-using namespace TopTree;
+using namespace IPHCTree;
 
 class DiLepRecoHistoManager: public HistoManager{
 

@@ -1,4 +1,4 @@
-#include "../interface/JetHistoManager.h"
+#include "Plots/interface/JetHistoManager.h"
 
 
 
@@ -36,9 +36,9 @@ void JetHistoManager::FillSelStep(const vector<NTJet>& jets, const int& iSelStep
 		Histos[1][iChannel][iSelStep][iDataset].Fill(jets[i].p4.Pt(),weight);
 		Histos[2][iChannel][iSelStep][iDataset].Fill(jets[i].p4.Eta(),weight);
 		Histos[3][iChannel][iSelStep][iDataset].Fill(jets[i].p4.Phi(),weight);
-		Histos[4][iChannel][iSelStep][iDataset].Fill(jets[i].TCDiscri,weight);
-		Histos[5][iChannel][iSelStep][iDataset].Fill(jets[i].SVDiscri,weight);
-		Histos[6][iChannel][iSelStep][iDataset].Fill(jets[i].SMDiscri,weight);
+		Histos[4][iChannel][iSelStep][iDataset].Fill(jets[i].bTag["TCDiscri"],weight);
+		Histos[5][iChannel][iSelStep][iDataset].Fill(jets[i].bTag["SVDiscri"],weight);
+		Histos[6][iChannel][iSelStep][iDataset].Fill(jets[i].bTag["SMDiscri"],weight);
 	}
 }
 

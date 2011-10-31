@@ -1,4 +1,4 @@
-#include "../interface/TagAndProbe.h"
+#include "Tools/interface/TagAndProbe.h"
 
 		
 TagAndProbe::TagAndProbe(){
@@ -212,7 +212,7 @@ void TagAndProbe::FillHistos(std::vector<NTJet> thejets, string TypeSel, string 
 	    double invM = dilepton_looseID.M();
 	    for(unsigned int i=0; i< hlist_Mu_LooseID.size(); i++){
 	    
-	      if(tightMuons[0].Charge != looseIDMuons[imuon].Charge && (invM >infMassCut && invM < supMassCut)){
+	      if(tightMuons[0].charge != looseIDMuons[imuon].charge && (invM >infMassCut && invM < supMassCut)){
                 if( datasetname+TypeSel+"_looseID_pt"      == hlist_Mu_LooseID[i]->GetName()) hlist_Mu_LooseID[i]->Fill(looseIDMuons[imuon].p4.Pt(), weight);  
                 if( datasetname+TypeSel+"_looseID_pt_infEta15"      == hlist_Mu_LooseID[i]->GetName() && fabs(looseIDMuons[imuon].p4.Eta()) < 1.5) hlist_Mu_LooseID[i]->Fill(looseIDMuons[imuon].p4.Pt(), weight);  
                 if( datasetname+TypeSel+"_looseID_pt_supEta15"      == hlist_Mu_LooseID[i]->GetName() && fabs(looseIDMuons[imuon].p4.Eta()) > 1.5) hlist_Mu_LooseID[i]->Fill(looseIDMuons[imuon].p4.Pt(), weight); 
@@ -220,7 +220,7 @@ void TagAndProbe::FillHistos(std::vector<NTJet> thejets, string TypeSel, string 
                 if( datasetname+TypeSel+"_looseID_phi"     == hlist_Mu_LooseID[i]->GetName()) hlist_Mu_LooseID[i]->Fill(looseIDMuons[imuon].p4.Phi(), weight);   
                 if( datasetname+TypeSel+"_looseID_njet"    == hlist_Mu_LooseID[i]->GetName()) hlist_Mu_LooseID[i]->Fill(njet, weight); 
 	      }
-	      if(tightMuons[0].Charge != looseIDMuons[imuon].Charge) { 
+	      if(tightMuons[0].charge != looseIDMuons[imuon].charge) { 
                 if( datasetname+TypeSel+"_looseID_invM"    == hlist_Mu_LooseID[i]->GetName()) hlist_Mu_LooseID[i]->Fill(invM, weight);
 	      }  
               else{ if( datasetname+TypeSel+"_looseID_invM_LS" == hlist_Mu_LooseID[i]->GetName()) hlist_Mu_LooseID[i]->Fill(invM, weight); }  
@@ -241,7 +241,7 @@ void TagAndProbe::FillHistos(std::vector<NTJet> thejets, string TypeSel, string 
 	    double invM = dilepton_looseIso.M();
 	    for(unsigned int i=0; i< hlist_Mu_LooseIso.size(); i++){
 	    
-	      if(tightMuons[0].Charge != looseIsoMuons[imuon].Charge && (invM >infMassCut && invM < supMassCut)){
+	      if(tightMuons[0].charge != looseIsoMuons[imuon].charge && (invM >infMassCut && invM < supMassCut)){
                 if( datasetname+TypeSel+"_looseIso_pt"      == hlist_Mu_LooseIso[i]->GetName()) hlist_Mu_LooseIso[i]->Fill(looseIsoMuons[imuon].p4.Pt(), weight); 
                 if( datasetname+TypeSel+"_looseIso_pt_infEta15"      == hlist_Mu_LooseIso[i]->GetName()&& fabs(looseIsoMuons[imuon].p4.Eta()) < 1.5) hlist_Mu_LooseIso[i]->Fill(looseIsoMuons[imuon].p4.Pt(), weight); 
                 if( datasetname+TypeSel+"_looseIso_pt_supEta15"      == hlist_Mu_LooseIso[i]->GetName()&& fabs(looseIsoMuons[imuon].p4.Eta()) > 1.5) hlist_Mu_LooseIso[i]->Fill(looseIsoMuons[imuon].p4.Pt(), weight); 
@@ -249,7 +249,7 @@ void TagAndProbe::FillHistos(std::vector<NTJet> thejets, string TypeSel, string 
                 if( datasetname+TypeSel+"_looseIso_phi"     == hlist_Mu_LooseIso[i]->GetName()) hlist_Mu_LooseIso[i]->Fill(looseIsoMuons[imuon].p4.Phi(), weight);   
                 if( datasetname+TypeSel+"_looseIso_njet"    == hlist_Mu_LooseIso[i]->GetName()) hlist_Mu_LooseIso[i]->Fill(njet, weight); 
 	      }
-	      if(tightMuons[0].Charge != looseIsoMuons[imuon].Charge) { 
+	      if(tightMuons[0].charge != looseIsoMuons[imuon].charge) { 
                 if( datasetname+TypeSel+"_looseIso_invM"    == hlist_Mu_LooseIso[i]->GetName()) hlist_Mu_LooseIso[i]->Fill(invM, weight);
 	      }  
               else{ if( datasetname+TypeSel+"_looseIso_invM_LS" == hlist_Mu_LooseIso[i]->GetName()) hlist_Mu_LooseIso[i]->Fill(invM, weight); }  
@@ -268,7 +268,7 @@ void TagAndProbe::FillHistos(std::vector<NTJet> thejets, string TypeSel, string 
 	 dilepton_Tight = lepton_tight + lepton_tight2;
   	 double invM = dilepton_Tight.M(); 
 	 for(unsigned int i=0; i< hlist_Mu_Tight.size(); i++){
-	   if(tightMuons[0].Charge != tightMuons[1].Charge && (invM >infMassCut && invM < supMassCut)){
+	   if(tightMuons[0].charge != tightMuons[1].charge && (invM >infMassCut && invM < supMassCut)){
              if( datasetname+TypeSel+"_Tight_pt"      == hlist_Mu_Tight[i]->GetName()) hlist_Mu_Tight[i]->Fill(tightMuons[1].p4.Pt(), weight);  
              if( datasetname+TypeSel+"_Tight_pt_infEta15"      == hlist_Mu_Tight[i]->GetName()&& fabs(tightMuons[1].p4.Eta()) < 1.5) hlist_Mu_Tight[i]->Fill(tightMuons[1].p4.Pt(), weight);  
              if( datasetname+TypeSel+"_Tight_pt_supEta15"      == hlist_Mu_Tight[i]->GetName()&& fabs(tightMuons[1].p4.Eta()) > 1.5) hlist_Mu_Tight[i]->Fill(tightMuons[1].p4.Pt(), weight); 
@@ -276,7 +276,7 @@ void TagAndProbe::FillHistos(std::vector<NTJet> thejets, string TypeSel, string 
              if( datasetname+TypeSel+"_Tight_phi"     == hlist_Mu_Tight[i]->GetName()) hlist_Mu_Tight[i]->Fill(tightMuons[1].p4.Phi(), weight);   
              if( datasetname+TypeSel+"_Tight_njet"    == hlist_Mu_Tight[i]->GetName()) hlist_Mu_Tight[i]->Fill(njet, weight);
 	   }
-	   if(tightMuons[0].Charge != tightMuons[1].Charge) { 
+	   if(tightMuons[0].charge != tightMuons[1].charge) { 
              if( datasetname+TypeSel+"_Tight_invM"    == hlist_Mu_Tight[i]->GetName()) hlist_Mu_Tight[i]->Fill(invM, weight);
 	   }  
            else{ if( datasetname+TypeSel+"_Tight_invM_LS" == hlist_Mu_Tight[i]->GetName()) hlist_Mu_Tight[i]->Fill(invM, weight); } 
@@ -311,7 +311,7 @@ void TagAndProbe::FillHistos(std::vector<NTJet> thejets, string TypeSel, string 
 	    double invM = dilepton_looseID.M();
 	    for(unsigned int i=0; i< hlist_El_LooseID.size(); i++){
 	    
-	      if(tightElectrons[0].Charge != looseIDElectrons[iElectron].Charge && (invM >infMassCut && invM < supMassCut)){
+	      if(tightElectrons[0].charge != looseIDElectrons[iElectron].charge && (invM >infMassCut && invM < supMassCut)){
                 if( datasetname+TypeSel+"_looseID_pt"      == hlist_El_LooseID[i]->GetName()) hlist_El_LooseID[i]->Fill(looseIDElectrons[iElectron].p4.Pt(), weight);  
                 if( datasetname+TypeSel+"_looseID_pt_infEta15"      == hlist_El_LooseID[i]->GetName()&& fabs(looseIDElectrons[iElectron].p4.Eta()) < 1.5) hlist_El_LooseID[i]->Fill(looseIDElectrons[iElectron].p4.Pt(), weight);  
                 if( datasetname+TypeSel+"_looseID_pt_supEta15"      == hlist_El_LooseID[i]->GetName()&& fabs(looseIDElectrons[iElectron].p4.Eta()) > 1.5) hlist_El_LooseID[i]->Fill(looseIDElectrons[iElectron].p4.Pt(), weight); 
@@ -319,7 +319,7 @@ void TagAndProbe::FillHistos(std::vector<NTJet> thejets, string TypeSel, string 
                 if( datasetname+TypeSel+"_looseID_phi"     == hlist_El_LooseID[i]->GetName()) hlist_El_LooseID[i]->Fill(looseIDElectrons[iElectron].p4.Phi(), weight);   
                 if( datasetname+TypeSel+"_looseID_njet"    == hlist_El_LooseID[i]->GetName()) hlist_El_LooseID[i]->Fill(njet, weight); 
 	      }
-	      if(tightElectrons[0].Charge != looseIDElectrons[iElectron].Charge) { 
+	      if(tightElectrons[0].charge != looseIDElectrons[iElectron].charge) { 
                 if( datasetname+TypeSel+"_looseID_invM"    == hlist_El_LooseID[i]->GetName()) hlist_El_LooseID[i]->Fill(invM, weight);
 	      }  
               else{ if( datasetname+TypeSel+"_looseID_invM_LS" == hlist_El_LooseID[i]->GetName()) hlist_El_LooseID[i]->Fill(invM, weight); }  
@@ -340,7 +340,7 @@ void TagAndProbe::FillHistos(std::vector<NTJet> thejets, string TypeSel, string 
 	    double invM = dilepton_looseIso.M();
 	    for(unsigned int i=0; i< hlist_El_LooseIso.size(); i++){
 	    
-	      if(tightElectrons[0].Charge != looseIsoElectrons[iElectron].Charge && (invM >infMassCut && invM < supMassCut)){
+	      if(tightElectrons[0].charge != looseIsoElectrons[iElectron].charge && (invM >infMassCut && invM < supMassCut)){
                 if( datasetname+TypeSel+"_looseIso_pt"      == hlist_El_LooseIso[i]->GetName()) hlist_El_LooseIso[i]->Fill(looseIsoElectrons[iElectron].p4.Pt(), weight);  
                 if( datasetname+TypeSel+"_looseIso_pt_infEta15"      == hlist_El_LooseIso[i]->GetName()&& fabs(looseIsoElectrons[iElectron].p4.Eta()) < 1.5) hlist_El_LooseIso[i]->Fill(looseIsoElectrons[iElectron].p4.Pt(), weight);  
                 if( datasetname+TypeSel+"_looseIso_pt_supEta15"      == hlist_El_LooseIso[i]->GetName()&& fabs(looseIsoElectrons[iElectron].p4.Eta()) > 1.5) hlist_El_LooseIso[i]->Fill(looseIsoElectrons[iElectron].p4.Pt(), weight); 
@@ -348,7 +348,7 @@ void TagAndProbe::FillHistos(std::vector<NTJet> thejets, string TypeSel, string 
                 if( datasetname+TypeSel+"_looseIso_phi"     == hlist_El_LooseIso[i]->GetName()) hlist_El_LooseIso[i]->Fill(looseIsoElectrons[iElectron].p4.Phi(), weight);   
                 if( datasetname+TypeSel+"_looseIso_njet"    == hlist_El_LooseIso[i]->GetName()) hlist_El_LooseIso[i]->Fill(njet, weight); 
 	      }
-	      if(tightElectrons[0].Charge != looseIsoElectrons[iElectron].Charge) { 
+	      if(tightElectrons[0].charge != looseIsoElectrons[iElectron].charge) { 
                 if( datasetname+TypeSel+"_looseIso_invM"    == hlist_El_LooseIso[i]->GetName()) hlist_El_LooseIso[i]->Fill(invM, weight);
 	      }  
               else{ if( datasetname+TypeSel+"_looseIso_invM_LS" == hlist_El_LooseIso[i]->GetName()) hlist_El_LooseIso[i]->Fill(invM, weight); }  
@@ -367,7 +367,7 @@ void TagAndProbe::FillHistos(std::vector<NTJet> thejets, string TypeSel, string 
 	 dilepton_Tight = lepton_tight + lepton_tight2;
   	 double invM = dilepton_Tight.M(); 
 	 for(unsigned int i=0; i< hlist_El_Tight.size(); i++){
-	   if(tightElectrons[0].Charge != tightElectrons[1].Charge && (invM >infMassCut && invM < supMassCut)){
+	   if(tightElectrons[0].charge != tightElectrons[1].charge && (invM >infMassCut && invM < supMassCut)){
              if( datasetname+TypeSel+"_Tight_pt"      == hlist_El_Tight[i]->GetName()) hlist_El_Tight[i]->Fill(tightElectrons[1].p4.Pt(), weight);  
              if( datasetname+TypeSel+"_Tight_pt_infEta15"      == hlist_El_Tight[i]->GetName()&& fabs(tightElectrons[1].p4.Eta()) < 1.5) hlist_El_Tight[i]->Fill(tightElectrons[1].p4.Pt(), weight);  
              if( datasetname+TypeSel+"_Tight_pt_supEta15"      == hlist_El_Tight[i]->GetName()&& fabs(tightElectrons[1].p4.Eta()) > 1.5) hlist_El_Tight[i]->Fill(tightElectrons[1].p4.Pt(), weight); 
@@ -375,7 +375,7 @@ void TagAndProbe::FillHistos(std::vector<NTJet> thejets, string TypeSel, string 
              if( datasetname+TypeSel+"_Tight_phi"     == hlist_El_Tight[i]->GetName()) hlist_El_Tight[i]->Fill(tightElectrons[1].p4.Phi(), weight);   
              if( datasetname+TypeSel+"_Tight_njet"    == hlist_El_Tight[i]->GetName()) hlist_El_Tight[i]->Fill(njet, weight);
 	   }
-	   if(tightElectrons[0].Charge != tightElectrons[1].Charge) { 
+	   if(tightElectrons[0].charge != tightElectrons[1].charge) { 
              if( datasetname+TypeSel+"_Tight_invM"    == hlist_El_Tight[i]->GetName()) hlist_El_Tight[i]->Fill(invM, weight);
 	   }  
            else{ if( datasetname+TypeSel+"_Tight_invM_LS" == hlist_El_Tight[i]->GetName()) hlist_El_Tight[i]->Fill(invM, weight); } 

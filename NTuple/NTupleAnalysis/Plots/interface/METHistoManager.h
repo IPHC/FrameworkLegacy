@@ -1,12 +1,12 @@
 #ifndef METHistoManager_h
 #define METHistoManager_h
 
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTMET.h"
+#include "NTFormat/interface/NTMET.h"
 
-#include "HistoManager.h"
+#include "Plots/interface/HistoManager.h"
 
 
-using namespace TopTree;
+using namespace IPHCTree;
 
 class METHistoManager: public HistoManager{
 

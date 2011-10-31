@@ -1,4 +1,4 @@
-#include "../interface/DiLepMCHistoManager.h"
+#include "Plots/interface/DiLepMCHistoManager.h"
 
 
 
@@ -23,7 +23,7 @@ void DiLepMCHistoManager::Fill(NTEvent* event, const int& maxSelStep, const int&
 
 void DiLepMCHistoManager::FillSelStep(NTEvent* event, const int& iSelStep, const int& iChannel, const int& iDataset, const float& weight){
         if(!Check(iChannel, iSelStep, iDataset, 0) ) return;
-	Histos[0][iChannel][iSelStep][iDataset].Fill(event->TMEME,weight);
+	Histos[0][iChannel][iSelStep][iDataset].Fill(event->mc.TMEME,weight);
 }
 
 

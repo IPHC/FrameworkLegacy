@@ -1,13 +1,12 @@
 #ifndef EventShapesHistoManager_h
 #define EventShapesHistoManager_h
 
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTEvent.h"
+#include "NTFormat/interface/NTEvent.h"
+#include "Tools/interface/EventShapes.h"
+#include "Plots/interface/HistoManager.h"
 
-#include "../../Tools/interface/EventShapes.h"
-#include "HistoManager.h"
 
-
-using namespace TopTree;
+using namespace IPHCTree;
 
 class EventShapesHistoManager: public HistoManager{
 

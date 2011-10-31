@@ -1,10 +1,10 @@
 #ifndef SSDiLepAnaHistoManager_h
 #define SSDiLepAnaHistoManager_h
 
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTEvent.h"
+#include "NTFormat/interface/NTEvent.h"
 
-#include "../../Selection/interface/SSDiLeptonSelection.h"
-#include "../../Tools/interface/Dataset.h"
+#include "Selection/interface/SSDiLeptonSelection.h"
+#include "Tools/interface/Dataset.h"
 #include "ElectronHistoManager.h"
 #include "MuonHistoManager.h"
 #include "JetHistoManager.h"
@@ -15,7 +15,7 @@
 
 #include <TH1F.h>
 
-using namespace TopTree;
+using namespace IPHCTree;
 
 class SSDiLepAnaHistoManager{
 

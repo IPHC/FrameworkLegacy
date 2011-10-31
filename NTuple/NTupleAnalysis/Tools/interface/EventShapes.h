@@ -14,13 +14,13 @@
 #include "TVectorD.h"
 #include "Math/Vector3D.h"
 #include <vector>
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTLepton.h"
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTJet.h"
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTTau.h"
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTEvent.h"
+#include "NTFormat/interface/NTLepton.h"
+#include "NTFormat/interface/NTJet.h"
+#include "NTFormat/interface/NTTau.h"
+#include "NTFormat/interface/NTEvent.h"
 
 using namespace std;
-using namespace TopTree;
+using namespace IPHCTree;
 using namespace ROOT::Math;
 
 class EventShapes {

@@ -14,7 +14,7 @@
 #include <TLegend.h>
 #include <TFile.h>
 
-#include "../../Tools/interface/Dataset.h"
+#include "Tools/interface/Dataset.h"
 
 using namespace std;
 

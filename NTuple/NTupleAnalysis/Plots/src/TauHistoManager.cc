@@ -1,4 +1,4 @@
-#include "../interface/TauHistoManager.h"
+#include "Plots/interface/TauHistoManager.h"
 
 
 
@@ -46,7 +46,7 @@ void TauHistoManager::FillSelStep(NTMET met, const vector<NTTau>& taus, const ve
 	float MTW = -9999;
 	for(int i=0;i<(int) taus.size();i++){
 	        NTTau taui = taus[i];
-		MTW =sqrt (pow(taui.p4.Et() + met.p4.Et(),2) - pow(taui.p4.Px() + met.p4.Px(),2) - pow(taui.p4.Py() + met.p4.Py(),2));
+          MTW =sqrt (pow(taui.p4.Et() + met.met(),2) - pow(taui.p4.Px() + met.p2.Px(),2) - pow(taui.p4.Py() + met.p2.Py(),2));
 	        //very important:
 		//respect the order of the function CreateHistos to fill the histograms
 		Histos[1][iChannel][iSelStep][iDataset].Fill(taus[i].p4.Pt(),weight);
@@ -54,7 +54,7 @@ void TauHistoManager::FillSelStep(NTMET met, const vector<NTTau>& taus, const ve
 		Histos[3][iChannel][iSelStep][iDataset].Fill(taus[i].p4.Phi(),weight);
 		Histos[4][iChannel][iSelStep][iDataset].Fill(taus[i].D0,weight);
 		Histos[5][iChannel][iSelStep][iDataset].Fill(taus[i].vertex.Z()-vertices[0].p3.Z(),weight);
-		Histos[6][iChannel][iSelStep][iDataset].Fill(taus[i].Charge,weight);
+		Histos[6][iChannel][iSelStep][iDataset].Fill(taus[i].charge,weight);
 		Histos[7][iChannel][iSelStep][iDataset].Fill(taus[i].leadTrackPt,weight);
 		Histos[8][iChannel][iSelStep][iDataset].Fill(taui.GetDiscriminator("byLooseIsolation"),weight);
 		Histos[9][iChannel][iSelStep][iDataset].Fill(taui.GetDiscriminator("byMediumIsolation"),weight);
@@ -66,7 +66,7 @@ void TauHistoManager::FillSelStep(NTMET met, const vector<NTTau>& taus, const ve
 		Histos[15][iChannel][iSelStep][iDataset].Fill(taus[i].emFraction,weight);
 		Histos[16][iChannel][iSelStep][iDataset].Fill(taui.GetDiscriminator("againstElectronLoose"),weight);
 		Histos[17][iChannel][iSelStep][iDataset].Fill(taui.GetDiscriminator("againstMuonLoose"),weight);
-	        Histos[18][iChannel][iSelStep][iDataset].Fill((taus[i].p4.Eta())*(taus[i].Charge),weight);
+	        Histos[18][iChannel][iSelStep][iDataset].Fill((taus[i].p4.Eta())*(taus[i].charge),weight);
 		Histos[19][iChannel][iSelStep][iDataset].Fill(MTW,weight);}
 }
 

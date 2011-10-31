@@ -426,13 +426,13 @@ vector<float> SFBweight::GetWeigth4BSel(int method_b,  int syst_b, const std::ve
              float discri_val=0.;
              switch(btag_algo_){
                          case 0 :
-                                 discri_val=selJets[j].TCDiscri;
+                                 discri_val=selJets[j].bTag["TCDiscri"];
                                  break;
                          case 1 :
-                                 discri_val=selJets[j].SVDiscri;
+                                 discri_val=selJets[j].bTag["SVDiscri"];
                                  break;
                          case 2 :
-                                 discri_val=selJets[j].SMDiscri;
+                                 discri_val=selJets[j].bTag["SMDiscri"];
                                  break;
                          default:
                                  cerr << "btagAlgo doesn't exist !"<<endl;

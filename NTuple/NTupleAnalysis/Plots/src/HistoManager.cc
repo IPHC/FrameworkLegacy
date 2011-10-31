@@ -1,4 +1,4 @@
-#include "../interface/HistoManager.h"
+#include "Plots/interface/HistoManager.h"
 
 HistoManager::HistoManager(){
 }

@@ -16,14 +16,14 @@
 #include "TCanvas.h"
 #include "TStyle.h"
 #include "TFile.h"
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTEvent.h"
+#include "NTFormat/interface/NTEvent.h"
 //#include "RooGlobalFunc.h"
 
 
  
 using namespace std;
 //using namespace RooFit;
-using namespace TopTree;
+using namespace IPHCTree;
 
 
 class TagAndProbe {

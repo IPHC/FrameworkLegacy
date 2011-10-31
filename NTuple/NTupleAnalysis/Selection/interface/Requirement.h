@@ -7,6 +7,7 @@
 #include <string>
 
 class Selection;
+class AnalysisEnvironmentLoader;
 
 //! \class Requirement
 class Requirement
@@ -18,6 +19,7 @@ class Requirement
  public:
 
   friend class Selection;
+  friend class AnalysisEnvironmentLoader;
 
   //! Constructor without argument
   Requirement();

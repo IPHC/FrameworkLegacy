@@ -300,11 +300,12 @@ class Selection : public Event
   //                        data members
   // -------------------------------------------------------------
    
-  private:
+ public:
 
   //! requirements
   Requirement cfg;
 
+ private:
   //! Pile-Up weights
   std::vector<double> PUWeights;
       

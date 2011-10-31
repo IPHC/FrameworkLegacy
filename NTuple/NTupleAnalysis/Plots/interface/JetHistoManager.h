@@ -1,12 +1,12 @@
 #ifndef JetHistoManager_h
 #define JetHistoManager_h
 
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTJet.h"
+#include "NTFormat/interface/NTJet.h"
 
-#include "HistoManager.h"
+#include "Plots/interface/HistoManager.h"
 
 
-using namespace TopTree;
+using namespace IPHCTree;
 
 class JetHistoManager: public HistoManager{
 

@@ -1,4 +1,4 @@
-#include "../interface/AnalysisEnvironmentLoader.h"
+#include "Tools/interface/AnalysisEnvironmentLoader.h"
 
 
 void Print(const ExtendedSyst& sys){
@@ -353,7 +353,7 @@ void AnalysisEnvironmentLoader::LoadXExtraction(string channel, XExtractionChann
     }
 }
 
-void AnalysisEnvironmentLoader::LoadBgkInformation(PLRMeasurement& plr){
+/*void AnalysisEnvironmentLoader::LoadBgkInformation(PLRMeasurement& plr){
   Reset();
   elem = NodeLoader(string("EvtNumbers"));
   if(!elem) return;
@@ -558,7 +558,7 @@ void AnalysisEnvironmentLoader::LoadPLRInformation(PLRMeasurement& plr, int& doP
     plr.SetSignalInfo(SignalDSName,XsectionIsAParam);	
 	
 }
-
+*/
 
 void AnalysisEnvironmentLoader::LoadSamples(vector<Dataset>& datasets){
   Reset();
@@ -744,7 +744,7 @@ void AnalysisEnvironmentLoader::LoadSelection (Selection& sel)
 	  elem->QueryFloatAttribute ("VertexNdofThr", &VertexNdofThr);
 	  elem->QueryFloatAttribute ("VertexZThr", &VertexZThr);
 	  elem->QueryFloatAttribute ("VertexRhoThr", &VertexRhoThr);
-	  sel.SetVertexRequirements(VertexNdofThr, VertexZThr, VertexRhoThr);
+	  sel.cfg.SetVertexRequirements(VertexNdofThr, VertexZThr, VertexRhoThr);
 	}
       if (type == string ("Electron"))
 	{
@@ -762,7 +762,7 @@ void AnalysisEnvironmentLoader::LoadSelection (Selection& sel)
 	  elem->QueryFloatAttribute ("VertexMatchThr", &VertexMatchThr);
 	  elem->QueryFloatAttribute ("ElectronETSCThr", &ElectronETSCThr);
 	  elem->QueryFloatAttribute ("DRemuThr", &DRemuThr);
-  	  sel.SetElectronRequirements(PtThreshold,EtaThreshold,RelIso,D0Cut,VertexMatchThr,ElectronETSCThr,DRemuThr);
+  	  sel.cfg.SetElectronRequirements(PtThreshold,EtaThreshold,RelIso,D0Cut,VertexMatchThr,ElectronETSCThr,DRemuThr);
         }
       if (type == string ("Muon"))
 	{
@@ -782,7 +782,7 @@ void AnalysisEnvironmentLoader::LoadSelection (Selection& sel)
 	  elem->QueryFloatAttribute ("NofValidHits",   &NofValidHits);
 	  elem->QueryFloatAttribute ("NofValidTkHits", &NofValidTkHits);
 	  elem->QueryFloatAttribute ("NormChi2", &NormChi2);
-  	  sel.SetMuonRequirements(PtThreshold,EtaThreshold,RelIso,D0Cut,VertexMatchThr,NofValidHits,NofValidTkHits,NormChi2);
+  	  sel.cfg.SetMuonRequirements(PtThreshold,EtaThreshold,RelIso,D0Cut,VertexMatchThr,NofValidHits,NofValidTkHits,NormChi2);
         }
       if (type == string ("Tau"))
 	{
@@ -796,8 +796,8 @@ void AnalysisEnvironmentLoader::LoadSelection (Selection& sel)
 	  elem->QueryFloatAttribute ("VertexMatchThr", &VertexMatchThr);
 	  elem->QueryFloatAttribute ("TauLeadTrkPtCut", &TauLeadTrkPtCut);
 	  Algo = elem->Attribute("Algo");
-          sel.SetDefaultTauCollection(Algo);
-  	  sel.SetTauRequirements(PtThreshold,EtaThreshold,VertexMatchThr,TauLeadTrkPtCut);
+          sel.SetTauCollectionLabel(Algo);
+  	  sel.cfg.SetTauRequirements(PtThreshold,EtaThreshold,VertexMatchThr,TauLeadTrkPtCut);
         }
       if (type == string ("Jet"))
 	{
@@ -806,16 +806,16 @@ void AnalysisEnvironmentLoader::LoadSelection (Selection& sel)
 	  float EtaThreshold=0;
 	  elem->QueryFloatAttribute ("PtThreshold", &PtThreshold);
 	  elem->QueryFloatAttribute ("EtaThreshold", &EtaThreshold);
-          sel.SetJetRequirements(PtThreshold, EtaThreshold);
+          sel.cfg.SetJetRequirements(PtThreshold, EtaThreshold);
 	  Algo = elem->Attribute("Algo");
-          sel.SetDefaultJetCollection(Algo);
+          sel.SetJetMetCollectionLabel(Algo);
         }
       elem = elem->NextSiblingElement ();	// iteration
     }
 }
 
 
-void AnalysisEnvironmentLoader::LoadDiLeptonSelection (DiLeptonSelection& sel)
+/*void AnalysisEnvironmentLoader::LoadDiLeptonSelection (DiLeptonSelection& sel)
 {
 
   LoadSelection(dynamic_cast<Selection&>(sel));
@@ -840,8 +840,9 @@ void AnalysisEnvironmentLoader::LoadDiLeptonSelection (DiLeptonSelection& sel)
       elem->QueryIntAttribute ("btagAlgo", &btagAlgo);
       elem->QueryFloatAttribute ("btagDiscriCut", &btagDiscriCut);
       elem->QueryIntAttribute ("NofBtagJets", &NofBtagJets);
-      sel.SetParameters(MinMassCut, pair<float,float> (METEMu,METLL), pair<float,float> (ZMassWindowMin,ZMassWindowMax), btagAlgo, btagDiscriCut, NofBtagJets);
+      sel.cfg.SetParameters(MinMassCut, pair<float,float> (METEMu,METLL), pair<float,float> (ZMassWindowMin,ZMassWindowMax), btagAlgo, btagDiscriCut, NofBtagJets);
 }
+*/
 
 void AnalysisEnvironmentLoader::LoadSSDiLeptonSelection (SSDiLeptonSelection& sel)
 {
@@ -872,7 +873,7 @@ void AnalysisEnvironmentLoader::LoadSSDiLeptonSelection (SSDiLeptonSelection& se
 }
 
 
-void AnalysisEnvironmentLoader::LoadSemiLeptonicTauSelection (SemiLeptonicTauSelection& sel)
+/*void AnalysisEnvironmentLoader::LoadSemiLeptonicTauSelection (SemiLeptonicTauSelection& sel)
 {
 
   LoadSelection(dynamic_cast<Selection&>(sel));
@@ -889,10 +890,10 @@ void AnalysisEnvironmentLoader::LoadSemiLeptonicTauSelection (SemiLeptonicTauSel
       elem->QueryIntAttribute ("btagAlgo", &btagAlgo);
       elem->QueryFloatAttribute ("btagDiscriCut", &btagDiscriCut);
       elem->QueryIntAttribute ("NofBtagJets", &NofBtagJets);
-      sel.SetParameters(btagAlgo, btagDiscriCut, NofBtagJets, METCut);
+      sel.cfg.SetParameters(btagAlgo, btagDiscriCut, NofBtagJets, METCut);
 }
-
-void AnalysisEnvironmentLoader::LoadWeight (DiLeptonSelection& sel)
+*/
+/*void AnalysisEnvironmentLoader::LoadWeight (DiLeptonSelection& sel)
 {
   LoadSelection(dynamic_cast<Selection&>(sel));
   Reset();
@@ -913,7 +914,7 @@ void AnalysisEnvironmentLoader::LoadWeight (DiLeptonSelection& sel)
       int btagNjet = sel.GetNofBtagJetsCut();
       sel.InitSFBWeight(flag, methodb, systb, btagAlgo, btagDiscriCut, btagNjet);
       sel.InitJESUnc();
-}
+      }*/
 
 void AnalysisEnvironmentLoader::StringSeparator(string s, string sep, vector<int>& out)
 {

@@ -1,4 +1,4 @@
-#include "../interface/METHistoManager.h"
+#include "Plots/interface/METHistoManager.h"
 
 
 
@@ -27,10 +27,10 @@ void METHistoManager::Fill(NTMET met, const int& maxSelStep, const int& iChannel
 void METHistoManager::FillSelStep(NTMET met, const int& iSelStep, const int& iChannel, const int& iDataset, const float& weight){
         if(!Check(iChannel, iSelStep, iDataset, 0) ) return;
 	//respect the order of the function CreateHistos to fill the histograms
-	Histos[0][iChannel][iSelStep][iDataset].Fill(met.p4.Et(),weight);
-	Histos[1][iChannel][iSelStep][iDataset].Fill(met.p4.Px(),weight);
-	Histos[2][iChannel][iSelStep][iDataset].Fill(met.p4.Py(),weight);
-	Histos[3][iChannel][iSelStep][iDataset].Fill(met.p4.Phi(),weight);
+	Histos[0][iChannel][iSelStep][iDataset].Fill(met.met(),weight);
+	Histos[1][iChannel][iSelStep][iDataset].Fill(met.p2.Px(),weight);
+	Histos[2][iChannel][iSelStep][iDataset].Fill(met.p2.Py(),weight);
+	Histos[3][iChannel][iSelStep][iDataset].Fill(met.p2.Phi(),weight);
 }
 
 

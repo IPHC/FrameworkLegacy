@@ -1,12 +1,11 @@
 #ifndef ElectronHistoManager_h
 #define ElectronHistoManager_h
 
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTElectron.h"
+#include "NTFormat/interface/NTElectron.h"
+#include "Plots/interface/HistoManager.h"
 
-#include "HistoManager.h"
 
-
-using namespace TopTree;
+using namespace IPHCTree;
 
 class ElectronHistoManager: public HistoManager{
 

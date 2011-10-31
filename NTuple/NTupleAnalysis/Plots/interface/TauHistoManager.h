@@ -1,14 +1,12 @@
 #ifndef TauHistoManager_h
 #define TauHistoManager_h
 
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTTau.h"
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTVertex.h"
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTEvent.h"
+#include "NTFormat/interface/NTTau.h"
+#include "NTFormat/interface/NTVertex.h"
+#include "NTFormat/interface/NTEvent.h"
+#include "Plots/interface/HistoManager.h"
 
-#include "HistoManager.h"
-
-
-using namespace TopTree;
+using namespace IPHCTree;
 
 class TauHistoManager: public HistoManager{
 

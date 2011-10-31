@@ -1,14 +1,14 @@
 #ifndef DiLepMCHistoManager_h
 #define DiLepMCHistoManager_h
 
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTEvent.h"
+#include "NTFormat/interface/NTEvent.h"
+#include "Plots/interface/HistoManager.h"
 
-#include "HistoManager.h"
 
+using namespace IPHCTree;
 
-using namespace TopTree;
-
-class DiLepMCHistoManager: public HistoManager{
+class DiLepMCHistoManager: public HistoManager
+{
 
   public:
 	DiLepMCHistoManager();

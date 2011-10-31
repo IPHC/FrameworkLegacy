@@ -1,4 +1,4 @@
-#include "../interface/MuonHistoManager.h"
+#include "Plots/interface/MuonHistoManager.h"
 
 
 
@@ -40,7 +40,7 @@ void MuonHistoManager::FillSelStep(const vector<NTMuon>& muons, const int& iSelS
 		Histos[2][iChannel][iSelStep][iDataset].Fill(muons[i].p4.Eta(),weight);
 		Histos[3][iChannel][iSelStep][iDataset].Fill(muons[i].p4.Phi(),weight);
 		Histos[4][iChannel][iSelStep][iDataset].Fill(muons[i].D0,weight);
-		Histos[5][iChannel][iSelStep][iDataset].Fill(muons[i].Charge,weight);
+		Histos[5][iChannel][iSelStep][iDataset].Fill(muons[i].charge,weight);
 		Histos[6][iChannel][iSelStep][iDataset].Fill(muons[i].TrkIso03,weight);
 		Histos[7][iChannel][iSelStep][iDataset].Fill(muons[i].ECaloIso03,weight);
 		Histos[8][iChannel][iSelStep][iDataset].Fill(muons[i].HCaloIso03,weight);
