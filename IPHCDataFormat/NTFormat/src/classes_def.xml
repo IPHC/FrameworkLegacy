@@ -53,7 +53,8 @@
   <class name="IPHCTree::NTTrack"/>
 
   // Vectors
-  <class name="std::vector<IPHCTree::NTJetMet>"/>
+  <class name="std::vector<IPHCTree::NTJet>"/>
+  <class name="std::vector<IPHCTree::NTMET>"/>
   <class name="std::vector<IPHCTree::NTElectron>"/>
   <class name="std::vector<IPHCTree::NTMuon>"/>
   <class name="std::vector<IPHCTree::NTTau>"/>
@@ -67,7 +68,8 @@
   <class name="std::vector<IPHCTree::ZDecaysMC>"/>
 
   // Vector of Vector
-  <class name="std::vector<std::vector<IPHCTree::NTJetMet> >"/>
+  <class name="std::vector<std::vector<IPHCTree::NTJet> >"/>
+  <class name="std::vector<std::vector<IPHCTree::NTMET> >"/>
   <class name="std::vector<std::vector<IPHCTree::NTElectron> >"/>
   <class name="std::vector<std::vector<IPHCTree::NTMuon> >"/>
   <class name="std::vector<std::vector<IPHCTree::NTTau> >"/>
@@ -76,13 +78,30 @@
   <class name="std::vector<std::vector<IPHCTree::NTVertex> >"/>
 
   // MultiCollection
-  <class name="IPHCTree::MultiCollection<IPHCTree::NTJetMet>"/>
-  <class name="IPHCTree::MultiCollection<IPHCTree::NTElectron>"/>
-  <class name="IPHCTree::MultiCollection<IPHCTree::NTMuon>"/>
-  <class name="IPHCTree::MultiCollection<IPHCTree::NTTau>"/>
-  <class name="IPHCTree::MultiCollection<IPHCTree::NTPhoton>"/>
-  <class name="IPHCTree::MultiCollection<IPHCTree::NTTrack>"/>
-  <class name="IPHCTree::MultiCollection<IPHCTree::NTVertex>"/>
+  <class name="IPHCTree::MultiCollection<IPHCTree::NTJet>">
+     <field name="current_index_" transient="true"/>
+  </class>
+  <class name="IPHCTree::MultiCollection<IPHCTree::NTMET>">
+     <field name="current_index_" transient="true"/>
+  </class>
+  <class name="IPHCTree::MultiCollection<IPHCTree::NTElectron>">
+     <field name="current_index_" transient="true"/>
+  </class>
+  <class name="IPHCTree::MultiCollection<IPHCTree::NTMuon>">
+     <field name="current_index_" transient="true"/>
+  </class>
+  <class name="IPHCTree::MultiCollection<IPHCTree::NTTau>">
+     <field name="current_index_" transient="true"/>
+  </class>
+  <class name="IPHCTree::MultiCollection<IPHCTree::NTPhoton>">
+     <field name="current_index_" transient="true"/>
+  </class>
+  <class name="IPHCTree::MultiCollection<IPHCTree::NTTrack>">
+     <field name="current_index_" transient="true"/>
+  </class>
+  <class name="IPHCTree::MultiCollection<IPHCTree::NTVertex>">
+     <field name="current_index_" transient="true"/>
+  </class>
 
   
 </lcgdict>

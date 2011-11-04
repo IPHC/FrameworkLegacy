@@ -84,6 +84,7 @@ MiniTreeProducer::MiniTreeProducer (const edm::ParameterSet & iConfig)
 
   // Extract info for JetMET
   cfg.doJetMet         = iConfig.getParameter<bool>        ("doJetMet");  
+  cfg.doMuonCorrection = iConfig.getParameter<bool>        ("doMuonCorrection");
   cfg.jet_cut_pt       = iConfig.getParameter<double>      ("jet_cut_pt");
   cfg.jet_cut_eta      = iConfig.getParameter<double>      ("jet_cut_eta");
   cfg.jetBTagList      = iConfig.getParameter<std::vector<std::string> > ("jetBTagList"); 
@@ -561,31 +562,35 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
   // ------------------------
   if (cfg.doJetMet)
 	{
-		if (cfg.verbose>1) std::cout << "Filling muon correction for MET ..."  << std::endl;
-
-		edm::Handle<edm::ValueMap<reco::MuonMETCorrectionData> > muMEThandle;
-    iEvent.getByLabel("muonTCMETValueMapProducer", "muCorrData", muMEThandle);
-
-    if (!muMEThandle.isValid())
-    {
-      ERROR("Produce") << "MuonMETCorrectionData collection "
-                       << "is missing." << std::endl;
-    }
-
-  	edm::Handle<std::vector<reco::Muon> > recoMuonHandle;
-    iEvent.getByLabel("muons", recoMuonHandle);
-
-    if (!recoMuonHandle.isValid())
-    {
-      ERROR("Produce") << "reco::Muon collection "
-                       << "is missing." << std::endl;
-    }
-
     std::pair<float,float> SumMuMetCorr(0,0);
-    if (recoMuonHandle.isValid() && muMEThandle.isValid())
+ 
+    if (cfg.doMuonCorrection)
     {
-      SumMuMetCorr = 
-        fillMuonMET(muMEThandle.product(),recoMuonHandle.product());
+      if (cfg.verbose>1) std::cout << "Filling muon correction for MET ..."  << std::endl;
+
+      edm::Handle<edm::ValueMap<reco::MuonMETCorrectionData> > muMEThandle;
+      iEvent.getByLabel("muonTCMETValueMapProducer", "muCorrData", muMEThandle);
+
+      if (!muMEThandle.isValid())
+      {
+        ERROR("Produce") << "MuonMETCorrectionData collection "
+                         << "is missing." << std::endl;
+      }
+
+      edm::Handle<std::vector<reco::Muon> > recoMuonHandle;
+      iEvent.getByLabel("muons", recoMuonHandle);
+
+      if (!recoMuonHandle.isValid())
+      {
+        ERROR("Produce") << "reco::Muon collection "
+                         << "is missing." << std::endl;
+      }
+
+      if (recoMuonHandle.isValid() && muMEThandle.isValid())
+      {
+        SumMuMetCorr = 
+          fillMuonMET(muMEThandle,recoMuonHandle);
+      }
     }
 
 		if (cfg.verbose>1) std::cout << "Filling jet MET ..."  << std::endl;
@@ -1213,7 +1218,11 @@ void MiniTreeProducer::fillElectrons(edm::Event& iEvent,
     // Electron DB
 		myelec->DB = patelec->dB();
 
-    // Track info
+    // is GSF electron ?
+    myelec->isGsfElectron = patelec->gsfTrack().isNonnull();
+
+    // ------------------- Track info -----------------------
+
     if (patelec->gsfTrack().isNonnull())
 		{
       myelec->nLost = patelec->gsfTrack()-> 
@@ -1240,20 +1249,17 @@ void MiniTreeProducer::fillElectrons(edm::Event& iEvent,
 
 		}
 
-
     // --------------------- Conversion ---------------------
  
     // returns the best candidate partner
     ConversionFinder convFinder;
+
     ConversionInfo convInfo = 
-      convFinder.getConversionInfo(*patelec, tracks, bField);
+            convFinder.getConversionInfo(*patelec, tracks, bField);
 
     // fill informations 
     myelec->deltaDistance = convInfo.dist();
     myelec->deltaCotTheta = convInfo.dcot();
-
-    // is GSF electron ?
-    myelec->isGsfElectron = (patelec->gsfTrack().isNonnull()!=0);
 
     // --------------------- Electron ID -----------------------
 	
@@ -1779,8 +1785,8 @@ bool MiniTreeProducer::getBfieldFromDCS(edm::Event& iEvent, const edm::EventSetu
 //
 // ----------------------------------------------------------------------------
 std::pair<float,float> MiniTreeProducer::fillMuonMET(
-                   const edm::ValueMap<reco::MuonMETCorrectionData>* muMET, 
-                   const std::vector<reco::Muon>* muons )
+         const edm::Handle<edm::ValueMap<reco::MuonMETCorrectionData> >& muMET, 
+         const edm::Handle<std::vector<reco::Muon> >& muons )
 
 {
 	// Reseting output variables

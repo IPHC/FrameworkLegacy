@@ -35,15 +35,30 @@
   <class name="IPHCTree::MTTrack"/>
 
   // Multicollection
-  <class name="IPHCTree::MultiCollection<IPHCTree::MTJetMet>"/>
-  <class name="IPHCTree::MultiCollection<IPHCTree::MTJet>"/>   
-  <class name="IPHCTree::MultiCollection<IPHCTree::MTMET>"/>   
-  <class name="IPHCTree::MultiCollection<IPHCTree::MTElectron>"/>
-  <class name="IPHCTree::MultiCollection<IPHCTree::MTMuon>"/>   
-  <class name="IPHCTree::MultiCollection<IPHCTree::MTTau>"/>    
-  <class name="IPHCTree::MultiCollection<IPHCTree::MTTrack>"/>  
-  <class name="IPHCTree::MultiCollection<IPHCTree::MTVertex>"/> 
-  <class name="IPHCTree::MultiCollection<IPHCTree::MTPhoton>"/> 
+  <class name="IPHCTree::MultiCollection<IPHCTree::MTJet>">
+     <field name="current_index_" transient="true"/>
+  </class>
+  <class name="IPHCTree::MultiCollection<IPHCTree::MTMET>">
+     <field name="current_index_" transient="true"/>
+  </class>
+  <class name="IPHCTree::MultiCollection<IPHCTree::MTElectron>">
+     <field name="current_index_" transient="true"/>
+  </class>
+  <class name="IPHCTree::MultiCollection<IPHCTree::MTMuon>">
+     <field name="current_index_" transient="true"/>
+  </class>
+  <class name="IPHCTree::MultiCollection<IPHCTree::MTTau>">
+     <field name="current_index_" transient="true"/>
+  </class>
+  <class name="IPHCTree::MultiCollection<IPHCTree::MTPhoton>">
+     <field name="current_index_" transient="true"/>
+  </class>
+  <class name="IPHCTree::MultiCollection<IPHCTree::MTTrack>">
+     <field name="current_index_" transient="true"/>
+  </class>
+  <class name="IPHCTree::MultiCollection<IPHCTree::MTVertex>">
+     <field name="current_index_" transient="true"/>
+  </class>
 
   // Vector
   <class name="std::vector<IPHCTree::MTJetMet>"/> 

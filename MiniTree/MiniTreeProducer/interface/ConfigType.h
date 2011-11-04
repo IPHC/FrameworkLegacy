@@ -72,6 +72,7 @@ struct ConfigType
 
   // Extract info for JetMET
   bool          doJetMet;
+  bool          doMuonCorrection;
   double 	      jet_cut_pt;
   double 	      jet_cut_eta;
   std::vector<std::string> jetBTagList;

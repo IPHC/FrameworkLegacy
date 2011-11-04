@@ -52,7 +52,7 @@ typedef math::XYZPoint Point;
 //
 // Original Author:  Jeremy ANDREA
 //         Created:  Sun Nov  1 21:30:20 CET 2009
-// $Id: MiniTreeProducer.h,v 1.10 2011/05/03 11:58:24 alebihan Exp $
+// $Id: MiniTreeProducer.h,v 1.2 2011/11/04 12:25:21 econte Exp $
 //
 //
 
@@ -242,8 +242,8 @@ class MiniTreeProducer : public edm::EDProducer
                  const reco::BeamSpot* & bs,
                  const pat::TriggerEvent* patTriggerEvent);
   std::pair<float,float> fillMuonMET(
-                   const edm::ValueMap<reco::MuonMETCorrectionData>* muMET, 
-                   const std::vector<reco::Muon>* muons );
+      const edm::Handle<edm::ValueMap<reco::MuonMETCorrectionData> >& muMET, 
+      const edm::Handle<std::vector<reco::Muon> >& muons );
   void fillJetMET(edm::Event& iEvent, 
                   const edm::EventSetup& iSetup,
                   std::auto_ptr<IPHCTree::MTEvent>& evt,
