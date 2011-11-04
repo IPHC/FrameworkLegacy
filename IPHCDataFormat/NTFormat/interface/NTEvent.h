@@ -20,7 +20,6 @@
 #include "NTPileUp.h"
 #include "KeyedCollection.h"
 #include "MultiCollection.h"
-#include "TransientData.h"
 
 
 namespace IPHCTree
@@ -49,15 +48,13 @@ namespace IPHCTree
     MultiCollection<NTMuon>     muons;     //! Muon collection
     MultiCollection<NTTau>      taus;      //! Tau collection
     MultiCollection<NTPhoton>   photons;	 //! Photon collection
-    MultiCollection<NTJetMet>   jetMet;    //! JetMet collection
+    MultiCollection<NTMET>      met;       //! Met collection (only one)
+    MultiCollection<NTJet>      jets;      //! Jet collection
 
     MultiCollection<NTTrack>    tracks;    //! Track collection
     MultiCollection<NTVertex>   vertices;  //! Primary vertex collection
 
     KeyedCollection<Float_t>    others;    //! Additionnal variables
-
-  private :
-    TransientData               transient; //! Handle transient data
 
     // -------------------------------------------------------------
     //                       method members
@@ -99,8 +96,11 @@ namespace IPHCTree
     NTVertex* NewVertex()
     { return vertices.New(); }
 
-    NTJetMet* NewJetMet()
-    { return jetMet.New(); }
+    NTJet* NewJet()
+    { return jets.New(); }
+
+    NTMET* NewMet()
+    { return met.New(); }
 
     NTTrack* NewTrack()
     { return tracks.New(); }
@@ -125,8 +125,11 @@ namespace IPHCTree
     void NewTrack    (const NTTrack& track   )
     { tracks.push_back(track); }
 
-    void NewJetMet   (const NTJetMet& jetmet  )
-    { jetMet.push_back(jetmet); }
+    void NewJet      (const NTJet& myjet  )
+    { jets.push_back(myjet); }
+
+    void NewMet      (const NTMET& mymet  )
+    { met.push_back(mymet); }
 
     void PrintTriggerPassed(std::ostream & os) const
     {

@@ -18,17 +18,33 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
+    // ---------------------- general info -------------------------
+
     //! Is coming from Ecal Barrel ?
     Bool_t isEB;
 
     //! Correspond to elec->ecalDrivenSeed() in PAT
     Bool_t isEcalDriven;
 
+    //! ET of the SuperCluster
+    Float_t ET_SC;
+
+    // ---------------------- track info ---------------------------
+
     //! Is there a GSF track linked to the electron ?
     Bool_t isGsfElectron;
 
-    //! ET of the SuperCluster
-    Float_t ET_SC;
+    //! Number of lost hits for the GSF tracks
+    Short_t nLost;
+ 
+    // ------------------- conversion info -------------------------
+
+    //! to do
+    Float_t deltaCotTheta;
+
+    //! to do
+    Float_t deltaDistance;
+
 
   public:
     // -------------------------------------------------------------

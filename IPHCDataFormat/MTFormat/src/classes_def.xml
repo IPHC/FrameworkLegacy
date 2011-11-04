@@ -14,14 +14,20 @@
   <class name="std::map<Char_t,std::vector<IPHCTree::MTInteraction> >"/>
 
   // Physics Object
-  <class name="IPHCTree::MTLepton"/>
   <class name="IPHCTree::MTJet"/>   
   <class name="IPHCTree::MTMET"/>   
   <class name="IPHCTree::MTJetMet"/>
   <class name="IPHCTree::MTPhoton"/>
-  <class name="IPHCTree::MTElectron"/>
-  <class name="IPHCTree::MTMuon"/>
-  <class name="IPHCTree::MTTau"/>
+  <class name="IPHCTree::MTLepton"/>
+  <class name="IPHCTree::MTElectron">
+     <field name="charge" transient="true"/>
+  </class>
+  <class name="IPHCTree::MTMuon">
+     <field name="charge" transient="true"/>
+  </class>
+  <class name="IPHCTree::MTTau">
+     <field name="charge" transient="true"/>
+  </class>
 
   // Reconstructed objects
   <class name="IPHCTree::MTVertex"/>

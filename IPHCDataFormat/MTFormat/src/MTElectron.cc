@@ -21,9 +21,6 @@ void MTElectron::Reset(bool constructor_call)
   e2x5Max         = -999;
   e5x5            = -999;
   fbrem           = -999;
-  deltaCotTheta   = -999;
-  deltaDistance   = -999;
-  nLost           = 0;
   caloEnergy      = -999;
   deltaEtaSeedClusterTrackAtCalo = -999;
   deltaPhiSeedClusterTrackAtCalo = -999;
@@ -58,10 +55,7 @@ void MTElectron::Dump(std::ostream & os) const
   os << " sigmaIetaIeta = " << sigmaIetaIeta;
   os << " e2x5Max = " << e2x5Max;
   os << " e5x5 = " << e5x5 << std::endl; 
-  os << " fbrem = " << fbrem;
-  os << " deltaCotTheta = " << deltaCotTheta;
-  os << " deltaDistance = " << deltaDistance << std::endl;
-  os << " nLost = " << nLost;
+  os << " fbrem = " << fbrem << std::endl;
   os << " caloEnergy = " << caloEnergy;
   os << " deltaEtaSeedClusterTrackAtCalo = " << deltaEtaSeedClusterTrackAtCalo;
   os << " deltaPhiSeedClusterTrackAtCalo = " << deltaPhiSeedClusterTrackAtCalo;

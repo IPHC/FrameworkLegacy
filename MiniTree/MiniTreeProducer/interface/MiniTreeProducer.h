@@ -1,5 +1,6 @@
 #ifndef __MiniTreeProducer_H__
 #define __MiniTreeProducer_H__
+
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
@@ -68,7 +69,6 @@ typedef math::XYZPoint Point;
 //----------------- cmssw includes
 
 #include "FWCore/Framework/interface/Frameworkfwd.h"
-
 #include "FWCore/Framework/interface/Event.h"
 #include <FWCore/Framework/interface/Run.h>
 
@@ -109,7 +109,7 @@ typedef math::XYZPoint Point;
 #include "PhysicsTools/SelectorUtils/interface/PFJetIDSelectionFunctor.h"
 #include "DataFormats/HLTReco/interface/TriggerEvent.h"
 #include "DataFormats/HepMCCandidate/interface/PdfInfo.h"
-
+#include "MiniTree/MiniTreeProducer/interface/ConfigType.h" 
 
 //--------------------ROOT includes
 #include "TFile.h"
@@ -181,84 +181,9 @@ class MiniTreeProducer : public edm::EDProducer
 
 
   // ----------member data ---------------------------
+
+  ConfigType cfg;
  
-  // Extract MiniTreeProducer settings
-  unsigned int  verbose;
-  bool          isAOD; 
-  bool          isData; 
-
-  // Extract info for Triggers
-  bool          doTrigger;
-  edm::InputTag      TriggerMenu;
-  bool	        saveAllTriggers;
-  std::string   hltJetsMatcher;
-  std::vector<std::string> triggerList;
-
-  // Extract info for Electrons
-  bool          doElectrons;
-  double	      electron_cut_pt;
-  double	      electron_cut_eta;
-  bool          electron_saveAllID;
-  std::vector<std::string> electron_IDlist;
-  std::vector<edm::InputTag> electronProducer;
-
-  // Extract info for Photons
-  bool 	       	doPhotons;
-  double	      photon_cut_pt;
-  double	      photon_cut_eta;
-  std::vector<edm::InputTag>      photonProducer;
-
-  // Extract info for Muons
-  bool 		      doMuons;
-  double        muon_cut_pt;
-  double 	      muon_cut_eta;
-  bool          muon_cut_sta;
-  bool          muon_cut_trk;
-  bool          muon_cut_glb;
-  bool          muon_cut_cal;
-  std::vector<std::string> muon_IDlist;
-  std::vector<edm::InputTag>  muonProducer;
-
-  // Extract info for Taus
-  bool     		  doTaus;
-  double        tau_cut_pt;
-  double 	      tau_cut_eta;
-  bool          tau_saveAllID;
-  std::vector<std::string> tauHLTmatching;
-  std::vector<std::string> tau_IDlist;
-  std::vector<edm::InputTag> tauProducer;
-
-  // Extract info for Tracks
-  bool          doTracks;
-  double	      track_cut_pt;
-  double	      track_cut_eta;
-  std::vector<edm::InputTag>      trackProducer; 
-
-  // Extract info for Vertices
-  bool          doVertices;
-  bool		      saveAllVertex;
-  std::vector<edm::InputTag>      vertexProducer;
-
-  // Extract info for BeamSpot
-  bool          doBeamSpot; 
-  edm::InputTag	beamSpotProducer; 
-
-  // Extract info for JetMET
-  typedef std::vector<edm::ParameterSet> VParameters;
-  bool          doJetMet;
-  double 	      jet_cut_pt;
-  double 	      jet_cut_eta;
-  std::vector<std::string> jetBTagList;
-  std::vector<std::string> jetHLTmatching;
-  VParameters   jetmetProducer;
-
-  // Extract info for Pile-Up
-  bool           doPileUp; 
-  edm::InputTag	 rho_PUUE_dens;
-  edm::InputTag	 neutralRho_PUUE_dens;
-
-  // Extract info for Monte Carlo
-  bool 	      	doGenParticleCollection;
 
 
   JetVertexMain* vertexAlgo;
@@ -286,24 +211,29 @@ class MiniTreeProducer : public edm::EDProducer
   void fillPhotons(edm::Event& iEvent, 
                    const edm::EventSetup& iSetup,
                    std::auto_ptr<IPHCTree::MTEvent>& evt,
-                   const std::vector<pat::Photon>* gammas);
+                   const edm::Handle<std::vector<pat::Photon> >& gammas,
+                   const pat::TriggerEvent* patTriggerEvent);
   void fillMuons(edm::Event& iEvent, 
                  const edm::EventSetup& iSetup,
                  std::auto_ptr<IPHCTree::MTEvent>& evt,
-  	           	 const std::vector<pat::Muon>* tracks,
-                 const TransientTrackBuilder* trackBuilder,
-                 const reco::GenParticleCollection* genParticles,
-                 const reco::BeamSpot* & bs,
-                 const reco::Vertex* & vp);
-  void fillElectrons(edm::Event& iEvent, 
-                 const edm::EventSetup& iSetup,
-                 std::auto_ptr<IPHCTree::MTEvent>& evt,
-  	           	 const std::vector<pat::Electron>* electrons,
+  	           	 const edm::Handle< std::vector<pat::Muon> >& muons,
                  const TransientTrackBuilder* trackBuilder,
                  const reco::GenParticleCollection* genParticles,
                  const reco::BeamSpot* & bs,
                  const reco::Vertex* & vp,
-                 const float& bField);
+                 const pat::TriggerEvent* patTriggerEvent);
+  void fillElectrons(edm::Event& iEvent, 
+                 const edm::EventSetup& iSetup,
+                 std::auto_ptr<IPHCTree::MTEvent>& evt,
+                 const edm::Handle< std::vector<pat::Electron> >& electrons,
+                 const TransientTrackBuilder* trackBuilder,
+                 const reco::GenParticleCollection* genParticles,
+                 const reco::BeamSpot* & bs,
+                 const reco::Vertex* & vp,
+                 const float& bField,
+                 const edm::Handle<std::vector<reco::Track> >& tracks,
+                 const pat::TriggerEvent* patTriggerEvent);
+
   void fillTaus(edm::Event& iEvent, 
                  const edm::EventSetup& iSetup,
                  std::auto_ptr<IPHCTree::MTEvent>& evt,
@@ -343,29 +273,6 @@ void fillGenParticles(edm::Event& iEvent,
 
   bool getBfieldFromDCS(edm::Event& iEvent, const edm::EventSetup& iSetup, float& evt_bField);
   bool getBfieldFromIDEAL(edm::Event& iEvent, const edm::EventSetup& iSetup, float& evt_bField);
-  
-  JetIDSelectionFunctor   *jetSel_;
-  PFJetIDSelectionFunctor *pfJetSel_;
-  
-  
-  
-  
-  
-  double xfx(const double &x, const double &Q, int fl) {
-    double f[13], mx = x, mQ = Q;
-    evolvepdf_(mx, mQ, f);
-    return f[fl+6];
-  }
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
   
 
 };

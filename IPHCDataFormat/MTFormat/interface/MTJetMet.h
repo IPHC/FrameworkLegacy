@@ -67,6 +67,36 @@ namespace IPHCTree
     void NewJet (const MTJet& jet)
     { jets.push_back(jet); }
 
+    //! Give the number of jets
+    unsigned int size() const
+    { return jets.size(); }
+
+    //! Add a new jets
+    void push_back(const IPHCTree::MTJet& myjet)
+    { jets.push_back(myjet); }
+
+    //! Give the first jet
+    const IPHCTree::MTJet& front() const
+    { return jets.front(); }
+
+    IPHCTree::MTJet& front()
+    { return jets.front(); }
+
+    //! Give the last jet
+    const IPHCTree::MTJet& back() const
+    { return jets.back(); }
+
+    IPHCTree::MTJet& back()
+    { return jets.back(); }
+
+    //! operator [] overlaoding
+    const IPHCTree::MTJet& operator[] (unsigned int i) const
+    { return jets[i]; }
+
+    IPHCTree::MTJet& operator[] (unsigned int i)
+    { return jets[i]; }
+
+
   };
 }
 

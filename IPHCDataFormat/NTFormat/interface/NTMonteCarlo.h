@@ -13,6 +13,7 @@
 #include "WDecaysMC.h"
 #include "ZDecaysMC.h"
 #include "topDecaysMC.h"
+#include "NTGenParticle.h"
 
 
 namespace IPHCTree
@@ -28,8 +29,6 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    Int_t            procId;       //! process id
-    std::string      eventType;    //! process id (string)
     Int_t            ptHat;        //! Pythia ptHat value
     std::pair<Float_t,Float_t> x;  //! Feynman variable (p_L / p)
     Float_t          Q_scale;      //! Q scale
@@ -37,7 +36,9 @@ namespace IPHCTree
     //! PDG id of partons involved in collision
     std::pair<Char_t,Char_t> partonFlavor;
 
- 
+    //! Collection of generated particles
+    std::vector<IPHCTree::NTGenParticle> genParticles; 
+
     //! Characterizes W decay mode
     UInt_t TMEME;
     //  T = # of taus from W decays 	
@@ -45,7 +46,7 @@ namespace IPHCTree
     //  E = # of electrons from W->tau->electron
     //  M = # of muons from W->muon	
     //  E = # of electrons from W->electron
-    
+  
 
     // --- generated taus
     std::vector < TLorentzVector> Generatedtaus;
@@ -86,6 +87,16 @@ namespace IPHCTree
     //! Alias to Dump method
     void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
+
+    NTGenParticle* NewGenParticle()
+    { 
+      genParticles.push_back(NTGenParticle());
+      return &genParticles.back();
+    }
+
+    void NewGenParticle(const NTGenParticle& part)
+    { genParticles.push_back(part); }
+
 
   };
 }

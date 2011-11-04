@@ -12,7 +12,8 @@ void NTEvent::Reset()
   pileup.Reset();         vertices.Reset();
   electrons.Reset();      muons.Reset();
   taus.Reset();           photons.Reset();
-  jetMet.Reset();         tracks.Reset();
+  jets.Reset();           met.Reset(); 
+  tracks.Reset();
 }
 
 
@@ -25,7 +26,8 @@ void NTEvent::Dump(std::ostream & os) const
   pileup.Dump(os);         vertices.Dump(os);
   electrons.Dump(os);      muons.Dump(os);
   taus.Dump(os);           photons.Dump(os);
-  jetMet.Dump(os);         tracks.Dump(os);
+  jets.Dump(os);           met.Dump(os);
+         tracks.Dump(os);
 }
 
 

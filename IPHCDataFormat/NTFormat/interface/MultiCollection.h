@@ -98,6 +98,22 @@ namespace IPHCTree
       return 0;
     }
 
+    //! Getting list of collections
+    void GetCollectionList(std::set<std::string>& names) const
+    { 
+      names.clear();
+      for (unsigned int i=0;i<names_.size();i++)
+        names.insert(names_[i]);
+    }
+
+    //! Check if a collection exist
+    bool DoYouKnowCollection(const std::string& name) const
+    {
+      for (unsigned int i=0;i<names_.size();i++)
+        if (names_[i]==name) return true;
+      return false;
+    }
+
     // ------- Accessor and Mutator @ Element level ----------
 
     //! operator [] overloading 
@@ -168,7 +184,22 @@ namespace IPHCTree
 
 		//! Display information related to the MultiCollection
     //! \param[in,out] os   a log stream
-    void Dump(std::ostream & os = std::cout) const;
+    void Dump(std::ostream & os = std::cout) const
+    {
+      if (names_.size()!=collections_.size())
+      {
+        os << "-- internal problems with KeyedCollection --" << std::endl;
+      }
+      else
+      {
+        for (unsigned int i=0;i<names_.size();i++)
+        {
+          os << names_[i] << " : size = " 
+             << collections_[i].size()
+             << std::endl;
+        }
+      }
+    }
 
     //! Alias to Dump method
     void PrintInfo(std::ostream & os = std::cout) const
@@ -176,27 +207,6 @@ namespace IPHCTree
 
 
 	};
-
-  // -------------------------------------------------------------------------
-  // Dump
-  // --------------------------------------------------------------------------
-  template <class T>
-  void MultiCollection<T>::Dump(std::ostream & os) const
-  {
-    if (names_.size()!=collections_.size())
-    {
-      os << "-- internal problems with KeyedCollection --" << std::endl;
-    }
-    else
-    {
-      for (unsigned int i=0;i<names_.size();i++)
-      {
-        os << names_[i] << " : size = " 
-                        << collections_[i].size()
-                        << std::endl;
-      }
-    }
-  }
 
 
 

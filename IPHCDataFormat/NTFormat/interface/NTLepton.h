@@ -29,8 +29,11 @@ namespace IPHCTree
     //! vertex origin
     TVector3 vertex;
 
-    //! electric charge
+    //! (PERSISTENT) electric charge
     Bool_t charge_;
+
+    //! (Transient) electric charge
+    Float_t charge;
 
     //! MC information : origin of the lepton 
     Int_t LeptonOrigin;
@@ -97,7 +100,7 @@ namespace IPHCTree
     { Dump(os); }
 
 		//! Get the charge of the particle
-    signed int charge() const
+    signed int getCharge() const
 		{
 			if (charge_) return +1.;
 			else return -1.;

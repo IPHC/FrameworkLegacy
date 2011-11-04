@@ -13,9 +13,9 @@ void MTEvent::Reset()
   pileup.Reset();
   electrons.Reset();      muons.Reset();
   taus.Reset();           photons.Reset();
-  jetMet.Reset();       tracks.Reset();
+  jets.Reset();       tracks.Reset();
   vertices.Reset();       beamSpot.Reset();
-  others.Reset();
+  others.Reset();         met.Reset();
 }
 
 
@@ -29,9 +29,9 @@ void MTEvent::Dump(std::ostream & os) const
   pileup.Dump(os);
   electrons.Dump(os);      muons.Dump(os);
   taus.Dump(os);           photons.Dump(os);
-  jetMet.Dump(os);         tracks.Dump(os);
+  jets.Dump(os);         tracks.Dump(os);
   vertices.Dump(os);       beamSpot.Dump(os);
-  others.Dump(os);
+  others.Dump(os);         met.Dump(os);
 }
 
 

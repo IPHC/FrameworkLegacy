@@ -51,16 +51,14 @@ namespace IPHCTree
     MultiCollection<MTMuon>     muons;     //! Muon collection
     MultiCollection<MTTau>      taus;      //! Tau collection
     MultiCollection<MTPhoton>   photons;	 //! Photon collection
-    MultiCollection<MTJetMet>   jetMet;    //! JetMet collection
+    MultiCollection<MTMET>      met;       //! Met collection (only one)
+    MultiCollection<MTJet>      jets;      //! Jet collection
 
     MultiCollection<NTTrack>    tracks;    //! Track collection
     MultiCollection<MTVertex>   vertices;  //! Primary vertex collection
     MTBeamSpot                  beamSpot;  //! Beam Spot
 
     KeyedCollection<Float_t>    others;    //! Additionnal variables
-
-  private:
-    TransientData transient;
 
     // -------------------------------------------------------------
     //                       method members
@@ -102,8 +100,11 @@ namespace IPHCTree
     MTVertex* NewVertex()
     { return vertices.New(); }
 
-    MTJetMet* NewJetMet()
-    { return jetMet.New(); }
+    MTJet* NewJet()
+    { return jets.New(); }
+
+    MTMET* NewMet()
+    { return met.New(); }
 
     NTTrack* NewTrack()
     { return tracks.New(); }
@@ -127,8 +128,11 @@ namespace IPHCTree
     void NewTrack    (const MTTrack& track   )
     { tracks.push_back(track); }
 
-    void NewJetMet   (const MTJetMet& jetmet  )
-    { jetMet.push_back(jetmet); }
+    void NewJet      (const MTJet& myjet  )
+    { jets.push_back(myjet); }
+
+    void NewMET      (const MTMET& mymet  )
+    { met.push_back(mymet); }
 
   };
 }

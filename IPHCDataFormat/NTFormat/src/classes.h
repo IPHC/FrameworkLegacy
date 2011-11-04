@@ -22,11 +22,11 @@ namespace{
     edm::Wrapper<IPHCTree::NTEvent>        NTEvent;
     edm::Wrapper<IPHCTree::NTGeneral>      NTGeneral;
     edm::Wrapper<IPHCTree::NTTrigger>      NTTrigger;
-    edm::Wrapper<IPHCTree::TransientData>  Transient;
     edm::Wrapper<IPHCTree::NTPileUp>       NTPileUp;
 
     // Monte Carlo
-    edm::Wrapper<IPHCTree::NTMonteCarlo>   NTMonteCarlo;
+    edm::Wrapper<IPHCTree::NTMonteCarlo>   NTMonteCarlo_;
+    edm::Wrapper<IPHCTree::NTGenParticle>  NTGenParticle_;
     edm::Wrapper<IPHCTree::TopDecaysMC>    TopDecays;
     edm::Wrapper<IPHCTree::WDecaysMC>      WDecays;
     edm::Wrapper<IPHCTree::ZDecaysMC>      ZDecays;
@@ -64,6 +64,8 @@ namespace{
     edm::Wrapper<std::vector<IPHCTree::NTTrack> >    VNTTrack;
     edm::Wrapper<std::vector<IPHCTree::NTVertex> >   VNTVertex;
 
+    edm::Wrapper<std::vector<IPHCTree::NTGenParticle> >VecNTGenParticle;
+    edm::Wrapper<std::vector<IPHCTree::NTGenParticle*> >VecNTGenParticle2;
     edm::Wrapper<std::vector<IPHCTree::TopDecaysMC> >  VecTopDecays;
     edm::Wrapper<std::vector<IPHCTree::WDecaysMC> >    VecWDecays;
     edm::Wrapper<std::vector<IPHCTree::ZDecaysMC> >    VecZDecays;

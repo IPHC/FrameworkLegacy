@@ -15,6 +15,9 @@ void NTElectron::Reset(bool constructor_call)
   isGsfElectron = false;
   isEB          = false;
   ET_SC         = 0.;
+  deltaCotTheta   = -999;
+  deltaDistance   = -999;
+  nLost           = 0;
 }
 
 
@@ -26,9 +29,12 @@ void NTElectron::Dump(std::ostream & os) const
 	os << "Object: Electron " << std::endl;
   NTLepton::Dump(os);
   os << " isEB = "          << isEB; 
-	os << " isGsfElectron = " << isGsfElectron;
   os << " isEcalDriven = "  << isEcalDriven;
   os << " ET_SC = "         << ET_SC << std::endl;
+  os << " deltaCotTheta = " << deltaCotTheta;
+  os << " deltaDistance = " << deltaDistance << std::endl;
+	os << " isGsfElectron = " << isGsfElectron;
+  os << " nLost = " << nLost << std::endl;
 }
  
   

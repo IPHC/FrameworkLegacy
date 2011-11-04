@@ -17,21 +17,32 @@
   <class name="IPHCTree::NTEvent"/>
   <class name="IPHCTree::NTGeneral"/>
   <class name="IPHCTree::NTTrigger"/>
-  <class name="IPHCTree::TransientData"/>
   <class name="IPHCTree::NTPileUp"/>
 
   // Monte Carlo
   <class name="IPHCTree::NTMonteCarlo"/>
+  <class name="IPHCTree::NTGenParticle">
+     <field name="mother" transient="true"/>
+     <field name="daughters" transient="true"/>
+  </class>
   <class name="IPHCTree::TopDecaysMC"/>
   <class name="IPHCTree::WDecaysMC"/>
   <class name="IPHCTree::ZDecaysMC"/>
 
   // Particle
   <class name="IPHCTree::NTParticle"/>
-  <class name="IPHCTree::NTLepton"/>
-  <class name="IPHCTree::NTElectron"/>
-  <class name="IPHCTree::NTMuon"/>
-  <class name="IPHCTree::NTTau"/>
+  <class name="IPHCTree::NTLepton">
+     <field name="charge" transient="true"/>
+  </class>
+  <class name="IPHCTree::NTElectron">
+     <field name="charge" transient="true"/>
+  </class>
+  <class name="IPHCTree::NTMuon">
+     <field name="charge" transient="true"/>
+  </class>
+  <class name="IPHCTree::NTTau">
+     <field name="charge" transient="true"/>
+  </class>
   <class name="IPHCTree::NTJet"/>
   <class name="IPHCTree::NTMET"/>
   <class name="IPHCTree::NTJetMet"/>
@@ -49,6 +60,8 @@
   <class name="std::vector<IPHCTree::NTPhoton>"/>
   <class name="std::vector<IPHCTree::NTTrack>"/>
   <class name="std::vector<IPHCTree::NTVertex>"/>
+  <class name="std::vector<IPHCTree::NTGenParticle>"/>
+  <class name="std::vector<IPHCTree::NTGenParticle*>"/>
   <class name="std::vector<IPHCTree::TopDecaysMC>"/>
   <class name="std::vector<IPHCTree::WDecaysMC>"/>
   <class name="std::vector<IPHCTree::ZDecaysMC>"/>

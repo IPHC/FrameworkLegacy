@@ -72,6 +72,10 @@ namespace IPHCTree
     float misEt() const 
     { return p2.Mod(); }
 
+    //! Accessing to PT of MET
+    float met() const 
+    { return p2.Mod(); }
+
     //! Apply correction
     void doCorrection (float SumMuMetCorrX, float SumMuMetCorrY)
     { 

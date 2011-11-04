@@ -61,6 +61,35 @@ namespace IPHCTree
     void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 
+    //! Give the number of jets
+    unsigned int size() const
+    { return jets.size(); }
+
+    //! Add a new jets
+    void push_back(const IPHCTree::NTJet& myjet)
+    { jets.push_back(myjet); }
+
+    //! Give the first jet
+    const IPHCTree::NTJet& front() const
+    { return jets.front(); }
+
+    IPHCTree::NTJet& front()
+    { return jets.front(); }
+
+    //! Give the last jet
+    const IPHCTree::NTJet& back() const
+    { return jets.back(); }
+
+    IPHCTree::NTJet& back()
+    { return jets.back(); }
+
+    //! operator [] overlaoding
+    const IPHCTree::NTJet& operator[] (unsigned int i) const
+    { return jets[i]; }
+
+    IPHCTree::NTJet& operator[] (unsigned int i)
+    { return jets[i]; }
+
   };
 }
 #endif

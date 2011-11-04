@@ -54,15 +54,6 @@ namespace IPHCTree
     Float_t fbrem;
     
     //! to do
-    Float_t deltaCotTheta;
-
-    //! to do
-    Float_t deltaDistance;
-
-    //! Number of lost hits for the GSF tracks
-    Short_t nLost;
-
-    //! to do
     Float_t caloEnergy;
 
     //! to do

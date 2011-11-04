@@ -11,6 +11,10 @@
 // ROOT headers
 #include <TROOT.h> 
 
+// IPHC headers
+#include "NTTriggerPathType.h"
+
+
 namespace IPHCTree
 {
 
@@ -68,9 +72,16 @@ namespace IPHCTree
     { return tablenames_[0]; }
 
 		//! Is the given trigger path fired
-    bool IsTriggerFired(const std::string& name) const
+    bool IsFired(const std::string& name) const
     {
-      return results_[GetIndex(name)];
+      if (name.find("*")!=std::string::npos)
+      {
+        return results_[GetIndex(name)];
+      }
+      else
+      {
+        return IsFiredWithWildcards(name);
+      }
     }
 
 		//! Is the given trigger path fired
@@ -78,6 +89,11 @@ namespace IPHCTree
     {
       return prescales_[GetIndex(name)];
     }
+
+		//! Is the given trigger path fired
+    bool GetSubTable(const std::string& name,
+                     std::vector<IPHCTree::NTTriggerPathType>& subtable) const;
+
 
     // ---------------- Displaying ---------------------------
 
@@ -88,7 +104,6 @@ namespace IPHCTree
     //! Alias to Dump method
     void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
-
 
     void FillTableName(const std::string& L1name, const std::string& HLTname);
 
@@ -108,6 +123,15 @@ namespace IPHCTree
       }
       return std::distance(names_.begin(),found); 
     }
+
+		//! Is a trigger path consistent with with name fired 
+    //! (wildcard '*' is allowed)
+    bool IsFiredWithWildcards(const std::string& name) const;
+
+
+    //! Is the two names are consistent (including wildcard)
+    bool NameCompatible(const std::string& pattern,
+                        const std::string& name) const;
 
 	};
 }

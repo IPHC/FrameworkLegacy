@@ -16,7 +16,6 @@
 #pragma link C++ class IPHCTree::NTEvent+;
 #pragma link C++ class IPHCTree::NTGeneral+;
 #pragma link C++ class IPHCTree::NTTrigger+;
-#pragma link C++ class IPHCTree::TransientData+;
 #pragma link C++ class IPHCTree::NTPileUp+;
 
 // Monte Carlo

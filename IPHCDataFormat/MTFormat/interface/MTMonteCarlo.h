@@ -4,9 +4,6 @@
 // STL headers
 #include <map>
 
-// CMSSW headers
-#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
-
 // IPHC headers (NTuple format)
 #include "../../NTFormat/interface/NTMonteCarlo.h"
 
@@ -18,22 +15,6 @@ namespace IPHCTree
   //! Extension of NTMonteCarlo with GeneratedParticles
   class MTMonteCarlo : public NTMonteCarlo
   {
-
-    // -------------------------------------------------------------
-    //                        data members
-    // -------------------------------------------------------------
-  public:
-
-    //! Skimmed GenParticleCollection
-    reco::GenParticleCollection GPC;
-
-    //! List of GeneratedParticle daughters 
-    std::map < unsigned int, std::vector < signed int > > GPC_list_index_dau;
-
-    //! List of GeneratedParticle daughters 
-    std::map < unsigned int, std::vector < signed int > > GPC_list_index_mot;
-
-
     // -------------------------------------------------------------
     //                       method members
     // -------------------------------------------------------------
@@ -58,8 +39,6 @@ namespace IPHCTree
     virtual void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 
-    //! Filling the GeneratedParticle collection 
-    void fillGenInfo(reco::GenParticleCollection* genParticles);
   };
 }
 #endif

@@ -1,5 +1,6 @@
 #include "MiniTree/MiniTreeProducer/interface/MiniTreeProducer.h"
-//using namespace std;
+#include "MiniTree/MiniTreeProducer/interface/MonteCarloOrigin.h"
+
 
 // ----------------------------------------------------------------------------
 // Constructor
@@ -9,90 +10,96 @@ MiniTreeProducer::MiniTreeProducer (const edm::ParameterSet & iConfig)
 	std::cout << "Constructor of MiniTreeProducer - BEGIN" << std::endl;
 
   // Extract MiniTreeProducer settings
-  verbose           = iConfig.getParameter<unsigned int>  ("verbose");
-  isAOD             = iConfig.getParameter<bool>          ("isAOD");
-  isData            = iConfig.getParameter<bool>          ("isData");
+  cfg.verbose           = iConfig.getParameter<unsigned int>  ("verbose");
+  cfg.isAOD             = iConfig.getParameter<bool>          ("isAOD");
+  cfg.isData            = iConfig.getParameter<bool>          ("isData");
 
   // Extract info for Triggers
-  doTrigger         = iConfig.getParameter<bool>         ("doTrigger");
-  TriggerMenu       = iConfig.getParameter<edm::InputTag>("TriggerMenu");
-  saveAllTriggers   = iConfig.getParameter<bool>         ("saveAllTriggers");
-  triggerList       = iConfig.getParameter<std::vector<std::string> >
+  cfg.doTrigger         = iConfig.getParameter<bool>         ("doTrigger");
+  cfg.saveAllTriggers   = iConfig.getParameter<bool>         ("saveAllTriggers");
+  cfg.triggerList       = iConfig.getParameter<std::vector<std::string> >
                       ("triggerList");
 
   // Extract info for Electrons
-  doElectrons       = iConfig.getParameter<bool>     ("doElectrons");
-  electron_cut_pt   = iConfig.getParameter<double>   ("electron_cut_pt");
-  electron_cut_eta  = iConfig.getParameter<double>   ("electron_cut_eta");
-  electron_saveAllID= iConfig.getParameter<bool>     ("electron_saveAllID");
-  electron_IDlist   = iConfig.getParameter<std::vector<std::string> >
+  cfg.doElectrons       = iConfig.getParameter<bool>     ("doElectrons");
+  cfg.electron_cut_pt   = iConfig.getParameter<double>   ("electron_cut_pt");
+  cfg.electron_cut_eta  = iConfig.getParameter<double>   ("electron_cut_eta");
+  cfg.electron_saveAllID= iConfig.getParameter<bool>     ("electron_saveAllID");
+  cfg.electron_IDlist   = iConfig.getParameter<std::vector<std::string> >
                       ("electron_IDlist");
-  electronProducer  = iConfig.getParameter<std::vector<edm::InputTag> >
+  cfg.electronHLTmatching = iConfig.getParameter<std::vector<std::string> > ("electronHLTmatching");
+  cfg.electronProducer  = iConfig.getParameter<std::vector<edm::InputTag> >
                       ("electronProducer");
 
   // Extract info for Photons
-  doPhotons         = iConfig.getParameter<bool>     ("doPhotons");
-  photon_cut_pt     = iConfig.getParameter<double>   ("photon_cut_pt");
-  photon_cut_eta    = iConfig.getParameter<double>   ("photon_cut_eta");
-  photonProducer    = iConfig.getParameter<std::vector<edm::InputTag> >
+  cfg.doPhotons         = iConfig.getParameter<bool>     ("doPhotons");
+  cfg.photon_cut_pt     = iConfig.getParameter<double>   ("photon_cut_pt");
+  cfg.photon_cut_eta    = iConfig.getParameter<double>   ("photon_cut_eta");
+  cfg.photonHLTmatching = iConfig.getParameter<std::vector<std::string> >
+                      ("photonHLTmatching");
+  cfg.photonProducer    = iConfig.getParameter<std::vector<edm::InputTag> >
                       ("photonProducer");
 
   // Extract info for Muons
-  doMuons           = iConfig.getParameter<bool>     ("doMuons");
-  muon_cut_pt       = iConfig.getParameter<double>   ("muon_cut_pt");
-  muon_cut_eta      = iConfig.getParameter<double>   ("muon_cut_eta");
-  muon_cut_sta      = iConfig.getParameter<bool>     ("muon_cut_keepStandaloneMu");
-  muon_cut_trk      = iConfig.getParameter<bool>     ("muon_cut_keepTrackerMu");
-  muon_cut_cal      = iConfig.getParameter<bool>     ("muon_cut_keepCaloMu");
-  muon_cut_glb      = iConfig.getParameter<bool>     ("muon_cut_keepGlobalMu");
-  muon_IDlist       = iConfig.getParameter<std::vector<std::string> >
+  cfg.doMuons           = iConfig.getParameter<bool>     ("doMuons");
+  cfg.muon_cut_pt       = iConfig.getParameter<double>   ("muon_cut_pt");
+  cfg.muon_cut_eta      = iConfig.getParameter<double>   ("muon_cut_eta");
+  cfg.muon_cut_sta      = iConfig.getParameter<bool>     ("muon_cut_keepStandaloneMu");
+  cfg.muon_cut_trk      = iConfig.getParameter<bool>     ("muon_cut_keepTrackerMu");
+  cfg.muon_cut_cal      = iConfig.getParameter<bool>     ("muon_cut_keepCaloMu");
+  cfg.muon_cut_glb      = iConfig.getParameter<bool>     ("muon_cut_keepGlobalMu");
+  cfg.muon_IDlist       = iConfig.getParameter<std::vector<std::string> >
                       ("muon_IDlist");
-  muonProducer      = iConfig.getParameter<std::vector<edm::InputTag> >
+  cfg.muonHLTmatching   = iConfig.getParameter<std::vector<std::string> > ("muonHLTmatching");
+  cfg.muonProducer      = iConfig.getParameter<std::vector<edm::InputTag> >
                       ("muonProducer");
 
   // Extract info for Taus
-  doTaus            = iConfig.getParameter<bool>     ("doTaus");
-  tau_cut_pt        = iConfig.getParameter<double>   ("tau_cut_pt");
-  tau_cut_eta       = iConfig.getParameter<double>   ("tau_cut_eta");
-  tau_saveAllID     = iConfig.getParameter<bool>     ("tau_saveAllID");
-  tau_IDlist        = iConfig.getParameter<std::vector<std::string> >
+  cfg.doTaus            = iConfig.getParameter<bool>     ("doTaus");
+  cfg.tau_cut_pt        = iConfig.getParameter<double>   ("tau_cut_pt");
+  cfg.tau_cut_eta       = iConfig.getParameter<double>   ("tau_cut_eta");
+  cfg.tau_saveAllID     = iConfig.getParameter<bool>     ("tau_saveAllID");
+  cfg.tau_IDlist        = iConfig.getParameter<std::vector<std::string> >
                       ("tau_IDlist");
-  tauHLTmatching    = iConfig.getParameter<std::vector<std::string> > ("tauHLTmatching");
-  tauProducer       = iConfig.getParameter<std::vector<edm::InputTag> >
+  cfg.tauHLTmatching    = iConfig.getParameter<std::vector<std::string> > ("tauHLTmatching");
+  cfg.tauProducer       = iConfig.getParameter<std::vector<edm::InputTag> >
                       ("tauProducer");
 
   // Extract info for Tracks
-  doTracks          = iConfig.getParameter<bool>     ("doTracks");
-  track_cut_pt      = iConfig.getParameter<double>   ("track_cut_pt");
-  track_cut_eta     = iConfig.getParameter<double>   ("track_cut_eta");
-  trackProducer     = iConfig.getParameter<std::vector<edm::InputTag> >
+  cfg.doTracks          = iConfig.getParameter<bool>     ("doTracks");
+  cfg.track_cut_pt      = iConfig.getParameter<double>   ("track_cut_pt");
+  cfg.track_cut_eta     = iConfig.getParameter<double>   ("track_cut_eta");
+  cfg.trackProducer     = iConfig.getParameter<std::vector<edm::InputTag> >
                       ("trackProducer");
 
   // Extract info for Vertices
-  doVertices       = iConfig.getParameter<bool>     ("doVertices");  
-  saveAllVertex    = iConfig.getParameter<bool>     ("saveAllVertex");
-  vertexProducer   = iConfig.getParameter<std::vector<edm::InputTag> >
+  cfg.doVertices       = iConfig.getParameter<bool>     ("doVertices");  
+  cfg.saveAllVertex    = iConfig.getParameter<bool>     ("saveAllVertex");
+  cfg.vertexProducer   = iConfig.getParameter<std::vector<edm::InputTag> >
                      ("vertexProducer");
 
   // Extract info for BeamSpot
-  doBeamSpot       = iConfig.getParameter<bool>          ("doBeamSpot");  
-  beamSpotProducer = iConfig.getParameter<edm::InputTag> ("beamSpotProducer");
+  cfg.doBeamSpot       = iConfig.getParameter<bool>          ("doBeamSpot");  
+  cfg.beamSpotProducer = iConfig.getParameter<edm::InputTag> ("beamSpotProducer");
 
   // Extract info for JetMET
-  doJetMet         = iConfig.getParameter<bool>        ("doJetMet");  
-  jet_cut_pt       = iConfig.getParameter<double>      ("jet_cut_pt");
-  jet_cut_eta      = iConfig.getParameter<double>      ("jet_cut_eta");
-  jetBTagList      = iConfig.getParameter<std::vector<std::string> > ("jetBTagList"); 
-  jetHLTmatching   = iConfig.getParameter<std::vector<std::string> > ("jetHLTmatching");
-  jetmetProducer   = iConfig.getParameter<VParameters> ("jetmetProducer");
+  cfg.doJetMet         = iConfig.getParameter<bool>        ("doJetMet");  
+  cfg.jet_cut_pt       = iConfig.getParameter<double>      ("jet_cut_pt");
+  cfg.jet_cut_eta      = iConfig.getParameter<double>      ("jet_cut_eta");
+  cfg.jetBTagList      = iConfig.getParameter<std::vector<std::string> > ("jetBTagList"); 
+  cfg.jetHLTmatching   = iConfig.getParameter<std::vector<std::string> > ("jetHLTmatching");
+  cfg.jetmetProducer   = iConfig.getParameter<VParameters> ("jetmetProducer");
 
   // Extract info for Pile-Up
-  doPileUp              = iConfig.getParameter<bool>          ("doPileUp");
-  rho_PUUE_dens         = iConfig.getParameter<edm::InputTag> ("rho_PUUE_dens");
-  neutralRho_PUUE_dens  = iConfig.getParameter<edm::InputTag> ("neutralRho_PUUE_dens");
+  cfg.doPileUp              = iConfig.getParameter<bool>          ("doPileUp");
+  cfg.rho_PUUE_dens         = iConfig.getParameter<edm::InputTag> ("rho_PUUE_dens");
+  cfg.neutralRho_PUUE_dens  = iConfig.getParameter<edm::InputTag> ("neutralRho_PUUE_dens");
 
   // Extract info for Monte Carlo
-  doGenParticleCollection = iConfig.getParameter<bool> ("doGenParticleCollection");
+  cfg.doGenParticleCollection = iConfig.getParameter<bool> ("doGenParticleCollection");
+  cfg.mcDescentMax  = iConfig.getParameter<unsigned int> ("mcDescentMax");
+  cfg.mcNGenPartMax = iConfig.getParameter<unsigned int> ("mcNGenPartMax");
+
 
   // Register the final product : the MiniTree Event
   produces<IPHCTree::MTEvent> (); 
@@ -136,39 +143,41 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
   using namespace edm;
   using namespace IPTools;
 
-  if (verbose > 0) std::cout << "--------- new event ---------" << std::endl;
+  if (cfg.verbose > 0) std::cout << "--------- new event ---------" << std::endl;
 
-	// Reseting event information
+  // -----------------------------
+  // Creating a new MTEvent
+  // -----------------------------
+  if (cfg.verbose > 1) std::cout << "Creating a new MTEvent ..." << std::endl;
   std::auto_ptr<IPHCTree::MTEvent> evt(new IPHCTree::MTEvent);
 
-  //General 
+  // -----------------------------
+  // Defining common pointer
+  // -----------------------------
   const reco::BeamSpot* bs = 0;
   const reco::Vertex*   vp = 0;
   const TransientTrackBuilder* trackBuilder = 0;
   const reco::GenParticleCollection * genParticles = 0;
   const pat::TriggerEvent* patTriggerEvent = 0;
-
-
-  //********************************************************
-  // PAT trigger helper for trigger matching information
-  //********************************************************
+  edm::Handle<std::vector<reco::Track> > trackHandle;
 
   // --------------------
-  //   Fill Event info 
+  // Fill Event info 
   // --------------------
-  if (verbose > 1) std::cout << "Filling event info ..." << std::endl;
+  if (cfg.verbose > 1) std::cout << "Filling event info ..." << std::endl;
   fillGeneralInfo(iEvent,iSetup,evt);
 
 
   // --------------------
-  //    Fill MC Truth 
+  // Fill MC Truth 
   // --------------------
-  if (!isData)
+  if (!cfg.isData)
   {
-    //********************************************************
+
+    // -------------------------------------
     // Gen Event Info
-    //********************************************************
-    if (verbose > 1) std::cout << "Filling MC event info ..." << std::endl;
+    // -------------------------------------
+    if (cfg.verbose > 1) std::cout << "Filling MC event info ..." << std::endl;
 
     edm::Handle<GenEventInfoProduct> theGenEventInfo;
     iEvent.getByType(theGenEventInfo);
@@ -181,28 +190,28 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
 			ERROR("Produce") << "GenEventInfoProduct is missing." << std::endl; 
 		}
 
-   	//********************************************************
+    // -------------------------------------
 		// Pileup summary info
-		//********************************************************
-		if (doPileUp)
+    // -------------------------------------
+		if (cfg.doPileUp)
 		{
-			if (verbose > 1) std::cout << "Filling Pile-Up info ..." << std::endl;
+			if (cfg.verbose > 1) std::cout << "Filling Pile-Up ..." << std::endl;
 
       //get Rho (PU/UE densities)
       edm::Handle<double> h_rho;
-      iEvent.getByLabel( rho_PUUE_dens, h_rho);
+      iEvent.getByLabel( cfg.rho_PUUE_dens, h_rho);
 			if (!h_rho.isValid())
       {
-				ERROR("Produce") << "rho_PUUE_dens is missing." << std::endl; 
+				ERROR("Produce") << "cfg.rho_PUUE_dens is missing." << std::endl; 
         return;
 			}
 
       //get Rho (PU/UE densities)
       edm::Handle<double> h_neutralRho;
-      iEvent.getByLabel( neutralRho_PUUE_dens, h_neutralRho);
+      iEvent.getByLabel( cfg.neutralRho_PUUE_dens, h_neutralRho);
 			if (!h_neutralRho.isValid())
       {
-				ERROR("Produce") << "neutralRho_PUUE_dens is missing." << std::endl; 
+				ERROR("Produce") << "cfg.neutralRho_PUUE_dens is missing." << std::endl; 
         return;
 			}
 
@@ -218,12 +227,12 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
 			}
 		}
 
-    //********************************************************
+    // -------------------------------------
     // Fill skimmed GenparticleCollection 
-    //********************************************************
-		if (doGenParticleCollection)
+    // -------------------------------------
+    if (cfg.doGenParticleCollection)
 		{
-			if (verbose > 1) std::cout << "Filling GenParticles ..." << std::endl;
+			if (cfg.verbose > 1) std::cout << "Filling GenParticles ..." << std::endl;
 			edm::Handle<reco::GenParticleCollection> genParticles;
 			iEvent.getByLabel ("genParticles", genParticles);
 			if (genParticles.isValid())
@@ -234,17 +243,16 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
 			{
 				ERROR("Produce") << "GenParticles collection is missing." << std::endl; 
 			}
-		}
+    }
   }
 
-
-	if (doTrigger)
+  // ------------------------
+  //  Fill TriggerResults
+  // ------------------------
+	if (cfg.doTrigger)
 	{
-    // ------------------------
-    //  Fill TriggerResults
-    // ------------------------
 
-		if (verbose>1) std::cout << "Filling trigger info ..." << std::endl;
+		if (cfg.verbose>1) std::cout << "Filling trigger ..." << std::endl;
 
     // Getting Trigger products
     edm::Handle< pat::TriggerEvent > triggerHandle;
@@ -253,8 +261,8 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
     // Filling Minitree if TriggerResults is available
     if (triggerHandle.isValid())
     {
-      const pat::TriggerEvent* triggers = triggerHandle.product();
-      fillTriggerInfo(iEvent,iSetup,evt,triggers);
+      patTriggerEvent = triggerHandle.product();
+      fillTriggerInfo(iEvent,iSetup,evt,patTriggerEvent);
     }
     else
     { 
@@ -265,9 +273,9 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
   // ------------------------
   //  Fill BeamSpot position
   // ------------------------
-  if (doBeamSpot)
+  if (cfg.doBeamSpot)
   {
-    if (verbose>1) std::cout << "Filling beamspot info ..." << std::endl;
+    if (cfg.verbose>1) std::cout << "Filling beamspot ..." << std::endl;
 
     // Getting BeamSpot  
     edm::Handle<reco::BeamSpot> recoBeamSpotHandle;
@@ -290,40 +298,78 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
     }
   }
 
+
+  // ------------------------
+  //  Fill Tracks
+  // ------------------------
+  if (cfg.doTracks)
+  {
+    if (cfg.verbose>1) std::cout << "Filling tracks ..." << std::endl;
+
+    std::set<std::string> labels;
+    for (unsigned int i=0;i<cfg.trackProducer.size();i++)
+    {
+      labels.insert(cfg.trackProducer[i].label()+":"+
+                    cfg.trackProducer[i].instance()+":"+
+                    cfg.trackProducer[i].process());
+    }
+    evt->tracks.Reserve(labels);
+
+		// Loop over the different taus collection
+		for (unsigned int m=0 ; m<cfg.trackProducer.size(); m++) 
+		{
+      evt->tracks.SelectLabel(cfg.trackProducer[m].label()+":"+
+                              cfg.trackProducer[m].instance()+":"+
+                              cfg.trackProducer[m].process());
+
+			// Getting tracks
+			iEvent.getByLabel(cfg.trackProducer[m], trackHandle);
+
+			// Filling MiniTree if tracks are available
+			if (trackHandle.isValid()) 
+        fillTracks(iEvent,iSetup,evt,trackHandle.product(),bs);
+			else
+			{ 
+        ERROR("Produce") << "Track collection '" 
+                         << cfg.trackProducer[m] << "' is missing." << std::endl;
+			}
+		}
+	}
+
   // ------------------------
   //  Fill Vertices
   // ------------------------
-  if (doVertices)
+  if (cfg.doVertices)
   {
-    if (verbose>1) std::cout << "Filling vertices info ..." << std::endl;
+    if (cfg.verbose>1) std::cout << "Filling vertices ..." << std::endl;
   
     std::set<std::string> labels;
-    for (unsigned int i=0;i<vertexProducer.size();i++)
+    for (unsigned int i=0;i<cfg.vertexProducer.size();i++)
     {
-      labels.insert(vertexProducer[i].label()+":"+
-                       vertexProducer[i].instance()+":"+
-                       vertexProducer[i].process());
+      labels.insert(cfg.vertexProducer[i].label()+":"+
+                       cfg.vertexProducer[i].instance()+":"+
+                       cfg.vertexProducer[i].process());
     }
     evt->vertices.Reserve(labels);
 
 		// Loop over the different vertices collection
-		for (unsigned int m=0 ; m<vertexProducer.size(); m++) 
+		for (unsigned int m=0 ; m<cfg.vertexProducer.size(); m++) 
 		{
       // 
-      evt->vertices.SelectLabel(vertexProducer[m].label()+":"+
-                       vertexProducer[m].instance()+":"+
-                       vertexProducer[m].process());
+      evt->vertices.SelectLabel(cfg.vertexProducer[m].label()+":"+
+                       cfg.vertexProducer[m].instance()+":"+
+                       cfg.vertexProducer[m].process());
 
    		// Getting vertices
 			edm::Handle< vector<reco::Vertex> > vertices;
-			iEvent.getByLabel(vertexProducer[m], vertices);
+			iEvent.getByLabel(cfg.vertexProducer[m], vertices);
 
 			// Filling MiniTree if vertices are available
       if (vertices.isValid()) fillVertices(iEvent,iSetup,evt,vertices.product(),vp);
 			else
 			{ 
         ERROR("Produce") << "Vertex collection '" 
-                         << vertexProducer[m] << "' is missing." << std::endl;
+                         << cfg.vertexProducer[m] << "' is missing." << std::endl;
 			}
 		}
   }
@@ -332,37 +378,37 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
   // ------------------------
   //  Fill Photons
   // ------------------------
-	if (doPhotons)
+	if (cfg.doPhotons)
 	{
-		if (verbose>1) std::cout << "Filling photons ..." << std::endl;
+		if (cfg.verbose>1) std::cout << "Filling photons ..." << std::endl;
       
     std::set<std::string> labels;
-    for (unsigned int i=0;i<photonProducer.size();i++)
+    for (unsigned int i=0;i<cfg.photonProducer.size();i++)
     {
-      labels.insert(photonProducer[i].label()+":"+
-                    photonProducer[i].instance()+":"+
-                    photonProducer[i].process());
+      labels.insert(cfg.photonProducer[i].label()+":"+
+                    cfg.photonProducer[i].instance()+":"+
+                    cfg.photonProducer[i].process());
     }
     evt->photons.Reserve(labels);
 
 		// Loop over the different photons collection
-		for (unsigned int m=0 ; m<photonProducer.size(); m++) 
+		for (unsigned int m=0 ; m<cfg.photonProducer.size(); m++) 
 		{
 
-      evt->photons.SelectLabel(photonProducer[m].label()+":"+
-                               photonProducer[m].instance()+":"+
-                               photonProducer[m].process());
+      evt->photons.SelectLabel(cfg.photonProducer[m].label()+":"+
+                               cfg.photonProducer[m].instance()+":"+
+                               cfg.photonProducer[m].process());
 
 			// Getting photons
 			edm::Handle< std::vector<pat::Photon> > phHa;
-			iEvent.getByLabel(photonProducer[m], phHa);
+			iEvent.getByLabel(cfg.photonProducer[m], phHa);
 
 			// Filling MiniTree if photons are available
-			if (phHa.isValid()) fillPhotons(iEvent,iSetup,evt,phHa.product());
+			if (phHa.isValid()) fillPhotons(iEvent,iSetup,evt,phHa,patTriggerEvent);
 			else
 			{ 
         ERROR("Produce") << "Photon collection '" 
-                         << photonProducer[m] << "' is missing." << std::endl;
+                         << cfg.photonProducer[m] << "' is missing." << std::endl;
 			}
 		}
 	}
@@ -383,30 +429,30 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
   // ------------------------
   //  Fill Electrons
   // ------------------------
-	if (doElectrons)
+	if (cfg.doElectrons)
 	{
-		if (verbose>1) std::cout << "Filling electrons ..." << std::endl;
+		if (cfg.verbose>1) std::cout << "Filling electrons ..." << std::endl;
       
     std::set<std::string> labels;
-    for (unsigned int i=0;i<electronProducer.size();i++)
+    for (unsigned int i=0;i<cfg.electronProducer.size();i++)
     {
-      labels.insert(electronProducer[i].label()+":"+
-                    electronProducer[i].instance()+":"+
-                    electronProducer[i].process());
+      labels.insert(cfg.electronProducer[i].label()+":"+
+                    cfg.electronProducer[i].instance()+":"+
+                    cfg.electronProducer[i].process());
     }
     evt->electrons.Reserve(labels);
 
 		// Loop over the different electrons collection
-		for (unsigned int m=0 ; m<electronProducer.size(); m++) 
+		for (unsigned int m=0 ; m<cfg.electronProducer.size(); m++) 
 		{
 
-      evt->electrons.SelectLabel(electronProducer[m].label()+":"+
-                                 electronProducer[m].instance()+":"+
-                                 electronProducer[m].process());
+      evt->electrons.SelectLabel(cfg.electronProducer[m].label()+":"+
+                                 cfg.electronProducer[m].instance()+":"+
+                                 cfg.electronProducer[m].process());
  
       // Getting bField
       float bField;
-   		if (isData) 
+   		if (cfg.isData) 
 		  {
         if (!getBfieldFromDCS(iEvent,iSetup,bField))
         {
@@ -420,14 +466,14 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
 
 			// Getting electrons
 			edm::Handle< std::vector<pat::Electron> > elHa;
-			iEvent.getByLabel(electronProducer[m], elHa);
+			iEvent.getByLabel(cfg.electronProducer[m], elHa);
 
 			// Filling MiniTree if electrons are available
-			if (elHa.isValid()) fillElectrons(iEvent,iSetup,evt,elHa.product(),trackBuilder,genParticles,bs,vp,bField);
+			if (elHa.isValid()) fillElectrons(iEvent,iSetup,evt,elHa,trackBuilder,genParticles,bs,vp,bField,trackHandle,patTriggerEvent);
 			else
 			{ 
         ERROR("Produce") << "Electron collection '" 
-                         << electronProducer[m] << "' is missing." << std::endl;
+                         << cfg.electronProducer[m] << "' is missing." << std::endl;
 			}
 		}
   }
@@ -436,37 +482,37 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
   // ------------------------
   //  Fill Muons
   // ------------------------
-	if (doMuons)
+	if (cfg.doMuons)
 	{
-		if (verbose>1) std::cout << "Filling muons ..." << std::endl;
+		if (cfg.verbose>1) std::cout << "Filling muons ..." << std::endl;
 
     std::set<std::string> labels;
-    for (unsigned int i=0;i<muonProducer.size();i++)
+    for (unsigned int i=0;i<cfg.muonProducer.size();i++)
     {
-      labels.insert(muonProducer[i].label()+":"+
-                    muonProducer[i].instance()+":"+
-                    muonProducer[i].process());
+      labels.insert(cfg.muonProducer[i].label()+":"+
+                    cfg.muonProducer[i].instance()+":"+
+                    cfg.muonProducer[i].process());
     }
     evt->muons.Reserve(labels);
       
 		// Loop over the different muons collection
-		for (unsigned int m=0 ; m<muonProducer.size(); m++) 
+		for (unsigned int m=0 ; m<cfg.muonProducer.size(); m++) 
 		{
 
-      evt->muons.SelectLabel(muonProducer[m].label()+":"+
-                             muonProducer[m].instance()+":"+
-                             muonProducer[m].process());
+      evt->muons.SelectLabel(cfg.muonProducer[m].label()+":"+
+                             cfg.muonProducer[m].instance()+":"+
+                             cfg.muonProducer[m].process());
 
 			// Getting muons 
 			edm::Handle< std::vector<pat::Muon> > muHa;
-			iEvent.getByLabel(muonProducer[m], muHa);
+			iEvent.getByLabel(cfg.muonProducer[m], muHa);
 
 			// Filling MiniTree if muons are available
-      if (muHa.isValid()) fillMuons(iEvent, iSetup, evt,muHa.product(), trackBuilder, genParticles, bs, vp);
+      if (muHa.isValid()) fillMuons(iEvent, iSetup, evt, muHa, trackBuilder, genParticles, bs, vp, patTriggerEvent);
 			else
 			{ 
         ERROR("Produce") << "Muon collection '" 
-                         << muonProducer[m] << "' is missing." << std::endl;
+                         << cfg.muonProducer[m] << "' is missing." << std::endl;
 			}
 		}
 	}
@@ -474,75 +520,37 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
   // ------------------------
   //  Fill Taus
   // ------------------------
-	if (doTaus)
+	if (cfg.doTaus)
 	{
-		if (verbose>1) std::cout << "Filling taus ..." << std::endl;
+		if (cfg.verbose>1) std::cout << "Filling taus ..." << std::endl;
 
     std::set<std::string> labels;
-    for (unsigned int i=0;i<tauProducer.size();i++)
+    for (unsigned int i=0;i<cfg.tauProducer.size();i++)
     {
-      labels.insert(tauProducer[i].label()+":"+
-                    tauProducer[i].instance()+":"+
-                    tauProducer[i].process());
+      labels.insert(cfg.tauProducer[i].label()+":"+
+                    cfg.tauProducer[i].instance()+":"+
+                    cfg.tauProducer[i].process());
     }
     evt->taus.Reserve(labels);
       
 		// Loop over the different taus collection
-		for (unsigned int m=0;m<tauProducer.size();m++) 
+		for (unsigned int m=0;m<cfg.tauProducer.size();m++) 
 		{
 
-      labels.insert(tauProducer[m].label()+":"+
-                    tauProducer[m].instance()+":"+
-                    tauProducer[m].process());
+      labels.insert(cfg.tauProducer[m].label()+":"+
+                    cfg.tauProducer[m].instance()+":"+
+                    cfg.tauProducer[m].process());
 
 			// Getting taus 
 			edm::Handle< std::vector<pat::Tau> > tauHandle;
-			iEvent.getByLabel(tauProducer[m], tauHandle);
+			iEvent.getByLabel(cfg.tauProducer[m], tauHandle);
 
 			// Filling MiniTree if taus are available
 			if (tauHandle.isValid()) fillTaus(iEvent,iSetup,evt,tauHandle,genParticles,bs,patTriggerEvent);
 			else
 			{ 
         ERROR("Produce") << "Tau collection '" 
-                         << tauProducer[m] << "' is missing." << std::endl;
-			}
-		}
-	}
-
-
-  // ------------------------
-  //  Fill Tracks
-  // ------------------------
-  if (doTracks)
-  {
-    if (verbose>1) std::cout << "Filling tracks info ..." << std::endl;
-
-    std::set<std::string> labels;
-    for (unsigned int i=0;i<trackProducer.size();i++)
-    {
-      labels.insert(trackProducer[i].label()+":"+
-                    trackProducer[i].instance()+":"+
-                    trackProducer[i].process());
-    }
-    evt->tracks.Reserve(labels);
-
-		// Loop over the different taus collection
-		for (unsigned int m=0 ; m<trackProducer.size(); m++) 
-		{
-      evt->tracks.SelectLabel(trackProducer[m].label()+":"+
-                              trackProducer[m].instance()+":"+
-                              trackProducer[m].process());
-
-			// Getting tracks
-			edm::Handle< std::vector < reco::Track > > trackHa;
-			iEvent.getByLabel(trackProducer[m], trackHa);
-
-			// Filling MiniTree if tracks are available
-			if (trackHa.isValid()) fillTracks(iEvent,iSetup,evt,trackHa.product(),bs);
-			else
-			{ 
-        ERROR("Produce") << "Track collection '" 
-                         << trackProducer[m] << "' is missing." << std::endl;
+                         << cfg.tauProducer[m] << "' is missing." << std::endl;
 			}
 		}
 	}
@@ -551,36 +559,56 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
   // ------------------------
   //  Fill JetMET
   // ------------------------
-  if (doJetMet)
+  if (cfg.doJetMet)
 	{
-		if (verbose>1) std::cout << "Filling jetMET info ..." << std::endl;
+		if (cfg.verbose>1) std::cout << "Filling muon correction for MET ..."  << std::endl;
 
 		edm::Handle<edm::ValueMap<reco::MuonMETCorrectionData> > muMEThandle;
     iEvent.getByLabel("muonTCMETValueMapProducer", "muCorrData", muMEThandle);
 
+    if (!muMEThandle.isValid())
+    {
+      ERROR("Produce") << "MuonMETCorrectionData collection "
+                       << "is missing." << std::endl;
+    }
+
   	edm::Handle<std::vector<reco::Muon> > recoMuonHandle;
     iEvent.getByLabel("muons", recoMuonHandle);
 
-    std::pair<float,float> SumMuMetCorr = 
-          fillMuonMET(muMEThandle.product(),recoMuonHandle.product());
+    if (!recoMuonHandle.isValid())
+    {
+      ERROR("Produce") << "reco::Muon collection "
+                       << "is missing." << std::endl;
+    }
+
+    std::pair<float,float> SumMuMetCorr(0,0);
+    if (recoMuonHandle.isValid() && muMEThandle.isValid())
+    {
+      SumMuMetCorr = 
+        fillMuonMET(muMEThandle.product(),recoMuonHandle.product());
+    }
+
+		if (cfg.verbose>1) std::cout << "Filling jet MET ..."  << std::endl;
 
     std::set<std::string> labels;
-    for (VParameters::iterator ijetmet = jetmetProducer.begin();
-         ijetmet != jetmetProducer.end(); ijetmet++)
+    for (VParameters::iterator ijetmet = cfg.jetmetProducer.begin();
+         ijetmet != cfg.jetmetProducer.end(); ijetmet++)
     {
       labels.insert(ijetmet->getUntrackedParameter<std::string>("algo"));
     }
-    evt->tracks.Reserve(labels);
+    evt->jets.Reserve(labels);
+    evt->met.Reserve(labels);
 
     // Loop over the different jet/met collection 
-    for (VParameters::iterator ijetmet = jetmetProducer.begin();
-         ijetmet != jetmetProducer.end(); ijetmet++)
+    for (VParameters::iterator ijetmet = cfg.jetmetProducer.begin();
+         ijetmet != cfg.jetmetProducer.end(); ijetmet++)
 		{
       std::string jet_ = ijetmet->getUntrackedParameter<std::string>("jet");
       std::string met_ = ijetmet->getUntrackedParameter<std::string>("met");
       std::string algo_= ijetmet->getUntrackedParameter<std::string>("algo");
 
-      evt->tracks.SelectLabel(algo_);
+      evt->jets.SelectLabel(algo_);
+      evt->met.SelectLabel(algo_);
 
       // Getting MET
 			edm::Handle<edm::View<pat::MET> > metHandle;
@@ -616,11 +644,12 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
 			}
     }
   }
-  
+    
   // Save the event 
   std::cout << "Save the event in the root file ..." << std::endl; 
   iEvent.put(evt);
-  if (verbose>0) std::cout << "-> The event is successfully saved in the MiniTree" << std::endl;
+  if (cfg.verbose>0)
+     std::cout << "-> The event is successfully saved in the MiniTree" << std::endl;
 }
 
 
@@ -668,7 +697,7 @@ void MiniTreeProducer::fillTriggerInfo(edm::Event& iEvent,
   std::map<std::string, std::pair<UInt_t,Bool_t> > output;
 
   // Getting trigger bits and prescales for the whole table
-  if (saveAllTriggers) 
+  if (cfg.saveAllTriggers) 
   {
     const std::vector<pat::TriggerPath>* paths = triggerEvent->paths(); 
     for (unsigned int i=0; i<paths->size(); i++)
@@ -683,12 +712,12 @@ void MiniTreeProducer::fillTriggerInfo(edm::Event& iEvent,
   else
   {
 
-    for (unsigned int j=0; j<triggerList.size(); j++)
+    for (unsigned int j=0; j<cfg.triggerList.size(); j++)
     {
-      const pat::TriggerPath* path = triggerEvent->path(triggerList[j]);
+      const pat::TriggerPath* path = triggerEvent->path(cfg.triggerList[j]);
       if (path==0)
       {
-        ERROR("Produce") << "trigger bit called '" << triggerList[j]
+        ERROR("Produce") << "trigger bit called '" << cfg.triggerList[j]
                          << "' is not found" << std::endl;
       }
       else
@@ -755,7 +784,7 @@ void MiniTreeProducer::fillVertices(edm::Event& iEvent,
 		pvx->NumberOfTracks = itv->tracksSize();
 
 		// Keep only the first vertex ?
-		if (!saveAllVertex) break;
+		if (!cfg.saveAllVertex) break;
   }
 }
 
@@ -782,8 +811,8 @@ void MiniTreeProducer::fillTracks(edm::Event& iEvent,
 		const reco::Track* track = &*it;
 
 		// Applying a preselection based on on pT, eta 
-		if ( track->pt () < track_cut_pt || 
-         fabs (track->eta ()) > track_cut_eta ) continue;
+		if ( track->pt () < cfg.track_cut_pt || 
+         fabs (track->eta ()) > cfg.track_cut_eta ) continue;
 
 		IPHCTree::NTTrack* myTrack = evt->NewTrack ();
 
@@ -804,7 +833,7 @@ void MiniTreeProducer::fillTracks(edm::Event& iEvent,
 		myTrack->setCharge(track->charge());
 
 		// dxy wrt BeamSpot (if BeamSpot is available)
-    if (doBeamSpot && bs!=0)	myTrack->dxy_BS = track->dxy(bs->position());
+    if (cfg.doBeamSpot && bs!=0)	myTrack->dxy_BS = track->dxy(bs->position());
 	}
 }
 
@@ -919,65 +948,129 @@ void MiniTreeProducer::fillGenParticles(edm::Event& iEvent,
                                         std::auto_ptr<IPHCTree::MTEvent>& evt,
                                         const edm::Handle<std::vector<reco::GenParticle> >& GenParticles)
 {
-/*	std::map < int, std::vector < int > > daughtermap;
-	std::map < int, std::vector < int > > mothermap;
 
-	size_t MaxLim = 100;
-	bool maxlimfound = false;
-	for (size_t i = 0; i < genParticles->size(); i++) 
-	{
-		const GenParticle & paIt = (*genParticles)[i];
-		if (maxlimfound) continue;
-		if (abs (paIt.pdgId ()) == 92 && MaxLim <= 100) 
-		{
-			MaxLim = i;
-			maxlimfound = true;
-		}
-	}
+  // Minimal Check : at least the two initial protons
+  if (GenParticles->size()<2)
+  {
+    if (GenParticles->empty())
+      WARNING("fillGenParticles") << "GenParticles container is empty !" << std::endl; 
+    else
+      WARNING("fillGenParticles") << "GenParticles contains only 2 or less particles !" << std::endl; 
+    return;
+  }
+
+  // New Format
+
+  // Look for the two initial protons
+  std::vector<const reco::Candidate*> mothers;
+  std::vector<const reco::Candidate*> all;
+  for (unsigned int i=0;i<2; i++)
+  {
+    if ( (*GenParticles)[i].status()==3 && 
+         (*GenParticles)[i].pdgId()==2212) mothers.push_back(&(*GenParticles)[i]);
+  }
+  if (mothers.size()!=2)
+  {
+    WARNING("fillGenParticles") << "The two initial protons are not"
+                                << " found in the GenParticles container"
+                                << std::endl; 
+    return;
+  }
+
+  // Fill the MiniTree with the two initial protons
+  for (unsigned int i=0;i<mothers.size();i++)
+  {
+    IPHCTree::NTGenParticle* mypart = evt->mc.NewGenParticle();
+    mypart->p4.SetPxPyPzE(mothers[i]->px(),
+                          mothers[i]->py(),
+                          mothers[i]->pz(),
+                          mothers[i]->energy());
+    mypart->isStatus3 = (mothers[i]->status()==3);
+    mypart->id        = mothers[i]->pdgId();
+    all.push_back(mothers[i]);
+  }
+
+  // Fill other particles
+  unsigned int nIter=0;
+  std::vector<const reco::Candidate*> daughters;
+  while (nIter < cfg.mcDescentMax)
+  {
+
+    // Get daughters for all mothers
+    for (unsigned int i=0;i<mothers.size();i++)
+    {
+      for (unsigned int j=0;j<mothers[i]->numberOfDaughters();j++)
+      {
+        // Save the pointer to the daughter only if it is non null 
+        if (mothers[i]->daughter(j)!=0) 
+            daughters.push_back(mothers[i]->daughter(j));
+      }
+    }
+
+    // End of the loop ?
+    // 2 possible cases to break the loop :
+    //  - no daughters found (no more particles)
+    //  - mcNGenPartMax is reached
+    if ( daughters.size()==0 || 
+         evt->mc.genParticles.size()+daughters.size() > cfg.mcNGenPartMax) break;
+
+    // Fill the MiniTree
+    for (unsigned int i=0;i<daughters.size();i++)
+    {
+      IPHCTree::NTGenParticle* mypart = evt->mc.NewGenParticle();
+      mypart->p4.SetPxPyPzE(daughters[i]->px(),
+                            daughters[i]->py(),
+                            daughters[i]->pz(),
+                            daughters[i]->energy());
+      mypart->isStatus3 = (daughters[i]->status()==3);
+      mypart->id        = daughters[i]->pdgId();
+      all.push_back(daughters[i]);
+    }
+   
+    // Prepare for a new loop : 
+    //  1. daughters become mothers
+    //  2. daughters container is cleaned
+    mothers = daughters;
+    daughters.clear();
+
+    // Increment the iteration counter
+    nIter++;
+  }
+
+  // Fill mother links
+  for (unsigned int i=0;i<all.size();i++)
+  {
+    evt->mc.genParticles[i].motherIndex_=-1;
+    for (unsigned int j=0;j<i;j++)
+    {
+      if (all[i]->mother() == all[j])
+        evt->mc.genParticles[i].motherIndex_=j;
+    }
+  }
 
 
-	for (size_t i = 0; i < MaxLim; i++)
-	{
-		const GenParticle & paIt = (*genParticles)[i];
-		// daughters
-		std::vector < int >list_index_dau;
-		list_index_dau.clear ();
-		for (unsigned int j = 0; j < paIt.numberOfDaughters (); j++) 
-		{
-			const reco::Candidate * d = paIt.daughter (j);  
-			if(d == NULL) continue;
-	  
-			for (size_t k = i + 1; k < genParticles->size (); ++k)
-			{
-				const GenParticle & p = (*genParticles)[k];
-				if (p.p4 ().e () == d->p4 ().e () && p.p4 ().pz () == d->p4 ().pz () && p.pdgId () == d->pdgId () && p.status () == d->status ())
-					list_index_dau.push_back (k);
-			}
-			daughtermap[i] = list_index_dau;
-			d = 0 ;
-			delete d;
-		}
-		evt.GPC.push_back (paIt);
-		// mothers
-		std::vector < int >list_index_mot;
-		list_index_mot.clear ();
-		for (unsigned int j = 0; j < paIt.numberOfMothers (); j++) 
-		{
-			const reco::Candidate * m = paIt.mother (j);
-			if(m == NULL) continue;
-	  
-			for (size_t k = 0; k < i; ++k) {
-				const GenParticle & p = (*genParticles)[k];
-				if (p.p4 ().e () == m->p4 ().e () && p.pdgId () == m->pdgId () && p.status () == m->status ())
-					list_index_mot.push_back (k);
-			}
-			mothermap[i] = list_index_mot;
-		}
+  // Fill taus
+  for (unsigned int i=0;i<GenParticles->size(); i++)
+  {
+    if ( (*GenParticles)[i].pdgId () == 15 )
+    {  
+      TLorentzVector p4( (*GenParticles)[i].px(),
+                         (*GenParticles)[i].py(),
+                         (*GenParticles)[i].pz(),
+                         (*GenParticles)[i].energy() );
+      evt->mc.Generatedtaus.push_back(p4);
+    }
+   
+    if ( (*GenParticles)[i].pdgId () == -15 )
+    {  
+      TLorentzVector p4( (*GenParticles)[i].px(),
+                         (*GenParticles)[i].py(),
+                         (*GenParticles)[i].pz(),
+                         (*GenParticles)[i].energy() );
+      evt->mc.GeneratedAtaus.push_back(p4);
+    }
+  }
 
-	}
-      
-	evt.GPC_list_index_dau = daughtermap;
-	evt.GPC_list_index_mot = mothermap;*/
 }
 
               
@@ -991,43 +1084,44 @@ void MiniTreeProducer::fillGenParticles(edm::Event& iEvent,
 //
 // ----------------------------------------------------------------------------
 void MiniTreeProducer::fillPhotons(edm::Event& iEvent, 
-                                  const edm::EventSetup& iSetup,
-                                  std::auto_ptr<IPHCTree::MTEvent>& evt,
-                                  const std::vector<pat::Photon>* gammas)
+                                   const edm::EventSetup& iSetup,
+                                   std::auto_ptr<IPHCTree::MTEvent>& evt,
+                                   const edm::Handle<std::vector<pat::Photon> >& gammas,
+                                   const pat::TriggerEvent* patTriggerEvent)
 {
 	// Loop over photons
-	for (std::vector < pat::Photon >::const_iterator
+	for (std::vector <pat::Photon>::const_iterator
        it = gammas->begin (); it != gammas->end (); it++)
 	{
 		// Getting pointer to the current photon
 		const pat::Photon* thephoton = &*it;
 
 		// Applying preselection based on pT, eta, ID
-		if ( thephoton->p4().pt () < photon_cut_pt  || 
-         fabs(thephoton->p4().eta()) > photon_cut_eta ) continue;
+		if ( thephoton->p4().pt () < cfg.photon_cut_pt  || 
+         fabs(thephoton->p4().eta()) > cfg.photon_cut_eta ) continue;
 
     // Create a new photon [no delete to do !]
-		IPHCTree::MTPhoton *photon = evt->NewPhoton();
+		IPHCTree::MTPhoton *myphoton = evt->NewPhoton();
 
     // Set 4-vector momentum
-		photon->p4.SetPxPyPzE( thephoton->p4().px(),
+		myphoton->p4.SetPxPyPzE( thephoton->p4().px(),
                            thephoton->p4().py(),
                            thephoton->p4().pz(),
                            thephoton->p4().energy() );
    
     // Set isolation properties
-		photon->ECaloIso = thephoton->ecalIso();
-		photon->HCaloIso = thephoton->hcalIso();
-		photon->TrkIso   = thephoton->trackIso();
+		myphoton->ECaloIso = thephoton->ecalIso();
+		myphoton->HCaloIso = thephoton->hcalIso();
+		myphoton->TrkIso   = thephoton->trackIso();
 
 		// Calorimeter type
-		photon->isEB = thephoton->isEB();
+		myphoton->isEB = thephoton->isEB();
       
 		// Shower shape variables
-		photon->e1x5 = thephoton->e1x5();
-		photon->e2x5 = thephoton->e2x5();
-		photon->e3x3 = thephoton->e3x3();
-		photon->e5x5 = thephoton->e5x5();
+		myphoton->e1x5 = thephoton->e1x5();
+		myphoton->e2x5 = thephoton->e2x5();
+		myphoton->e3x3 = thephoton->e3x3();
+		myphoton->e5x5 = thephoton->e5x5();
 
     // Other data
     std::map<std::string,Float_t> others;
@@ -1036,7 +1130,30 @@ void MiniTreeProducer::fillPhotons(edm::Event& iEvent,
     // Example : others["myvariables"]=1.0;
 
     // Saving others
-    photon->others.Fill(others);
+    myphoton->others.Fill(others);
+
+    // --------------------- HLT-object matching -----------------------
+    if (cfg.doTrigger)
+    {
+      std::map<std::string,TLorentzVector> matched;
+
+      const pat::helper::TriggerMatchHelper matchHelper;
+
+      for (unsigned int i=0;i<cfg.photonHLTmatching.size();i++)
+      {
+        if (cfg.photonHLTmatching[i]=="") continue;
+        const pat::TriggerObjectRef trigRef ( 
+               matchHelper.triggerMatchObject(gammas, std::distance(gammas->begin(),it), cfg.photonHLTmatching[i], iEvent, *patTriggerEvent ) );
+        if ( trigRef.isAvailable() )
+        {
+          TLorentzVector q;
+          q.SetPxPyPzE(trigRef->px(), trigRef->py(), trigRef->pz(), trigRef->energy());
+        }
+      }
+
+      myphoton->p4HLT.Fill(matched);
+    }
+
 	}
 }
         
@@ -1053,12 +1170,14 @@ void MiniTreeProducer::fillPhotons(edm::Event& iEvent,
 void MiniTreeProducer::fillElectrons(edm::Event& iEvent, 
                  const edm::EventSetup& iSetup,
                  std::auto_ptr<IPHCTree::MTEvent>& evt,
-                 const std::vector<pat::Electron>* electrons,
+                 const edm::Handle< std::vector<pat::Electron> >& electrons,
                  const TransientTrackBuilder* trackBuilder,
                  const reco::GenParticleCollection* genParticles,
                  const reco::BeamSpot* & bs,
                  const reco::Vertex* & vp,
-                 const float& bField)
+                 const float& bField,
+                 const edm::Handle<std::vector<reco::Track> >& tracks,
+                 const pat::TriggerEvent* patTriggerEvent)
 {
 	// Loop over electrons
 	for (vector < pat::Electron >::const_iterator
@@ -1069,8 +1188,8 @@ void MiniTreeProducer::fillElectrons(edm::Event& iEvent,
     // --------------------- Preselection -----------------------
 
 		// Applying preselection based on pT, eta, ID
-		if ( patelec->pt() < electron_cut_pt || 
-         fabs(patelec->eta()) > electron_cut_eta) continue;
+		if ( patelec->pt() < cfg.electron_cut_pt || 
+         fabs(patelec->eta()) > cfg.electron_cut_eta) continue;
 
     // --------------------- General info -----------------------
 
@@ -1099,7 +1218,7 @@ void MiniTreeProducer::fillElectrons(edm::Event& iEvent,
 		{
       myelec->nLost = patelec->gsfTrack()-> 
                     trackerExpectedHitsInner().numberOfLostHits();
-      if (doBeamSpot && bs!=0) myelec->D0 = patelec->gsfTrack()->dxy(*bs);
+      if (cfg.doBeamSpot && bs!=0) myelec->D0 = patelec->gsfTrack()->dxy(*bs);
       myelec->Chi2 = patelec->gsfTrack()->normalizedChi2();
 
       // REMARK: pour avoir acces a la trace il faut lors de la creation du
@@ -1107,7 +1226,7 @@ void MiniTreeProducer::fillElectrons(edm::Event& iEvent,
       myelec->TrackEl = *(patelec->gsfTrack());
 
       // 3D impact parameter if primary vertex is available
-      if (doVertices && vp!=0)
+      if (cfg.doVertices && vp!=0)
 			{
         // Building transientTrack from inner Track
         reco::TransientTrack tt = trackBuilder->build(patelec->gsfTrack());
@@ -1122,45 +1241,26 @@ void MiniTreeProducer::fillElectrons(edm::Event& iEvent,
 		}
 
 
-    ///////////////////////////////// 
-		//  	Conversion
-		////////////////////////////////
-    /*		float evt_bField=0;
+    // --------------------- Conversion ---------------------
+ 
+    // returns the best candidate partner
+    ConversionFinder convFinder;
+    ConversionInfo convInfo = 
+      convFinder.getConversionInfo(*patelec, tracks, bField);
 
-    //Get the CTF tracks
-      Handle<reco::TrackCollection> tracks_h;
-      iEvent.getByLabel("generalTracks", tracks_h);
+    // fill informations 
+    myelec->deltaDistance = convInfo.dist();
+    myelec->deltaCotTheta = convInfo.dcot();
 
-      ConversionFinder convFinder;
-      //returns the best candidate partner (see text below)
-      ConversionInfo convInfo = convFinder.getConversionInfo(*elec, tracks_h, evt_bField);
-      electron->deltaDistance = convInfo.dist();
-      electron->deltaCotTheta = convInfo.dcot();
-      //cout<<"elec: "<<convInfo.dist()<<" "<<convInfo.dcot()<<endl;
-
-    //  if(elec->gsfTrack()) electron->isGsfElectron = true;
-       bool isGsfElectron = true;
-       if (!elec->gsfTrack()) isGsfElectron = false;
-        electron->isGsfElectron = isGsfElectron;
-      // Swiss cross for Ecal spkie cleaning
-      double myswissCross = -999;
-      // Cut only on EB, ecal-seeded electrons
-      //if (elec->ecalDrivenSeed () > 0 && fabs (elec->superCluster ()->eta ()) < 1.4442) {
-	//const reco::CaloClusterPtr seed = patelec->superCluster ()->seed ();	// seed cluster                                 
-	//const DetId seedId = seed->seed ();
-	//EcalSeverityLevelAlgo severity;
-	//myswissCross = severity.swissCross (seedId, *myRecHits);
-      //}
-
-      // end swisscross
-      */
+    // is GSF electron ?
+    myelec->isGsfElectron = (patelec->gsfTrack().isNonnull()!=0);
 
     // --------------------- Electron ID -----------------------
 	
     std::map<std::string,Float_t> ids;
 
     // Fill all the available IDs
-    if (electron_saveAllID)
+    if (cfg.electron_saveAllID)
     {
       const std::vector< std::pair<std::string,float> > patids 
           = patelec->electronIDs();
@@ -1174,9 +1274,9 @@ void MiniTreeProducer::fillElectrons(edm::Event& iEvent,
     // Fill only selected IDs
     else
     {
-      for (unsigned int i=0;i<electron_IDlist.size();i++)
+      for (unsigned int i=0;i<cfg.electron_IDlist.size();i++)
       {
-        ids[electron_IDlist[i]] = patelec->electronID(electron_IDlist[i]);
+        ids[cfg.electron_IDlist[i]] = patelec->electronID(cfg.electron_IDlist[i]);
       }
     }
 
@@ -1228,9 +1328,32 @@ void MiniTreeProducer::fillElectrons(edm::Event& iEvent,
     double theta = 2*atan(exp(-1*patelec->superCluster()->eta()));
     myelec->ET_SC = patelec->superCluster()->energy()*sin(theta);
 
+    // --------------------- HLT-object matching -----------------------
+    if (cfg.doTrigger)
+    {
+      std::map<std::string,TLorentzVector> matched;
+
+      const pat::helper::TriggerMatchHelper matchHelper;
+
+      for (unsigned int i=0;i<cfg.electronHLTmatching.size();i++)
+      {
+        if (cfg.electronHLTmatching[i]=="") continue;
+        const pat::TriggerObjectRef trigRef ( 
+               matchHelper.triggerMatchObject(electrons, std::distance(electrons->begin(),it),
+                                              cfg.electronHLTmatching[i], iEvent, *patTriggerEvent ) );
+        if ( trigRef.isAvailable() )
+        {
+          TLorentzVector q;
+          q.SetPxPyPzE(trigRef->px(), trigRef->py(), trigRef->pz(), trigRef->energy());
+        }
+      }
+
+      myelec->p4HLT.Fill(matched);
+    }
+
     // --------------------- Monte Carlo Info -----------------------
 
-    if (!isData)
+    if (!cfg.isData)
     {
       // Get 4-vector momentum with pat matched MC particle
       if ((patelec->genLepton()!=0))
@@ -1242,15 +1365,16 @@ void MiniTreeProducer::fillElectrons(edm::Event& iEvent,
       }
 
       // Get mother, grandmother and grandgrandmother particles
-      if (doGenParticleCollection && genParticles!=0)
+      if (cfg.doGenParticleCollection && genParticles!=0)
       { 
         reco::GenParticle genmother;
         reco::GenParticle gengrandmother;
         reco::GenParticle genggrandmother;
-        //      myelec->LeptonOrigin    = getMuonOrigin (genParticles, patelec,
-        //                                         genmother,
-        //                                         gengrandmother,
-        //                                        genggrandmother);
+        myelec->LeptonOrigin = MonteCarloOrigin::getElectronOrigin(
+                                     genParticles, patelec,
+                                     genmother,
+                                     gengrandmother,
+                                     genggrandmother);
         myelec->GenMother       = genmother;
         myelec->GenGrandMother  = gengrandmother;
         myelec->GenGGrandMother = genggrandmother;
@@ -1273,11 +1397,12 @@ void MiniTreeProducer::fillElectrons(edm::Event& iEvent,
 void MiniTreeProducer::fillMuons(edm::Event& iEvent, 
                  const edm::EventSetup& iSetup,
                  std::auto_ptr<IPHCTree::MTEvent>& evt,
-  	           	 const std::vector<pat::Muon>* muons,
+                 const edm::Handle< std::vector<pat::Muon> >& muons,
                  const TransientTrackBuilder* trackBuilder,
                  const reco::GenParticleCollection* genParticles,
                  const reco::BeamSpot* & bs,
-                 const reco::Vertex* & vp)
+                 const reco::Vertex* & vp,
+                 const pat::TriggerEvent* patTriggerEvent)
 {
   // Loop over Muons
 	for (std::vector<pat::Muon>::const_iterator
@@ -1288,14 +1413,14 @@ void MiniTreeProducer::fillMuons(edm::Event& iEvent,
     // --------------------- Preselection -----------------------
 
 		// Applying a preselectin on muons based on lep pT, eta, iso
-		if ( patmuon->pt() < muon_cut_pt || 
-         fabs (patmuon->eta()) > muon_cut_eta ) continue;
+		if ( patmuon->pt() < cfg.muon_cut_pt || 
+         fabs (patmuon->eta()) > cfg.muon_cut_eta ) continue;
 
     // Applying a preselection on muons kind
-    if (! (patmuon->isGlobalMuon()     && muon_cut_glb) ) continue;
-    if (! (patmuon->isTrackerMuon()    && muon_cut_trk) ) continue;
-    if (! (patmuon->isStandAloneMuon() && muon_cut_sta) ) continue;
-    if (! (patmuon->isCaloMuon()       && muon_cut_cal) ) continue;
+    if (! (patmuon->isGlobalMuon()     && cfg.muon_cut_glb) ) continue;
+    if (! (patmuon->isTrackerMuon()    && cfg.muon_cut_trk) ) continue;
+    if (! (patmuon->isStandAloneMuon() && cfg.muon_cut_sta) ) continue;
+    if (! (patmuon->isCaloMuon()       && cfg.muon_cut_cal) ) continue;
 
     // --------------------- General info -----------------------
 
@@ -1339,10 +1464,10 @@ void MiniTreeProducer::fillMuons(edm::Event& iEvent,
     std::map<std::string,Float_t> ids;
 
     // Fill with IDs
-    for (unsigned int i=0;i<muon_IDlist.size();i++)
+    for (unsigned int i=0;i<cfg.muon_IDlist.size();i++)
     {
-      if (muon_IDlist[i]=="") continue;
-      ids[muon_IDlist[i]] = patmuon->muonID(muon_IDlist[i]);
+      if (cfg.muon_IDlist[i]=="") continue;
+      ids[cfg.muon_IDlist[i]] = patmuon->muonID(cfg.muon_IDlist[i]);
     }
 
     // Possibility to add other data
@@ -1356,14 +1481,14 @@ void MiniTreeProducer::fillMuons(edm::Event& iEvent,
 		// Global Track
     if (patmuon->globalTrack().isNonnull())
     {
-			if (doBeamSpot && bs!=0) mymuon->D0 = patmuon->globalTrack()->dxy(*bs);
+			if (cfg.doBeamSpot && bs!=0) mymuon->D0 = patmuon->globalTrack()->dxy(*bs);
 			mymuon->Chi2 = patmuon->globalTrack()->normalizedChi2();
 		}
 
 		// Inner Track
 		if (patmuon->innerTrack().isNonnull())
 		{
-			if (doBeamSpot && bs!=0) mymuon->D0Inner = patmuon->innerTrack()->dxy(*bs);
+			if (cfg.doBeamSpot && bs!=0) mymuon->D0Inner = patmuon->innerTrack()->dxy(*bs);
    		mymuon->NTrValidHits = patmuon->innerTrack()->numberOfValidHits();
 		}
 
@@ -1386,7 +1511,7 @@ void MiniTreeProducer::fillMuons(edm::Event& iEvent,
              patmuon->globalTrack()->hitPattern().numberOfValidMuonHits();
 
       // 3D impact parameter if primary vertex is available
-      if (doVertices && vp!=0)
+      if (cfg.doVertices && vp!=0)
 			{
         // Building transientTrack from inner Track
         reco::TransientTrack tt = trackBuilder->build(it->innerTrack());
@@ -1399,8 +1524,30 @@ void MiniTreeProducer::fillMuons(edm::Event& iEvent,
       }
     }
 
+    // --------------------- HLT-object matching -----------------------
+    if (cfg.doTrigger)
+    {
+      std::map<std::string,TLorentzVector> matched;
+
+      const pat::helper::TriggerMatchHelper matchHelper;
+
+      for (unsigned int i=0;i<cfg.muonHLTmatching.size();i++)
+      {
+        if (cfg.muonHLTmatching[i]=="") continue;
+        const pat::TriggerObjectRef trigRef ( 
+               matchHelper.triggerMatchObject(muons, std::distance(muons->begin(),it), cfg.muonHLTmatching[i], iEvent, *patTriggerEvent ) );
+        if ( trigRef.isAvailable() )
+        {
+          TLorentzVector q;
+          q.SetPxPyPzE(trigRef->px(), trigRef->py(), trigRef->pz(), trigRef->energy());
+        }
+      }
+
+      mymuon->p4HLT.Fill(matched);
+    }
+
     // --------------------- Monte Carlo Info -----------------------
-    if (!isData)
+    if (!cfg.isData)
     {
       // Get 4-vector momentum with pat matched MC particle
       if ((patmuon->genLepton()!=0))
@@ -1412,15 +1559,16 @@ void MiniTreeProducer::fillMuons(edm::Event& iEvent,
       }
 
       // Get mother, grandmother and grandgrandmother particles
-      if (doGenParticleCollection && genParticles!=0)
+      if (cfg.doGenParticleCollection && genParticles!=0)
       { 
         reco::GenParticle genmother;
         reco::GenParticle gengrandmother;
         reco::GenParticle genggrandmother;
-        //      mymuon->LeptonOrigin    = getMuonOrigin (genParticles, patmuon,
-        //                                         genmother,
-        //                                         gengrandmother,
-        //                                        genggrandmother);
+        mymuon->LeptonOrigin = MonteCarloOrigin::getMuonOrigin(
+                                    genParticles, patmuon,
+                                    genmother,
+                                    gengrandmother,
+                                    genggrandmother);
         mymuon->GenMother       = genmother;
         mymuon->GenGrandMother  = gengrandmother;
         mymuon->GenGGrandMother = genggrandmother;
@@ -1457,8 +1605,8 @@ void MiniTreeProducer::fillTaus(edm::Event& iEvent,
     // --------------------- Preselection -----------------------
 
 		// Applying preselection based  on pT, eta, ID
-		if ( patTau->pt () < tau_cut_pt || 
-         fabs (patTau->eta ()) > tau_cut_eta ) continue;
+		if ( patTau->pt () < cfg.tau_cut_pt || 
+         fabs (patTau->eta ()) > cfg.tau_cut_eta ) continue;
 
 		IPHCTree::MTTau *mytau = evt->NewTau();
 
@@ -1482,12 +1630,12 @@ void MiniTreeProducer::fillTaus(edm::Event& iEvent,
 			if (patTau->leadPFChargedHadrCand()->trackRef().isNonnull())
 			{
 				mytau->leadTrackPt = patTau->leadPFChargedHadrCand()->trackRef()->pt();
-				if (doBeamSpot && bs!=0) mytau->D0 = patTau->leadPFChargedHadrCand()->trackRef()->dxy(*bs);
+				if (cfg.doBeamSpot && bs!=0) mytau->D0 = patTau->leadPFChargedHadrCand()->trackRef()->dxy(*bs);
 			}
 			else if (patTau->leadPFChargedHadrCand()->gsfTrackRef().isNonnull())
 			{
 				mytau->leadTrackPt = patTau->leadPFChargedHadrCand()->gsfTrackRef()->pt();
-				if (doBeamSpot && bs!=0) mytau->D0 = patTau->leadPFChargedHadrCand()->gsfTrackRef()->dxy(*bs);
+				if (cfg.doBeamSpot && bs!=0) mytau->D0 = patTau->leadPFChargedHadrCand()->gsfTrackRef()->dxy(*bs);
 			}
 		}
 
@@ -1516,7 +1664,7 @@ void MiniTreeProducer::fillTaus(edm::Event& iEvent,
     std::map<std::string,Float_t> ids;
 
     // Fill all the available IDs
-    if (tau_saveAllID)
+    if (cfg.tau_saveAllID)
     {
       const std::vector<std::pair<std::string,float> > patids 
           = patTau->tauIDs();
@@ -1530,9 +1678,9 @@ void MiniTreeProducer::fillTaus(edm::Event& iEvent,
     // Fill only selected IDs
     else
     {
-      for (unsigned int i=0;i<tau_IDlist.size();i++)
+      for (unsigned int i=0;i<cfg.tau_IDlist.size();i++)
       {
-        ids[tau_IDlist[i]] = patTau->tauID(tau_IDlist[i]);
+        ids[cfg.tau_IDlist[i]] = patTau->tauID(cfg.tau_IDlist[i]);
       }
     }
 
@@ -1544,17 +1692,17 @@ void MiniTreeProducer::fillTaus(edm::Event& iEvent,
 
  
     // --------------------- HLT-object matching -----------------------
-    if (doTrigger)
+    if (cfg.doTrigger)
     {
       std::map<std::string,TLorentzVector> matched;
 
       const pat::helper::TriggerMatchHelper matchHelper;
 
-      for (unsigned int i=0;i<tauHLTmatching.size();i++)
+      for (unsigned int i=0;i<cfg.tauHLTmatching.size();i++)
       {
-        if (tauHLTmatching[i]=="") continue;
+        if (cfg.tauHLTmatching[i]=="") continue;
         const pat::TriggerObjectRef trigRef ( 
-               matchHelper.triggerMatchObject(taus, std::distance(taus->begin(),it), tauHLTmatching[i], iEvent, *patTriggerEvent ) );
+               matchHelper.triggerMatchObject(taus, std::distance(taus->begin(),it), cfg.tauHLTmatching[i], iEvent, *patTriggerEvent ) );
         if ( trigRef.isAvailable() )
         {
           TLorentzVector q;
@@ -1567,7 +1715,7 @@ void MiniTreeProducer::fillTaus(edm::Event& iEvent,
 
     // --------------------- Monte Carlo Info -----------------------
 
-    if (!isData)
+    if (!cfg.isData)
     {
       // Get 4-vector momentum with pat matched MC particle
       if ((patTau->genLepton()!=0))
@@ -1579,15 +1727,16 @@ void MiniTreeProducer::fillTaus(edm::Event& iEvent,
       }
 
       // Get mother, grandmother and grandgrandmother particles
-      if (doGenParticleCollection && genParticles!=0)
+      if (cfg.doGenParticleCollection && genParticles!=0)
       { 
         reco::GenParticle genmother;
         reco::GenParticle gengrandmother;
         reco::GenParticle genggrandmother;
-        //      mytau->LeptonOrigin    = getMuonOrigin (genParticles, patTau,
-        //                                         genmother,
-        //                                         gengrandmother,
-        //                                        genggrandmother);
+        /*        mytau->LeptonOrigin = MonteCarloOrigin::getMuonOrigin(
+                                  genParticles, patTau,
+                                  genmother,
+                                  gengrandmother,
+                                  genggrandmother);*/
         mytau->GenMother       = genmother;
         mytau->GenGrandMother  = gengrandmother;
         mytau->GenGGrandMother = genggrandmother;
@@ -1665,19 +1814,19 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
                  const std::pair<float,float>& SumMuMetCorr,
                  const pat::TriggerEvent* patTriggerEvent)
 {
-  IPHCTree::MTJetMet* myjetmet = evt->NewJetMet();
+  IPHCTree::MTMET* mymet = evt->NewMet();
 
   // ---------------------------------------------------------------
   //                           MET   
   // ---------------------------------------------------------------
 
 	// This is global (JES+muon) corrected MET
-	myjetmet->met.p2.Set(met->px(), met->py());
-	myjetmet->met.uncmisEt = met->uncorrectedPt();
-	myjetmet->met.sumEt    = met->sumEt();
+	mymet->p2.Set(met->px(), met->py());
+	mymet->uncmisEt = met->uncorrectedPt();
+	mymet->sumEt    = met->sumEt();
 
 	// NB: met - globaluncorrection = uncorrectedmet : 
-	// met.px() - met.corEx(uc0) = uncmisEt.px(), idem for py
+	// px() - met.corEx(uc0) = uncmisEt.px(), idem for py
 
   // { uncorrALL, uncorrJES, uncorrMUON, uncorrMAXN }
 	pat::MET::UncorrectionType uc0 = pat::MET::UncorrectionType(0);
@@ -1685,15 +1834,15 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
 	//pat::MET::UncorrectionType uc2 = pat::MET::UncorrectionType(2);
 
 	// MET global uncorrections (to be added if needed):
-	myjetmet->met.dmEx = met->corEx(uc0);
-	myjetmet->met.dmEy = met->corEy(uc0);
+	mymet->dmEx = met->corEx(uc0);
+	mymet->dmEy = met->corEy(uc0);
 
 	if (algo == "tc")
 	{
-		myjetmet -> met.doCorrection(SumMuMetCorr.first,
-                                 SumMuMetCorr.second);
-		myjetmet -> met.p2MuonCorr.Set(met->px() + SumMuMetCorr.first,
-																   met->py() + SumMuMetCorr.second);
+		mymet -> doCorrection(SumMuMetCorr.first,
+                          SumMuMetCorr.second);
+		mymet -> p2MuonCorr.Set(met->px() + SumMuMetCorr.first,
+							 					    met->py() + SumMuMetCorr.second);
 	}
 
   // ---------------------------------------------------------------
@@ -1718,12 +1867,12 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
     // --------------------- Preselection -----------------------
 
 		// Applying a preselection based on pT, eta
-		if (patJet->pt() < jet_cut_pt || 
-        abs(patJet->eta()) > jet_cut_eta)	continue;
+		if (patJet->pt() < cfg.jet_cut_pt || 
+        abs(patJet->eta()) > cfg.jet_cut_eta)	continue;
 
     // -------- Creating a new jet in MiniTree -----------------
 
-		IPHCTree::MTJet* myjet = myjetmet->NewJet();
+		IPHCTree::MTJet* myjet = evt->NewJet();
 
     // ------------------------ General ------------------------
 
@@ -1795,7 +1944,7 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
 		for(unsigned int tr=0;tr<patJet->associatedTracks().size();tr++)
        myjet->sumPtTracks+=patJet->associatedTracks()[tr]->pt();
 
-		if (!isAOD)
+		if (!cfg.isAOD)
     {
 			const reco::TrackIPTagInfo * TIP = patJet->tagInfoTrackIP();
 			const reco::TrackRefVector & T   = TIP->selectedTracks();
@@ -1876,7 +2025,7 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
     // --------------------- Monte Carlo Info -----------------------
 
     // Fill MC 4-vector momentum
-		if (!isData)
+		if (!cfg.isData)
 		{
 			myjet->partonFlavour = patJet->partonFlavour();
   		if (patJet->genJet()!=0)
@@ -1895,27 +2044,27 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
 
     std::map<std::string,Float_t> ids;
 
-    for (unsigned int i=0;i<jetBTagList.size();i++)
+    for (unsigned int i=0;i<cfg.jetBTagList.size();i++)
     {
-      if (jetBTagList[i]=="") continue;
-      ids[jetBTagList[i]] = patJet->bDiscriminator(jetBTagList[i]);
+      if (cfg.jetBTagList[i]=="") continue;
+      ids[cfg.jetBTagList[i]] = patJet->bDiscriminator(cfg.jetBTagList[i]);
     }
  
     // Saving ids
     myjet->bTag.Fill(ids);
 
     // --------------------- HLT-object matching -----------------------
-    if (doTrigger)
+    if (cfg.doTrigger)
     {
       std::map<std::string,TLorentzVector> matched;
 
       const pat::helper::TriggerMatchHelper matchHelper;
 
-      for (unsigned int i=0;i<jetHLTmatching.size();i++)
+      for (unsigned int i=0;i<cfg.jetHLTmatching.size();i++)
       {
-        if (jetHLTmatching[i]=="") continue;
+        if (cfg.jetHLTmatching[i]=="") continue;
         const pat::TriggerObjectRef trigRef ( 
-               matchHelper.triggerMatchObject(jets, std::distance(jets->begin(),it), jetHLTmatching[i], iEvent, *patTriggerEvent ) );
+               matchHelper.triggerMatchObject(jets, std::distance(jets->begin(),it), cfg.jetHLTmatching[i], iEvent, *patTriggerEvent ) );
         if ( trigRef.isAvailable() )
         {
           TLorentzVector q;
@@ -1928,8 +2077,8 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
 
     // --------------------- sumET -----------------------
 
-		myjetmet->sumEtJet    += patJet->et();
-		myjetmet->sumEtJetRaw += patJet->et()/myjet->scale;
+    //		myjetmet->sumEtJet    += patJet->et();
+		//    myjetmet->sumEtJetRaw += patJet->et()/myjet->scale;
     }		
   }
 }  
