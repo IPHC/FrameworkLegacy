@@ -469,6 +469,17 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
 			edm::Handle< std::vector<pat::Electron> > elHa;
 			iEvent.getByLabel(cfg.electronProducer[m], elHa);
 
+      // Getting tracks if not initialized
+      if (!cfg.doTracks)
+      {
+        if (cfg.trackProducer.size()>0) 
+              iEvent.getByLabel(cfg.trackProducer[0], trackHandle);
+        if (!trackHandle.isValid())
+        {
+          ERROR("Produce") << "Track collection is missing." << std::endl;
+        }
+      }
+
 			// Filling MiniTree if electrons are available
 			if (elHa.isValid()) fillElectrons(iEvent,iSetup,evt,elHa,trackBuilder,genParticles,bs,vp,bField,trackHandle,patTriggerEvent);
 			else
@@ -774,7 +785,8 @@ void MiniTreeProducer::fillVertices(edm::Event& iEvent,
 			 itv = vertices->begin(); itv!=vertices->end(); itv++)
 	{
     // Get the primary vertex used in the following 
-		vp = &(*itv);
+    // the first of the collection !
+		if (itv == vertices->begin()) vp = &(*itv);
 
     // Get a new vertex
 		IPHCTree::MTVertex* pvx = evt->NewVertex();
