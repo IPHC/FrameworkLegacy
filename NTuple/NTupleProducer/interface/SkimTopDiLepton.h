@@ -1,5 +1,5 @@
-#ifndef __NTupleProducer_H__
-#define __NTupleProducer_H__
+#ifndef __NTUPLE_SkimTopDiLepton_H__
+#define __NTUPLE_SkimTopDiLepton_H__
 
 // system include files
 #include <memory>
@@ -14,9 +14,6 @@
 #include <fstream>
 #include <TH1F.h>
 
-
-#include "NTuple/NTupleProducer/interface/SkimTopDiLepton.h"
-#include "NTuple/NTupleProducer/interface/FillNTuple.h"
 
 //----------------- cmssw includes
 #include "FWCore/Framework/interface/Frameworkfwd.h"
@@ -56,38 +53,64 @@
 #define WARNING(title) edm::LogWarning(title) << "[" << __FILE__ <<", line=" << __LINE__ <<"] "
 
 
-// Class declaration ----------------------------------
-
-class NTupleProducer:public edm::EDAnalyzer
+class SkimTopDiLepton
 {
 public:
-  explicit NTupleProducer (const edm::ParameterSet &);
-   ~NTupleProducer ();
 
-private:
-  virtual void beginJob ();
-  virtual void analyze (const edm::Event &, const edm::EventSetup &);
-  virtual void endJob ();
+  /// Constructor without arguments
+  SkimTopDiLepton()
+  { }
 
-  TTree *output;
-  IPHCTree::NTEvent * ntuple;
-  edm::Service<TFileService> fs;
+  /// Destructor
+  virtual ~SkimTopDiLepton()
+  { }
 
-  unsigned int verbose;
- 
+  /// Initialize
+  virtual bool Initialize(const edm::ParameterSet& parameters);
 
-  TH1F * theNormHisto;
-  TH1F * theNormHistoByTMEME;
+  /// Filter
+  virtual bool Filter(const IPHCTree::NTEvent* event);
 
-  SkimTopDiLepton top_filter;
-  FillNTuple ntuple_filler;
+ private:
 
-  unsigned long ntotal;
-  unsigned long nfiltered;
+  int GetNumberOfIDMuons(const IPHCTree::NTEvent* event);
+  int GetNumberOfMuons(const IPHCTree::NTEvent* event);
+  int GetNumberOfIDElectrons(const IPHCTree::NTEvent* event);
+  int GetNumberOfElectrons(const IPHCTree::NTEvent* event);
+  int GetNumberOfTaus(const IPHCTree::NTEvent* event);
+  int GetNumberOfJets(const IPHCTree::NTEvent* event);
 
+  int numberOfLept;
+
+  int numberOfMuon;
+  bool useMuonIdSkim;
+  double muon_cut_pt;
+  double muon_cut_iso;
+
+  int numberOfElec;
+  bool useElectronIdSkim;
+  double electron_cut_pt;
+  double electron_cut_iso;
+
+  bool doTMEMESkimming;
+  std::vector<int> TMEMESkimList;
+  bool doMCDiLepSkimming;
+  std::vector<string> MCDiLepList;
+
+  bool doTriggerSkimming;
+  std::vector<std::string> triggerSkimList;
+
+  bool doTauSkimming;
+  int numberOfTau;
+  double tau_cut_pt;
+  std::string tau_algo;
+
+  bool doJetSkimming;
+  int numberOfJet;
+  double jet_cut_pt;
+  double jet_cut_eta;
+  std::string jet_algo;
+  
 };
-
-
-
 
 #endif
