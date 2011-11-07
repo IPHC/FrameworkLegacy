@@ -11,15 +11,18 @@
 #pragma link C++ class IPHCTree::KeyedCollection<Float_t>+;
 #pragma link C++ class IPHCTree::KeyedCollection<UInt_t>+;
 #pragma link C++ class IPHCTree::KeyedCollection<TLorentzVector>+;
+#pragma link C++ class std::pair<Char_t,Char_t>+;
 
 // General
 #pragma link C++ class IPHCTree::NTEvent+;
 #pragma link C++ class IPHCTree::NTGeneral+;
 #pragma link C++ class IPHCTree::NTTrigger+;
 #pragma link C++ class IPHCTree::NTPileUp+;
+#pragma link C++ class IPHCTree::NTEventDescriptor+;
 
 // Monte Carlo
 #pragma link C++ class IPHCTree::NTMonteCarlo+;
+#pragma link C++ class IPHCTree::NTGenParticle+;
 #pragma link C++ class IPHCTree::WDecaysMC+;
 #pragma link C++ class IPHCTree::ZDecaysMC+;
 #pragma link C++ class IPHCTree::TopDecaysMC+;
@@ -41,7 +44,8 @@
 #pragma link C++ class IPHCTree::NTVertex+;
 
 // Multicollection
-#pragma link C++ class IPHCTree::MultiCollection<IPHCTree::NTJetMet>+;
+#pragma link C++ class IPHCTree::MultiCollection<IPHCTree::NTJet>+;
+#pragma link C++ class IPHCTree::MultiCollection<IPHCTree::NTMET>+;
 #pragma link C++ class IPHCTree::MultiCollection<IPHCTree::NTElectron>+;
 #pragma link C++ class IPHCTree::MultiCollection<IPHCTree::NTMuon>+;
 #pragma link C++ class IPHCTree::MultiCollection<IPHCTree::NTTau>+;
@@ -50,7 +54,9 @@
 #pragma link C++ class IPHCTree::MultiCollection<IPHCTree::NTTrack>+;
 
 // Vector
-#pragma link C++ class std::vector<IPHCTree::NTJetMet>+;
+#pragma link C++ class std::vector<IPHCTree::NTGenParticle>+;
+#pragma link C++ class std::vector<IPHCTree::NTJet>+;
+#pragma link C++ class std::vector<IPHCTree::NTMET>+;
 #pragma link C++ class std::vector<IPHCTree::NTElectron>+;
 #pragma link C++ class std::vector<IPHCTree::NTMuon>+;
 #pragma link C++ class std::vector<IPHCTree::NTTau>+;
@@ -62,7 +68,8 @@
 #pragma link C++ class std::vector<IPHCTree::TopDecaysMC>+;
 
 // Vector of vector
-#pragma link C++ class std::vector<std::vector< IPHCTree::NTJetMet> >+;
+#pragma link C++ class std::vector<std::vector< IPHCTree::NTJet> >+;
+#pragma link C++ class std::vector<std::vector< IPHCTree::NTMET> >+;
 #pragma link C++ class std::vector<std::vector< IPHCTree::NTElectron> >+;
 #pragma link C++ class std::vector<std::vector< IPHCTree::NTMuon> >+;
 #pragma link C++ class std::vector<std::vector< IPHCTree::NTTau> >+;

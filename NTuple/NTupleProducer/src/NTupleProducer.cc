@@ -1,4 +1,6 @@
 #include "NTuple/NTupleProducer/interface/NTupleProducer.h"
+#include "IPHCDataFormat/MTFormat/interface/MTTransient.h"
+#include "IPHCDataFormat/NTFormat/interface/NTTransient.h"
 
 
 // ----------------------------------------------------------------------------
@@ -116,8 +118,8 @@ void NTupleProducer::analyze (const edm::Event & iEvent,
     ERROR("Produce") << "IPHCTree::MTEvent is not found." << std::endl;
     return;
   }
-  const IPHCTree::MTEvent* minitree = minitreeHandle.product ();
-
+  const IPHCTree::MTEvent* minitree = minitreeHandle.product();
+  IPHCTree::MTTransient::InitializeAfterReading(minitree);
 
   // -------------------------------------
   // Reseting ntuple current event
@@ -140,9 +142,12 @@ void NTupleProducer::analyze (const edm::Event & iEvent,
   // -------------------------------------
   // General info
   // -------------------------------------
-  ntuple->general = minitree->general;
-  ntuple->mc      = minitree->mc;
-  ntuple->pileup  = minitree->pileup;
+  ntuple->general = 
+          dynamic_cast<const IPHCTree::NTGeneral&>(minitree->general);
+  ntuple->pileup  = 
+          dynamic_cast<const IPHCTree::NTPileUp&>(minitree->pileup);
+  ntuple->mc      = 
+          dynamic_cast<const IPHCTree::NTMonteCarlo&>(minitree->mc);
 
 
   // -------------------------------------
@@ -505,77 +510,8 @@ void NTupleProducer::analyze (const edm::Event & iEvent,
   }
 
 
-
-
-  /*  
-  //apply skimming
-  
-  int nmuon = 0; 
-  int nelec = 0; 
-  
-  int passSkim = false;
-  int passSkimMuon = false;
-  int passSkimElec = false;
-  
-  if(numberOfLept4Skim != -1){
-    if(useMuonIdSkim) nmuon = GetNumberOfIDMuons(*ntevt, muon_cut_pt_skim, muon_cut_iso_skim);
-    else nmuon = GetNumberOfMuons(*ntevt, muon_cut_pt_skim, muon_cut_iso_skim);
-    if(useElectronIdSkim) nelec = GetNumberOfIDElectrons(*ntevt, electron_cut_pt_skim, electron_cut_iso_skim);
-    else nelec = GetNumberOfElectrons(*ntevt, electron_cut_pt_skim, electron_cut_iso_skim);
-    if(nmuon >= numberOfMuon4Skim) passSkimMuon = true;
-    if(nelec >= numberOfElec4Skim) passSkimElec = true;
-  }//else passSkim = true;
-  
-  int ntotlepton = nmuon+nelec;
-  if(ntotlepton >= numberOfLept4Skim && passSkimMuon && passSkimElec )passSkim = true;
- 
- 
-  int passTauSkim = false;
-  if(doTauSkimming){
-    int ntau = GetNumberOfTaus(*ntevt, tau_cut_pt_skim, tau_algo_skim);
-    if(ntau >= numberOfTau4Skim) passTauSkim = true;
-  }
-  
-  int passVerticeskim = false;
-  if(doJetSkimming){
-    int njet = GetNumberOfJets(*ntevt, jet_cut_pt_skim, jet_cut_eta_skim, jet_algo_skim);
-    if(njet >= numberOfJet4Skim) passJetSkim = true;
-  }
-  
-  bool passTMEME = false;
-  if(doTMEMESkimming){
-  	for(unsigned int x = 0; x<TMEMESkimList.size(); x++){
-		if(ntevt->TMEME== TMEMESkimList[x])
-			passTMEME = true;
-	} 
-	//if(!passTMEME) passSkim = false;
-  }
-  bool passChannel = false;
-  if(doMCDiLepSkimming){
-	for(unsigned int x = 0 ; x<MCDiLepList.size(); x++){
-		int TMEME = ntevt->TMEME;
-		if(MCDiLepList[x] == string("ee") && (TMEME == 2  || TMEME == 10101 || TMEME == 20200 )) passChannel = true;
-        	if(MCDiLepList[x] == string("mumu") && (TMEME == 20 || TMEME == 11010 || TMEME == 22000 )) passChannel = true;
-        	if(MCDiLepList[x] == string("emu") && (TMEME == 11 || TMEME == 11001 || TMEME == 10110 || TMEME == 21100 )) passChannel = true;
-        	if(MCDiLepList[x] == string("tautau") && (TMEME == 20000 )) passChannel = true;
-        	if(MCDiLepList[x] == string("ljets") && (TMEME == 1 || TMEME == 10 || TMEME == 10000 || TMEME == 11000 || TMEME == 10100 )) passChannel = true;
-		if(MCDiLepList[x] == string("had") && (TMEME == 0 )) passChannel = true;
-	}
-	//if(!passChannel) passSkim = false;
-  }
-  
-
-  // --- Filling tree
-  if ((numberOfLept4Skim == -1 && !doTMEMESkimming && !doMCDiLepSkimming && !doTriggerSkimming && !doTauSkimming && !doJetSkimming)||
-      (numberOfLept4Skim != -1 && passSkim)|| 
-      (doTMEMESkimming   && passTMEME)|| 
-      (doMCDiLepSkimming && passChannel)|| 
-      (doTriggerSkimming && passTriggerSkim)|| 
-      (doTauSkimming     && passTauSkim)||
-      (doJetSkimming     && passJetSkim))
-  */
-
   std::cout << "Store the event into the ntuple ..." << std::endl; 
+  IPHCTree::NTTransient::InitializeBeforeWriting(ntuple);
   output->Fill ();
   std::cout << "--> the event is successfully stored into the ntuple.";
   std::cout << std::endl;

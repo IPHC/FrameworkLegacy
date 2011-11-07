@@ -18,8 +18,8 @@
 namespace IPHCTree
 {
 
-  //! \class NTTrigger
-  //! Class related to trigger info for NTuple 
+  /// \class NTTrigger
+  /// Class related to trigger info for NTuple 
 	class NTTrigger
 	{
     // -------------------------------------------------------------
@@ -27,16 +27,16 @@ namespace IPHCTree
     // -------------------------------------------------------------
 	protected:
 
-    //! pointer to the table of prescales
+    /// pointer to the table of prescales
     std::vector<UInt_t>       prescales_;
 
-    //! pointer to the table of trigger bit names
+    /// pointer to the table of trigger bit names
     std::set<std::string>     names_;
 
-    //! trigger bit table
+    /// trigger bit table
     std::vector<Bool_t>       results_;
 
-    //! trigger table name
+    /// trigger table name
     std::vector<std::string>  tablenames_;
 
     // -------------------------------------------------------------
@@ -44,17 +44,15 @@ namespace IPHCTree
     // -------------------------------------------------------------
 	public:
 
-    //! Constructor without arguments
+    /// Constructor without arguments
 		NTTrigger()
-    { 
-    }
+    { }
 
-    //! Destructor
+    /// Destructor
 		~NTTrigger()
-    {
-    }
+    { }
 
-    //! Clear content of the Trigger
+    /// Clear content of the Trigger
 		void Reset()
 		{
       names_.clear();
@@ -63,15 +61,17 @@ namespace IPHCTree
       tablenames_.clear();
 		}
 
-		//! \brief Accessor to HLT table name
-		const std::string& HLTname() const
-    { return tablenames_[1]; }
+		/// \brief Accessor to HLT table name
+		const std::string HLTname() const
+    { if (tablenames_.size()>=2) return tablenames_[1];
+      else return ""; }
 
-		//! \brief Accessor to L1 table name
-		const std::string& L1name() const
-    { return tablenames_[0]; }
+		/// \brief Accessor to L1 table name
+		const std::string L1name() const
+    { if (tablenames_.size()>=1) return tablenames_[0];
+      else return ""; }
 
-		//! Is the given trigger path fired
+		/// Is the given trigger path fired
     bool IsFired(const std::string& name) const
     {
       if (name.find("*")!=std::string::npos)
@@ -84,24 +84,24 @@ namespace IPHCTree
       }
     }
 
-		//! Is the given trigger path fired
+		/// Is the given trigger path fired
     UInt_t GetPrescale(const std::string& name) const
     {
       return prescales_[GetIndex(name)];
     }
 
-		//! Is the given trigger path fired
+		/// Is the given trigger path fired
     bool GetSubTable(const std::string& name,
                      std::vector<IPHCTree::NTTriggerPathType>& subtable) const;
 
 
     // ---------------- Displaying ---------------------------
 
-		//! Display information related to the MultiCollection
-    //! \param[in,out] os   a log stream
+		/// Display information related to the MultiCollection
+    /// \param[in,out] os   a log stream
     void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 
@@ -112,7 +112,7 @@ namespace IPHCTree
 
   private:
 
-    //! Getting index
+    /// Getting index
     unsigned int GetIndex(const std::string& name) const
     {
       std::set<std::string>::const_iterator found = names_.find(name);
@@ -124,12 +124,12 @@ namespace IPHCTree
       return std::distance(names_.begin(),found); 
     }
 
-		//! Is a trigger path consistent with with name fired 
-    //! (wildcard '*' is allowed)
+		/// Is a trigger path consistent with with name fired 
+    /// (wildcard '*' is allowed)
     bool IsFiredWithWildcards(const std::string& name) const;
 
 
-    //! Is the two names are consistent (including wildcard)
+    /// Is the two names are consistent (including wildcard)
     bool NameCompatible(const std::string& pattern,
                         const std::string& name) const;
 

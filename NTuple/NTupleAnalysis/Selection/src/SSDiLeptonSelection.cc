@@ -569,9 +569,9 @@ bool SSDiLeptonSelection::passTriggerSelection (Dataset * dataset, string channe
   //  if(runNumber == 1){
   if (!dataset->isData ()) 	//MC
   {
-    passMu = GetPointer2Trigger()->IsTriggerFired("HLT_DoubleMu6_v1");
-    passEl = GetPointer2Trigger()->IsTriggerFired("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v2");
-    passElMu = GetPointer2Trigger()->IsTriggerFired("HLT_Mu8_Ele17_CaloIdL_v2");
+    passMu = GetPointer2Trigger()->IsFired("HLT_DoubleMu6_v1");
+    passEl = GetPointer2Trigger()->IsFired("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v2");
+    passElMu = GetPointer2Trigger()->IsFired("HLT_Mu8_Ele17_CaloIdL_v2");
   }
   else
   {
@@ -581,9 +581,9 @@ bool SSDiLeptonSelection::passTriggerSelection (Dataset * dataset, string channe
     // ERIC TO DO
     /*
       if ( 160329 <= getRunNumber() && getRunNumber() < 164237 && 
-      GetPointer2Trigger()->IsTriggerFired("HLT_DoubleMu7");
+      GetPointer2Trigger()->IsFired("HLT_DoubleMu7");
       else if ( 165085 <= getRunNumber() && 
-      GetPointer2Trigger()->IsTriggerFired("HLT_Mu13_Mu8_vleMu7");
+      GetPointer2Trigger()->IsFired("HLT_Mu13_Mu8_vleMu7");
       ( triggerList[i].first.compare(0,14,"HLT_Mu13_Mu8_v")==0  && triggerList[i].second == true)  )
       passMu = true;
 

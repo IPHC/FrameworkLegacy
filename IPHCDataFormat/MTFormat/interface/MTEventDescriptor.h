@@ -1,28 +1,30 @@
-#ifndef __IPHC_TREE_NTGeneral_H__
-#define __IPHC_TREE_NTGeneral_H__
+#ifndef __IPHC_TREE_MTEventDescriptor_H__
+#define __IPHC_TREE_MTEventDescriptor_H__
 
 // STL headers
 #include <iostream>
+#include <string>
+#include <set>
 
 // ROOT headers
 #include <TROOT.h>
 
+// IPHC headers (NTuple format)
+#include "../../NTFormat/interface/NTEventDescriptor.h"
+
+
 namespace IPHCTree
 {
 
-  /// \class NTGeneral
-  /// NTGeneral contains all information about event id
-  class NTGeneral
+  /// \class MTEventDescriptor
+  /// MTEventDescriptor contains all information about event id
+  class MTEventDescriptor : public NTEventDescriptor
   {
 
     // -------------------------------------------------------------
     //                        data members
     // -------------------------------------------------------------
   public:
-
-    UInt_t runNb;     /// run number
-    UInt_t eventNb;   /// event number 
-    UInt_t lumiblock; /// luminosity block number
 
 
     // -------------------------------------------------------------
@@ -31,24 +33,21 @@ namespace IPHCTree
   public:
 
     /// Constructor without arguments
-    NTGeneral()
-    { Reset(); }
-
-    /// Destructor
-    ~NTGeneral()
+    MTEventDescriptor()
     { }
 
-    /// Clear all information related to the Pile-Up
+    /// Destructor
+    ~MTEventDescriptor()
+    { }
+
+		/// Clear all information
     void Reset()
-    { runNb=0; eventNb=0; lumiblock=0; }
+    { NTEventDescriptor::Reset(); }
 
     /// Display information related to the photon
     /// \param[in,out] os   a log stream
     void Dump(std::ostream & os = std::cout) const
-    { 
-      os << " -- Event " << eventNb << " from run " << runNb
-         << " & lumiBlock " << lumiblock<< std::endl;
-    }
+    { NTEventDescriptor::Dump(os); }
 
     /// Alias to Dump method
     void PrintInfo(std::ostream & os = std::cout) const

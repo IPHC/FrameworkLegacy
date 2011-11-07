@@ -13,17 +13,22 @@
 namespace IPHCTree
 {
 
+  class NTTransient;
+  class MTTransient;
+
 	template <class T> class KeyedCollection
 	{
-  public:
+
+    friend class IPHCTree::NTTransient;
+    friend class IPHCTree::MTTransient;
 
     // -------------------------------------------------------------
     //                        data members
     // -------------------------------------------------------------
 	protected:
 
-    //! pointer to the table of trigger bit names
-    std::set<std::string> names_;
+    //! transient variable : collection of variable names
+    mutable std::set<std::string> names_; //! TRANSIENT
 
     //! persistent variable : collection of variable values
     std::vector<T> values_;

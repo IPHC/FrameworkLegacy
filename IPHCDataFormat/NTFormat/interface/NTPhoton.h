@@ -11,9 +11,9 @@
 namespace IPHCTree
 {
 
-  //! \class NTPhoton
-  //! NTPhoton should contain the minimal common information as p4, charge,
-  //! isolation, d0, chi2, PhotonOrigin.
+  /// \class NTPhoton
+  /// NTPhoton should contain the minimal common information as p4, charge,
+  /// isolation, d0, chi2, PhotonOrigin.
   class NTPhoton : public NTParticle
   {
 
@@ -24,21 +24,21 @@ namespace IPHCTree
 
     // ------------------ general variables ------------------------
 
-    //! Is the photon reconstructed from Barrel calorimeter ?
-    //! true = Barrel, false = End-Cap
+    /// Is the photon reconstructed from Barrel calorimeter ?
+    /// true = Barrel, false = End-Cap
     Bool_t isEB; 
     
     // ------------------ isolation variables ----------------------
 
-    //! summed track pt in a cone of deltaR<0.4
+    /// summed track pt in a cone of deltaR<0.4
     Float_t TrkIso;    
 
-    //! ECAL summed ET in a cone of deltaR<0.4 iso deposit from
-    //! RecHits with electron footprint removed (cone = 0.4)
+    /// ECAL summed ET in a cone of deltaR<0.4 iso deposit from
+    /// RecHits with electron footprint removed (cone = 0.4)
     Float_t ECaloIso;  
                      
-    //! HCAL iso deposit from calo Towers (cone = 0.4) summed Et in
-    //! a cone of deltaR<0.4 
+    /// HCAL iso deposit from calo Towers (cone = 0.4) summed Et in
+    /// a cone of deltaR<0.4 
     Float_t HCaloIso; 
 
     // ---------------- shower shape variables ---------------------
@@ -53,22 +53,22 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
  
-    //! Constructor without arguments
+    /// Constructor without arguments
     NTPhoton ()
     { Reset(true); }
 
-    //! Destructor
+    /// Destructor
     virtual ~NTPhoton ()
     { }
 
-    //! Clear all information related to the photon
+    /// Clear all information related to the photon
     virtual void Reset(bool constructor_call);
     
-    //! Display information related to the photon
-    //! \param[in,out] os   a log stream
+    /// Display information related to the photon
+    /// \param[in,out] os   a log stream
     virtual void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     virtual void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 

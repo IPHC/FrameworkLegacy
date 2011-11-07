@@ -176,13 +176,15 @@ void NTTrigger::Dump(std::ostream& os) const
   os << " | fired? | prescale" << std::endl;
 
   // Loop over paths
+  unsigned int index=0;
   for (std::set<std::string>::const_iterator name = names_.begin();
        name != names_.end(); name++)
   {
-    unsigned int index = std::distance(name,names_.begin());
+    //  unsigned int index = std::distance(name,names_.begin());
     os.width(30); os << *name;
     os << " |   " << static_cast<unsigned int>(results_[index]);
     os << "    | " << prescales_[index] << std::endl;
+    index++;
   }
 
   // Foot

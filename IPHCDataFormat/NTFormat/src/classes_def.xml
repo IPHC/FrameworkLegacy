@@ -11,10 +11,16 @@
   <class name="std::pair<Char_t,Char_t>" />
 
   // IPHC containers
-  <class pattern="IPHCTree::KeyedCollection<*>"/>
+  <class name="IPHCTree::KeyedCollection<Float_t>">
+     <field name="names_" transient="true"/>
+  </class>
+  <class name="IPHCTree::KeyedCollection<TLorentzVector>">
+     <field name="names_" transient="true"/>
+  </class>
 
   // General
   <class name="IPHCTree::NTEvent"/>
+  <class name="IPHCTree::NTEventDescriptor"/>
   <class name="IPHCTree::NTGeneral"/>
   <class name="IPHCTree::NTTrigger"/>
   <class name="IPHCTree::NTPileUp"/>
@@ -43,14 +49,21 @@
   <class name="IPHCTree::NTTau">
      <field name="charge" transient="true"/>
   </class>
-  <class name="IPHCTree::NTJet"/>
-  <class name="IPHCTree::NTMET"/>
-  <class name="IPHCTree::NTJetMet"/>
-  <class name="IPHCTree::NTPhoton"/>
+  <class name="IPHCTree::NTJet">
+  </class>
+  <class name="IPHCTree::NTMET">
+  </class>
+  <class name="IPHCTree::NTJetMet">
+  </class>
+  <class name="IPHCTree::NTPhoton">
+  </class>
 
   // Reconstructed objects
   <class name="IPHCTree::NTVertex"/>
-  <class name="IPHCTree::NTTrack"/>
+  <class name="IPHCTree::NTTrack">
+     <field name="charge" transient="true"/>
+  </class>
+
 
   // Vectors
   <class name="std::vector<IPHCTree::NTJet>"/>

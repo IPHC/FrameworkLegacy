@@ -13,8 +13,16 @@
 
 namespace IPHCTree
 {
+
+  class NTTransient;
+  class MTTransient;
+
 	template <class T> class MultiCollection
 	{
+
+    friend class IPHCTree::NTTransient;
+    friend class IPHCTree::MTTransient;
+
     // -------------------------------------------------------------
     //                        data members
     // -------------------------------------------------------------
@@ -22,32 +30,29 @@ namespace IPHCTree
 
     // ------------------- persistent data -------------------------
 
-    //! collection of variable names
+    /// collection of variable names
     std::vector< std::vector<T> > collections_;
 
-    //! collection of variable names
+    /// collection of variable names
 		std::vector< std::string > names_;
 
-    //! current index
-    mutable UInt_t current_index_;
+    /// current index
+    mutable UInt_t current_index_; //! TRANSIENT
 
     // -------------------------------------------------------------
     //                       method members
     // -------------------------------------------------------------
 	public:
 
-    //! Constructor without arguments
+    /// Constructor without arguments
 		MultiCollection()
-    { 
-      current_index_=0;
-    }
+    { current_index_=0; }
 
-    //! Destructor
+    /// Destructor
 		~MultiCollection()
-    { 
-    }
+    { }
 
-    //! Clear content of the MultiCollection
+    /// Clear content of the MultiCollection
 		void Reset()
 		{
       current_index_=0;
@@ -55,7 +60,7 @@ namespace IPHCTree
       collections_.clear();
 		}
 
-    //! Creating a new Collection
+    /// Creating a new Collection
     void Reserve(const std::set<std::string>& labels)
     {
       // Clear names table
@@ -75,7 +80,7 @@ namespace IPHCTree
       current_index_=0;
     }
 
-    //! Changing collection
+    /// Changing collection
     void SelectLabel(const std::string& label) const
     {
       for (unsigned int i=0;i<names_.size();i++)
@@ -88,7 +93,7 @@ namespace IPHCTree
 
     // ------- Accessor and Mutator @ Collection level ----------
 
-    //! Getting a collection by its name
+    /// Getting a collection by its name
     const std::vector<T>* GetCollection(const std::string& name) const
     {
       for (unsigned int i=0;i<names_.size();i++)
@@ -98,7 +103,7 @@ namespace IPHCTree
       return 0;
     }
 
-    //! Getting list of collections
+    /// Getting list of collections
     void GetCollectionList(std::set<std::string>& names) const
     { 
       names.clear();
@@ -106,7 +111,7 @@ namespace IPHCTree
         names.insert(names_[i]);
     }
 
-    //! Check if a collection exist
+    /// Check if a collection exist
     bool DoYouKnowCollection(const std::string& name) const
     {
       for (unsigned int i=0;i<names_.size();i++)
@@ -116,15 +121,15 @@ namespace IPHCTree
 
     // ------- Accessor and Mutator @ Element level ----------
 
-    //! operator [] overloading 
+    /// operator [] overloading 
     T& operator[] (unsigned int i)
     { return collections_[current_index_][i]; }
 
-    //! operator [] overloading in readmode
+    /// operator [] overloading in readmode
     const T& operator[] (unsigned int i) const
     { return collections_[current_index_][i]; }
 
-    //! return size of the collection
+    /// return size of the collection
     unsigned int size() const
     { return collections_[current_index_].size(); }
 
@@ -134,47 +139,47 @@ namespace IPHCTree
     typedef typename std::vector<T>::const_reverse_iterator 
                                                 const_reverse_iterator;
 
-    //! iterator to the begin of the collection
+    /// iterator to the begin of the collection
     iterator begin()
     { return collections_[current_index_].begin(); }
 
-    //! iterator to the end of the collection
+    /// iterator to the end of the collection
     iterator end()
     { return collections_[current_index_].end(); }
 
-    //! iterator to the begin of the readmode collection
+    /// iterator to the begin of the readmode collection
     const_iterator begin() const
     { return collections_[current_index_].begin(); }
 
-    //! iterator to the end of the readmode collection
+    /// iterator to the end of the readmode collection
     const_iterator end() const
     { return collections_[current_index_].end(); }
 
-    //! iterator to the end of the readmode collection
+    /// iterator to the end of the readmode collection
     reverse_iterator rbegin()
     { return collections_[current_index_].rbegin(); }
 
-    //! iterator to the begin of the collection
+    /// iterator to the begin of the collection
     reverse_iterator rend()
     { return collections_[current_index_].rend(); }
 
-    //! iterator to the end of the collection
+    /// iterator to the end of the collection
     const_reverse_iterator rbegin() const
     { return collections_[current_index_].rbegin(); }
 
-    //! iterator to the begin of the readmode collection
+    /// iterator to the begin of the readmode collection
     const_reverse_iterator rend() const
     { return collections_[current_index_].rend(); }
 
-    //! Adding an item to the current collection
-    //! and getting a pointer to this item
+    /// Adding an item to the current collection
+    /// and getting a pointer to this item
     T* New()
     {
       collections_[current_index_].push_back(T());
       return &(collections_[current_index_].back());
     }
 
-    //! Adding an item to the current collection
+    /// Adding an item to the current collection
     void push_back(const T& item)
     {
       collections_[current_index_].push_back(item);
@@ -182,8 +187,8 @@ namespace IPHCTree
 
     // ---------------- Displaying ---------------------------
 
-		//! Display information related to the MultiCollection
-    //! \param[in,out] os   a log stream
+		/// Display information related to the MultiCollection
+    /// \param[in,out] os   a log stream
     void Dump(std::ostream & os = std::cout) const
     {
       if (names_.size()!=collections_.size())
@@ -201,7 +206,7 @@ namespace IPHCTree
       }
     }
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 

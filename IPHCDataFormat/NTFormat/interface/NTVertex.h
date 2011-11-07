@@ -12,8 +12,8 @@
 namespace IPHCTree
 {
 
-  //! \class NTVertex
-  //! class related to primary vertices for NTuple.
+  /// \class NTVertex
+  /// class related to primary vertices for NTuple.
   class NTVertex
   {
 
@@ -22,12 +22,12 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    TVector3 p3;             //! vertex position (x,y,z)
-    Float_t  chi2;           //! chi-square
-    Bool_t   isFake;         //! tells whether the vertex is fake
-    Bool_t   isValid;        //! tells whether the vertex is valid
-    UInt_t   ndof;           //! number of degree of freedom
-    UInt_t   NumberOfTracks; //! number of tracks
+    TVector3 p3;             /// vertex position (x,y,z)
+    Float_t  chi2;           /// chi-square
+    Bool_t   isFake;         /// tells whether the vertex is fake
+    Bool_t   isValid;        /// tells whether the vertex is valid
+    UInt_t   ndof;           /// number of degree of freedom
+    UInt_t   NumberOfTracks; /// number of tracks
 
 
     // -------------------------------------------------------------
@@ -35,30 +35,30 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    //! Constructor without arguments
+    /// Constructor without arguments
     NTVertex()
     { Reset(true); }
 
-    //! Destructor
+    /// Destructor
     ~NTVertex()
     { }
 
-		//! Clear all information related to the tau
+		/// Clear all information related to the tau
     void Reset(bool constructor_call=false);
 
-		//! Display information related to the tau
-    //! \param[in,out] os   a log stream
+		/// Display information related to the tau
+    /// \param[in,out] os   a log stream
     void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 
-    //! Access to Rho parameter (position)
+    /// Access to Rho parameter (position)
     const float Rho() const
     { return p3.Perp(); }
 
-    //! Access to normalized chi2
+    /// Access to normalized chi2
     const float normalizedChi2() const
     { return chi2/static_cast<float>(ndof); }
 

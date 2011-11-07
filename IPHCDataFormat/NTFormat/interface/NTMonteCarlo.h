@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <iomanip>
 
 // ROOT headers
 #include <TLorentzVector.h>
@@ -19,8 +20,8 @@
 namespace IPHCTree
 {
 
-  //! \class NTMonteCarlo
-  //! History for generated event
+  /// \class NTMonteCarlo
+  /// History for generated event
   class NTMonteCarlo
   {
 
@@ -29,39 +30,39 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    Int_t            ptHat;        //! Pythia ptHat value
-    std::pair<Float_t,Float_t> x;  //! Feynman variable (p_L / p)
-    Float_t          Q_scale;      //! Q scale
+    Float_t          ptHat;        /// Pythia ptHat value
+    std::pair<Float_t,Float_t> x;  /// Feynman variable (p_L / p)
+    Float_t          Q_scale;      /// Q scale
 
-    //! PDG id of partons involved in collision
+    /// PDG id of partons involved in collision
     std::pair<Char_t,Char_t> partonFlavor;
 
-    //! Collection of generated particles
+    /// Collection of generated particles
     std::vector<IPHCTree::NTGenParticle> genParticles; 
 
-    //! Characterizes W decay mode
-    UInt_t TMEME;
+    /// Characterizes W decay mode
     //  T = # of taus from W decays 	
     //  M = # of muons from W->tau->muon	
     //  E = # of electrons from W->tau->electron
     //  M = # of muons from W->muon	
     //  E = # of electrons from W->electron
+    //  By default = -999
+    Int_t TMEME;
   
-
     // --- generated taus
-    std::vector < TLorentzVector> Generatedtaus;
-    std::vector < TLorentzVector> GeneratedAtaus;
+    std::vector<TLorentzVector> Generatedtaus;
+    std::vector<TLorentzVector> GeneratedAtaus;
     
     // --- generated quarks flavour
-    std::vector < TLorentzVector > genBquarks;
-    std::vector < TLorentzVector > genCquarks;
-    std::vector < TLorentzVector > genLquarks;
-    std::vector < TLorentzVector > genGquarks;
+    std::vector<TLorentzVector > genBquarks;
+    std::vector<TLorentzVector > genCquarks;
+    std::vector<TLorentzVector > genLquarks;
+    std::vector<TLorentzVector > genGquarks;
     
     // --- specific decays
-    std::vector < WDecaysMC >   wAndDecays;
-    std::vector < ZDecaysMC >   zAndDecays;
-    std::vector < TopDecaysMC > topAndDecays;
+    std::vector<WDecaysMC >   wAndDecays;
+    std::vector<ZDecaysMC >   zAndDecays;
+    std::vector<TopDecaysMC > topAndDecays;
 
     
     // -------------------------------------------------------------
@@ -69,24 +70,27 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    //! Constructor without arguments
+    /// Constructor without arguments
     NTMonteCarlo()
     { Reset(true); }
 
-    //! Destructor
+    /// Destructor
     ~NTMonteCarlo()
     { }
 
-    //! Clear all information related to the Monte Carlo
+    /// Clear all information related to the Monte Carlo
     void Reset(bool constructor_call=false);
 
-    //! Display information related to Monte Carlo
-    //! \param[in,out] os   a log stream
+    /// Display information related to Monte Carlo
+    /// \param[in,out] os   a log stream
     void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
+
+    /// Dump only genparticles
+    void DumpGenParticles(std::ostream & os) const;
 
     NTGenParticle* NewGenParticle()
     { 
@@ -96,6 +100,12 @@ namespace IPHCTree
 
     void NewGenParticle(const NTGenParticle& part)
     { genParticles.push_back(part); }
+
+  protected:
+
+    static void PrintParticleDaughters(const IPHCTree::NTGenParticle* part, 
+                                       unsigned int descent,
+                                       std::ostream & os);
 
 
   };

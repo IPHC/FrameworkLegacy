@@ -45,8 +45,8 @@ struct MonteCarloOrigin
                      const reco::GenParticleCollection* genParticles, 
                      const pat::Tau* thePatTau);
 
-  static void fillGenInfo(IPHCTree::MTEvent* evt,
-                          reco::GenParticleCollection* genParticles);
+  static void fillGenInfo(std::auto_ptr<IPHCTree::MTEvent>& evt,
+                          const edm::Handle<reco::GenParticleCollection>& genParticles);
 
     };
 

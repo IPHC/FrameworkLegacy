@@ -52,11 +52,11 @@ class Event
 
   //! Get a copy of the jet collection
   std::vector<IPHCTree::NTJet> GetJets() const
-  { return (*jetmet_)[0].jets; }
+  { return (*jets_); }
 
   //! Get a copy of the MET collection
   IPHCTree::NTMET GetMET() const
-  { return (*jetmet_)[0].met; }
+  { return (*met_); }
 
   //! Get a copy of the electron collection
   std::vector<IPHCTree::NTElectron> GetElectrons() const
@@ -94,13 +94,11 @@ class Event
 
   //! Get a const pointer to the jet collection
   const std::vector<IPHCTree::NTJet>* GetPointer2Jets() const
-  { if (jetmet_==0) return 0;
-    else return &((*jetmet_)[0].jets); }
+  { return jets_; }
 
   //! Get a const pointer to the MET collection
   const IPHCTree::NTMET* GetPointer2MET() const
-  { if (jetmet_==0) return 0;
-    else return &((*jetmet_)[0].met); }
+  { return met_; }
 
   //! Get a const pointer to the electron collection
   const std::vector<IPHCTree::NTElectron>* GetPointer2Electrons() const
@@ -210,7 +208,8 @@ class Event
   const IPHCTree::NTMonteCarlo*            mc_;
   const IPHCTree::NTTrigger*               trigger_;
   const IPHCTree::NTPileUp*                pileup_;
-  const std::vector<IPHCTree::NTJetMet>*   jetmet_;
+  const std::vector<IPHCTree::NTJet>*      jets_;
+  const IPHCTree::NTMET*                   met_;
   const std::vector<IPHCTree::NTPhoton>*   photons_;
   const std::vector<IPHCTree::NTElectron>* electrons_;
   const std::vector<IPHCTree::NTMuon>*     muons_;
@@ -229,7 +228,8 @@ class Event
 
   // Static empty collection if a collection 
   // is not stored in the NTuple
-  static const std::vector<IPHCTree::NTJetMet>   empty_jetmet_;
+  static const std::vector<IPHCTree::NTJet>      empty_jets_;
+  static const IPHCTree::NTJetMet                empty_met_;
   static const std::vector<IPHCTree::NTPhoton>   empty_photons_;
   static const std::vector<IPHCTree::NTElectron> empty_electrons_;
   static const std::vector<IPHCTree::NTMuon>     empty_muons_;

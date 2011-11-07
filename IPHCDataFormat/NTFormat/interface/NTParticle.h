@@ -15,9 +15,9 @@
 namespace IPHCTree
 {
 
-  //! \class NTParticle
-  //! Mother class to all particles
-  //! Contains momentum vector, 
+  /// \class NTParticle
+  /// Mother class to all particles
+  /// Contains momentum vector, 
   class NTParticle
   {
 
@@ -26,13 +26,13 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    //! 4-vector momentum
+    /// 4-vector momentum
     TLorentzVector p4; 
 
-    //! 4-vector momentum @ HLT
+    /// 4-vector momentum @ HLT
     KeyedCollection<TLorentzVector> p4HLT;
 
-    //! Container for adding easly variables without changing dataformat code
+    /// Container for adding easly variables without changing dataformat code
     KeyedCollection<Float_t> others;
 
     // -------------------------------------------------------------
@@ -40,17 +40,17 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    //! Constructor without arguments
+    /// Constructor without arguments
     NTParticle()
     { 
       // By default, TLorentzVector are initialized to (0.,0.,0.,0.)
     }
 
-		//! Destructor
+		/// Destructor
     virtual ~NTParticle()
     { }
 
-		//! Clear all information related to the particle
+		/// Clear all information related to the particle
     virtual void Reset()
 		{
       p4.SetPxPyPzE    (0., 0., 0., 0.);
@@ -58,8 +58,8 @@ namespace IPHCTree
       others.Reset();
 		}
 
-		//! Display information related to the particle
-    //! \param[in,out] os   a log stream
+		/// Display information related to the particle
+    /// \param[in,out] os   a log stream
     virtual void Dump(std::ostream & os = std::cout) const
     {
       NTParticle::PrintP4(p4,os);
@@ -68,13 +68,13 @@ namespace IPHCTree
       os << std::endl;
     }
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     virtual void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 
-    //! Display a 4-vector momentum
-    //! \param[in]     a    a 4-vector momentum to display
-    //! \param[in,out] os   a log stream
+    /// Display a 4-vector momentum
+    /// \param[in]     a    a 4-vector momentum to display
+    /// \param[in,out] os   a log stream
     static void PrintP4(const TLorentzVector& a,
                         std::ostream & os = std::cout)
 		{
@@ -82,9 +82,9 @@ namespace IPHCTree
          << "," << a.E() << ") & pT = " << a.Pt() << " ";
     }
 
-    //! Display 3-vector momentum
-    //! \param[in]     a    a 3-vector momentum to display
-    //! \param[in,out] os   a log stream
+    /// Display 3-vector momentum
+    /// \param[in]     a    a 3-vector momentum to display
+    /// \param[in,out] os   a log stream
     static void PrintP3(const TVector3& a, std::ostream & os = std::cout)
     {
 			os << " p3 = ("<< a.X() << "," << a.Y() << "," << a.Z() << ") ";

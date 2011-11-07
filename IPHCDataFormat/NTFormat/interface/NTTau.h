@@ -17,40 +17,40 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    //! Transverse momentum of the leading track
+    /// Transverse momentum of the leading track
     Float_t leadTrackPt;
 
-    //! Number of signal tracks
+    /// Number of signal tracks
     UInt_t numSigConeTracks;
 
-    //! Number of isolation tracks
+    /// Number of isolation tracks
     UInt_t numIsoConeTracks;
 
-    //! PT sum of charged candidates in isolation region
+    /// PT sum of charged candidates in isolation region
     Float_t isolationPFChargedHadrCandsPtSum;
 
-    //! ET sum of gamma candidates in isolation region
+    /// ET sum of gamma candidates in isolation region
     Float_t isolationPFGammaCandsEtSum;
 
-    //! Maximum ET of HCALcluster
+    /// Maximum ET of HCALcluster
     Float_t maximumHCALPFClusterEt;
 
-    //! Electromagnetic fraction
+    /// Electromagnetic fraction
     Float_t emFraction;
 
-    //! to do
+    /// to do
     Float_t hcalTotOverPLead;
 
-    //! to do
+    /// to do
     Float_t hcalMaxOverPLead;
 
-    //! to do
+    /// to do
     Float_t hcal3x3OverPLead;
 
-    //! to do
+    /// to do
     Float_t ecalStripSumEOverPLead;
 
-    //! Hadronic decay id (see enumeration PFTau::HadronicDecayMode)
+    /// Hadronic decay id (see enumeration PFTau::HadronicDecayMode)
     Int_t decayMode;
 
     // -------------------------------------------------------------
@@ -58,26 +58,26 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    //! Constructor without arguments
+    /// Constructor without arguments
     NTTau()
     { Reset(true); }
 
-    //! Destructor
+    /// Destructor
     virtual ~NTTau()
     { }
 
-		//! Clear all information related to the tau
+		/// Clear all information related to the tau
     virtual void Reset(bool constructor_call=false);
 
-		//! Display information related to the tau
-    //! \param[in,out] os   a log stream
+		/// Display information related to the tau
+    /// \param[in,out] os   a log stream
     virtual void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     virtual void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 
-    //! Access to a tau descriminator
+    /// Access to a tau descriminator
     int GetDiscriminator(std::string discriminatorName)
     {
       //      float* value = ID.find(discriminatorName);

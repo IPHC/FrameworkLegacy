@@ -11,8 +11,8 @@
 namespace IPHCTree
 {
 
-  //! \class NTGenParticle
-  //! Mother class for Generated Particle
+  /// \class NTGenParticle
+  /// Mother class for Generated Particle
   class NTGenParticle
   {
     // -------------------------------------------------------------
@@ -21,25 +21,24 @@ namespace IPHCTree
 
   public :
 
-    //! 4-vector momentum
+    /// 4-vector momentum
     TLorentzVector p4;
 
-    //! PDG identity
+    /// PDG identity
     Int_t id;
 
-    //! StatusCode
+    /// StatusCode
     bool isStatus3;
 
-    //! Mother index
+    /// Mother index
     Int_t motherIndex_;
 
-    //! Mother of the particle
-    //! Transient !!!
-    IPHCTree::NTGenParticle* mother;
+    /// Mother of the particle
+    mutable IPHCTree::NTGenParticle* mother;  //! TRANSIENT
 
-    //! Collection of pointers to the particle daughters
-    //! Transient !!!
-    std::vector<NTGenParticle*> daughters;
+    /// Collection of pointers to the particle daughters
+    /// Transient !!!
+    mutable std::vector<NTGenParticle*> daughters;  //! TRANSIENT
 
   public :
  
@@ -48,22 +47,22 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    //! Constructor without arguments
+    /// Constructor without arguments
     NTGenParticle()
     { Reset(true); }
 
-		//! Destructor
+		/// Destructor
     virtual ~NTGenParticle()
     { }
 
-		//! Clear all information related to lepton
+		/// Clear all information related to lepton
     virtual void Reset(bool constructor_call=false);
 
-		//! Display information related to the lepton
-    //! \param[in,out] os   a log stream
+		/// Display information related to the lepton
+    /// \param[in,out] os   a log stream
     virtual void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     virtual void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 

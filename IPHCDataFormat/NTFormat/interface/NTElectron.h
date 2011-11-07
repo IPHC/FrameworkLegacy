@@ -7,9 +7,9 @@
 
 namespace IPHCTree
 {
-  //! \class NTElectron
-  //! class electron for NTuple( default track = gsfTrack,
-  //! D0 = Transverse IP of gsfTrack  wrt BS (or 0 if !BS) )
+  /// \class NTElectron
+  /// class electron for NTuple( default track = gsfTrack,
+  /// D0 = Transverse IP of gsfTrack  wrt BS (or 0 if !BS) )
   class NTElectron: public NTLepton
   {
 
@@ -20,29 +20,29 @@ namespace IPHCTree
 
     // ---------------------- general info -------------------------
 
-    //! Is coming from Ecal Barrel ?
+    /// Is coming from Ecal Barrel ?
     Bool_t isEB;
 
-    //! Correspond to elec->ecalDrivenSeed() in PAT
+    /// Correspond to elec->ecalDrivenSeed() in PAT
     Bool_t isEcalDriven;
 
-    //! ET of the SuperCluster
+    /// ET of the SuperCluster
     Float_t ET_SC;
 
     // ---------------------- track info ---------------------------
 
-    //! Is there a GSF track linked to the electron ?
+    /// Is there a GSF track linked to the electron ?
     Bool_t isGsfElectron;
 
-    //! Number of lost hits for the GSF tracks
+    /// Number of lost hits for the GSF tracks
     Short_t nLost;
  
     // ------------------- conversion info -------------------------
 
-    //! to do
+    /// to do
     Float_t deltaCotTheta;
 
-    //! to do
+    /// to do
     Float_t deltaDistance;
 
 
@@ -51,29 +51,29 @@ namespace IPHCTree
     //                       method members
     // -------------------------------------------------------------
 
-    //! Constructor without arguments
+    /// Constructor without arguments
     NTElectron()
     { Reset(true); }
 
-		//! Destructor
+		/// Destructor
     virtual ~NTElectron()
     { }
 
-		//! Clear all information related to electron
+		/// Clear all information related to electron
     virtual void Reset(bool constructor_call=false);
 
-		//! Display information related to the electron
-    //! \param[in,out] os   a log stream
+		/// Display information related to the electron
+    /// \param[in,out] os   a log stream
     virtual void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     virtual void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 
-    //! Is not converted ?
+    /// Is not converted ?
     static bool isNotConv(int elecId) { return (elecId & 0x4);};
 
-    //! Had Id ?
+    /// Had Id ?
     static bool hadId(int elecId)     { return (elecId & 0x1);};
     
     // Isolation variable considering Barrel & EndCap

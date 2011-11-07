@@ -16,7 +16,7 @@ void NTLepton::Reset(bool constructor_called)
   }
 
    // ------------------ general variables ------------------------
-  charge_ = false;
+  charge_bit_ = false;
   charge  = 0.;
   LeptonOrigin = -999;
 
@@ -46,7 +46,7 @@ void NTLepton::Dump(std::ostream & os) const
   os << "vertex: ";
   NTParticle::PrintP3(vertex, os); 
  	os << std::endl;
-	os << " Charge = "<< getCharge() <<" ";
+	os << " Charge = " << charge << " ";
 	os << " D0 =  "<< D0 <<" ";
 	os << " Chi2 =  "<< Chi2 <<" ";
 	os << " LeptonOrigin =  " << LeptonOrigin << " " << std::endl;

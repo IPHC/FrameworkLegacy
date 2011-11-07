@@ -8,11 +8,7 @@
 
 // IPHC headers (Ntuple format)
 #include "../../NTFormat/interface/MultiCollection.h"
-#include "../../NTFormat/interface/NTGeneral.h"
 #include "../../NTFormat/interface/NTTrack.h"
-#include "../../NTFormat/interface/NTTrigger.h"
-#include "../../NTFormat/interface/NTMonteCarlo.h"
-#include "../../NTFormat/interface/TransientData.h"
 
 // IPHC headers 
 #include "MTJet.h"
@@ -26,65 +22,75 @@
 #include "MTMonteCarlo.h"
 #include "MTPileUp.h"
 #include "MTBeamSpot.h"
+#include "MTTrigger.h"
+#include "MTGeneral.h"
+#include "MTEventDescriptor.h"
 
 
 namespace IPHCTree
 {
-  //! \class MTEvent
-  //! Main class stored in the MiniTree
-  //! It contains leptons, Jet/MET collections, tracks, PV, BS, triggers,
-  //! event info, detailled MC info are stored.
+  class MTTransient;
+
+  /// \class MTEvent
+  /// Main class stored in the MiniTree
+  /// It contains leptons, Jet/MET collections, tracks, PV, BS, triggers,
+  /// event info, detailled MC info are stored.
   class MTEvent
   {
+    friend class MTTransient;
 
     // -------------------------------------------------------------
     //                        data members
     // -------------------------------------------------------------
   public:
 
-    NTGeneral    general; //! General information about the event
-    NTTrigger    trigger; //! Trigger information
-    MTMonteCarlo mc;      //! Monte Carlo information
-    MTPileUp     pileup;  //! Pile-Up information
+    MTGeneral    general; /// General information about the event
+    MTTrigger    trigger; /// Trigger information
+    MTMonteCarlo mc;      /// Monte Carlo information
+    MTPileUp     pileup;  /// Pile-Up information
 
-    MultiCollection<MTElectron> electrons; //! Electron collection
-    MultiCollection<MTMuon>     muons;     //! Muon collection
-    MultiCollection<MTTau>      taus;      //! Tau collection
-    MultiCollection<MTPhoton>   photons;	 //! Photon collection
-    MultiCollection<MTMET>      met;       //! Met collection (only one)
-    MultiCollection<MTJet>      jets;      //! Jet collection
+    MultiCollection<MTElectron> electrons; /// Electron collection
+    MultiCollection<MTMuon>     muons;     /// Muon collection
+    MultiCollection<MTTau>      taus;      /// Tau collection
+    MultiCollection<MTPhoton>   photons;	 /// Photon collection
+    MultiCollection<MTMET>      met;       /// Met collection (only one)
+    MultiCollection<MTJet>      jets;      /// Jet collection
 
-    MultiCollection<NTTrack>    tracks;    //! Track collection
-    MultiCollection<MTVertex>   vertices;  //! Primary vertex collection
-    MTBeamSpot                  beamSpot;  //! Beam Spot
+    MultiCollection<NTTrack>    tracks;    /// Track collection
+    MultiCollection<MTVertex>   vertices;  /// Primary vertex collection
+    MTBeamSpot                  beamSpot;  /// Beam Spot
 
-    KeyedCollection<Float_t>    others;    //! Additionnal variables
+    KeyedCollection<Float_t>    others;    /// Additionnal variables
+
+  protected :
+
+    MTEventDescriptor           descriptor; /// Info related to variables name
 
     // -------------------------------------------------------------
     //                       method members
     // -------------------------------------------------------------
   public:
 
-    //! Constructor without argument
+    /// Constructor without argument
     MTEvent()
     { }
 
-		//! Destructor
+		/// Destructor
     ~MTEvent()
     { }
 
-		//! Reset all event information
+		/// Reset all event information
     void Reset();
 
-		//! Display information related to the event
-    //! \param[in,out] os   a log stream
+		/// Display information related to the event
+    /// \param[in,out] os   a log stream
     void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 
-    // methods to instanciate a new object
+    /// methods to instanciate a new object
     MTElectron* NewElectron()
     { return electrons.New(); }
 
@@ -109,7 +115,7 @@ namespace IPHCTree
     NTTrack* NewTrack()
     { return tracks.New(); }
 
-    // methods to instanciate a new object
+    /// methods to instanciate a new object
     void NewElectron (const MTElectron& electron)
     { electrons.push_back(electron); }
 

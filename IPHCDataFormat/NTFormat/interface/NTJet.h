@@ -11,9 +11,9 @@
 namespace IPHCTree
 {
 
-  //! \class NTJet
-  //! Class jet for NTuple. Contains info on identification,
-  //! b-tagging, partonFlavour, SV.
+  /// \class NTJet
+  /// Class jet for NTuple. Contains info on identification,
+  /// b-tagging, partonFlavour, SV.
   class NTJet : public NTParticle
   {
 
@@ -24,23 +24,23 @@ namespace IPHCTree
 
     // ------------------ general variables ------------------------
 
-    //! 4-vector of the matched generated jet
+    /// 4-vector of the matched generated jet
     TLorentzVector p4Gen;
 
-    //! 4-vector of the generated parton
+    /// 4-vector of the generated parton
     TLorentzVector p4Parton;
 
-    //! parton flavour (MC info)  
+    /// parton flavour (MC info)  
     Char_t partonFlavour;
 
     // --------------- variables related to tracks -------------------
 
-    UInt_t nTracks;      //! number of tracks associated to the jet
-    Float_t sumPtTracks; //! the scalar sum of Pt of the nTracks tracks
+    UInt_t nTracks;      /// number of tracks associated to the jet
+    Float_t sumPtTracks; /// the scalar sum of Pt of the nTracks tracks
    
     // ------------------ b-tagging discriminator --------------------
 
-    //! b-tagging discriminators for different algorithms
+    /// b-tagging discriminators for different algorithms
     KeyedCollection<Float_t> bTag; 
 
    
@@ -49,22 +49,22 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    //! Constructor without arguments
+    /// Constructor without arguments
     NTJet()
     { Reset(true); }
 
-		//! Destructor
+		/// Destructor
     virtual ~NTJet()
     {}
 
-		//! Clear all information related to the particle
+		/// Clear all information related to the particle
     virtual void Reset(bool constructor_call=false);
 
-		//! Display information related to the jet
-    //! \param[in,out] os   a log stream
+		/// Display information related to the jet
+    /// \param[in,out] os   a log stream
     void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     virtual void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 

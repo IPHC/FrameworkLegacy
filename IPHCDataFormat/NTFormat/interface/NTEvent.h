@@ -20,63 +20,71 @@
 #include "NTPileUp.h"
 #include "KeyedCollection.h"
 #include "MultiCollection.h"
-
+#include "NTEventDescriptor.h"
+#include "NTTransient.h"
 
 namespace IPHCTree
 {
 
-  //! \class NTEvent
-  //! main class stored in the NTuple.
-  //! Selected objects [leptons, Jet/MET collections, tracks, PV, BS],
-  //! triggers, event info, basic MC info are stored.
-  //! Useless information might be deleted to keep the size of the
-  //! NTuple reasonnable. Addtional information could be found in the MiniTree
+  class NTTransient;
+
+  /// \class NTEvent
+  /// main class stored in the NTuple.
+  /// Selected objects [leptons, Jet/MET collections, tracks, PV, BS],
+  /// triggers, event info, basic MC info are stored.
+  /// Useless information might be deleted to keep the size of the
+  /// NTuple reasonnable. Addtional information could be found in the MiniTree
   class NTEvent
   {
+    friend class NTTransient;
 
     // -------------------------------------------------------------
     //                        data members
     // -------------------------------------------------------------
   public:
 
-    NTGeneral    general; //! General information about the event
-    NTMonteCarlo mc;      //! Monte Carlo information
-    NTTrigger    trigger; //! Trigger information
-    NTPileUp     pileup;  //! Pile-Up information
+    NTGeneral    general; /// General information about the event
+    NTPileUp     pileup;  /// Pile-Up information
+    NTMonteCarlo mc;      /// Monte Carlo information
+    NTTrigger    trigger; /// Trigger information
 
-    MultiCollection<NTElectron> electrons; //! Electron collection
-    MultiCollection<NTMuon>     muons;     //! Muon collection
-    MultiCollection<NTTau>      taus;      //! Tau collection
-    MultiCollection<NTPhoton>   photons;	 //! Photon collection
-    MultiCollection<NTMET>      met;       //! Met collection (only one)
-    MultiCollection<NTJet>      jets;      //! Jet collection
+    MultiCollection<NTElectron> electrons; /// Electron collection
+    MultiCollection<NTMuon>     muons;     /// Muon collection
+    MultiCollection<NTTau>      taus;      /// Tau collection
+    MultiCollection<NTPhoton>   photons;	 /// Photon collection
+    MultiCollection<NTMET>      met;       /// Met collection (only one)
+    MultiCollection<NTJet>      jets;      /// Jet collection
 
-    MultiCollection<NTTrack>    tracks;    //! Track collection
-    MultiCollection<NTVertex>   vertices;  //! Primary vertex collection
+    MultiCollection<NTTrack>    tracks;    /// Track collection
+    MultiCollection<NTVertex>   vertices;  /// Primary vertex collection
 
-    KeyedCollection<Float_t>    others;    //! Additionnal variables
+    KeyedCollection<Float_t>    others;    /// Additionnal variables
+
+  protected :
+
+    NTEventDescriptor           descriptor; /// Info related to variables name
 
     // -------------------------------------------------------------
     //                       method members
     // -------------------------------------------------------------
   public:
-
-    //! Constructor without argument
+  
+    /// Constructor without argument
     NTEvent()
     { }
 
-		//! Destructor
+		/// Destructor
     ~NTEvent()
     { }
 
-		//! Reset all event information
+		/// Reset all event information
     void Reset();
 
-		//! Display information related to the event
-    //! \param[in,out] os   a log stream
+		/// Display information related to the event
+    /// \param[in,out] os   a log stream
     void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 
@@ -130,46 +138,6 @@ namespace IPHCTree
 
     void NewMet      (const NTMET& mymet  )
     { met.push_back(mymet); }
-
-    void PrintTriggerPassed(std::ostream & os) const
-    {
-      /*      os << "Triggers passed : ";
-      for(unsigned int i=0;i<triggers.size();i++)
-      {
-        if(triggers[i].second) os << triggers[i].first << " ";
-      }
-      os <<endl;*/
-    }
-
-    void PrintTriggerList(std::ostream & os) const
-    {
-      /*      os << "List of triggers"<<endl;
-      for(unsigned int i=0;i<triggers.size();i++)
-      {
-        os << triggers[i].first << " ";
-      }
-      os << endl;*/
-    }
-
-    bool TriggerPassed(std::string trigName) const
-    {
-      /*      for(unsigned int i=0;i<triggers.size();i++)
-      {
-        if(triggers[i].first == trigName)
-          return triggers[i].second;
-          }*/
-      return false;
-    }
-
-    bool TriggerStored(std::string trigName) const
-    {
-      /*      for(unsigned int i=0;i<triggers.size();i++)
-      {
-        if(triggers[i].first == trigName)
-          return true;
-          }*/
-      return false;
-    }
 
 
   };

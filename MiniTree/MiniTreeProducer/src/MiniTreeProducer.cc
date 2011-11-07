@@ -1,6 +1,6 @@
 #include "MiniTree/MiniTreeProducer/interface/MiniTreeProducer.h"
 #include "MiniTree/MiniTreeProducer/interface/MonteCarloOrigin.h"
-
+#include "IPHCDataFormat/MTFormat/interface/MTTransient.h"
 
 // ----------------------------------------------------------------------------
 // Constructor
@@ -310,18 +310,18 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
     std::set<std::string> labels;
     for (unsigned int i=0;i<cfg.trackProducer.size();i++)
     {
-      labels.insert(cfg.trackProducer[i].label()+":"+
-                    cfg.trackProducer[i].instance()+":"+
-                    cfg.trackProducer[i].process());
+      labels.insert(cfg.trackProducer[i].label());//+":"+
+      //                    cfg.trackProducer[i].instance()+":"+
+      //                    cfg.trackProducer[i].process());
     }
     evt->tracks.Reserve(labels);
 
 		// Loop over the different taus collection
 		for (unsigned int m=0 ; m<cfg.trackProducer.size(); m++) 
 		{
-      evt->tracks.SelectLabel(cfg.trackProducer[m].label()+":"+
-                              cfg.trackProducer[m].instance()+":"+
-                              cfg.trackProducer[m].process());
+      evt->tracks.SelectLabel(cfg.trackProducer[m].label()); //+":"+
+      //                              cfg.trackProducer[m].instance()+":"+
+      //                              cfg.trackProducer[m].process());
 
 			// Getting tracks
 			iEvent.getByLabel(cfg.trackProducer[m], trackHandle);
@@ -347,9 +347,9 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
     std::set<std::string> labels;
     for (unsigned int i=0;i<cfg.vertexProducer.size();i++)
     {
-      labels.insert(cfg.vertexProducer[i].label()+":"+
-                       cfg.vertexProducer[i].instance()+":"+
-                       cfg.vertexProducer[i].process());
+      labels.insert(cfg.vertexProducer[i].label()); //+":"+
+      //                       cfg.vertexProducer[i].instance()+":"+
+      //                       cfg.vertexProducer[i].process());
     }
     evt->vertices.Reserve(labels);
 
@@ -357,9 +357,9 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
 		for (unsigned int m=0 ; m<cfg.vertexProducer.size(); m++) 
 		{
       // 
-      evt->vertices.SelectLabel(cfg.vertexProducer[m].label()+":"+
-                       cfg.vertexProducer[m].instance()+":"+
-                       cfg.vertexProducer[m].process());
+      evt->vertices.SelectLabel(cfg.vertexProducer[m].label());//+":"+
+      //                       cfg.vertexProducer[m].instance()+":"+
+      //                       cfg.vertexProducer[m].process());
 
    		// Getting vertices
 			edm::Handle< vector<reco::Vertex> > vertices;
@@ -386,9 +386,9 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
     std::set<std::string> labels;
     for (unsigned int i=0;i<cfg.photonProducer.size();i++)
     {
-      labels.insert(cfg.photonProducer[i].label()+":"+
-                    cfg.photonProducer[i].instance()+":"+
-                    cfg.photonProducer[i].process());
+      labels.insert(cfg.photonProducer[i].label());//+":"+
+      //                    cfg.photonProducer[i].instance()+":"+
+      //                    cfg.photonProducer[i].process());
     }
     evt->photons.Reserve(labels);
 
@@ -396,9 +396,9 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
 		for (unsigned int m=0 ; m<cfg.photonProducer.size(); m++) 
 		{
 
-      evt->photons.SelectLabel(cfg.photonProducer[m].label()+":"+
-                               cfg.photonProducer[m].instance()+":"+
-                               cfg.photonProducer[m].process());
+      evt->photons.SelectLabel(cfg.photonProducer[m].label());//+":"+
+      //                               cfg.photonProducer[m].instance()+":"+
+      //                               cfg.photonProducer[m].process());
 
 			// Getting photons
 			edm::Handle< std::vector<pat::Photon> > phHa;
@@ -437,9 +437,9 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
     std::set<std::string> labels;
     for (unsigned int i=0;i<cfg.electronProducer.size();i++)
     {
-      labels.insert(cfg.electronProducer[i].label()+":"+
-                    cfg.electronProducer[i].instance()+":"+
-                    cfg.electronProducer[i].process());
+      labels.insert(cfg.electronProducer[i].label());//+":"+
+      //                    cfg.electronProducer[i].instance()+":"+
+      //                    cfg.electronProducer[i].process());
     }
     evt->electrons.Reserve(labels);
 
@@ -447,9 +447,9 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
 		for (unsigned int m=0 ; m<cfg.electronProducer.size(); m++) 
 		{
 
-      evt->electrons.SelectLabel(cfg.electronProducer[m].label()+":"+
-                                 cfg.electronProducer[m].instance()+":"+
-                                 cfg.electronProducer[m].process());
+      evt->electrons.SelectLabel(cfg.electronProducer[m].label());//+":"+
+      //                                 cfg.electronProducer[m].instance()+":"+
+      //                                 cfg.electronProducer[m].process());
  
       // Getting bField
       float bField;
@@ -490,9 +490,9 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
     std::set<std::string> labels;
     for (unsigned int i=0;i<cfg.muonProducer.size();i++)
     {
-      labels.insert(cfg.muonProducer[i].label()+":"+
-                    cfg.muonProducer[i].instance()+":"+
-                    cfg.muonProducer[i].process());
+      labels.insert(cfg.muonProducer[i].label());//+":"+
+      //                    cfg.muonProducer[i].instance()+":"+
+      //                    cfg.muonProducer[i].process());
     }
     evt->muons.Reserve(labels);
       
@@ -500,9 +500,9 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
 		for (unsigned int m=0 ; m<cfg.muonProducer.size(); m++) 
 		{
 
-      evt->muons.SelectLabel(cfg.muonProducer[m].label()+":"+
-                             cfg.muonProducer[m].instance()+":"+
-                             cfg.muonProducer[m].process());
+      evt->muons.SelectLabel(cfg.muonProducer[m].label());//+":"+
+      //                             cfg.muonProducer[m].instance()+":"+
+      //                             cfg.muonProducer[m].process());
 
 			// Getting muons 
 			edm::Handle< std::vector<pat::Muon> > muHa;
@@ -528,9 +528,9 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
     std::set<std::string> labels;
     for (unsigned int i=0;i<cfg.tauProducer.size();i++)
     {
-      labels.insert(cfg.tauProducer[i].label()+":"+
-                    cfg.tauProducer[i].instance()+":"+
-                    cfg.tauProducer[i].process());
+      labels.insert(cfg.tauProducer[i].label());//+":"+
+      //                    cfg.tauProducer[i].instance()+":"+
+      //                    cfg.tauProducer[i].process());
     }
     evt->taus.Reserve(labels);
       
@@ -538,9 +538,9 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
 		for (unsigned int m=0;m<cfg.tauProducer.size();m++) 
 		{
 
-      labels.insert(cfg.tauProducer[m].label()+":"+
-                    cfg.tauProducer[m].instance()+":"+
-                    cfg.tauProducer[m].process());
+      labels.insert(cfg.tauProducer[m].label());//+":"+
+      //                    cfg.tauProducer[m].instance()+":"+
+      //                    cfg.tauProducer[m].process());
 
 			// Getting taus 
 			edm::Handle< std::vector<pat::Tau> > tauHandle;
@@ -651,6 +651,8 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
   }
     
   // Save the event 
+  std::cout << "Optimize space occupied by the event ..." << std::endl;
+  IPHCTree::MTTransient::InitializeBeforeWriting(evt.get());
   std::cout << "Save the event in the root file ..." << std::endl; 
   iEvent.put(evt);
   if (cfg.verbose>0)
@@ -835,7 +837,7 @@ void MiniTreeProducer::fillTracks(edm::Event& iEvent,
 		myTrack->dxyError    = track->dxyError();
 
 		// Charge
-		myTrack->setCharge(track->charge());
+		myTrack->charge = track->charge();
 
 		// dxy wrt BeamSpot (if BeamSpot is available)
     if (cfg.doBeamSpot && bs!=0)	myTrack->dxy_BS = track->dxy(bs->position());
@@ -870,11 +872,11 @@ void MiniTreeProducer::fillGenEventInfo(edm::Event& iEvent,
 	//********************************************************
 	// Calculate PDF weight 
 	//********************************************************
-	evt->mc.partonFlavor.first = genEventInfo->pdf()->id.first;
+	evt->mc.partonFlavor.first  = genEventInfo->pdf()->id.first;
 	evt->mc.partonFlavor.second = genEventInfo->pdf()->id.second;
-	evt->mc.x.first       = genEventInfo->pdf()->x.first;
-	evt->mc.x.second      = genEventInfo->pdf()->x.second;
-	evt->mc.Q_scale       = genEventInfo->pdf()->scalePDF;
+	evt->mc.x.first             = genEventInfo->pdf()->x.first;
+	evt->mc.x.second            = genEventInfo->pdf()->x.second;
+	evt->mc.Q_scale             = genEventInfo->pdf()->scalePDF;
 
 	//********************************************************
 	// Extract ptHat
@@ -1053,7 +1055,6 @@ void MiniTreeProducer::fillGenParticles(edm::Event& iEvent,
     }
   }
 
-
   // Fill taus
   for (unsigned int i=0;i<GenParticles->size(); i++)
   {
@@ -1076,6 +1077,8 @@ void MiniTreeProducer::fillGenParticles(edm::Event& iEvent,
     }
   }
 
+  // OLD Gen info
+  MonteCarloOrigin::fillGenInfo(evt,GenParticles);
 }
 
               
@@ -1213,7 +1216,7 @@ void MiniTreeProducer::fillElectrons(edm::Event& iEvent,
                            patelec->vz() );
 
     // Set charge
-    myelec->setCharge(patelec->charge());
+    myelec->charge = patelec->charge();
 
     // Electron DB
 		myelec->DB = patelec->dB();
@@ -1444,7 +1447,7 @@ void MiniTreeProducer::fillMuons(edm::Event& iEvent,
                            patmuon->vz() );
 
     // Charge
-    mymuon->setCharge(patmuon->charge());
+    mymuon->charge = patmuon->charge();
 
 		// Muon type
     mymuon->isGlobalMuon     = patmuon->isGlobalMuon();
@@ -1628,7 +1631,7 @@ void MiniTreeProducer::fillTaus(edm::Event& iEvent,
                           patTau->vz() );
 
     // Electric charge
-		mytau->setCharge(patTau->charge());
+		mytau->charge = patTau->charge();
 
 		// Leading track
 		if (patTau->leadPFChargedHadrCand().isAvailable())
@@ -1983,7 +1986,7 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
 				mytrack->nHitTOB = tk.hitPattern ().numberOfValidStripTOBHits ();
 				mytrack->nHitTID = tk.hitPattern ().numberOfValidStripTIDHits ();
 				mytrack->nHitTEC = tk.hitPattern ().numberOfValidStripTECHits ();
-				mytrack->setCharge(tk.charge());
+				mytrack->charge  = tk.charge();
 				mytrack->IP3Dsig = ip[itk].ip3d.significance ();
 				mytrack->IP3D    = ip[itk].ip3d.value ();
 				mytrack->IP3Derr = ip[itk].ip3d.error ();

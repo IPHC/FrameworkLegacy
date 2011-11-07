@@ -11,9 +11,9 @@
 namespace IPHCTree
 {
 
-  //! \class NTMuon
-  //! class muon for NTuple.
-  //! default track = globalTrack (tracker+mu)
+  /// \class NTMuon
+  /// class muon for NTuple.
+  /// default track = globalTrack (tracker+mu)
   class NTMuon : public NTLepton
   {
 
@@ -31,10 +31,10 @@ namespace IPHCTree
 
     // ------------------- associated track ------------------------
 
-    UInt_t  NValidHits;  //! Nb of valid hits associated to the global track
-    UInt_t  NTrValidHits;//! Nb of valid hits associated to the innerTrack
-    UInt_t  NOfMatches;  //! Nb of matches 
-    Float_t D0Inner;		 //! Transverse IP from tracks
+    UInt_t  NValidHits;  /// Nb of valid hits associated to the global track
+    UInt_t  NTrValidHits;/// Nb of valid hits associated to the innerTrack
+    UInt_t  NOfMatches;  /// Nb of matches 
+    Float_t D0Inner;		 /// Transverse IP from tracks
 
 
     // -------------------------------------------------------------
@@ -42,22 +42,22 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    //! Constructor without arguments
+    /// Constructor without arguments
     NTMuon()
     { Reset(true); }
 
-		//! Destructor
+		/// Destructor
     virtual ~NTMuon()
     { }
 
-		//! Clear all information related to the muon
+		/// Clear all information related to the muon
     void Reset(bool constructor_call=false);
 
-		//! Display information related to the muon
-    //! \param[in,out] os   a log stream
+		/// Display information related to the muon
+    /// \param[in,out] os   a log stream
     void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 

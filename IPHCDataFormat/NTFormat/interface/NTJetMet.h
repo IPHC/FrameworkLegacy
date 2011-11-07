@@ -13,9 +13,9 @@
 namespace IPHCTree
 {
 
-  //! \class NTJetMet
-  //! Class jet/met for NTuple. Contains for a given algorithm the jet
-  //! collection & the associated MET.
+  /// \class NTJetMet
+  /// Class jet/met for NTuple. Contains for a given algorithm the jet
+  /// collection & the associated MET.
   class NTJetMet
   {
 
@@ -24,16 +24,16 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    //! Missing transverse energy
+    /// Missing transverse energy
     IPHCTree::NTMET met;
 
-    //! Sum of the corrected jet's ET
+    /// Sum of the corrected jet's ET
     Float_t sumEtJet;
 
-    //! Sum of the raw jet's ET
+    /// Sum of the raw jet's ET
     Float_t sumEtJetRaw;
 
-    //! Collection of jets
+    /// Collection of jets
     std::vector<NTJet> jets; 
 
 
@@ -42,48 +42,48 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
     
-    //! Constructor without arguments
+    /// Constructor without arguments
     NTJetMet()
     { Reset(true); }
 
-		//! Destructor
+		/// Destructor
     ~NTJetMet()
     { }
 
-		//! Clear all information related to the particle
+		/// Clear all information related to the particle
     void Reset(bool constructor_call=false);
 
-		//! Display information related to the jet
-    //! \param[in,out] os   a log stream
+		/// Display information related to the jet
+    /// \param[in,out] os   a log stream
     void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 
-    //! Give the number of jets
+    /// Give the number of jets
     unsigned int size() const
     { return jets.size(); }
 
-    //! Add a new jets
+    /// Add a new jets
     void push_back(const IPHCTree::NTJet& myjet)
     { jets.push_back(myjet); }
 
-    //! Give the first jet
+    /// Give the first jet
     const IPHCTree::NTJet& front() const
     { return jets.front(); }
 
     IPHCTree::NTJet& front()
     { return jets.front(); }
 
-    //! Give the last jet
+    /// Give the last jet
     const IPHCTree::NTJet& back() const
     { return jets.back(); }
 
     IPHCTree::NTJet& back()
     { return jets.back(); }
 
-    //! operator [] overlaoding
+    /// operator [] overlaoding
     const IPHCTree::NTJet& operator[] (unsigned int i) const
     { return jets[i]; }
 

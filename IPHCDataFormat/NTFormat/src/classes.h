@@ -23,6 +23,7 @@ namespace{
     edm::Wrapper<IPHCTree::NTGeneral>      NTGeneral;
     edm::Wrapper<IPHCTree::NTTrigger>      NTTrigger;
     edm::Wrapper<IPHCTree::NTPileUp>       NTPileUp;
+    edm::Wrapper<IPHCTree::NTEventDescriptor>       NTEventDescriptor;
 
     // Monte Carlo
     edm::Wrapper<IPHCTree::NTMonteCarlo>   NTMonteCarlo_;
@@ -47,7 +48,9 @@ namespace{
     edm::Wrapper<IPHCTree::NTTrack>        NTTrack;
 
     // Multiparticles
-    edm::Wrapper<IPHCTree::MultiCollection<IPHCTree::NTJetMet> >   MultiNTJet; 
+    edm::Wrapper<IPHCTree::MultiCollection<IPHCTree::NTJetMet> >   MultiNTJetMet; 
+    edm::Wrapper<IPHCTree::MultiCollection<IPHCTree::NTJet> >      MultiNTJet; 
+    edm::Wrapper<IPHCTree::MultiCollection<IPHCTree::NTMET> >      MultiNTMET; 
     edm::Wrapper<IPHCTree::MultiCollection<IPHCTree::NTElectron> > MultiNTElectron;
     edm::Wrapper<IPHCTree::MultiCollection<IPHCTree::NTMuon> >     MultiNTMuon;
     edm::Wrapper<IPHCTree::MultiCollection<IPHCTree::NTTau> >      MultiNTTau;
@@ -56,7 +59,9 @@ namespace{
     edm::Wrapper<IPHCTree::MultiCollection<IPHCTree::NTVertex> >   MultiNTVertex;
 
     // Vector
-    edm::Wrapper<std::vector<IPHCTree::NTJetMet> >   VNTJet; 
+    edm::Wrapper<std::vector<IPHCTree::NTJetMet> >   VNTJetMet; 
+    edm::Wrapper<std::vector<IPHCTree::NTJet> >      VNTJet; 
+    edm::Wrapper<std::vector<IPHCTree::NTMET> >      VNTMET; 
     edm::Wrapper<std::vector<IPHCTree::NTElectron> > VNTElectron;
     edm::Wrapper<std::vector<IPHCTree::NTMuon> >     VNTMuon;
     edm::Wrapper<std::vector<IPHCTree::NTTau> >      VNTTau;
@@ -71,7 +76,9 @@ namespace{
     edm::Wrapper<std::vector<IPHCTree::ZDecaysMC> >    VecZDecays;
 
     // Vector of vector
-    edm::Wrapper<std::vector<std::vector<IPHCTree::NTJetMet> > >   VVNTJet; 
+    edm::Wrapper<std::vector<std::vector<IPHCTree::NTJetMet> > >   VVNTJetMet; 
+    edm::Wrapper<std::vector<std::vector<IPHCTree::NTJet> > >      VVNTJet; 
+    edm::Wrapper<std::vector<std::vector<IPHCTree::NTMET> > >      VVNTMET; 
     edm::Wrapper<std::vector<std::vector<IPHCTree::NTElectron> > > VVNTElectron;
     edm::Wrapper<std::vector<std::vector<IPHCTree::NTMuon> > >     VVNTMuon;
     edm::Wrapper<std::vector<std::vector<IPHCTree::NTTau> > >      VVNTTau;

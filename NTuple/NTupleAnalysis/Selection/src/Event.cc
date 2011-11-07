@@ -10,7 +10,8 @@ Event::Event(const Event& evt)
   mc_        = evt.mc_;
   pileup_    = evt.pileup_;
   trigger_   = evt.trigger_;
-  jetmet_    = evt.jetmet_;
+  jets_      = evt.jets_;
+  met_       = evt.met_;
   photons_   = evt.photons_;
   electrons_ = evt.electrons_;
   muons_     = evt.muons_;
@@ -38,7 +39,8 @@ void Event::Reset()
   pileup_    = 0;
   trigger_   = 0;
   photons_   = 0;
-  jetmet_    = 0;
+  jets_      = 0;
+  met_       = 0;
   electrons_ = 0;
   muons_     = 0;
   taus_      = 0;
@@ -84,12 +86,25 @@ bool Event::LoadEvent(const IPHCTree::NTEvent* evt)
     std::cerr<<"The photon collection was not found !"<<std::endl;
   }
 
-  // get only one JetMet collection 
-  jetmet_ = evt->jetMet.GetCollection(JetMetType_);
-  if(jetmet_==0)
+  // get only one Jet collection 
+  jets_ = evt->jets.GetCollection(JetMetType_);
+  if(jets_==0)
   {
     success=false;
     std::cerr<<"The jet collection was not found !"<<std::endl;
+  }
+
+  // get only one Met collection 
+  const std::vector<IPHCTree::NTMET>* mets = 
+                                  evt->met.GetCollection(JetMetType_);
+  if(mets==0)
+  {
+    success=false;
+    std::cerr<<"The MET was not found !"<<std::endl;
+  }
+  else
+  {
+    met_ = &((*mets)[0]);
   }
 
   // get only one electron collection 

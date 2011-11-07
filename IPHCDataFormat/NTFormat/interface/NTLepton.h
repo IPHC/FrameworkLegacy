@@ -10,12 +10,18 @@
 namespace IPHCTree
 {
 
-  //! \class NTLepton
-  //! Mother class for all leptons: NTElectron, NTMuon, NTTau. 
-  //! It should contain the minimal common information as p4, charge,
-  //! isolation, d0, chi2, leptonOrigin
+  class NTTransient;
+  class MTTransient;
+
+  /// \class NTLepton
+  /// Mother class for all leptons: NTElectron, NTMuon, NTTau. 
+  /// It should contain the minimal common information as p4, charge,
+  /// isolation, d0, chi2, leptonOrigin
   class NTLepton : public NTParticle
   {
+
+    friend class IPHCTree::NTTransient;
+    friend class IPHCTree::MTTransient;
 
     // -------------------------------------------------------------
     //                        data members
@@ -26,98 +32,87 @@ namespace IPHCTree
 
     // p4 and p4HLT coming from NTParticle
 
-    //! vertex origin
+    /// vertex origin
     TVector3 vertex;
 
-    //! (PERSISTENT) electric charge
-    Bool_t charge_;
+    /// electric charge (transient)
+    mutable Float_t charge; //! TRANSIENT
 
-    //! (Transient) electric charge
-    Float_t charge;
-
-    //! MC information : origin of the lepton 
+    /// MC information : origin of the lepton 
     Int_t LeptonOrigin;
 
     // ---------- isolation variables (cone of deltaR<0.3) -----------
 
-    //! Summed track PT (in a cone of deltaR<0.3)
+    /// Summed track PT (in a cone of deltaR<0.3)
     Float_t TrkIso03;
 
-    //! ECAL isolation depositfrom RecHits
-    //! with electron footprint removed (in a cone of deltaR<0.3)
+    /// ECAL isolation depositfrom RecHits
+    /// with electron footprint removed (in a cone of deltaR<0.3)
     Float_t ECaloIso03;
 
-    //! HCAL isolation deposit from Calo Towers (in a cone of deltaR<0.3)
+    /// HCAL isolation deposit from Calo Towers (in a cone of deltaR<0.3)
     Float_t HCaloIso03;
 
     // ------------ ParticleFlow isolation variables -----------------
 
-    //! to do
+    /// to do
     Float_t PATNeutralHadronIso;
 
-    //! to do
+    /// to do
     Float_t PATChargedHadronIso;
 
-    //! to do
+    /// to do
     Float_t PATPhotonIso;
 
-    //! to do 
+    /// to do 
     Float_t PATTrackIso;
     
     // ------------- Information related to the track ----------------
 
-    //! Transverse impact parameter
+    /// Transverse impact parameter
     Float_t D0;
 
-    //! Normalize Chi2 (divided by ndof)
+    /// Normalize Chi2 (divided by ndof)
     Float_t Chi2;
 
-    //! Collection of ID
+    /// Collection of ID
     KeyedCollection<Float_t> ID;
+
+  protected :
+
+    /// electric charge (persistent)
+    Bool_t charge_bit_;
+
 
     // -------------------------------------------------------------
     //                       method members
     // -------------------------------------------------------------
   public:
 
-    //! Constructor without arguments
+    /// Constructor without arguments
     NTLepton()
     { Reset(true); }
 
-		//! Destructor
+		/// Destructor
     virtual ~NTLepton()
     { }
 
-		//! Clear all information related to lepton
+		/// Clear all information related to lepton
     virtual void Reset(bool constructor_call=false);
 
-		//! Display information related to the lepton
-    //! \param[in,out] os   a log stream
+		/// Display information related to the lepton
+    /// \param[in,out] os   a log stream
     virtual void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     virtual void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 
-		//! Get the charge of the particle
-    signed int getCharge() const
-		{
-			if (charge_) return +1.;
-			else return -1.;
-		}
-
-		//! Set the charge of the particle
-    void setCharge(float charge)
-		{
-      if (charge<0) charge_=false;
-      else charge_=true;
-		}
-
-    //! Get the Sum of ECaloIso03 and HCaloIso03
+    /// Get the Sum of ECaloIso03 and HCaloIso03
     float CaloIso03() const
     { return ECaloIso03 + HCaloIso03; }
 
-    //! to do
+    /// to do
     double RelIso03() const
     {
       if (p4.Pt()>0)

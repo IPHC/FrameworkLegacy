@@ -265,8 +265,8 @@ int MonteCarloOrigin::getTauDecay(
 // ----------------------------------------------------------------------------
 // fillGenInfo
 // ----------------------------------------------------------------------------
-void MonteCarloOrigin::fillGenInfo(IPHCTree::MTEvent* evt,
-                                   reco::GenParticleCollection* genParticles)
+void MonteCarloOrigin::fillGenInfo(std::auto_ptr<IPHCTree::MTEvent>& evt,
+                                   const edm::Handle<reco::GenParticleCollection>& genParticles)
 {
  
   using namespace IPHCTree;
@@ -274,7 +274,7 @@ void MonteCarloOrigin::fillGenInfo(IPHCTree::MTEvent* evt,
   using namespace reco;
 
   // Safety : check if pointer is null
-  if (genParticles==0) return;
+  if (!genParticles.isValid()) return;
 
   int tmeme = 0;
   int idum = 0;

@@ -11,7 +11,7 @@
 namespace IPHCTree
 {
 
-  //! \class TriggerPathType
+  /// \class TriggerPathType
   struct NTTriggerPathType
   {
     // -------------------------------------------------------------
@@ -25,16 +25,16 @@ namespace IPHCTree
     //                       method members
     // -------------------------------------------------------------
 
-    //! Constructor without arguments 
+    /// Constructor without arguments 
     NTTriggerPathType() : prescale(0), fired(false) {}
  
-    //! Constructor with arguments
+    /// Constructor with arguments
     NTTriggerPathType(const std::string& _name,
                       const UInt_t& _prescale,
                       const Bool_t& _fired) :
       name(_name), prescale(_prescale), fired(_fired) {}
 
-    //! Destructor
+    /// Destructor
     ~NTTriggerPathType() {}
 
   };

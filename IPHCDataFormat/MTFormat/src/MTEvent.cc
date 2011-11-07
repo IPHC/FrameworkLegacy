@@ -13,9 +13,10 @@ void MTEvent::Reset()
   pileup.Reset();
   electrons.Reset();      muons.Reset();
   taus.Reset();           photons.Reset();
-  jets.Reset();       tracks.Reset();
+  jets.Reset();           tracks.Reset();
   vertices.Reset();       beamSpot.Reset();
   others.Reset();         met.Reset();
+  descriptor.Reset();
 }
 
 

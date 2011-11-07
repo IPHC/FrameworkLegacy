@@ -4,6 +4,9 @@
   // General
   <class name="IPHCTree::MTEvent"/>
   <class name="IPHCTree::MTMonteCarlo"/>
+  <class name="IPHCTree::MTTrigger"/>
+  <class name="IPHCTree::MTGeneral"/>
+  <class name="IPHCTree::MTEventDescriptor"/>
 
   // Pile Up
   <class name="IPHCTree::MTPileUp"/> MTPU;
@@ -19,45 +22,33 @@
   <class name="IPHCTree::MTJetMet"/>
   <class name="IPHCTree::MTPhoton"/>
   <class name="IPHCTree::MTLepton"/>
-  <class name="IPHCTree::MTElectron">
-     <field name="charge" transient="true"/>
-  </class>
-  <class name="IPHCTree::MTMuon">
-     <field name="charge" transient="true"/>
-  </class>
-  <class name="IPHCTree::MTTau">
-     <field name="charge" transient="true"/>
-  </class>
+  <class name="IPHCTree::MTElectron"/>
+  <class name="IPHCTree::MTMuon"/>
+  <class name="IPHCTree::MTTau"/>
 
   // Reconstructed objects
   <class name="IPHCTree::MTVertex"/>
   <class name="IPHCTree::MTBeamSpot"/>
-  <class name="IPHCTree::MTTrack"/>
+  <class name="IPHCTree::MTTrack">
+     <field name="charge" transient="true"/>
+  </class>
 
   // Multicollection
   <class name="IPHCTree::MultiCollection<IPHCTree::MTJet>">
-     <field name="current_index_" transient="true"/>
   </class>
   <class name="IPHCTree::MultiCollection<IPHCTree::MTMET>">
-     <field name="current_index_" transient="true"/>
   </class>
   <class name="IPHCTree::MultiCollection<IPHCTree::MTElectron>">
-     <field name="current_index_" transient="true"/>
   </class>
   <class name="IPHCTree::MultiCollection<IPHCTree::MTMuon>">
-     <field name="current_index_" transient="true"/>
   </class>
   <class name="IPHCTree::MultiCollection<IPHCTree::MTTau>">
-     <field name="current_index_" transient="true"/>
   </class>
   <class name="IPHCTree::MultiCollection<IPHCTree::MTPhoton>">
-     <field name="current_index_" transient="true"/>
   </class>
   <class name="IPHCTree::MultiCollection<IPHCTree::MTTrack>">
-     <field name="current_index_" transient="true"/>
   </class>
   <class name="IPHCTree::MultiCollection<IPHCTree::MTVertex>">
-     <field name="current_index_" transient="true"/>
   </class>
 
   // Vector

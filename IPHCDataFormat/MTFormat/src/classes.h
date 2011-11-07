@@ -9,7 +9,10 @@ namespace{
 
     // General
     edm::Wrapper<IPHCTree::MTEvent>            MTEvent; 
+    edm::Wrapper<IPHCTree::MTGeneral>          MTGeneral;
+    edm::Wrapper<IPHCTree::MTTrigger>          MTTrigger;
     edm::Wrapper<IPHCTree::MTMonteCarlo>       MTMonteCarlo;
+    edm::Wrapper<IPHCTree::MTEventDescriptor>  MTEventDescriptor;
 
     // Pile Up
     edm::Wrapper<IPHCTree::MTPileUp> MTPU;
