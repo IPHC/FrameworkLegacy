@@ -27,7 +27,7 @@ void NTPileUp::Dump(std::ostream & os) const
 
   os << " intime_npu = " << static_cast<unsigned int>(intime_npu) << " ;";
   os << " before_npu = " << static_cast<unsigned int>(before_npu) << " ;";
-  os << " after_npu = "  << static_cast<unsigned int>(before_npu);
+  os << " after_npu = "  << static_cast<unsigned int>(after_npu);
   os << std::endl;
 }
 
