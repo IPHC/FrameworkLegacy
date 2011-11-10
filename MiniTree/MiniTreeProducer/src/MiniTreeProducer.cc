@@ -220,7 +220,7 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
 			iEvent.getByLabel("addPileupInfo", PupInfo);
 			if (PupInfo.isValid())
 			{
-				fillPileUp(iEvent,iSetup,evt,h_neutralRho,h_rho,PupInfo);
+				fillPileUp(iEvent,iSetup,evt,h_rho,h_neutralRho,PupInfo);
 			}
 			else
 			{
@@ -925,15 +925,16 @@ void MiniTreeProducer::fillPileUp(edm::Event& iEvent,
       PVI = PupInfo->begin(); PVI != PupInfo->end(); PVI++)
 	{
     // Get bunchcrossing number
-    int n_bc=PVI->getBunchCrossing();
+    signed int n_bc=PVI->getBunchCrossing();
 
     // Fill pile-up
     if (n_bc==0) evt->pileup.intime_npu = PVI->getPU_NumInteractions();
     else if (n_bc==-1) evt->pileup.before_npu = PVI->getPU_NumInteractions();
     else if (n_bc==+1) evt->pileup.after_npu  = PVI->getPU_NumInteractions();
-
+    
     // Create a new container for interaction data in the MiniTree
-    std::vector<IPHCTree::MTInteraction>* pu_info = evt->pileup.NewPUbunch(n_bc);
+    std::vector<IPHCTree::MTInteraction>* pu_info = 
+                                              evt->pileup.NewPUbunch(n_bc);
 
     // Loop over interaction
 		for (unsigned int ipu=0; ipu<PVI->getPU_zpositions().size(); ipu++)
@@ -1438,10 +1439,10 @@ void MiniTreeProducer::fillMuons(edm::Event& iEvent,
          fabs (patmuon->eta()) > cfg.muon_cut_eta ) continue;
 
     // Applying a preselection on muons kind
-    if (! (patmuon->isGlobalMuon()     && cfg.muon_cut_glb) ) continue;
-    if (! (patmuon->isTrackerMuon()    && cfg.muon_cut_trk) ) continue;
-    if (! (patmuon->isStandAloneMuon() && cfg.muon_cut_sta) ) continue;
-    if (! (patmuon->isCaloMuon()       && cfg.muon_cut_cal) ) continue;
+    if (! ((patmuon->isGlobalMuon()     && cfg.muon_cut_glb ) ||
+           (patmuon->isTrackerMuon()    && cfg.muon_cut_trk ) ||
+           (patmuon->isStandAloneMuon() && cfg.muon_cut_sta ) ||
+           (patmuon->isCaloMuon()       && cfg.muon_cut_cal )) ) continue;
 
     // --------------------- General info -----------------------
 
