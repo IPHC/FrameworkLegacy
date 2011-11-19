@@ -21,10 +21,10 @@ namespace IPHCTree
     Float_t leadTrackPt;
 
     /// Number of signal tracks
-    UInt_t numSigConeTracks;
+    UShort_t numSigConeTracks;
 
     /// Number of isolation tracks
-    UInt_t numIsoConeTracks;
+    UShort_t numIsoConeTracks;
 
     /// PT sum of charged candidates in isolation region
     Float_t isolationPFChargedHadrCandsPtSum;
@@ -51,7 +51,7 @@ namespace IPHCTree
     Float_t ecalStripSumEOverPLead;
 
     /// Hadronic decay id (see enumeration PFTau::HadronicDecayMode)
-    Int_t decayMode;
+    Short_t decayMode;
 
     // -------------------------------------------------------------
     //                       method members

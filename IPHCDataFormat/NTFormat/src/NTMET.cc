@@ -26,16 +26,24 @@ void NTMET::Reset(bool constructor_call)
 // ----------------------------------------------------------------------------
 void NTMET::Dump(std::ostream & os) const
 {
-	os << "Object: MET " << std::endl;
-  os << "p2 : px=" << p2.Px() << " ; py=" << p2.Py();
-  os << std::endl << "MuonCorr "; 
-  os << "p2 : px=" << p2MuonCorr.Px() << " ; py=" << p2MuonCorr.Py();
+  for (unsigned int i=0;i<80;i++) os << "-"; os << std::endl;
+
+	os << "Object: MET" << std::endl;
+
+  os << " p2 = ( " << p2.Px() << " , " << p2.Py() << " )";
+  os << " ; met = " << met() << std::endl;
+
+  os << " MuonCorr p2 = ( " << p2MuonCorr.Px(); 
+  os << " , " << p2MuonCorr.Py() << " ) ; met = " << p2MuonCorr.Mod();
   os << std::endl;
 
-	os << " correction = " << correction;
-	os << " dmEx = "       << dmEx;
-	os << " dmEy = "       << dmEy         << std::endl;
-  os << " misEt = "      << misEt();
-  os << " uncmisEt = "   << uncmisEt;
-  os << " sumEt = "      << sumEt        << std::endl;
+	os << " correction = " << correction << " ;";
+	os << " dmEx = "       << dmEx << " ;";
+	os << " dmEy = "       << dmEy << std::endl;
+
+  os << " misEt = "      << misEt() << " ;";
+  os << " uncmisEt = "   << uncmisEt << " ;";
+  os << " sumEt = "      << sumEt  << std::endl;
+
+  for (unsigned int i=0;i<80;i++) os << "-"; os << std::endl;
 }

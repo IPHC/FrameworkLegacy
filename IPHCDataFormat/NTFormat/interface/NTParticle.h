@@ -10,7 +10,7 @@
 
 // IPHC headers
 #include "KeyedCollection.h"
-
+#include "DisplayTool.h"
 
 namespace IPHCTree
 {
@@ -62,34 +62,21 @@ namespace IPHCTree
     /// \param[in,out] os   a log stream
     virtual void Dump(std::ostream & os = std::cout) const
     {
-      NTParticle::PrintP4(p4,os);
-      os << std::endl << "HLT";
+      os << " p4 = " << p4 << std::endl;
+
+
+      os << " HLT p4 collection content : " << p4HLT.size();
+      os << " items" << std::endl;
       p4HLT.Dump(os);
-      os << std::endl;
+
+      os << " 'others' collection content : " << others.size();
+      os << " items" <<  std::endl;
+      others.Dump(os);
     }
 
     /// Alias to Dump method
     virtual void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
-
-    /// Display a 4-vector momentum
-    /// \param[in]     a    a 4-vector momentum to display
-    /// \param[in,out] os   a log stream
-    static void PrintP4(const TLorentzVector& a,
-                        std::ostream & os = std::cout)
-		{
-			os << " p4 = ("<< a.Px() << "," << a.Py() << "," << a.Pz() 
-         << "," << a.E() << ") & pT = " << a.Pt() << " ";
-    }
-
-    /// Display 3-vector momentum
-    /// \param[in]     a    a 3-vector momentum to display
-    /// \param[in,out] os   a log stream
-    static void PrintP3(const TVector3& a, std::ostream & os = std::cout)
-    {
-			os << " p3 = ("<< a.X() << "," << a.Y() << "," << a.Z() << ") ";
-    }
-
 
   };
 }

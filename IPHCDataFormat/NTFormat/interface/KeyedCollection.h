@@ -8,6 +8,10 @@
 #include <set>
 #include <map>
 #include <iterator>
+#include <typeinfo>
+
+// IPHC headers
+#include "DisplayTool.h"
 
 
 namespace IPHCTree
@@ -101,17 +105,33 @@ namespace IPHCTree
 
 	};
 
+
   // -------------------------------------------------------------------------
   // Dump
   // --------------------------------------------------------------------------
   template <class T>
   void KeyedCollection<T>::Dump(std::ostream & os) const
   {
-    for (std::set<std::string>::const_iterator it = names_.begin(); it != names_.end(); it++)
+
+    // determine the length of the longest name
+    unsigned int maxlength = 0;
+    for (std::set<std::string>::const_iterator 
+         it = names_.begin(); it != names_.end(); it++)
     {
-      os << (*it) << " : " << /*Get(*it) << */ std::endl;
+      if (it == names_.begin() || maxlength < it->size() )
+        maxlength=it->size();
+    }
+
+
+    for (std::set<std::string>::const_iterator
+         it = names_.begin(); it != names_.end(); it++)
+    {
+      os << "  ";
+      os.width(maxlength); os << (*it);
+      os << " : " << Get(*it) << std::endl;
     }
   }
+
 
   // -------------------------------------------------------------------------
   // Fill

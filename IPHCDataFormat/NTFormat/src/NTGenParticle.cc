@@ -1,5 +1,6 @@
 #include "../interface/NTGenParticle.h"
 #include "../interface/NTParticle.h"
+#include "../interface/DisplayTool.h"
 
 
 using namespace IPHCTree;
@@ -29,7 +30,7 @@ void NTGenParticle::Dump(std::ostream & os) const
 	os << "Object: NTGenParticle " << std::endl;
   os << " PDG id = " << id;
   os << " isStatus3 = " << static_cast<unsigned int>(isStatus3);
-  NTParticle::PrintP4(p4,os);
+  os << " p4 = " << p4;
   os << std::endl;
   os << " mother @ ";
   if (mother==0) os << "NULL";

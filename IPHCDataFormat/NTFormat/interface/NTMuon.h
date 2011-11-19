@@ -31,10 +31,10 @@ namespace IPHCTree
 
     // ------------------- associated track ------------------------
 
-    UInt_t  NValidHits;  /// Nb of valid hits associated to the global track
-    UInt_t  NTrValidHits;/// Nb of valid hits associated to the innerTrack
-    UInt_t  NOfMatches;  /// Nb of matches 
-    Float_t D0Inner;		 /// Transverse IP from tracks
+    UShort_t  NValidHits;  /// Nb of valid hits associated to the global track
+    UShort_t  NTrValidHits;/// Nb of valid hits associated to the innerTrack
+    UShort_t  NOfMatches;  /// Nb of matches 
+    Float_t   D0Inner;		 /// Transverse IP from tracks
 
 
     // -------------------------------------------------------------
@@ -67,9 +67,9 @@ namespace IPHCTree
       //            + IsStandAloneMuon * 10
       //            + IsTrackerMuon    * 1; 
 			unsigned id=0;
-      if (isTrackerMuon)    id = id | 1;
-      if (isStandaloneMuon) id = id | 2;
-      if (isGlobalMuon)     id = id | 4;
+      if (isTrackerMuon)    id += 1;
+      if (isStandaloneMuon) id += 10;
+      if (isGlobalMuon)     id += 100;
 			return id;
 		}
 

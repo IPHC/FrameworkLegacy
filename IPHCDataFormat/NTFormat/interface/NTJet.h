@@ -35,8 +35,8 @@ namespace IPHCTree
 
     // --------------- variables related to tracks -------------------
 
-    UInt_t nTracks;      /// number of tracks associated to the jet
-    Float_t sumPtTracks; /// the scalar sum of Pt of the nTracks tracks
+    UShort_t nTracks;     /// number of tracks associated to the jet
+    Float_t  sumPtTracks; /// the scalar sum of Pt of the nTracks tracks
    
     // ------------------ b-tagging discriminator --------------------
 

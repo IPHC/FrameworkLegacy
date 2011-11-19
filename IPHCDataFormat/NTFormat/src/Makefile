@@ -22,8 +22,8 @@ CXXFLAGS	+= $(ROOTCFLAGS)
 LIBS		= -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -pthread -lm -ldl -rdynamic -lGenVector
 GLIBS		= $(ROOTGLIBS)
 #------------------------------------------------------------------------------
-SOURCES		= $(wildcard NT*.cc KeyedCollection.cc MultiCollection.cc) 
-HEADERS		= $(wildcard ../interface/NT*.h ../interface/KeyedCollection.h ../interface/MultiCollection.h ../interface/TransientData.h) 
+SOURCES		= $(wildcard NT*.cc DisplayTool.cc MultiCollection.cc) 
+HEADERS		= $(wildcard ../interface/NT*.h ../interface/KeyedCollection.h ../interface/MultiCollection.h ../interface/TransientData.h ../interface/DisplayTool.h) 
 OBJECTS		= $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 DEPENDS		= $(SOURCES:.$(SrcSuf)=.d)
 SOBJECTS	= $(SOURCES:.$(SrcSuf)=.$(DllSuf))

@@ -1,5 +1,6 @@
 #include "../interface/MTLepton.h"
 #include "../../NTFormat/interface/NTParticle.h"
+#include "../../NTFormat/interface/DisplayTool.h"
 
 using namespace IPHCTree;
 
@@ -21,8 +22,7 @@ void MTLepton::Reset(bool constructor_called)
 // ----------------------------------------------------------------------------
 void MTLepton::Dump(std::ostream & os) const
 {
-  os << " p4Gen ";
-  NTParticle::PrintP4(p4Gen, os);
+  os << " p4Gen = " << p4Gen << std::endl;
   os << "pgdID-mother = "   << GenMother.pdgId();
   os << "pgdID-Gmother = "  << GenGrandMother.pdgId();
   os << "pgdID-GGmother = " << GenGGrandMother.pdgId();

@@ -9,6 +9,7 @@
 
 // IPHC headers (NTuple format)
 #include "../../NTFormat/interface/NTParticle.h"
+#include "../../NTFormat/interface/DisplayTool.h"
 
 
 namespace IPHCTree
@@ -52,11 +53,8 @@ namespace IPHCTree
     //! \param[in,out] os   a log stream
     void Dump(std::ostream & os = std::cout) const
     {
-      os << "BeamSpot information : "  << std::endl;
-      NTParticle::PrintP3(p3,os);
-      os << " with error ";
-      NTParticle::PrintP3(p3Err,os);
-      os << std::endl;
+      os << "BeamSpot info : " << p3;
+      os << " with error " << p3Err << std::endl;
     }
 
     //! Alias to Dump method

@@ -25,12 +25,23 @@ void NTJet::Reset (bool constructor_call)
 // ----------------------------------------------------------------------------
 void NTJet::Dump(std::ostream & os) const
 {
-	os << "Object: Jet " << std::endl;
+  for (unsigned int i=0;i<80;i++) os << "-"; os << std::endl;
+
+	os << "Object: Jet" << std::endl;
+
   NTParticle::Dump(os);
-  os << " p4Gen    : "; NTParticle::PrintP4(p4Gen,os);    os << std::endl;
-  os << " p4Parton : "; NTParticle::PrintP4(p4Parton,os); os << std::endl;
-  os << " partonFlavour = " << partonFlavour;
-  os << " nTracks = "      << nTracks;
-  os << " sumPtTracks = "  << sumPtTracks << std::endl;
+
+  os << " Gen p4    = " << p4Gen << std::endl;
+  os << " Parton p4 = " << p4Parton << std::endl;
+
+  os << " partonFlavour = " << static_cast<signed int>(partonFlavour) << " ;";
+  os << " nTracks = "       << nTracks << " ;";
+  os << " sumPtTracks = "   << sumPtTracks << std::endl;
+
+  os << " bTag collection content : " << bTag.size();
+  os << " items" << std::endl;
   bTag.Dump(os);
+
+  for (unsigned int i=0;i<80;i++) os << "-"; os << std::endl;
+
 }

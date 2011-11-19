@@ -1,5 +1,6 @@
 #include "../interface/NTVertex.h"
 #include "../interface/NTParticle.h"
+#include "../interface/DisplayTool.h"
 
 using namespace IPHCTree;
 
@@ -19,14 +20,14 @@ void NTVertex::Reset(bool constructor_call)
   NumberOfTracks = 0;
 }
 
+
 // ---------------------------------------------------------------------------
 // Dump
 // ----------------------------------------------------------------------------
 void NTVertex::Dump(std::ostream & os) const
 {
 	os << "Object: Vertex " << std::endl;
-	os << " vertex : ";
-  NTParticle::PrintP3(p3,os);
+	os << " vertex = " << p3 << std::endl;
 	os << " rho = " << Rho() << std::endl;
 	os << " chi2 = "    << chi2;
 	os << " ndof = "    << ndof;

@@ -39,7 +39,7 @@ namespace IPHCTree
     mutable Float_t charge; //! TRANSIENT
 
     /// MC information : origin of the lepton 
-    Int_t LeptonOrigin;
+    Short_t LeptonOrigin;
 
     // ---------- isolation variables (cone of deltaR<0.3) -----------
 

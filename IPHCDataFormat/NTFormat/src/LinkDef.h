@@ -8,6 +8,9 @@
 // STL containers
 
 // IPHC containers
+#pragma link C++ function operator<<(std::ostream&, const TLorentzVector&)+;
+#pragma link C++ function operator<<(std::ostream&, const TVector3&)+;
+#pragma link C++ function operator<<(std::ostream&, const TVector2&)+;
 #pragma link C++ class IPHCTree::KeyedCollection<Float_t>+;
 #pragma link C++ class IPHCTree::KeyedCollection<UInt_t>+;
 #pragma link C++ class IPHCTree::KeyedCollection<TLorentzVector>+;

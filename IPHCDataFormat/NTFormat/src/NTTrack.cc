@@ -1,5 +1,6 @@
 #include "../interface/NTTrack.h"
 #include "../interface/NTParticle.h"
+#include "../interface/DisplayTool.h"
 
 using namespace IPHCTree;
 
@@ -21,7 +22,7 @@ void NTTrack::Reset(bool constructor_call)
   dxyError = -999.;
   dz       = -999.;
   dzError  = -999.;
-  nHitTracker = 0.;
+  nHitTracker = 0;
 }
 
 
@@ -31,7 +32,7 @@ void NTTrack::Reset(bool constructor_call)
 void NTTrack::Dump(std::ostream & os) const
 {
 	os << "Object: Track " << std::endl;
-  NTParticle::PrintP4(p4, os);
+  os << " p4 = " << p4 << std::endl;
 	os << " charge = "      << charge;
 	os << " chi2 = "        << chi2 << std::endl;
 	os << " dxy = "         << dxy_BS;

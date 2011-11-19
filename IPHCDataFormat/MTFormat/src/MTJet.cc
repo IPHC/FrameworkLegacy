@@ -1,5 +1,8 @@
 #include "../interface/MTJet.h"
 
+// IPHC headers (NTuple format)
+#include "../../NTFormat/interface/DisplayTool.h"
+
 using namespace IPHCTree;
 
 // ---------------------------------------------------------------------------
@@ -43,12 +46,8 @@ void MTJet::Reset(bool constructor_call)
 void MTJet::Dump(std::ostream & os) const
 {
   NTJet::Dump(os);
-  os << " uncorrJet ";
-  NTParticle::PrintP4(uncorrJet,os);
-  os << std::endl; 
-  os << " vertex ";
-  NTParticle::PrintP3(vertex,os);
-  os << std::endl; 
+  os << " uncorrJet p4 = " << uncorrJet << std::endl;
+  os << " vertex = " << vertex << std::endl;
   os << " container 'TracksOfJet' size = " << TracksOfJet.size();
   os << " container 'trackassociatedVec' size = " << trackassociatedVec.size();
   os << std::endl;

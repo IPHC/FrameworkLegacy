@@ -1,4 +1,5 @@
 #include "../interface/NTLepton.h"
+#include "../interface/DisplayTool.h"
 
 using namespace IPHCTree;
 
@@ -43,22 +44,26 @@ void NTLepton::Reset(bool constructor_called)
 void NTLepton::Dump(std::ostream & os) const
 {
   NTParticle::Dump(os);
-  os << "vertex: ";
-  NTParticle::PrintP3(vertex, os); 
- 	os << std::endl;
-	os << " Charge = " << charge << " ";
-	os << " D0 =  "<< D0 <<" ";
-	os << " Chi2 =  "<< Chi2 <<" ";
-	os << " LeptonOrigin =  " << LeptonOrigin << " " << std::endl;
+  os << " vertex = " << vertex << std::endl;
+
+	os << " Charge = " << charge << " ;";
+	os << " D0 = "<< D0 << " ;";
+	os << " Chi2 = "<< Chi2 <<" ;";
+	os << " LeptonOrigin =  " << LeptonOrigin << std::endl;
+
 	os << " CaloIso03 = " << CaloIso03() <<" (";
 	os << " ECaloIso03 = " << ECaloIso03 <<" + ";
 	os << " HCaloIso03 = " << HCaloIso03 <<" )";
-	os << " TrkIso03 = " << TrkIso03 <<std::endl;
-	os << " PATNeutralHadronIso = " << PATNeutralHadronIso << " ";
-	os << " PATChargedHadronIso = " << PATChargedHadronIso << " ";
-	os << " PATPhotonIso = " << PATPhotonIso << " ";
+	os << " TrkIso03 = " << TrkIso03 << std::endl;
+
+	os << " PATNeutralHadronIso = " << PATNeutralHadronIso << " ;";
+	os << " PATChargedHadronIso = " << PATChargedHadronIso << " ;";
+	os << " PATPhotonIso = " << PATPhotonIso << " ;";
 	os << " PATTrackIso = " << PATTrackIso << std::endl;
 	os << std::endl;
+
+  os << " ID collection content : " << ID.size();
+  os << " items" << std::endl;
   ID.Dump(os);
 }
 

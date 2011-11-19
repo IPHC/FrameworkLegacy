@@ -32,19 +32,24 @@ void NTTau::Reset(bool constructor_call)
 // ----------------------------------------------------------------------------
 void NTTau::Dump(std::ostream & os) const
 {
+  for (unsigned int i=0;i<80;i++) os << "-"; os << std::endl;
+
 	os << "Object: Tau " << std::endl;
   NTLepton::Dump(os);
+
   os << " decay mode = "               << decayMode << std::endl;
-	os << " leadTrackPt = "              << leadTrackPt;
-	os << " numSigConeTracks = "         << numSigConeTracks;
+
+	os << " leadTrackPt = "              << leadTrackPt << " ;";
+	os << " numSigConeTracks = "         << numSigConeTracks << " ;";
 	os << " numIsoConeTracks = "         << numIsoConeTracks << std::endl;
-  os << " maximumHCALPFClusterEt = "   << maximumHCALPFClusterEt;
+  os << " maximumHCALPFClusterEt = "   << maximumHCALPFClusterEt << " ,";
 	os << " emFraction = "               << emFraction << std::endl;
-	os << " hcalTotOverPLead = "         << hcalTotOverPLead;
-	os << " hcalMaxOverPLead = "         << hcalMaxOverPLead;
-	os << " hcal3x3OverPLead = "         << hcal3x3OverPLead;
+	os << " hcalTotOverPLead = "         << hcalTotOverPLead << " ;";
+	os << " hcalMaxOverPLead = "         << hcalMaxOverPLead << " ;";
+	os << " hcal3x3OverPLead = "         << hcal3x3OverPLead << " ;";
 	os << " ecalStripSumEOverPLead = "   << ecalStripSumEOverPLead << std::endl;
-  ID.Dump(os);
+
+  for (unsigned int i=0;i<80;i++) os << "-"; os << std::endl;
 }
 
 
