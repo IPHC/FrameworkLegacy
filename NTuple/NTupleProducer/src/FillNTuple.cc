@@ -150,6 +150,7 @@ void FillNTuple::Fill(const IPHCTree::MTEvent* minitree, IPHCTree::NTEvent* ntup
        theLabel != labels.end(); theLabel++)
   {
     ntuple->electrons.SelectLabel(*theLabel);
+    minitree->electrons.SelectLabel(*theLabel);
     for (unsigned int i=0; i<minitree->electrons.size(); i++) 
     {
       if (!skimElectrons || 
@@ -191,6 +192,7 @@ void FillNTuple::Fill(const IPHCTree::MTEvent* minitree, IPHCTree::NTEvent* ntup
        theLabel != labels.end(); theLabel++)
   {
     ntuple->photons.SelectLabel(*theLabel);
+    minitree->photons.SelectLabel(*theLabel);
     for (unsigned int i=0; i<minitree->photons.size(); i++) 
     {
       if (!skimPhotons || 
@@ -232,6 +234,7 @@ void FillNTuple::Fill(const IPHCTree::MTEvent* minitree, IPHCTree::NTEvent* ntup
        theLabel != labels.end(); theLabel++)
   {
     ntuple->muons.SelectLabel(*theLabel);
+    minitree->muons.SelectLabel(*theLabel);
     for (unsigned int i=0; i<minitree->muons.size(); i++) 
     {
       if (!skimMuons || 
@@ -274,6 +277,7 @@ void FillNTuple::Fill(const IPHCTree::MTEvent* minitree, IPHCTree::NTEvent* ntup
        theLabel != labels.end(); theLabel++)
   {
     ntuple->taus.SelectLabel(*theLabel);
+    minitree->taus.SelectLabel(*theLabel);
     for (unsigned int i=0; i<minitree->taus.size(); i++) 
     {
       if (!skimTaus || 
@@ -315,6 +319,7 @@ void FillNTuple::Fill(const IPHCTree::MTEvent* minitree, IPHCTree::NTEvent* ntup
        theLabel != labels.end(); theLabel++)
   {
     ntuple->jets.SelectLabel(*theLabel);
+    minitree->jets.SelectLabel(*theLabel);
     for (unsigned int i=0; i<minitree->jets.size(); i++) 
     {
       if (!skimJets || 
@@ -356,6 +361,7 @@ void FillNTuple::Fill(const IPHCTree::MTEvent* minitree, IPHCTree::NTEvent* ntup
        theLabel != labels.end(); theLabel++)
   {
     ntuple->met.SelectLabel(*theLabel);
+    minitree->met.SelectLabel(*theLabel);
     for (unsigned int i=0; i<minitree->met.size(); i++) 
     {
       ntuple -> NewMet(dynamic_cast<const IPHCTree::NTMET&>(minitree->met[i]));
@@ -394,6 +400,7 @@ void FillNTuple::Fill(const IPHCTree::MTEvent* minitree, IPHCTree::NTEvent* ntup
        theLabel != labels.end(); theLabel++)
   {
     ntuple->tracks.SelectLabel(*theLabel);
+    minitree->tracks.SelectLabel(*theLabel);
     for (unsigned int i=0; i<minitree->tracks.size(); i++) 
     {
       if (!skimTracks || 
@@ -435,6 +442,7 @@ void FillNTuple::Fill(const IPHCTree::MTEvent* minitree, IPHCTree::NTEvent* ntup
        theLabel != labels.end(); theLabel++)
   {
     ntuple->vertices.SelectLabel(*theLabel);
+    minitree->vertices.SelectLabel(*theLabel);
     for (unsigned int i=0; i<minitree->vertices.size(); i++) 
     {
       ntuple -> NewVertex(dynamic_cast<const IPHCTree::NTVertex&>(minitree->vertices[i]));

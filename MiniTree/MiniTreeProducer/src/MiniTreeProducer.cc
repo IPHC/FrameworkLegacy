@@ -98,8 +98,8 @@ MiniTreeProducer::MiniTreeProducer (const edm::ParameterSet & iConfig)
 
   // Extract info for Monte Carlo
   cfg.doGenParticleCollection = iConfig.getParameter<bool> ("doGenParticleCollection");
-  cfg.mcDescentMax  = iConfig.getParameter<unsigned int> ("mcDescentMax");
-  cfg.mcNGenPartMax = iConfig.getParameter<unsigned int> ("mcNGenPartMax");
+  cfg.mcDescentMax            = iConfig.getParameter<unsigned int> ("mcDescentMax");
+  cfg.mcNGenPartMax           = iConfig.getParameter<unsigned int> ("mcNGenPartMax");
 
 
   // Register the final product : the MiniTree Event
@@ -234,11 +234,12 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
     if (cfg.doGenParticleCollection)
 		{
 			if (cfg.verbose > 1) std::cout << "Filling GenParticles ..." << std::endl;
-			edm::Handle<reco::GenParticleCollection> genParticles;
-			iEvent.getByLabel ("genParticles", genParticles);
-			if (genParticles.isValid())
+			edm::Handle<reco::GenParticleCollection> genParticlesHandle;
+			iEvent.getByLabel ("genParticles", genParticlesHandle);
+			if (genParticlesHandle.isValid())
 			{
-			  fillGenParticles(iEvent,iSetup,evt,genParticles);
+			  fillGenParticles(iEvent,iSetup,evt,genParticlesHandle);
+        genParticles = genParticlesHandle.product();
 			}
 			else
 			{
@@ -650,9 +651,12 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
 
       // Filling MiniTree if MET is available
       if (jetHandle.isValid())
+      {
         fillJetMET(iEvent, iSetup, evt,
                    &(metHandle->front()), jetHandle,
                    algo_,SumMuMetCorr, patTriggerEvent);
+      std::cout << "ERIC : MET = " << evt->met[0].p2.Px() << std::endl;
+      }
 			else
 			{ 
          ERROR("Produce") << "JET collection '"
@@ -979,8 +983,31 @@ void MiniTreeProducer::fillGenParticles(edm::Event& iEvent,
     return;
   }
 
-  // New Format
 
+  for (unsigned int i=0;i<GenParticles->size();i++)
+  {
+    if ((*GenParticles)[i].status()!=3) continue;
+
+    IPHCTree::NTGenParticle* mypart = evt->mc.NewGenParticle();
+    mypart->p4.SetPxPyPzE((*GenParticles)[i].px(),
+                          (*GenParticles)[i].py(),
+                          (*GenParticles)[i].pz(),
+                          (*GenParticles)[i].energy());
+    mypart->isStatus3 = ((*GenParticles)[i].status()==3);
+    mypart->id        = (*GenParticles)[i].pdgId();
+
+    for (unsigned int j=0;j<GenParticles->size();j++)
+    {
+      if ((*GenParticles)[i].mother()==&((*GenParticles)[j]))
+      {
+        mypart->motherIndex_=j;
+        break;
+      }
+    }
+  }
+
+  // New Format
+  /*
   // Look for the two initial protons
   std::vector<const reco::Candidate*> mothers;
   std::vector<const reco::Candidate*> all;
@@ -1067,7 +1094,7 @@ void MiniTreeProducer::fillGenParticles(edm::Event& iEvent,
         evt->mc.genParticles[i].motherIndex_=j;
     }
   }
-
+*/
   // Fill taus
   for (unsigned int i=0;i<GenParticles->size(); i++)
   {
@@ -1389,6 +1416,8 @@ void MiniTreeProducer::fillElectrons(edm::Event& iEvent,
       // Get mother, grandmother and grandgrandmother particles
       if (cfg.doGenParticleCollection && genParticles!=0)
       { 
+        std::cout << "ERIC : ELECTRON LEPTO ORIGIN" << std::endl; 
+
         reco::GenParticle genmother;
         reco::GenParticle gengrandmother;
         reco::GenParticle genggrandmother;
@@ -1583,6 +1612,8 @@ void MiniTreeProducer::fillMuons(edm::Event& iEvent,
       // Get mother, grandmother and grandgrandmother particles
       if (cfg.doGenParticleCollection && genParticles!=0)
       { 
+        std::cout << "ERIC : ELECTRON LEPTO ORIGIN" << std::endl; 
+
         reco::GenParticle genmother;
         reco::GenParticle gengrandmother;
         reco::GenParticle genggrandmother;
@@ -1966,6 +1997,8 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
 		for(unsigned int tr=0;tr<patJet->associatedTracks().size();tr++)
        myjet->sumPtTracks+=patJet->associatedTracks()[tr]->pt();
 
+    // ##################### ONLY FOR RECO FORMAT - BEGIN ##########################
+
 		if (!cfg.isAOD)
     {
 			const reco::TrackIPTagInfo * TIP = patJet->tagInfoTrackIP();
@@ -2043,7 +2076,10 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
 				myjet->MassSVX = trackFourVectorSum.M ();
 	 
 			}
-	
+    }
+
+    // ##################### ONLY FOR RECO FORMAT - END ############################
+
     // --------------------- Monte Carlo Info -----------------------
 
     // Fill MC 4-vector momentum
@@ -2065,7 +2101,6 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
     // --------------------- B tagging -----------------------
 
     std::map<std::string,Float_t> ids;
-
     for (unsigned int i=0;i<cfg.jetBTagList.size();i++)
     {
       if (cfg.jetBTagList[i]=="") continue;
@@ -2101,9 +2136,9 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
 
     //		myjetmet->sumEtJet    += patJet->et();
 		//    myjetmet->sumEtJetRaw += patJet->et()/myjet->scale;
-    }		
-  }
-}  
+  }		
+}
+
 
 
 bool MiniTreeProducer::getBfieldFromIDEAL(edm::Event& iEvent, const edm::EventSetup& iSetup, float& evt_bField)
