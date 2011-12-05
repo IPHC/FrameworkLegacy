@@ -31,29 +31,65 @@ class Requirement
   //! Set electron requirements
   void SetElectronRequirements(float PtThr, float EtaThr,
                                float RelIsoThr, float D0Thr,
-                               float VertexMatchThr_, float ElectronETSCThr,
-                               float DRemuThr);
+                               float VertexMatchThr, float ElectronETSCThr,
+                               float DRemuThr)
+  {
+    ElectronPtThreshold_    = PtThr;
+    ElectronEtaThreshold_   = EtaThr;
+    ElectronRelIso_         = RelIsoThr;
+    ElectronD0Cut_          = D0Thr;
+    ElectronVertexMatchThr_ = VertexMatchThr;
+    ElectronETSCThr_        = ElectronETSCThr;
+    DRemuThr_               = DRemuThr;
+  }
 
   //! Set muon requirements
   void SetMuonRequirements(float PtThr, float EtaThr,
                            float RelIsoThr, float D0Thr,
-                           float VertexMatchThr_, float NValidHitsThr,
-                           float NValidTkHitsThr, float Chi2Thr);
+                           float VertexMatchThr, float NValidHitsThr,
+                           float NValidTkHitsThr, float Chi2Thr)
+  {
+    MuonPtThreshold_     = PtThr;
+    MuonEtaThreshold_    = EtaThr;
+    MuonRelIso_          = RelIsoThr;
+    MuonD0Cut_           = D0Thr;
+    MuonVertexMatchThr_  = VertexMatchThr;
+    MuonNofValidTrHits_  = NValidTkHitsThr;
+    MuonNofValidHits_    = NValidHitsThr;
+    MuonNormChi2_        = Chi2Thr;
+  }
 
   //! Set tau requirements
   void SetTauRequirements(float PtThr, float EtaThr,
-                          float VertexMatchThr_,
-                          float LeadTrkPtThr);
+                          float VertexMatchThr, float LeadTrkPtThr)
+  {
+    TauPtThreshold_    = PtThr;
+    TauEtaThreshold_   = EtaThr;
+    TauVertexMatchThr_ = VertexMatchThr;
+    TauLeadTrkPtCut_   = LeadTrkPtThr;
+  }
 
   //! Set jet requirements
-  void SetJetRequirements(float PtThr, float EtaThr);
+  void SetJetRequirements(float PtThr, float EtaThr)
+  {
+    JetPtThreshold_=PtThr;
+    JetEtaThreshold_=EtaThr;
+  }
 
   //! Set MET requirements
-  void SetMETRequirements(float PtThr);     
+  void SetMETRequirements(float PtThr)
+  {
+    METThreshold_=PtThr;
+  }
 
   //! Set vertex requirements
   void SetVertexRequirements(float VertexNdofThr, float VertexZThr,
-                             float VertexRhoThr);
+                             float VertexRhoThr)
+  {
+    VertexNdofThr_ = VertexNdofThr;
+    VertexZThr_    = VertexZThr;
+    VertexRhoThr_  = VertexRhoThr;
+  }
    
 
   // -------------------------------------------------------------

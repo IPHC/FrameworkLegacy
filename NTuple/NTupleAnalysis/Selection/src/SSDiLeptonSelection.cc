@@ -70,55 +70,64 @@ void SSDiLeptonSelection::SetParameters(float MinValue,
 
 
 
-bool SSDiLeptonSelection::GetLeptonPair (std::vector < NTMuon > muon_in, std::vector < IPHCTree::NTElectron > elec_in, std::vector < NTMuon > &muon_out, std::vector < NTElectron > &elec_out,
-				       string & CandPairType)
+bool SSDiLeptonSelection::GetLeptonPair (const std::vector < IPHCTree::NTMuon >& muon_in, 
+                                         const std::vector < IPHCTree::NTElectron >& elec_in, 
+                                         std::vector < NTMuon > &muon_out,
+                                         std::vector < NTElectron > &elec_out,
+                                         std::string & CandPairType)
 {
-
   //important: reset the out collections
   muon_out.clear ();
   elec_out.clear ();
 
+  // Electron combination
   float sum_pT_ee = 0.;
   bool pass_elec = false;
   int ie1 = -1;
   int ie2 = -1;
-  if (elec_in.size () >= 2) {
-    for (unsigned int i = 0; i < elec_in.size (); i++) {
-      for (unsigned int j = i + 1; j < elec_in.size (); j++) {
-	if (pass_elec)
-	  continue;
-	if ((elec_in[i].charge == elec_in[j].charge))
+  if (elec_in.size () >= 2)
+  {
+    for (unsigned int i = 0; i < elec_in.size (); i++) 
+    {
+      for (unsigned int j = i + 1; j < elec_in.size (); j++) 
+      {
+        if (pass_elec) continue;
+        if ((elec_in[i].charge == elec_in[j].charge))
         {
-	  pass_elec = true;
-	  sum_pT_ee = elec_in[i].p4.Pt () + elec_in[j].p4.Pt ();
-	  ie1 = i;
-	  ie2 = j;
-	}
+          pass_elec = true;
+          sum_pT_ee = elec_in[i].p4.Pt () + elec_in[j].p4.Pt ();
+          ie1 = i;
+          ie2 = j;
+        }
       }
     }
   }
 
+  // Muon combination
   float sum_pT_mumu = 0.;
   bool pass_muon = false;
   int imu1 = -1;
   int imu2 = -1;
-  if (muon_in.size () >= 2) {
-    for (unsigned int i = 0; i < muon_in.size (); i++) {
-      for (unsigned int j = i + 1; j < muon_in.size (); j++) {
-	if (pass_muon)
-	  continue;
-	if ((muon_in[i].charge == muon_in[j].charge))
+  if (muon_in.size () >= 2)
+  {
+    for (unsigned int i = 0; i < muon_in.size (); i++)
+    {
+      for (unsigned int j = i + 1; j < muon_in.size (); j++) 
+      {
+        if (pass_muon)  continue;
+        if ((muon_in[i].charge == muon_in[j].charge))
         {
-	  pass_muon = true;
-	  sum_pT_mumu = muon_in[i].p4.Pt () + muon_in[j].p4.Pt ();
-	  imu1 = i;
-	  imu2 = j;
-	}
+          pass_muon = true;
+          sum_pT_mumu = muon_in[i].p4.Pt () + muon_in[j].p4.Pt ();
+          imu1 = i;
+          imu2 = j;
+        }
       }
     }
   }
 
 
+  // ElecMu combination
   float sum_pT_emu_start = 0.;
   float sum_pT_emu = 0.;
   int je1 = -1;
@@ -126,15 +135,15 @@ bool SSDiLeptonSelection::GetLeptonPair (std::vector < NTMuon > muon_in, std::ve
   if (muon_in.size () >= 1 && elec_in.size () >= 1) {
     for (unsigned int i = 0; i < muon_in.size (); i++) {
       for (unsigned int j = 0; j < elec_in.size (); j++) {
-	if ((muon_in[i].charge == elec_in[j].charge))
+        if ((muon_in[i].charge == elec_in[j].charge))
         {
-	  sum_pT_emu = muon_in[i].p4.Pt () + elec_in[j].p4.Pt ();
-	  if (sum_pT_emu > sum_pT_emu_start) {
-	    sum_pT_emu_start = sum_pT_emu;
-	    je1 = j;
-	    jmu2 = i;
-	  }
-	}
+          sum_pT_emu = muon_in[i].p4.Pt () + elec_in[j].p4.Pt ();
+          if (sum_pT_emu > sum_pT_emu_start) {
+            sum_pT_emu_start = sum_pT_emu;
+            je1 = j;
+            jmu2 = i;
+          }
+        }
       }
     }
   }
@@ -162,14 +171,14 @@ bool SSDiLeptonSelection::GetLeptonPair (std::vector < NTMuon > muon_in, std::ve
 
   if (elec_out.size () + muon_out.size () == 2) {
     if (muon_out.size () == 2) {
-	CandPairType = "mumu";
+      CandPairType = "mumu";
     }
     if (elec_out.size () == 2) {
       CandPairType = "ee";
     }
     if (muon_out.size () == 1 && elec_out.size () == 1) {
-	CandPairType = "emu";
-      }
+      CandPairType = "emu";
+    }
   }
   else CandPairType="false";
 
@@ -404,7 +413,7 @@ int SSDiLeptonSelection::doFullSelection (Dataset * dataset, string channelName,
 	step_jets = true;
       }
       //Step 6  MET cuts
-      if (GetMET(applyJES, JESParam, applyMETS, METScale).met() < METLL) {
+      if (GetSelectedMET(applyJES, JESParam, applyMETS, METScale).met() < METLL) {
 	  step_met = true;
       }
       //Step 7 btagging
@@ -418,8 +427,8 @@ int SSDiLeptonSelection::doFullSelection (Dataset * dataset, string channelName,
       if(step_jets){
       	jet1pt_oss << SelectedJets[0].p4.Pt ();
       	jet2pt_oss << SelectedJets[1].p4.Pt ();
-      	jet1bdisc_oss << SelectedJets[0].bTag["TCDiscri"];
-      	jet2bdisc_oss << SelectedJets[1].bTag["TCDiscri"];
+      	jet1bdisc_oss << SelectedJets[0].bTag["trackCountingHighEffBJetTags"];
+      	jet2bdisc_oss << SelectedJets[1].bTag["trackCountingHighEffBJetTags"];
      	 met_oss << GetMET().met();
       	dump += jet1pt_oss.str () + " , " + jet2pt_oss.str () + " | " + met_oss.str () + " | " + jet1bdisc_oss.str () + " , " + jet2bdisc_oss.str () + " | " + pairType_;
       }
@@ -427,21 +436,21 @@ int SSDiLeptonSelection::doFullSelection (Dataset * dataset, string channelName,
       for (unsigned int j = 0; j < SelectedJets.size (); j++) {
 	switch (btagAlgo_) {
 	case 0:
-	  if (SelectedJets[j].bTag["TCDiscri"] >= btagDiscriCut_) {
+	  if (SelectedJets[j].bTag["trackCountingHighEffBJetTags"] >= btagDiscriCut_) {
 	    btagjets.push_back (SelectedJets[j]);
-	    btagDiscri.push_back (SelectedJets[j].bTag["TCDiscri"]);
+	    btagDiscri.push_back (SelectedJets[j].bTag["trackCountingHighEffBJetTags"]);
 	  }
 	  break;
 	case 1:
-	  if (SelectedJets[j].bTag["SVDiscri"] >= btagDiscriCut_) {
+	  if (SelectedJets[j].bTag["simpleSecondaryVertexBJetTags"] >= btagDiscriCut_) {
 	    btagjets.push_back (SelectedJets[j]);
-	    btagDiscri.push_back (SelectedJets[j].bTag["SVDiscri"]);
+	    btagDiscri.push_back (SelectedJets[j].bTag["simpleSecondaryVertexBJetTags"]);
 	  }
 	  break;
 	case 2:
-	  if (SelectedJets[j].bTag["SMDiscri"] >= btagDiscriCut_) {
+	  if (SelectedJets[j].bTag["softMuonBJetTags"] >= btagDiscriCut_) {
 	    btagjets.push_back (SelectedJets[j]);
-	    btagDiscri.push_back (SelectedJets[j].bTag["SMDiscri"]);
+	    btagDiscri.push_back (SelectedJets[j].bTag["softMuonBJetTags"]);
 	  }
 	  break;
 	default:
@@ -466,21 +475,21 @@ int SSDiLeptonSelection::doFullSelection (Dataset * dataset, string channelName,
       for (unsigned int j = 0; j < SelectedJets.size (); j++) {
 	switch (btagAlgo_) {
 	case 0:
-	  if (SelectedJets[j].bTag["TCDiscri"] >= btagDiscriCut_) {
+	  if (SelectedJets[j].bTag["trackCountingHighEffBJetTags"] >= btagDiscriCut_) {
 	    btagjets.push_back (SelectedJets[j]);
-	    btagDiscri.push_back (SelectedJets[j].bTag["TCDiscri"]);
+	    btagDiscri.push_back (SelectedJets[j].bTag["trackCountingHighEffBJetTags"]);
 	  }
 	  break;
 	case 1:
-	  if (SelectedJets[j].bTag["SVDiscri"] >= btagDiscriCut_) {
+	  if (SelectedJets[j].bTag["simpleSecondaryVertexBJetTags"] >= btagDiscriCut_) {
 	    btagjets.push_back (SelectedJets[j]);
-	    btagDiscri.push_back (SelectedJets[j].bTag["SVDiscri"]);
+	    btagDiscri.push_back (SelectedJets[j].bTag["simpleSecondaryVertexBJetTags"]);
 	  }
 	  break;
 	case 2:
-	  if (SelectedJets[j].bTag["SMDiscri"] >= btagDiscriCut_) {
+	  if (SelectedJets[j].bTag["softMuonBJetTags"] >= btagDiscriCut_) {
 	    btagjets.push_back (SelectedJets[j]);
-	    btagDiscri.push_back (SelectedJets[j].bTag["SMDiscri"]);
+	    btagDiscri.push_back (SelectedJets[j].bTag["softMuonBJetTags"]);
 	  }
 	  break;
 	default:
@@ -523,7 +532,9 @@ int SSDiLeptonSelection::doFullSelection (Dataset * dataset, string channelName,
 
 
 
-int SSDiLeptonSelection::FillTable (SelectionTable & selTable, Dataset * dataset, int idataset, float weight)
+int SSDiLeptonSelection::FillTable (SelectionTable & selTable,
+                                    Dataset * dataset,
+                                    int idataset, float weight)
 {
 
   int sel = doFullSelection (dataset, selTable.Channel (), false);	// true-> has to be modified !!
@@ -675,13 +686,13 @@ double SSDiLeptonSelection::getBtagDiscr(const NTJet & jet) const
 {
   switch (btagAlgo_) {
   case 0:
-    return jet.bTag["TCDiscri"];
+    return jet.bTag["trackCountingHighEffBJetTags"];
     break;
   case 1:
-    return jet.bTag["SVDiscri"];
+    return jet.bTag["simpleSecondaryVertexBJetTags"];
     break;
   case 2:
-    return jet.bTag["SMDiscri"];
+    return jet.bTag["softMuonBJetTags"];
     break;
   default:
     cerr << "btagAlgo doesn't exist !" << endl;

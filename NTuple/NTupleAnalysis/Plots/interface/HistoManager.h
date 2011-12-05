@@ -23,6 +23,8 @@ class HistoManager{
 	HistoManager();
 	~HistoManager();
 
+  static unsigned long ncounter;
+
 	//Initialisation methods
  	void LoadDatasets(vector<Dataset> datasets);    
  	void LoadSelectionSteps(vector<string> selectionSteps);
@@ -114,5 +116,7 @@ class HistoManager{
 //endmodifdg
 
 };
+
+
 
 #endif

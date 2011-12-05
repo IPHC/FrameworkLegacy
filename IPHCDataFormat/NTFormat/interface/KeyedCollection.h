@@ -96,7 +96,10 @@ namespace IPHCTree
       std::set<std::string>::const_iterator found = names_.find(name);
       if (found==names_.end()) 
       {
-        std::cout << "ERROR " << std::endl;
+        std::cout << "ERROR : KeyedCollection - Cannot find '"
+                  << name << "'" << std::endl;
+        std::cout << "Available content is : " << std::endl;
+        Dump();
         return 0;
       }
       return std::distance(names_.begin(),found); 

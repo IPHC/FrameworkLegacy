@@ -185,6 +185,63 @@ class Event
   std::string GetVertexCollectionLabel() const
   { return VertexType_; }
 
+  // ------------- mutator to enable/disable collection ------------------
+
+  //! Initialize the JetMet collection label
+  void EnableJetMetCollection()
+  { JetMetEnabled_=true; }
+
+  //! Initialize the photon collection label
+  void EnablePhotonCollection()
+  { PhotonEnabled_=true; }
+
+  //! Initialize the electron collection label
+  void EnableElectronCollection()
+  { ElectronEnabled_=true; }
+
+  //! Initialize the muon collection label
+  void EnableMuonCollection()
+  { MuonEnabled_=true; }
+
+  //! Initialize the tau collection label
+  void EnableTauCollection()
+  { TauEnabled_=true; }
+
+  //! Initialize the track collection label
+  void EnableTrackCollection()
+  { TrackEnabled_=true; }
+
+  //! Initialize the vertex collection label
+  void EnableVertexCollection()
+  { VertexEnabled_=true; }
+
+  //! Initialize the JetMet collection label
+  void DisableJetMetCollection()
+  { JetMetEnabled_=false; }
+
+  //! Initialize the photon collection label
+  void DisablePhotonCollection()
+  { PhotonEnabled_=false; }
+
+  //! Initialize the electron collection label
+  void DisableElectronCollection()
+  { ElectronEnabled_=false; }
+
+  //! Initialize the muon collection label
+  void DisableMuonCollection()
+  { MuonEnabled_=false; }
+
+  //! Initialize the tau collection label
+  void DisableTauCollection()
+  { TauEnabled_=false; }
+
+  //! Initialize the track collection label
+  void DisableTrackCollection()
+  { TrackEnabled_=false; }
+
+  //! Initialize the vertex collection label
+  void DisableVertexCollection()
+  { VertexEnabled_=false; }
 
   UInt_t getRunNumber()   const
   {return general_->runNb;}
@@ -225,6 +282,15 @@ class Event
   std::string TauType_;
   std::string TrackType_;
   std::string VertexType_;
+
+  // Collection Enabled
+  bool PhotonEnabled_;
+  bool JetMetEnabled_;
+  bool ElectronEnabled_;
+  bool MuonEnabled_;
+  bool TauEnabled_;
+  bool TrackEnabled_;
+  bool VertexEnabled_;
 
   // Static empty collection if a collection 
   // is not stored in the NTuple

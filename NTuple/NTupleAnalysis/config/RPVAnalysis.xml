@@ -26,7 +26,7 @@
 <d name="DataMuEG" add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1" filenames="/opt/sbg/data/data1/cms/gele/MCData/CMSSW_4_2_3/V1/DiLeptonDataMuEG/DoubleMuEGNTuple.root" />
 -->
 
-<d name="LM1" add="1" isData="0" color="5" ls="1" lw="2" normf="1" xsection="2.4" filenames="/opt/sbg/cms/ui3_data3/econte/public/forJLandPierre/NTuple_JL1_425.root" /> 
+<d name="LM1" add="1" isData="0" color="5" ls="1" lw="2" normf="1" xsection="2.4" filenames="/opt/sbg/cms/ui3_data3/econte/CMSSW_4_2_5/src/NTuple/NTupleAnalysis/macros/RPVSameSignDiLeptons/TTbar.root" /> 
 <!--d name="TTbar" add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="157.5" filenames="/opt/sbg/data/data1/cms/gele/MCData/CMSSW_4_2_3/V1/TTbar/TTbar.root" /-->
 
 <!--
@@ -45,7 +45,7 @@
 <d name="TbartW" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.87" filenames="/opt/sbg/data/data1/cms/gele/MCData/CMSSW_4_2_3/V1/Tbar/Tbartw.root" />
 
 -->
-<d name="WZ" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.61" filenames="/opt/sbg/data/data1/cms/jandrea/425MC/WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/WZTo3LNu_tot.root" />
+<d name="WZ" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.61" filenames="/opt/sbg/cms/ui3_data3/econte/CMSSW_4_2_5/src/NTuple/NTupleAnalysis/macros/RPVSameSignDiLeptons/NTuple.root"/>
 <!--<d name="ZZ" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.4" filenames="/opt/sbg/data/data1/cms/jandrea/425MC/ZZTo2L2Nu_TuneZ2/ZZTo2L2Nu_TuneZ2/ZZTo2L2Nu_tot.root" />
 <d name="WW" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="4.51" filenames="/opt/sbg/data/data1/cms/jandrea/425MC/WWTo2L2Nu_TuneZ2_7TeV/WWTo2L2Nu_TuneZ2_7TeV/WWTo2L2Nu_tot.root" />
 -->
@@ -83,14 +83,14 @@
 </Analysis>
 
 <Selection>
-<s type="Electron" PtThreshold="10." EtaThreshold="2.5" RelIso="0.17" D0Cut="0.04" VertexMatchThr="1." DElectronETSCThr="15" RemuThr="0.1"/>
-<s type="Muon"     PtThreshold="10." EtaThreshold="2.4" RelIso="0.20" D0Cut="0.02" VertexMatchThr="1." NofValidHits="0"  NofValidTkHits="10" NormChi2="10" />
-<s type="Tau"      Algo="selectedPatTaus" PtThreshold="20." EtaThreshold="2.5" RelIso="0.15" D0Cut="0.04" VertexMatchThr="1." TauLeadTrkPtCut="10."/>
-<s type="Vertex"   VertexNdofThr="4" VertexZThr="24."   VertexRhoThr="2." />
+<s type="Electron" Loaded="1" Algo="selectedPatElectronsPF2PAT" PtThreshold="10." EtaThreshold="2.5" RelIso="0.17" D0Cut="0.04" VertexMatchThr="1." DElectronETSCThr="15" RemuThr="0.1"/>
+<s type="Muon"     Loaded="1" Algo="selectedPatMuonsPF2PAT" PtThreshold="10." EtaThreshold="2.4" RelIso="0.20" D0Cut="0.02" VertexMatchThr="1." NofValidHits="0"  NofValidTkHits="10" NormChi2="10" />
+<s type="Tau"      Loaded="0" Algo="selectedPatTaus" PtThreshold="20." EtaThreshold="2.5" RelIso="0.15" D0Cut="0.04" VertexMatchThr="1." TauLeadTrkPtCut="10."/>
+<s type="Vertex"   Loaded="1" Algo="offlinePrimaryVertices" VertexNdofThr="4" VertexZThr="24."   VertexRhoThr="2." />
 <!--  
 <s type="Jet" Algo="tc" PtThreshold="30." EtaThreshold="2.5" />
 -->
-<s type="Jet" Algo="pf" PtThreshold="10." EtaThreshold="2.5" />   
+<s type="Jet" Loaded="1" Algo="pf" PtThreshold="10." EtaThreshold="2.5" />   
 </Selection>
 
 <SSDiLeptonSelection>

@@ -271,8 +271,8 @@ IPHCTree::NTMET Selection::GetUnclusScaledMET(bool applyUnclusScale,
 // ----------------------------------------------------------------------------
 // GetMET
 // ----------------------------------------------------------------------------
-IPHCTree::NTMET Selection::GetMET(bool applyJES, float scale, 
-                                  bool applyJER, float ResFactor) const
+IPHCTree::NTMET Selection::GetSelectedMET(bool applyJES, float scale, 
+                                          bool applyJER, float ResFactor) const
 {
 	// WARNING: force to not apply the JES 
   // it's due to JES/JEC correction scenario in PAT
@@ -463,17 +463,17 @@ std::vector<IPHCTree::NTJet> Selection::GetSelectedBJets(
   for(unsigned int j=0;j<SelectedJets.size();j++){
     switch(algo){
     case 0 :
-      if(SelectedJets[j].bTag["TCDiscri"]>=discricut){
+      if(SelectedJets[j].bTag["trackCountingHighEffBJetTags"]>=discricut){
         btagjets.push_back(SelectedJets[j]);
       }
       break;
     case 1 :
-      if(SelectedJets[j].bTag["SVDiscri"]>=discricut){
+      if(SelectedJets[j].bTag["simpleSecondaryVertexBJetTags"]>=discricut){
         btagjets.push_back(SelectedJets[j]);
       }
       break;
     case 2 :
-      if(SelectedJets[j].bTag["SMDiscri"]>=discricut){
+      if(SelectedJets[j].bTag["softMuonBJetTags"]>=discricut){
         btagjets.push_back(SelectedJets[j]);
       }
       break;
@@ -607,7 +607,7 @@ std::vector<IPHCTree::NTElectron> Selection::GetSelectedElectronsNoIso(
   for(unsigned int i=0;i<localElectrons.size();i++)
   {
     bool hadId = localElectrons[i].hadId(
-        static_cast<unsigned int>(localElectrons[i].ID["elecIdWP90_c"]) & 0x1
+        static_cast<unsigned int>(localElectrons[i].ID["simpleEleId90relIso"]) & 0x1
                                 );
   
     //useless 

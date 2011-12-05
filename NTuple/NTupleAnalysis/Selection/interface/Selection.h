@@ -247,7 +247,7 @@ class Selection : public Event
                               bool applyUnclusScale,
                               float scale) const;
   //! Get smeared MET
-  IPHCTree::NTMET GetMET(bool applyJES = false, 
+  IPHCTree::NTMET GetSelectedMET(bool applyJES = false, 
                          float scale = 1., 
                          bool applyJER = false,
                          float ResFactor = 0.) const;

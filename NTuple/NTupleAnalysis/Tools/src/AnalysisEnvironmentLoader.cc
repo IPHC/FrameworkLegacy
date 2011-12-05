@@ -734,84 +734,108 @@ void AnalysisEnvironmentLoader::LoadSelection (Selection& sel)
   elem = NodeLoader(string("Selection"));
   if(!elem) return;
   while (elem)
+  {
+    string type = elem->Attribute ("type");
+    if (type == string ("Vertex"))
     {
-      string type = elem->Attribute ("type");
-      if (type == string ("Vertex"))
-	{
-	  float VertexNdofThr=0;
-	  float VertexZThr=0;
-	  float VertexRhoThr=0;
-	  elem->QueryFloatAttribute ("VertexNdofThr", &VertexNdofThr);
-	  elem->QueryFloatAttribute ("VertexZThr", &VertexZThr);
-	  elem->QueryFloatAttribute ("VertexRhoThr", &VertexRhoThr);
-	  sel.cfg.SetVertexRequirements(VertexNdofThr, VertexZThr, VertexRhoThr);
-	}
-      if (type == string ("Electron"))
-	{
-	  float PtThreshold=0;
-	  float EtaThreshold=0;
-	  float RelIso=0;
-	  float D0Cut=0;
-          float VertexMatchThr=0;
- 	  float ElectronETSCThr=0;
-          float DRemuThr=0;
-	  elem->QueryFloatAttribute ("PtThreshold", &PtThreshold);
-	  elem->QueryFloatAttribute ("EtaThreshold", &EtaThreshold);
-	  elem->QueryFloatAttribute ("RelIso", &RelIso);
-	  elem->QueryFloatAttribute ("D0Cut", &D0Cut);
-	  elem->QueryFloatAttribute ("VertexMatchThr", &VertexMatchThr);
-	  elem->QueryFloatAttribute ("ElectronETSCThr", &ElectronETSCThr);
-	  elem->QueryFloatAttribute ("DRemuThr", &DRemuThr);
-  	  sel.cfg.SetElectronRequirements(PtThreshold,EtaThreshold,RelIso,D0Cut,VertexMatchThr,ElectronETSCThr,DRemuThr);
-        }
-      if (type == string ("Muon"))
-	{
-	  float PtThreshold=0;
-	  float EtaThreshold=0;
-	  float RelIso=0;
-	  float D0Cut=0;
-          float VertexMatchThr=0;
-          float NofValidHits=0;
-          float NofValidTkHits=0;
-	  float NormChi2=0;
-	  elem->QueryFloatAttribute ("PtThreshold", &PtThreshold);
-	  elem->QueryFloatAttribute ("EtaThreshold", &EtaThreshold);
-	  elem->QueryFloatAttribute ("RelIso", &RelIso);
-	  elem->QueryFloatAttribute ("D0Cut", &D0Cut);
-	  elem->QueryFloatAttribute ("VertexMatchThr", &VertexMatchThr);
-	  elem->QueryFloatAttribute ("NofValidHits",   &NofValidHits);
-	  elem->QueryFloatAttribute ("NofValidTkHits", &NofValidTkHits);
-	  elem->QueryFloatAttribute ("NormChi2", &NormChi2);
-  	  sel.cfg.SetMuonRequirements(PtThreshold,EtaThreshold,RelIso,D0Cut,VertexMatchThr,NofValidHits,NofValidTkHits,NormChi2);
-        }
-      if (type == string ("Tau"))
-	{
-	  string Algo;
-	  float PtThreshold=0;
-	  float EtaThreshold=0;
-          float VertexMatchThr=0;
-          float TauLeadTrkPtCut=0;
-	  elem->QueryFloatAttribute ("PtThreshold", &PtThreshold);
-	  elem->QueryFloatAttribute ("EtaThreshold", &EtaThreshold);
-	  elem->QueryFloatAttribute ("VertexMatchThr", &VertexMatchThr);
-	  elem->QueryFloatAttribute ("TauLeadTrkPtCut", &TauLeadTrkPtCut);
-	  Algo = elem->Attribute("Algo");
-          sel.SetTauCollectionLabel(Algo);
-  	  sel.cfg.SetTauRequirements(PtThreshold,EtaThreshold,VertexMatchThr,TauLeadTrkPtCut);
-        }
-      if (type == string ("Jet"))
-	{
-	  string Algo;
-	  float PtThreshold=0;
-	  float EtaThreshold=0;
-	  elem->QueryFloatAttribute ("PtThreshold", &PtThreshold);
-	  elem->QueryFloatAttribute ("EtaThreshold", &EtaThreshold);
-          sel.cfg.SetJetRequirements(PtThreshold, EtaThreshold);
-	  Algo = elem->Attribute("Algo");
-          sel.SetJetMetCollectionLabel(Algo);
-        }
-      elem = elem->NextSiblingElement ();	// iteration
+      int loaded=0;
+      string Algo;
+      float VertexNdofThr=0;
+      float VertexZThr=0;
+      float VertexRhoThr=0;
+      elem->QueryFloatAttribute ("VertexNdofThr", &VertexNdofThr);
+      elem->QueryFloatAttribute ("VertexZThr", &VertexZThr);
+      elem->QueryFloatAttribute ("VertexRhoThr", &VertexRhoThr);
+      Algo = elem->Attribute("Algo");
+      sel.SetVertexCollectionLabel(Algo);
+   		elem->QueryIntAttribute("Loaded", &loaded);
+      if (loaded==0) sel.DisableVertexCollection(); else sel.EnableVertexCollection();
+      sel.cfg.SetVertexRequirements(VertexNdofThr, VertexZThr, VertexRhoThr);
     }
+    if (type == string ("Electron"))
+    {
+      int loaded=0;
+      string Algo;
+      float PtThreshold=0;
+      float EtaThreshold=0;
+      float RelIso=0;
+      float D0Cut=0;
+      float VertexMatchThr=0;
+      float ElectronETSCThr=0;
+      float DRemuThr=0;
+      elem->QueryFloatAttribute ("PtThreshold", &PtThreshold);
+      elem->QueryFloatAttribute ("EtaThreshold", &EtaThreshold);
+      elem->QueryFloatAttribute ("RelIso", &RelIso);
+      elem->QueryFloatAttribute ("D0Cut", &D0Cut);
+      elem->QueryFloatAttribute ("VertexMatchThr", &VertexMatchThr);
+      elem->QueryFloatAttribute ("ElectronETSCThr", &ElectronETSCThr);
+      elem->QueryFloatAttribute ("DRemuThr", &DRemuThr);
+      Algo = elem->Attribute("Algo");
+      sel.SetElectronCollectionLabel(Algo);
+   		elem->QueryIntAttribute("Loaded", &loaded);
+      if (loaded==0) sel.DisableElectronCollection(); else sel.EnableElectronCollection();
+  	  sel.cfg.SetElectronRequirements(PtThreshold,EtaThreshold,RelIso,D0Cut,VertexMatchThr,ElectronETSCThr,DRemuThr);
+    }
+    if (type == string ("Muon"))
+    {
+      int loaded=0;
+      string Algo;
+      float PtThreshold=0;
+      float EtaThreshold=0;
+      float RelIso=0;
+      float D0Cut=0;
+      float VertexMatchThr=0;
+      float NofValidHits=0;
+      float NofValidTkHits=0;
+      float NormChi2=0;
+      elem->QueryFloatAttribute ("PtThreshold", &PtThreshold);
+      elem->QueryFloatAttribute ("EtaThreshold", &EtaThreshold);
+      elem->QueryFloatAttribute ("RelIso", &RelIso);
+      elem->QueryFloatAttribute ("D0Cut", &D0Cut);
+      elem->QueryFloatAttribute ("VertexMatchThr", &VertexMatchThr);
+      elem->QueryFloatAttribute ("NofValidHits",   &NofValidHits);
+      elem->QueryFloatAttribute ("NofValidTkHits", &NofValidTkHits);
+      elem->QueryFloatAttribute ("NormChi2", &NormChi2);
+      Algo = elem->Attribute("Algo");
+      sel.SetMuonCollectionLabel(Algo);
+   		elem->QueryIntAttribute("Loaded", &loaded);
+      if (loaded==0) sel.DisableMuonCollection(); else sel.EnableMuonCollection();
+  	  sel.cfg.SetMuonRequirements(PtThreshold,EtaThreshold,RelIso,D0Cut,VertexMatchThr,NofValidHits,NofValidTkHits,NormChi2);
+    }
+    if (type == string ("Tau"))
+    {
+      int loaded=0;
+      string Algo;
+      float PtThreshold=0;
+      float EtaThreshold=0;
+      float VertexMatchThr=0;
+      float TauLeadTrkPtCut=0;
+      elem->QueryFloatAttribute ("PtThreshold", &PtThreshold);
+      elem->QueryFloatAttribute ("EtaThreshold", &EtaThreshold);
+      elem->QueryFloatAttribute ("VertexMatchThr", &VertexMatchThr);
+      elem->QueryFloatAttribute ("TauLeadTrkPtCut", &TauLeadTrkPtCut);
+      Algo = elem->Attribute("Algo");
+      sel.SetTauCollectionLabel(Algo);
+   		elem->QueryIntAttribute("Loaded", &loaded);
+      if (loaded==0) sel.DisableTauCollection(); else sel.EnableTauCollection();
+  	  sel.cfg.SetTauRequirements(PtThreshold,EtaThreshold,VertexMatchThr,TauLeadTrkPtCut);
+    }
+    if (type == string ("Jet"))
+    {
+      int loaded=0;
+      string Algo;
+      float PtThreshold=0;
+      float EtaThreshold=0;
+      elem->QueryFloatAttribute ("PtThreshold", &PtThreshold);
+      elem->QueryFloatAttribute ("EtaThreshold", &EtaThreshold);
+      sel.cfg.SetJetRequirements(PtThreshold, EtaThreshold);
+      Algo = elem->Attribute("Algo");
+      sel.SetJetMetCollectionLabel(Algo);
+   		elem->QueryIntAttribute("Loaded", &loaded);
+      if (loaded==0) sel.DisableJetMetCollection(); else sel.EnableJetMetCollection();
+    }
+    elem = elem->NextSiblingElement ();	// iteration
+  }
 }
 
 

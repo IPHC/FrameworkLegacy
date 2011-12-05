@@ -85,7 +85,7 @@ class SSDiLeptonSelection: public Selection
   const std::vector<IPHCTree::NTMuon>& GetMuonsForAna() const
   { return muonsAna; }
 
-  bool GetLeptonPair(std::vector<IPHCTree::NTMuon> muon_in,std::vector<IPHCTree::NTElectron> elec_in, std::vector<IPHCTree::NTMuon>& muon_out,std::vector<IPHCTree::NTElectron>& elec_out,  string& CandPairType);
+  bool GetLeptonPair(const std::vector<IPHCTree::NTMuon>& muon_in,const std::vector<IPHCTree::NTElectron>& elec_in, std::vector<IPHCTree::NTMuon>& muon_out,std::vector<IPHCTree::NTElectron>& elec_out,  string& CandPairType);
   /** muon_out & elec_out will be filled with the 2 di-leptons candidates \n Returns true if a lepton pair is found \n
       CandPairType = "ee" or "emu" or "mumu" or "false"
 	*/

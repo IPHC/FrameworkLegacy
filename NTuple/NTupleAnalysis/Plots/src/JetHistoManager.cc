@@ -36,9 +36,9 @@ void JetHistoManager::FillSelStep(const vector<NTJet>& jets, const int& iSelStep
 		Histos[1][iChannel][iSelStep][iDataset].Fill(jets[i].p4.Pt(),weight);
 		Histos[2][iChannel][iSelStep][iDataset].Fill(jets[i].p4.Eta(),weight);
 		Histos[3][iChannel][iSelStep][iDataset].Fill(jets[i].p4.Phi(),weight);
-		Histos[4][iChannel][iSelStep][iDataset].Fill(jets[i].bTag["TCDiscri"],weight);
-		Histos[5][iChannel][iSelStep][iDataset].Fill(jets[i].bTag["SVDiscri"],weight);
-		Histos[6][iChannel][iSelStep][iDataset].Fill(jets[i].bTag["SMDiscri"],weight);
+		Histos[4][iChannel][iSelStep][iDataset].Fill(jets[i].bTag["trackCountingHighEffBJetTags"],weight);
+		Histos[5][iChannel][iSelStep][iDataset].Fill(jets[i].bTag["simpleSecondaryVertexBJetTags"],weight);
+		Histos[6][iChannel][iSelStep][iDataset].Fill(jets[i].bTag["softMuonBJetTags"],weight);
 	}
 }
 

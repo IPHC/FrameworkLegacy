@@ -1,14 +1,14 @@
 #include <iomanip>
 #include <iostream>
 #include <time.h>
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTEvent.h"
+#include "NTFormat/interface/NTEvent.h"
 
 //NTupleAnalysis classes
-#include "../../Selection/interface/SSDiLeptonSelection.h"
-#include "../../Selection/interface/SelectionTable.h"
-#include "../../Tools/interface/Dataset.h"
-#include "../../Tools/interface/AnalysisEnvironmentLoader.h"
-#include "../../Plots/interface/SSDiLepAnaHistoManager.h"
+#include "Selection/interface/SSDiLeptonSelection.h"
+#include "Selection/interface/SelectionTable.h"
+#include "Tools/interface/Dataset.h"
+#include "Tools/interface/AnalysisEnvironmentLoader.h"
+#include "Plots/interface/SSDiLepAnaHistoManager.h"
 
 
 #include <TFile.h>
@@ -18,7 +18,7 @@
 #include <TH2.h>
 #include <TCanvas.h>
 
-using namespace TopTree;
+using namespace IPHCTree;
 using namespace std;
 
 
@@ -60,7 +60,7 @@ int main (int argc, char *argv[])
   int methodOriginal=sel.GetMethodb();
   int systOriginal= sel.GetSystb();
   std::cout << " For btag : flag " << flagOriginal << ", method " << methodOriginal << ", syst " << systOriginal << std::endl;
-  TopTree::NTEvent * event = 0;
+  IPHCTree::NTEvent * event = 0;
   //Selection table
   SelectionTable selTable_allChannels (sel.GetCutList (), datasets, string ("*"));
   SelectionTable selTable_ee (sel.GetCutList (), datasets, string ("ee"));
@@ -109,37 +109,45 @@ int main (int argc, char *argv[])
     cout << "#########################" << endl;
   }
 
-  for (unsigned int d = 0; d < datasets.size (); d++) {
+  for (unsigned int d = 0; d < datasets.size (); d++) 
+  {
 
-    if(verbosity>2) cout<<"Dataset: "<<datasets[d].Name()<<endl;
+    if(verbosity>2) cout<<"RPVAnalysis> Dataset: "<<datasets[d].Name()<<endl;
     datasets[d].eventTree ()->SetBranchAddress ("NTEvent", &event);
 
-    unsigned int nEvents = (int) (datasets[d].eventTree ()->GetEntries ());
-    cout << "NEvents = " << nEvents << endl;
-    cout <<" NEvents to run over = "<<datasets[d].NofEvtsToRunOver()<<endl;
+    unsigned int nEvents = static_cast<unsigned int>(datasets[d].eventTree ()->GetEntries ());
+    cout << "RPVAnalysis> NEvents = " << nEvents << endl;
+    cout << "RPVAnalysis> NEvents to run over = "<<datasets[d].NofEvtsToRunOver()<<endl;
 
 
     //LOOP OVER THE EVENTS
-    for (unsigned int ievt = 0; ievt < datasets[d].NofEvtsToRunOver(); ievt++) {
+    for (unsigned int ievt = 0; ievt < datasets[d].NofEvtsToRunOver(); ievt++)
+    {
       float weight = 1.;
       if(datasets[d].isData() == false) weight = datasets[d].NormFactor()*Luminosity; //if Data , weight = 1
       //cout<<"weight "<<weight<<" "<<datasets[d].isData()<<endl;
-      datasets[d].eventTree ()->GetEntry (ievt);
-      if (verbosity > 3){
-	cout << "event " << ievt <<" - event number=" << event->eventNb <<" - run number=" << event->runNb << endl;
+      datasets[d].eventTree()->GetEntry(ievt);
+      IPHCTree::NTTransient::InitializeAfterReading(event);
+
+      if (verbosity > 3)
+      {
+        std::cout << "event " << ievt 
+                  <<" - event number=" << event->general.eventNb
+                  <<" - run number="   << event->general.runNb
+                  << std::endl;
       }
       if (ievt % 1000 == 0)
-	      cout << "number of events " << ievt << endl;
+	      cout << "RPVAnalysis> Progress bar : " << ievt << endl;
 
       //Load event for the selection
-      sel.LoadEvent (event);
+      sel.LoadEvent(event);
 
       //Collection of selected objects
       vector < NTElectron > selElectrons = sel.GetSelectedElectrons ();
       //vector < NTMuon > selMuons = sel.GetScaledMuons ();
       vector < NTMuon > selMuons = sel.GetSelectedMuons ();
       vector < NTJet > selJets = sel.GetSelectedJets ();
-      NTMET met = sel.GetMET ();	// no criteria applyied
+      NTMET met = sel.GetSelectedMET ();	// no criteria applyied
 
       //Candidate pair of lepton
       string CandType="false";		// ee - emu - mumum or false
@@ -154,21 +162,19 @@ int main (int argc, char *argv[])
       //////////////////////////////////   
       //   Fill the selection table
       //////////////////////////////////   
+      step = sel.FillTable (selTable_ee, &(datasets[d]), d, weight);
+      if (CandType=="ee") selLastStep = step;
+      step = sel.FillTable (selTable_emu, &(datasets[d]), d, weight);
+      if (CandType=="emu") selLastStep = step;
+      step = sel.FillTable (selTable_mumu, &(datasets[d]), d, weight);
+      if (CandType=="mumu") selLastStep = step;
 
-
-	 step = sel.FillTable (selTable_ee, &(datasets[d]), d, weight);
-	 if (CandType=="ee") selLastStep = step;
-	 step = sel.FillTable (selTable_emu, &(datasets[d]), d, weight);
-	 if (CandType=="emu") selLastStep = step;
-	 step = sel.FillTable (selTable_mumu, &(datasets[d]), d, weight);
-	 if (CandType=="mumu") selLastStep = step;
-
-//CandType="mumu";
-//cout<<selMuons.size()<<endl;
-       histoManager.Fill(sel, event, selMuons, selElectrons, selLastStep, sel.GetChannel(CandType), d, weight);
+      //CandType="mumu";
+      //cout<<selMuons.size()<<endl;
+      histoManager.Fill(sel, event, selMuons, selElectrons, selLastStep, sel.GetChannel(CandType), d, weight);
       if (CandType=="mumu" && selLastStep >= AnaStep)  Nobs_mumu+=weight;
 
-//     selLastStep = sel.FillTable(selTable_allChannels, &(datasets[d]), d, weight);
+      //     selLastStep = sel.FillTable(selTable_allChannels, &(datasets[d]), d, weight);
 
 
     }				// end of loop over evts

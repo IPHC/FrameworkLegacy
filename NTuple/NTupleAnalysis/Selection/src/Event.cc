@@ -26,6 +26,15 @@ Event::Event(const Event& evt)
   TauType_      = evt.TauType_;
   TrackType_    = evt.TrackType_;
   VertexType_   = evt.VertexType_;
+
+  PhotonEnabled_   = evt.PhotonEnabled_;
+  JetMetEnabled_   = evt.JetMetEnabled_;
+  ElectronEnabled_ = evt.ElectronEnabled_;
+  MuonEnabled_     = evt.MuonEnabled_;
+  TauEnabled_      = evt.TauEnabled_;
+  TrackEnabled_    = evt.TrackEnabled_;
+  VertexEnabled_   = evt.VertexEnabled_;
+
 }
 
 
@@ -54,6 +63,15 @@ void Event::Reset()
   TauType_      = "";
   TrackType_    = "";
   VertexType_   = "";
+
+  PhotonEnabled_   = false;
+  JetMetEnabled_   = false;
+  ElectronEnabled_ = false;
+  MuonEnabled_     = false;
+  TauEnabled_      = false;
+  TrackEnabled_    = false;
+  VertexEnabled_   = false;
+
 }
 
 
@@ -79,72 +97,159 @@ bool Event::LoadEvent(const IPHCTree::NTEvent* evt)
   pileup_  = &(evt->pileup);
 
   // get only one photon collection 
-  photons_ = evt->photons.GetCollection(PhotonType_);
-  if(photons_==0)
+  if (PhotonEnabled_)
   {
-    success=false;
-    std::cerr<<"The photon collection was not found !"<<std::endl;
+    photons_ = evt->photons.GetCollection(PhotonType_);
+    if(photons_==0)
+    {
+      success=false;
+      std::cerr<<"The photon collection called '" + PhotonType_ + "' is not found !"<<std::endl;
+    }
   }
 
   // get only one Jet collection 
-  jets_ = evt->jets.GetCollection(JetMetType_);
-  if(jets_==0)
+  if (JetMetEnabled_)
   {
-    success=false;
-    std::cerr<<"The jet collection was not found !"<<std::endl;
+    jets_ = evt->jets.GetCollection(JetMetType_);
+    if(jets_==0)
+    {
+      success=false;
+      std::cerr<<"The jet collection called '" + JetMetType_ + "' is not found !"<<std::endl;
+      std::set<std::string> names;
+      evt->jets.GetCollectionList(names);
+      std::cerr << "Available collections are : "; 
+      for (std::set<std::string>::const_iterator it=names.begin();it!=names.end();it++)
+      {
+        std::cerr << *it;
+        if (it!=names.begin()) std::cerr << " , ";
+      }
+      std::cerr << std::endl;
+    }
   }
 
   // get only one Met collection 
-  const std::vector<IPHCTree::NTMET>* mets = 
-                                  evt->met.GetCollection(JetMetType_);
-  if(mets==0)
+  if (JetMetEnabled_)
   {
-    success=false;
-    std::cerr<<"The MET was not found !"<<std::endl;
-  }
-  else
-  {
-    met_ = &((*mets)[0]);
+    const std::vector<IPHCTree::NTMET>* mets = 
+      evt->met.GetCollection(JetMetType_);
+    if(mets==0)
+    {
+      success=false;
+      std::cerr<<"The MET collection called '" + JetMetType_ + "' is not found !"<<std::endl;
+      std::set<std::string> names;
+      evt->met.GetCollectionList(names);
+      std::cerr << "Available collections are : "; 
+      for (std::set<std::string>::const_iterator it=names.begin();it!=names.end();it++)
+      {
+        std::cerr << *it;
+        if (it!=names.begin()) std::cerr << " , ";
+      }
+      std::cerr << std::endl;
+    }
+    else
+    {
+      met_ = &((*mets)[0]);
+    }
   }
 
   // get only one electron collection 
-  electrons_ = evt->electrons.GetCollection(ElectronType_);
-  if(electrons_==0)
+  if (JetMetEnabled_)
   {
-    success=false;
-    std::cerr<<"The electron collection was not found !"<<std::endl;
+    electrons_ = evt->electrons.GetCollection(ElectronType_);
+    if(electrons_==0)
+    {
+      success=false;
+      std::cerr<<"The electron collection called '" + ElectronType_ + "' is not found !"<<std::endl;
+      std::set<std::string> names;
+      evt->electrons.GetCollectionList(names);
+      std::cerr << "Available collections are : "; 
+      for (std::set<std::string>::const_iterator it=names.begin();it!=names.end();it++)
+      {
+        std::cerr << *it;
+        if (it!=names.begin()) std::cerr << " , ";
+      }
+      std::cerr << std::endl;
+    }
   }
 
   // get only one muon collection 
-  muons_ = evt->muons.GetCollection(MuonType_);
-  if(muons_==0)
+  if (MuonEnabled_)
   {
-    success=false;
-    std::cerr<<"The muon collection was not found !"<<std::endl;
+    muons_ = evt->muons.GetCollection(MuonType_);
+    if(muons_==0)
+    {
+      success=false;
+      std::cerr<<"The muon collection called '" + MuonType_ + "' is not found !"<<std::endl;
+      std::set<std::string> names;
+      evt->muons.GetCollectionList(names);
+      std::cerr << "Available collections are : "; 
+      for (std::set<std::string>::const_iterator it=names.begin();it!=names.end();it++)
+      {
+        std::cerr << *it;
+        if (it!=names.begin()) std::cerr << " , ";
+      }
+      std::cerr << std::endl;
+    }
   }
 
   // get only one tau collection 
-  taus_ = evt->taus.GetCollection(TauType_);
-  if(taus_==0)
+  if (TauEnabled_)
   {
-    success=false;
-    std::cerr<<"The tau collection was not found !"<<std::endl;
+    taus_ = evt->taus.GetCollection(TauType_);
+    if(taus_==0)
+    {
+      success=false;
+      std::cerr<<"The tau collection called '" + TauType_ + "' is not found !"<<std::endl;
+      std::set<std::string> names;
+      evt->taus.GetCollectionList(names);
+      std::cerr << "Available collections are : "; 
+      for (std::set<std::string>::const_iterator it=names.begin();it!=names.end();it++)
+      {
+        std::cerr << *it;
+        if (it!=names.begin()) std::cerr << " , ";
+      }
+      std::cerr << std::endl;
+    }
   }
 
   // get only one track collection 
-  tracks_ = evt->tracks.GetCollection(TrackType_); 
-  if(tracks_==0)
+  if (TrackEnabled_)
   {
-    success=false;
-    std::cerr<<"The track collection was not found !"<<std::endl;
+    tracks_ = evt->tracks.GetCollection(TrackType_); 
+    if(tracks_==0)
+    {
+      success=false;
+      std::cerr<<"The track collection called '" + TrackType_ + " is not found !"<<std::endl;
+      std::set<std::string> names;
+      evt->tracks.GetCollectionList(names);
+      std::cerr << "Available collections are : "; 
+      for (std::set<std::string>::const_iterator it=names.begin();it!=names.end();it++)
+      {
+        std::cerr << *it;
+        if (it!=names.begin()) std::cerr << " , ";
+      }
+      std::cerr << std::endl;
+    }
   }
 
   // get only one vertex collection 
-  vertices_ = evt->vertices.GetCollection(VertexType_); 
-  if(vertices_==0)
+  if (VertexEnabled_)
   {
-    success=false;
-    std::cerr<<"The vertex collection was not found !"<<std::endl;
+    vertices_ = evt->vertices.GetCollection(VertexType_); 
+    if(vertices_==0)
+    {
+      success=false;
+      std::cerr<<"The vertex collection called '" + VertexType_ + "' is not found !"<<std::endl;
+      std::set<std::string> names;
+      evt->vertices.GetCollectionList(names);
+      std::cerr << "Available collections are : "; 
+      for (std::set<std::string>::const_iterator it=names.begin();it!=names.end();it++)
+      {
+        std::cerr << *it;
+        if (it!=names.begin()) std::cerr << " , ";
+      }
+      std::cerr << std::endl;
+    }
   }
 
   return success;

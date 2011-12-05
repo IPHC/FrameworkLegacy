@@ -87,7 +87,10 @@ namespace IPHCTree
       {
         if (names_[i]==label) {current_index_=i; return; }
       }
-      std::cout << "ERROR !!!" << std::endl;
+      std::cout << "ERROR : MultiCollection - Cannot found label = '" 
+                << label << "'" << std::endl;
+      std::cout << "Available content is :"<<std::endl;
+      Dump();
       current_index_=0;
     }
 

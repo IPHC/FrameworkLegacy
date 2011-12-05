@@ -1,4 +1,7 @@
 #include "Plots/interface/HistoManager.h"
+#include <sstream>
+
+unsigned long HistoManager::ncounter = 0;
 
 HistoManager::HistoManager(){
 }
@@ -50,8 +53,13 @@ void HistoManager::Clear(){
 }
 
 
-void HistoManager::AddHisto(string name, string title, string xaxis, const int& nbins, const float& min, const float& max){
-	TH1F h (name.c_str(),title.c_str(),nbins,min,max);
+void HistoManager::AddHisto(string name, string title, string xaxis, const int& nbins, const float& min, const float& max)
+{
+  HistoManager::ncounter++;
+  std::stringstream str;
+  str << name.c_str() << "_" << HistoManager::ncounter;
+
+	TH1F h (str.str().c_str(),title.c_str(),nbins,min,max);
 	h.GetXaxis()->SetTitle(xaxis.c_str());
         h.Sumw2();
 	//channels loop
