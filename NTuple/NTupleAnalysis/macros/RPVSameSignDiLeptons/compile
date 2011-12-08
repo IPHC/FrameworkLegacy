@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Variables
-NTUPLEANA_PATH=$CMSSW_BASE/src/NTuple/NTupleAnalysis
+#NTUPLEANA_PATH=$CMSSW_BASE/src/NTuple/NTupleAnalysis/macros
 recompile=false;
 execute=false;
 execFile="";
@@ -132,7 +132,7 @@ if [[ $src != "" ]] ; then
 	execFile=`echo $src | awk -F '.' '{print $1}'`
 	CurrLib=`LatestLib`
         echo $NTUPLEANA_PATH
-	g++  -l:$NTUPLEANA_PATH/../../IPHCDataFormat/NTFormat/src/libNTuple.so -l:$NTUPLEANA_PATH/libNTupleAna.so -I `root-config --incdir` -I $NTUPLEANA_PATH -I $NTUPLEANA_PATH/../../IPHCDataFormat/ -L $ROOTSYS/lib -lGenVector -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -pthread -lm -ldl -rdynamic -lProof -lProofPlayer $src -o $execFile
+	g++  -l:$NTUPLEANA_PATH/../../../IPHCDataFormat/NTFormat/src/libNTuple.so -l:$NTUPLEANA_PATH/../libNTupleAna.so -I `root-config --incdir` -I $NTUPLEANA_PATH/../ -I $NTUPLEANA_PATH/../../../IPHCDataFormat/ -L $ROOTSYS/lib -lGenVector -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -pthread -lm -ldl -rdynamic -lProof -lProofPlayer $src -o $execFile
  	code=$?
 	echo "###############################"
 	if [ $code -eq 0 ] ; then

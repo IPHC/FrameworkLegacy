@@ -16,12 +16,12 @@
 #include <TFile.h>
 #include <TProofOutputFile.h>
 
-#include "../../../../MiniTreeFormat/NTFormat/interface/NTEvent.h"
-#include "../../Selection/interface/SelectionTable.h"
-#include "../../Plots/interface/SSDiLepAnaHistoManager.h"
-#include "../../Tools/interface/Dataset.h"
-#include "../../Tools/interface/AnalysisEnvironmentLoader.h"
-#include "../../Selection/interface/SSDiLeptonSelection.h"
+#include "NTFormat/interface/NTEvent.h"
+#include "Selection/interface/SelectionTable.h"
+#include "Plots/interface/SSDiLepAnaHistoManager.h"
+#include "Tools/interface/Dataset.h"
+#include "Tools/interface/AnalysisEnvironmentLoader.h"
+#include "Selection/interface/SSDiLeptonSelection.h"
 
 class TH1F;
 class TBranch;
@@ -37,7 +37,7 @@ public :
    //Access to the tree and outputs
    TTree* fChain;
    TBranch* branch;
-   TopTree::NTEvent* event;
+   IPHCTree::NTEvent* event;
    TFile            *fFile;
    TProofOutputFile *fProofFile; // For optimized merging of the ntuple
    //Pointer on results from xml file  reading

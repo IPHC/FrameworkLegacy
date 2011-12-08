@@ -21,7 +21,7 @@ int main(int argc, char* argv[]){
   string macroName = "ProofSelectorRPVAnalysis.C+"; //"+" should be put at the end to use ACLIC complication - This macro should inherit from TSelector 
   //In order to allow the node to access the xml, the name should be given with the full path
   string xmlFileName =
-  string("/home/jlagram/scratch/PROOF/CMSSW_4_2_5/src/MiniTreeAnalysis/NTupleAnalysis/config/RPVAnalysis.xml");
+  string("/home/jlagram/scratch/NEWFORMAT/CMSSW_4_2_5/src/NTuple/NTupleAnalysis/config/RPVAnalysis.xml");
   string outputFileName = "proof.root";
   
   //---------------------------------------//

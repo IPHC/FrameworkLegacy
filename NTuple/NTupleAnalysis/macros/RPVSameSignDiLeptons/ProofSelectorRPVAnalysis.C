@@ -72,7 +72,7 @@ void ProofSelectorRPVAnalysis::Init(TTree *tree)
 
    // Set branch addresses
    branch = (TBranch *) tree->GetBranch("NTEvent");
-   event = new TopTree::NTEvent();
+   event = new IPHCTree::NTEvent();
    branch->SetAddress(&event);
    //event is now retrieved and could be used in Process
 }
@@ -203,6 +203,7 @@ Bool_t ProofSelectorRPVAnalysis::Process(Long64_t entry)
    //---------------------------------------------------//
    fChain->GetTree()->GetEntry(entry); 
    branch->GetEntry(entry);
+   IPHCTree::NTTransient::InitializeAfterReading(event);
   
    float weight=1;
    if(dataset->isData() == false) weight = dataset->NormFactor()*Luminosity; //if Data , weight = 1
@@ -219,16 +220,16 @@ Bool_t ProofSelectorRPVAnalysis::Process(Long64_t entry)
 	//fHist->Fill(sel.GetSelectedJets()[i].p4.Pt());
    
    //Collection of selected objects
-   vector<TopTree::NTVertex>   selVertices  = sel.GetSelectedVertex();
-   vector<TopTree::NTElectron> selElectrons = sel.GetSelectedElectrons();
-   vector<TopTree::NTMuon>     selMuons     = sel.GetSelectedMuons();
-   vector<TopTree::NTJet>      selJets      = sel.GetSelectedJets();
-   TopTree::NTMET met                       = sel.GetMET(); 
+   vector<IPHCTree::NTVertex>   selVertices  = sel.GetSelectedVertex();
+   vector<IPHCTree::NTElectron> selElectrons = sel.GetSelectedElectrons();
+   vector<IPHCTree::NTMuon>     selMuons     = sel.GetSelectedMuons();
+   vector<IPHCTree::NTJet>      selJets      = sel.GetSelectedJets();
+   IPHCTree::NTMET met                       = sel.GetSelectedMET(); 
       
    //Candidate pair of lepton
    string CandType; // ee - emu - mumu or false
-   vector<TopTree::NTElectron> candElec;
-   vector<TopTree::NTMuon> candMuon;
+   vector<IPHCTree::NTElectron> candElec;
+   vector<IPHCTree::NTMuon> candMuon;
    sel.GetLeptonPair (candMuon, candElec, CandType);	// fill the variables 
 
    int selLastStep = 2;
