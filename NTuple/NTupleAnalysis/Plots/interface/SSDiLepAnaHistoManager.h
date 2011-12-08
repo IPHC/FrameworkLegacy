@@ -12,6 +12,7 @@
 #include "METHistoManager.h"
 #include "DiLepRecoHistoManager.h"
 #include "DiLepMCHistoManager.h"
+#include "DiLepDiJetRecoHistoManager.h"
 
 #include <TH1F.h>
 
@@ -47,6 +48,7 @@ class SSDiLepAnaHistoManager{
 	METHistoManager metHistos;
 	DiLepRecoHistoManager recoHistos;
 	DiLepMCHistoManager mcHistos;
+	DiLepDiJetRecoHistoManager lljjrecoHistos;
 };
 
 #endif

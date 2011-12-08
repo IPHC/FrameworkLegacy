@@ -21,6 +21,10 @@ void MuonHistoManager::CreateHistos(){
 	AddHisto(string("caloIso"),string("caloIso(muon)"),string("caloIso(muon)"),50,0,10);	
 	AddHisto(string("hcalIso"),string("hcalIso(muon)"),string("hcalIso(muon)"),50,0,10);	
 	AddHisto(string("relIso"),string("relIso(muon)"),string("relIso(muon)"),50,0,10);	
+	AddHisto(string("Pt1"),string("Pt(muon1)"),string("p_{T}(muon1)"),50,0,100);	
+	AddHisto(string("Eta1"),string("Eta(muon1)"),string("#eta(muon1)"),60,-3,3);	
+	AddHisto(string("Pt2"),string("Pt(muon2)"),string("p_{T}(muon2)"),50,0,100);	
+	AddHisto(string("Eta2"),string("Eta(muon2)"),string("#eta(muon2)"),60,-3,3);	
 }
 
 void MuonHistoManager::Fill(const vector<NTMuon>& muons, const int& maxSelStep, const int& iChannel, const int& iDataset, const float& weight){
@@ -48,6 +52,14 @@ void MuonHistoManager::FillSelStep(const vector<NTMuon>& muons, const int& iSelS
 		NTMuon mu = muons[i];
 		float relIso = mu.RelIso03();
 		Histos[9][iChannel][iSelStep][iDataset].Fill(relIso,weight);
+	}
+	if(muons.size()>0){
+		Histos[10][iChannel][iSelStep][iDataset].Fill(muons[0].p4.Pt(),weight);
+		Histos[11][iChannel][iSelStep][iDataset].Fill(muons[0].p4.Eta(),weight);
+	}
+	if(muons.size()>1){
+		Histos[12][iChannel][iSelStep][iDataset].Fill(muons[1].p4.Pt(),weight);
+		Histos[13][iChannel][iSelStep][iDataset].Fill(muons[1].p4.Eta(),weight);
 	}
 }
 

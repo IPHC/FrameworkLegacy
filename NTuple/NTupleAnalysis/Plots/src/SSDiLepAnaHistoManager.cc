@@ -16,6 +16,7 @@ void SSDiLepAnaHistoManager::LoadDatasets(vector<Dataset> datasets){
 	recoHistos.LoadDatasets(datasets);
 	mcHistos.LoadDatasets(datasets);
 	bjetHistos.LoadDatasets(datasets);
+	lljjrecoHistos.LoadDatasets(datasets);
 }    
  	
 
@@ -27,6 +28,7 @@ void SSDiLepAnaHistoManager::LoadSelectionSteps(vector<string> selectionSteps){
 	recoHistos.LoadSelectionSteps(selectionSteps);
 	mcHistos.LoadSelectionSteps(selectionSteps);
 	bjetHistos.LoadSelectionSteps(selectionSteps);
+	lljjrecoHistos.LoadSelectionSteps(selectionSteps);
 }
 	
  
@@ -38,6 +40,7 @@ void SSDiLepAnaHistoManager::LoadChannels(vector<string> channels){
 	recoHistos.LoadChannels(channels);
 	mcHistos.LoadChannels(channels);
 	bjetHistos.LoadChannels(channels);
+	lljjrecoHistos.LoadChannels(channels);
 }
 
 void SSDiLepAnaHistoManager::Clear(){
@@ -48,6 +51,7 @@ void SSDiLepAnaHistoManager::Clear(){
 	recoHistos.Clear();
 	mcHistos.Clear();
 	bjetHistos.Clear();
+	lljjrecoHistos.Clear();
 }
 
 
@@ -59,6 +63,7 @@ void SSDiLepAnaHistoManager::CreateHistos(){
 	recoHistos.CreateHistos();
 	mcHistos.CreateHistos();
 	bjetHistos.CreateHistos();
+	lljjrecoHistos.CreateHistos();
 }
 
 void SSDiLepAnaHistoManager::Fill(const SSDiLeptonSelection& sel, NTEvent* event, const vector<NTMuon>& candMuon, const vector<NTElectron>& candElec, const int& maxSelStep, const int& iChannel, const int& iDataset, const float& weight){
@@ -69,6 +74,7 @@ void SSDiLepAnaHistoManager::Fill(const SSDiLeptonSelection& sel, NTEvent* event
         recoHistos.Fill(event, candMuon, candElec, maxSelStep, iChannel, iDataset, weight);
         mcHistos.Fill(event, maxSelStep, iChannel, iDataset, weight);
         bjetHistos.Fill(sel.GetBJetsForAna().size(), maxSelStep, iChannel, iDataset, weight, weight);
+        lljjrecoHistos.Fill(event, candMuon, candElec, sel.GetJetsForAna(), maxSelStep, iChannel, iDataset, weight);
 }
 
 void SSDiLepAnaHistoManager::Fill(const SSDiLeptonSelection& sel, const int& maxSelStep, const int& iChannel, const int& iDataset, const float& weight){
@@ -89,6 +95,7 @@ void SSDiLepAnaHistoManager::Compute(){
 	recoHistos.MergeChannels();
 	mcHistos.MergeChannels();
 	bjetHistos.MergeChannels();
+	lljjrecoHistos.MergeChannels();
 
 	//MCStack
 	elecHistos.DoMCStack();
@@ -98,6 +105,7 @@ void SSDiLepAnaHistoManager::Compute(){
 	recoHistos.DoMCStack();
 	mcHistos.DoMCStack();
 	bjetHistos.DoMCStack();
+	lljjrecoHistos.DoMCStack();
 
 	//MCDatasets
 	elecHistos.MergeMCDatasets();
@@ -107,6 +115,7 @@ void SSDiLepAnaHistoManager::Compute(){
 	recoHistos.MergeMCDatasets();
 	mcHistos.MergeMCDatasets();
 	bjetHistos.MergeMCDatasets();
+	lljjrecoHistos.MergeMCDatasets();
 
 	//Cut by cut
 	elecHistos.PlotsCutByCut();
@@ -116,6 +125,7 @@ void SSDiLepAnaHistoManager::Compute(){
 	recoHistos.PlotsCutByCut();
 	mcHistos.PlotsCutByCut();
 	bjetHistos.PlotsCutByCut();
+	lljjrecoHistos.PlotsCutByCut();
 
 }
 
@@ -139,6 +149,7 @@ void SSDiLepAnaHistoManager::Write(TFile* file){
         dir = fdir->GetDirectory("RECO");
         if(!dir) dir = fdir->mkdir("RECO");
         recoHistos.Write(dir);
+        lljjrecoHistos.Write(dir);
         dir = fdir->GetDirectory("MC");
         if(!dir) dir = fdir->mkdir("MC");
         mcHistos.Write(dir);
