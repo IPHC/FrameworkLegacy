@@ -130,6 +130,22 @@ void SSDiLepAnaHistoManager::Compute(){
 }
 
 
+void SSDiLepAnaHistoManager::ComputeForProof(){
+        // Only 1 dataset filled with Proof
+        elecHistos.MergeChannels();
+        muHistos.MergeChannels();
+        jetHistos.MergeChannels();
+        metHistos.MergeChannels();
+        recoHistos.MergeChannels();
+        mcHistos.MergeChannels();
+        bjetHistos.MergeChannels();
+	lljjrecoHistos.MergeChannels();
+
+        //Cut by cut not done, because Proof can not merge Canvas 
+
+}
+
+
 void SSDiLepAnaHistoManager::Write(TFile* file){
         TDirectory *fdir = file->GetDirectory("SSDiLepAnaPlots");
         if(!fdir) fdir = file->mkdir("SSDiLepAnaPlots");

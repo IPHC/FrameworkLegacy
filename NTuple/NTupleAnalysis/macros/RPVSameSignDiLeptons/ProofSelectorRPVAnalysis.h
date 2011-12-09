@@ -17,7 +17,6 @@
 #include <TProofOutputFile.h>
 
 #include "NTFormat/interface/NTEvent.h"
-#include "Selection/interface/SelectionTable.h"
 #include "Plots/interface/SSDiLepAnaHistoManager.h"
 #include "Tools/interface/Dataset.h"
 #include "Tools/interface/AnalysisEnvironmentLoader.h"
@@ -57,10 +56,6 @@ public :
    TH1F* fHist;
    
    SSDiLepAnaHistoManager* histoManager;
-   SelectionTable* selTable_allChannels;
-   SelectionTable* selTable_ee;
-   SelectionTable* selTable_emu;
-   SelectionTable* selTable_mumu;
 
   //------------------------------------
   // for PileUP reweighting

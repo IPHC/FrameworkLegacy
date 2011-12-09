@@ -36,6 +36,7 @@ class SSDiLepAnaHistoManager{
 	//void FillwBweight(const DiLeptonSelection& sel, NTEvent* event, const vector<NTMuon>& candMuon, const vector<NTElectron>& candElec, const int& maxSelStep, const int& iChannel, const int& iDataset, const float& weight, const vector<float>& weightb);
 	
 	void Compute();
+	void ComputeForProof();
 	void Write(TFile* file);
 
 

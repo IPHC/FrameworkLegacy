@@ -36,7 +36,7 @@ ProofSelectorRPVAnalysis::ProofSelectorRPVAnalysis(): idataset(0)
    branch = 0;
    event = 0;
    dataset = 0;
-   //idataset = 0;
+   idataset = 0; // Only 1 dataset per job with PROOF, so idataset stay at 0
    anaEL = 0;
    verbosity = 0;
    DataType = 0;
@@ -44,10 +44,6 @@ ProofSelectorRPVAnalysis::ProofSelectorRPVAnalysis(): idataset(0)
    //histos
    fHist = 0;
    histoManager = 0;
-   selTable_allChannels = 0;
-   selTable_ee = 0;
-   selTable_emu = 0;
-   selTable_mumu = 0;
 }
 
 //_____________________________________________________________________________
@@ -55,7 +51,6 @@ ProofSelectorRPVAnalysis::~ProofSelectorRPVAnalysis()
 {
    // Destructor
 
-   //SafeDelete(fHist);
 }
 
 //_____________________________________________________________________________
@@ -110,11 +105,10 @@ void ProofSelectorRPVAnalysis::SlaveBegin(TTree * tree)
    vector<Dataset> onedatasetonly;
    //retrieve the current dataset according to its name
    for(unsigned int d=0;d<datasets.size();d++){
-	onedatasetonly.push_back(datasets[d]);
 	if(datasets[d].Name()==datasetName) { 
-	dataset = &datasets[d]; idataset = (int) d; 
-//	onedatasetonly.push_back(datasets[d]);
-	cout<<" SlaveBegin on dataset : "<<dataset->Name()<<" "<<idataset<<" "<<datasets[idataset].Name()<<endl; 
+	dataset = &datasets[d]; 
+	onedatasetonly.push_back(datasets[d]);
+	cout<<" SlaveBegin on dataset : "<<dataset->Name()<<endl;
 	}
    }
    anaEL->LoadSSDiLeptonSelection (sel); // now the parameters for the selection are given to the selection
@@ -122,32 +116,15 @@ void ProofSelectorRPVAnalysis::SlaveBegin(TTree * tree)
 
 
    //--------------------------------------//
-   //   Selection tables
-   //--------------------------------------//
-   // Only 1 dataset per job with PROOF
-   selTable_allChannels = new SelectionTable(sel.GetCutList (), onedatasetonly, string ("*"));
-   selTable_ee = new SelectionTable(sel.GetCutList (), onedatasetonly, string ("ee"));
-   selTable_emu = new SelectionTable(sel.GetCutList (), onedatasetonly, string ("emu"));
-   selTable_mumu = new SelectionTable(sel.GetCutList (), onedatasetonly, string ("mumu"));
-   /*selTable_allChannels = new SelectionTable(sel.GetCutList (), datasets, string ("*"));
-   selTable_ee = new SelectionTable(sel.GetCutList (), datasets, string ("ee"));
-   selTable_emu = new SelectionTable(sel.GetCutList (), datasets, string ("emu"));
-   selTable_mumu = new SelectionTable(sel.GetCutList (), datasets, string ("mumu"));*/
-
-   //--------------------------------------//
    //   Managing histos  	
    //--------------------------------------//
    histoManager = new SSDiLepAnaHistoManager();
    // Only 1 dataset per job with PROOF
-   //idataset = 1;
    histoManager->LoadDatasets (onedatasetonly);
-   //histoManager->LoadDatasets (datasets);
-   cout<<" Ndatasets  "<<datasets.size()<<endl;
    histoManager->LoadSelectionSteps (sel.GetCutList ());
    histoManager->LoadChannels (sel.GetChannelList ());
    histoManager->CreateHistos ();
 
-   //cout<<" Datasets in HistoManager : size = "<<histoManager->Datasets.size()<<endl;
 
    //////////////////////
 
@@ -171,8 +148,6 @@ void ProofSelectorRPVAnalysis::SlaveBegin(TTree * tree)
    //////////////////////
 
 
-   //example
-   //fHist = new TH1F("fHist", "jet pt", 50, 0., 200.);
 
    //--------------------------------------//
    //   Output file 	
@@ -190,7 +165,6 @@ void ProofSelectorRPVAnalysis::SlaveBegin(TTree * tree)
    //this line is very important !!!
    fFile->Write();
    //It is required to add in fOutput the histos you want to feedback
-   fOutput->Add(fHist);
    fOutput->Add(fFile);
 
 }
@@ -214,11 +188,7 @@ Bool_t ProofSelectorRPVAnalysis::Process(Long64_t entry)
 
    //cout<<"Entry "<<entry<<endl;
    sel.LoadEvent(event);
-   
-   //cout<<sel.GetSelectedJets().size()<<endl;
-   //for(unsigned int i=0;i<sel.GetSelectedJets().size();i++)
-	//fHist->Fill(sel.GetSelectedJets()[i].p4.Pt());
-   
+      
    //Collection of selected objects
    vector<IPHCTree::NTVertex>   selVertices  = sel.GetSelectedVertex();
    vector<IPHCTree::NTElectron> selElectrons = sel.GetSelectedElectrons();
@@ -232,19 +202,14 @@ Bool_t ProofSelectorRPVAnalysis::Process(Long64_t entry)
    vector<IPHCTree::NTMuon> candMuon;
    sel.GetLeptonPair (candMuon, candElec, CandType);	// fill the variables 
 
-   int selLastStep = 2;
+   int selLastStep = 0;
    int step = 0;
 
-   //////////////////////////////////   
-   //   Fill the selection table
-   //////////////////////////////////   
+   /////////////////////////  
+   //   Apply selection 
+   ///////////////////////// 
 
-   /*step = sel.FillTable (*selTable_ee, dataset, idataset, weight);
-   if (CandType=="ee") selLastStep = step;
-   step = sel.FillTable (*selTable_emu, dataset, idataset, weight);
-   if (CandType=="emu") selLastStep = step;
-   step = sel.FillTable (*selTable_mumu, dataset, idataset, weight);
-   if (CandType=="mumu") selLastStep = step;*/
+   selLastStep = sel.doFullSelection (dataset, CandType, false);
    
    /////////////////
    // Fill histos 
@@ -263,10 +228,11 @@ void ProofSelectorRPVAnalysis::SlaveTerminate()
    // have been processed. When running with PROOF SlaveTerminate() is called
    // on each slave server.
  
+   histoManager->ComputeForProof (); // Merge channels
+  
    if(fProofFile) fProofFile->Print();
    if (fFile) {
       fFile->cd();
-      //fHist->Write();
       histoManager->Write(fFile);
       fFile->Write();
       //The following line is mandatory to copy everything in a common RootFile
@@ -275,10 +241,6 @@ void ProofSelectorRPVAnalysis::SlaveTerminate()
    
    cout << "end SlaveTerminate " << endl;
 
-   delete selTable_allChannels;
-   delete selTable_ee;
-   delete selTable_emu;
-   delete selTable_mumu;
    delete histoManager;
    delete anaEL;
 }
@@ -291,9 +253,6 @@ void ProofSelectorRPVAnalysis::Terminate()
    // the results graphically or save the results to file.
 
    //Possibility to retrieve information from the merged file and perform some calculation or plotting tasks
-
-
-//histoManager.Compute (); // Merge channels, datasets, plots cut by cut
 
 
     /*TList* list = fOutput->GetOutputList() ;
