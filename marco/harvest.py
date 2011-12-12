@@ -121,6 +121,7 @@ def Execute(pattern,folder,output):
 
     # Check job num
     missing=[]
+    nduplicates=0
     for i in range(numfirst,numlast+1):
         entry=[]
         for j in range(0,len(nums)):
@@ -129,15 +130,29 @@ def Execute(pattern,folder,output):
         if len(entry)==0:
             missing.append(i)
         elif len(entry)>1:
+	    nduplicates+=1
             print "ERROR : several files have the same numbers : "
             for item in entry:
                 print " - '" + files[item] + "'"
-            return    
-    print " No Duplicates found !"
+	    print " Should first file be removed ? (Y/N)"
+	    allowed_answers=['n','no','y','yes']
+            answer=""
+            while answer not in allowed_answers:
+	        answer=raw_input(" Answer : ")
+	        answer=answer.lower()
+                if answer=="yes" or answer=="y":
+		    nduplicates-=1;
+	            os.system("rfrm " + folder + "/" + files[ entry[0] ] )
+		    print " file '" +  files[ entry[0] ]  +"' removed"
+    if(nduplicates>0):
+        print " Still duplicates. (" + str(nduplicates) + ")"
+        return
+    else:    
+        print " No Duplicates found !"
     if len(missing)==0:
         print " All jobs are found !"
     else:
-        print "WARNING : jobs number " + " ,".join(missing) + " are missed"   
+        print "WARNING : jobs number '" + ",".join(map(str,missing)) + "' are missed"   
 
     # Confirmation
     print "====================================================================="
