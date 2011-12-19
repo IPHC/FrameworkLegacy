@@ -26,7 +26,6 @@
 
 #include "ProofSelectorRPVAnalysis.h"
 
-
 //_____________________________________________________________________________
 ProofSelectorRPVAnalysis::ProofSelectorRPVAnalysis(): idataset(0)
 {
@@ -238,9 +237,9 @@ void ProofSelectorRPVAnalysis::SlaveTerminate()
       //The following line is mandatory to copy everything in a common RootFile
       fOutput->Add(fProofFile);
    }
-   
-   cout << "end SlaveTerminate " << endl;
 
+   cout << "end SlaveTerminate " << endl;
+   
    delete histoManager;
    delete anaEL;
 }

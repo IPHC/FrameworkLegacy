@@ -13,6 +13,7 @@
 #include "DiLepRecoHistoManager.h"
 #include "DiLepMCHistoManager.h"
 #include "DiLepDiJetRecoHistoManager.h"
+#include "NofEventsHistoManager.h"
 
 #include <TH1F.h>
 
@@ -50,6 +51,7 @@ class SSDiLepAnaHistoManager{
 	DiLepRecoHistoManager recoHistos;
 	DiLepMCHistoManager mcHistos;
 	DiLepDiJetRecoHistoManager lljjrecoHistos;
+	NofEventsHistoManager nofEvtHistos;
 };
 
 #endif

@@ -157,11 +157,11 @@ void HistoManager::Fill2D(const int& iChannel, const int& iSelStep, const int& i
 
 
 bool HistoManager::Check(const int& iChannel, const int& iDataset){
-	if(iChannel>= (int)Channels.size()){
+	if(iChannel<0 || iChannel>= (int)Channels.size()){
 	 	//cerr<<"HistoManager::iChannel incorrect"<<endl;
 		return false;
 	}
-	if(iDataset>= (int)Datasets.size()){
+	if(iDataset<0 || iDataset>= (int)Datasets.size()){
 	 	cerr<<"HistoManager::iDataset incorrect"<<endl;
 		return false;
 	}
