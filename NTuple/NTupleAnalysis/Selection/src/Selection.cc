@@ -36,6 +36,10 @@ Selection::Selection()
   // Pile-Up weights
   PUWeights.clear();
 
+  //! Scale factors
+  scaleFactEl = 0;
+  scaleFactMu = 0;
+
   // BTag variables
   flag_btagweight_=0;
   methodb_=0;
