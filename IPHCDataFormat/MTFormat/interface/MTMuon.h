@@ -14,13 +14,13 @@
 namespace IPHCTree
 {
 
-  //! \class MTMuon: 
-  //! \brief class muon for MiniTree - inherit from NTMuon
-  //! default track = globalTrack (tracker+mu)
-  //! D0   =   Transverse IP of globalTrack (tracker+mu) wrt BS (or 0 if !BS)
-  //! Chi2 =   Normalized chi2 of globalTrack wrt BS (or 0 if !BS)
-  //! Add all relevant information that should be saved in MiniTree
-  //! but not in the NTuple
+  /// \class MTMuon: 
+  /// \brief class muon for MiniTree - inherit from NTMuon
+  /// default track = globalTrack (tracker+mu)
+  /// D0   =   Transverse IP of globalTrack (tracker+mu) wrt BS (or 0 if !BS)
+  /// Chi2 =   Normalized chi2 of globalTrack wrt BS (or 0 if !BS)
+  /// Add all relevant information that should be saved in MiniTree
+  /// but not in the NTuple
   class MTMuon : public NTMuon, public MTLepton
   {
 
@@ -30,13 +30,13 @@ namespace IPHCTree
   public:
 
     //Tracks 
-    reco::Track TrackMu;	//! associated track (tracker only) for muon
-    reco::Track StaMu;		//! associated standalone track
-    reco::Track ComMu;		//! associated combined track
+    reco::Track TrackMu;	/// associated track (tracker only) for muon
+    reco::Track StaMu;		/// associated standalone track
+    reco::Track ComMu;		/// associated combined track
 
     //IP variables
-    Float_t IP3D;    //! Impact parameter    
-    Float_t IP3DErr; //! Impact parameter error
+    Float_t IP3D;    /// Impact parameter    
+    Float_t IP3DErr; /// Impact parameter error
 
 
     // -------------------------------------------------------------
@@ -44,22 +44,22 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    //! Constructor without arguments
+    /// Constructor without arguments
     MTMuon()
     { Reset(true); }
 
-		//! Destructor
+		/// Destructor
     virtual ~MTMuon()
     { }
 
-		//! Clear all information related to the muon
+		/// Clear all information related to the muon
     void Reset(bool constructor_call=false);
 
-		//! Display information related to the muon
-    //! \param[in,out] os   a log stream
+		/// Display information related to the muon
+    /// \param[in,out] os   a log stream
     void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 

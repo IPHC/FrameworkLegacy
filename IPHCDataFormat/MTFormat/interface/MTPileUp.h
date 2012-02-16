@@ -16,8 +16,8 @@
 namespace IPHCTree
 {
 
-  //! \class MTPileUp
-  //! Extension of NTPileUp with details about interaction
+  /// \class MTPileUp
+  /// Extension of NTPileUp with details about interaction
   class MTPileUp : public NTPileUp
   {
 
@@ -28,7 +28,7 @@ namespace IPHCTree
 
     // ------------------ general variables ------------------------
 
-    //! information related to each interaction
+    /// information related to each interaction
     std::map<Char_t, std::vector<MTInteraction> > interactions;
 
 
@@ -37,22 +37,22 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    //! Constructor without arguments
+    /// Constructor without arguments
     MTPileUp()
     { Reset(true); }
 
-    //! Destructor
+    /// Destructor
     virtual ~MTPileUp()
     { }
 
-    //! Clear all information related to the Pile-Up
+    /// Clear all information related to the Pile-Up
     virtual void Reset(bool constructor_call=false);
 
-    //! Display information related to the Pile-Up
-    //! \param[in,out] os   a log stream
+    /// Display information related to the Pile-Up
+    /// \param[in,out] os   a log stream
     virtual void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     virtual void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 

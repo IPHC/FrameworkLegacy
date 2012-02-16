@@ -38,6 +38,7 @@ namespace IPHCTree
     std::set<std::string> electron_ID;
     std::set<std::string> muon_ID;
     std::set<std::string> tau_ID;
+    std::set<std::string> jet_ID;
     std::set<std::string> jet_bTag;
 
     // -------------------------------------------------------------

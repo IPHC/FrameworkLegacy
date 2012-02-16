@@ -8,11 +8,11 @@
 namespace IPHCTree
 {
 
-  //! \class MTTrack
-  //! class track for MiniTree - inherit from NTTrack
-  //! Contains nHits for subdectectors and IPs.
-  //! Add all relevant information that should be saved in MiniTree
-  //! but not in the NTuple
+  /// \class MTTrack
+  /// class track for MiniTree - inherit from NTTrack
+  /// Contains nHits for subdectectors and IPs.
+  /// Add all relevant information that should be saved in MiniTree
+  /// but not in the NTuple
   class MTTrack : public NTTrack
   {
 
@@ -48,30 +48,30 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    //! Constructor without arguments
+    /// Constructor without arguments
     MTTrack ()
     { Reset(true); }
 
-    //! Destructor
+    /// Destructor
     virtual ~MTTrack ()
     { }
 
-		//! Clear all information related to lepton
+		/// Clear all information related to lepton
     virtual void Reset(bool constructor_call=false);
 
-		//! Display information related to the lepton
-    //! \param[in,out] os   a log stream
+		/// Display information related to the lepton
+    /// \param[in,out] os   a log stream
     virtual void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     virtual void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 
-    //! Number of Valid Hits
+    /// Number of Valid Hits
     unsigned int nHitPixel() const
     { return nHitPXB + nHitPXF; }
 
-    //! Number of Valid Pixel Hits
+    /// Number of Valid Pixel Hits
     unsigned int nHitTracker() const
     { return nHitTIB + nHitTOB + nHitTID + nHitTEC; }
 

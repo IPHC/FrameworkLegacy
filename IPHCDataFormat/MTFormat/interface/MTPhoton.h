@@ -7,8 +7,8 @@
 namespace IPHCTree
 {
 
-  //! \class MTPhoton
-  //! This is an extension of NTPhoton
+  /// \class MTPhoton
+  /// This is an extension of NTPhoton
   class MTPhoton : public NTPhoton
   {
 
@@ -22,22 +22,22 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
  
-    //! Constructor without arguments
+    /// Constructor without arguments
     MTPhoton ()
     { Reset(true); }
 
-    //! Destructor
+    /// Destructor
     virtual ~MTPhoton ()
     { }
 
-    //! Clear all information related to the photon
+    /// Clear all information related to the photon
     virtual void Reset(bool constructor_call);
     
-    //! Display information related to the photon
-    //! \param[in,out] os   a log stream
+    /// Display information related to the photon
+    /// \param[in,out] os   a log stream
     virtual void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     virtual void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 

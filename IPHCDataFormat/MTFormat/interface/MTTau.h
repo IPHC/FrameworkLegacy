@@ -11,10 +11,10 @@
 namespace IPHCTree
 {
 
-  //! \class MTTau
-  //! class tau for MiniTree - inherit from NTTau
-  //! Add all relevant information that should be saved in MiniTree
-  //! but not in the NTuple
+  /// \class MTTau
+  /// class tau for MiniTree - inherit from NTTau
+  /// Add all relevant information that should be saved in MiniTree
+  /// but not in the NTuple
   class MTTau : public NTTau, public MTLepton
   {
 
@@ -28,22 +28,22 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    //! Constructor without arguments
+    /// Constructor without arguments
     MTTau()
     { Reset(true); }
 
-    //! Destructor
+    /// Destructor
     virtual ~MTTau()
     { }
 
-		//! Clear all information related to the tau
+		/// Clear all information related to the tau
     virtual void Reset(bool constructor_call=false);
 
-		//! Display information related to the tau
-    //! \param[in,out] os   a log stream
+		/// Display information related to the tau
+    /// \param[in,out] os   a log stream
     virtual void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     virtual void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 

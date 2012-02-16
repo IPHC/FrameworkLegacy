@@ -8,10 +8,10 @@
 namespace IPHCTree
 {
 
-  //! \class MTMET
-  //! class MET for MiniTree - inherit from NTMET
-  //! Add all relevant information that should be saved in MiniTree
-  //! but not in the NTuple
+  /// \class MTMET
+  /// class MET for MiniTree - inherit from NTMET
+  /// Add all relevant information that should be saved in MiniTree
+  /// but not in the NTuple
   class MTMET : public NTMET
   {
 
@@ -26,22 +26,22 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    //! Constructor without arguments
+    /// Constructor without arguments
     MTMET()
     { Reset(true); }
 
-    //! Destructor
+    /// Destructor
     virtual ~MTMET()
     { }
 
-    //! Clear all information related to MET
+    /// Clear all information related to MET
     virtual void Reset(bool constructor_call=false);
 
-    //! Display information related to MET
-    //! \param[in,out] os   a log stream
+    /// Display information related to MET
+    /// \param[in,out] os   a log stream
     virtual void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     virtual void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 

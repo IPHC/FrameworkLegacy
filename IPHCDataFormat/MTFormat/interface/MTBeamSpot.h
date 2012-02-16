@@ -15,8 +15,8 @@
 namespace IPHCTree
 {
 
-  //! \class MTBeamSpot
-  //! MTBeamSpot contains all information related to Pile-Up
+  /// \class MTBeamSpot
+  /// MTBeamSpot contains all information related to Pile-Up
   class MTBeamSpot
   {
 
@@ -25,8 +25,8 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    TVector3 p3;      //! Beam spot position
-    TVector3 p3Err;   //! Beam spot position error
+    TVector3 p3;      /// Beam spot position
+    TVector3 p3Err;   /// Beam spot position error
 
 
     // -------------------------------------------------------------
@@ -34,30 +34,30 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    //! Constructor without arguments
+    /// Constructor without arguments
     MTBeamSpot()
     { }
 
-    //! Destructor
+    /// Destructor
     ~MTBeamSpot()
     { }
 
-    //! Clear all information related to the BeamSpot
+    /// Clear all information related to the BeamSpot
     void Reset()
     {
       p3.SetXYZ(0.,0.,0.);
       p3Err.SetXYZ(0.,0.,0.);
     }
 
-    //! Display information related to the BeamSpot
-    //! \param[in,out] os   a log stream
+    /// Display information related to the BeamSpot
+    /// \param[in,out] os   a log stream
     void Dump(std::ostream & os = std::cout) const
     {
       os << "BeamSpot info : " << p3;
       os << " with error " << p3Err << std::endl;
     }
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 

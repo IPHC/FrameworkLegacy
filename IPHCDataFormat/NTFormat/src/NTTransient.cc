@@ -110,6 +110,7 @@ void NTTransient::readmode_SetKeyedCollectionName(const IPHCTree::NTEvent* event
       for (unsigned int j=0;j<event->jets.collections_[i].size();j++)
       {
         event->jets.collections_[i][j].p4HLT.names_  = event->descriptor.jet_p4HLT; 
+        event->jets.collections_[i][j].ID.names_     = event->descriptor.jet_ID; 
         event->jets.collections_[i][j].bTag.names_   = event->descriptor.jet_bTag; 
         event->jets.collections_[i][j].others.names_ = event->descriptor.jet_others; 
       }
@@ -186,6 +187,13 @@ void NTTransient::writemode_SetKeyedCollectionName(IPHCTree::NTEvent* event)
       {
         if ( event->descriptor.jet_bTag.empty() ) event->descriptor.jet_bTag = event->jets.collections_[i][j].bTag.names_;
         else if (event->descriptor.jet_bTag != event->jets.collections_[i][j].bTag.names_)
+        { std::cout << "ERROR : some KeyedCollection are different" << std::endl; exit(1); }
+      }
+
+      if (!event->jets.collections_[i][j].ID.names_.empty())
+      {
+        if ( event->descriptor.jet_ID.empty() ) event->descriptor.jet_ID = event->jets.collections_[i][j].ID.names_;
+        else if (event->descriptor.jet_ID != event->jets.collections_[i][j].ID.names_)
         { std::cout << "ERROR : some KeyedCollection are different" << std::endl; exit(1); }
       }
 

@@ -11,8 +11,8 @@
 namespace IPHCTree
 {
 
-  //! \class MTMonteCarlo
-  //! Extension of NTMonteCarlo with GeneratedParticles
+  /// \class MTMonteCarlo
+  /// Extension of NTMonteCarlo with GeneratedParticles
   class MTMonteCarlo : public NTMonteCarlo
   {
     // -------------------------------------------------------------
@@ -20,22 +20,22 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    //! Constructor without arguments
+    /// Constructor without arguments
     MTMonteCarlo()
     { Reset(true); }
 
-    //! Destructor
+    /// Destructor
     ~MTMonteCarlo()
     { }
 
-    //! Clear all information related to the Monte Carlo
+    /// Clear all information related to the Monte Carlo
     virtual void Reset(bool constructor_call=false);
 
-    //! Display information related to Monte Carlo
-    //! \param[in,out] os   a log stream
+    /// Display information related to Monte Carlo
+    /// \param[in,out] os   a log stream
     virtual void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     virtual void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 

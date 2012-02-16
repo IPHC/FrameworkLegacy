@@ -16,11 +16,11 @@
 namespace IPHCTree
 {
 
-  //! \class MTLepton
-  //! This is an extension of NTLepton which contains additionnaly
-  //!  - MC information
-  //!  - Vertex information
-  //! MTLepton doesn't inherit from NTLepton.
+  /// \class MTLepton
+  /// This is an extension of NTLepton which contains additionnaly
+  ///  - MC information
+  ///  - Vertex information
+  /// MTLepton doesn't inherit from NTLepton.
   class MTLepton
   {
   public:
@@ -30,41 +30,41 @@ namespace IPHCTree
     // -------------------------------------------------------------
   public:
 
-    //! 4-vector momentum of the matched generated particle
+    /// 4-vector momentum of the matched generated particle
     TLorentzVector p4Gen;
 
-    //! IP wrt the beamline (?)
+    /// IP wrt the beamline (?)
     Float_t DB;
 
-    //! Generated Particle, mother of the particle
+    /// Generated Particle, mother of the particle
     reco::GenParticle GenMother;
 
-    //! Generated Particle, grand mother of the particle
+    /// Generated Particle, grand mother of the particle
     reco::GenParticle GenGrandMother;
 
-    //! Generated Particle, grand grand mother of the particle
+    /// Generated Particle, grand grand mother of the particle
     reco::GenParticle GenGGrandMother;
 
     // -------------------------------------------------------------
     //                       method members
     // -------------------------------------------------------------
 
-    //! Constructor without arguments
+    /// Constructor without arguments
     MTLepton()
     { Reset(true); }
 
-		//! Destructor
+		/// Destructor
     ~MTLepton()
     { }
 
-		//! Clear all information related to lepton
+		/// Clear all information related to lepton
     void Reset(bool constructor_call=false);
 
-		//! Display information related to the lepton
-    //! \param[in,out] os   a log stream
+		/// Display information related to the lepton
+    /// \param[in,out] os   a log stream
     void Dump(std::ostream & os = std::cout) const;
 
-    //! Alias to Dump method
+    /// Alias to Dump method
     void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 
