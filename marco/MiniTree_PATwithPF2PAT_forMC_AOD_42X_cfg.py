@@ -476,6 +476,9 @@ process.MyModule = cms.EDAnalyzer('NTupleProducer',
 #                         GENERAL SKIM 
 # -------------------------------------------------------------------
    general_skim = cms.PSet(
+# ---------------------- Monte Carlo  -------------------------------
+        skimGenParticles = cms.bool(True),
+        skimGenTaus      = cms.bool(True),
 # ----------------------   Trigger    -------------------------------
         skimTrigger = cms.bool(False),
         triggerList = cms.vstring(""),

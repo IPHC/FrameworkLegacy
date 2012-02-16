@@ -11,6 +11,10 @@ bool FillNTuple::Initialize(const edm::ParameterSet & iConfig)
   triggerList = iConfig.getParameter<std::vector<std::string> >
                                       ("triggerList");
 
+  // Monte Carlo
+  skimGenParticles = iConfig.getParameter<bool>("skimGenParticles");
+  skimGenTaus      = iConfig.getParameter<bool>("skimGenTaus");
+
   // Muon
   skimMuons = iConfig.getParameter<bool>("skimMuons");
   muon_keepAllCollections = iConfig.getParameter<bool>
@@ -81,6 +85,18 @@ void FillNTuple::Fill(const IPHCTree::MTEvent* minitree, IPHCTree::NTEvent* ntup
   ntuple->mc      = 
           dynamic_cast<const IPHCTree::NTMonteCarlo&>(minitree->mc);
 
+  // -------------------------------------
+  // GenParticle 
+  // -------------------------------------
+  if (skimGenParticles)
+  {
+    ntuple->mc.genParticles.clear();
+  }
+  if (skimGenTaus)
+  {
+    ntuple->mc.Generatedtaus.clear();
+    ntuple->mc.GeneratedAtaus.clear();
+  }
 
   // -------------------------------------
   // Trigger

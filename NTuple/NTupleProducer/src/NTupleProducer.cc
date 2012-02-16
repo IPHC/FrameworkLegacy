@@ -93,10 +93,10 @@ void NTupleProducer::analyze (const edm::Event & iEvent,
   // Skimming 
   // -------------------------------------
   ntotal++;
-  std::cout << "Skimming ..." << std::endl;
+  if (verbose > 0) std::cout << "Skimming ..." << std::endl;
   if (!top_filter.Filter(ntuple))
   {
-    std::cout << "--> the event is skimmed" << std::endl;
+    if (verbose > 0) std::cout << "--> the event is skimmed" << std::endl;
     return;
   }
   nfiltered++;
