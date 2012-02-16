@@ -75,9 +75,6 @@ namespace IPHCTree
     /// Normalize Chi2 (divided by ndof)
     Float_t Chi2;
 
-    /// Collection of ID
-    KeyedCollection<Float_t> ID;
-
   protected :
 
     /// electric charge (persistent)

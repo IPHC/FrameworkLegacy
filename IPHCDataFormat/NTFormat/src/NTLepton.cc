@@ -61,9 +61,5 @@ void NTLepton::Dump(std::ostream & os) const
 	os << " PATPhotonIso = " << PATPhotonIso << " ;";
 	os << " PATTrackIso = " << PATTrackIso << std::endl;
 	os << std::endl;
-
-  os << " ID collection content : " << ID.size();
-  os << " items" << std::endl;
-  ID.Dump(os);
 }
 

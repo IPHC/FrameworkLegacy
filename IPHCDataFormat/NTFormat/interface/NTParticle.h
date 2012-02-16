@@ -35,6 +35,9 @@ namespace IPHCTree
     /// Container for adding easly variables without changing dataformat code
     KeyedCollection<Float_t> others;
 
+    /// Collection of ID
+    KeyedCollection<Float_t> ID;
+
     // -------------------------------------------------------------
     //                         method members
     // -------------------------------------------------------------
@@ -64,13 +67,16 @@ namespace IPHCTree
     {
       os << " p4 = " << p4 << std::endl;
 
-
       os << " HLT p4 collection content : " << p4HLT.size();
       os << " items" << std::endl;
       p4HLT.Dump(os);
 
+      os << " ID collection content : " << ID.size();
+
       os << " 'others' collection content : " << others.size();
-      os << " items" <<  std::endl;
+      os << " items" << std::endl;
+      ID.Dump(os);
+
       others.Dump(os);
     }
 
