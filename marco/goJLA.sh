@@ -1,5 +1,5 @@
-#./submit_MiniTreeProducer.py  TTbar /TTJets_TuneD6T_7TeV-madgraph-tauola/Spring11-PU_S1_START311_V1G1-v1/AODSIM
-./submit_MiniTreeProducer.py  WJetsToLNu_CMSSW425_SUSY  /WJetsToLNu_TuneD6T_7TeV-madgraph-tauola/Spring11-PU_S1_START311_V1G1-v1/AODSIM
+./submit_MiniTreeProducer.py  TTbar_CMSSW425_SUSY /TTJets_TuneZ2_7TeV-madgraph-tauola/Summer11-PU_S4_START42_V11-v1/AODSIM
+#./submit_MiniTreeProducer.py  WJetsToLNu_CMSSW425_SUSY  /WJetsToLNu_TuneD6T_7TeV-madgraph-tauola/Spring11-PU_S1_START311_V1G1-v1/AODSIM
 
 #./submit_MiniTreeProducer.py  DYJetsToLL_CMSSW425_SUSY  /DYJetsToLL_TuneD6T_M-50_7TeV-madgraph-tauola/Spring11-PU_S1_START311_V1G1-v1/AODSIM
 
