@@ -701,9 +701,9 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
   }
     
   // Save the event 
-  if (verbose>1) std::cout << "Optimize space occupied by the event ..." << std::endl;
+  if (cfg.verbose>1) std::cout << "Optimize space occupied by the event ..." << std::endl;
   IPHCTree::MTTransient::InitializeBeforeWriting(evt.get());
-  if (verbose>1) std::cout << "Save the event in the root file ..." << std::endl; 
+  if (cfg.verbose>1) std::cout << "Save the event in the root file ..." << std::endl; 
   iEvent.put(evt);
   if (cfg.verbose>0)
      std::cout << "-> The event is successfully saved in the MiniTree" << std::endl;

@@ -29,6 +29,9 @@
 #include "DataFormats/Scalers/interface/DcsStatus.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 
+// Add System header
+#include <ctime>
+
 
 typedef math::XYZPoint Point;
 
@@ -52,7 +55,7 @@ typedef math::XYZPoint Point;
 //
 // Original Author:  Jeremy ANDREA
 //         Created:  Sun Nov  1 21:30:20 CET 2009
-// $Id: MiniTreeProducer.h,v 1.2 2011/11/04 12:25:21 econte Exp $
+// $Id: MiniTreeProducer.h,v 1.3 2011/11/04 21:40:33 econte Exp $
 //
 //
 
@@ -183,6 +186,9 @@ class MiniTreeProducer : public edm::EDProducer
   // ----------member data ---------------------------
 
   ConfigType cfg;
+  std::clock_t StartTime;
+  std::clock_t EndTime;
+
  
 
 
