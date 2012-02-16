@@ -443,6 +443,7 @@ process.MiniTreeProduction = cms.EDProducer('MiniTreeProducer',
         doMuonCorrection    = cms.bool(True),
         jet_cut_pt          = cms.double(10),
         jet_cut_eta         = cms.double(2.5), 
+        jetIDList           = cms.vstring(""),
         jetBTagList         = cms.vstring("trackCountingHighEffBJetTags","trackCountingHighPurBJetTags","simpleSecondaryVertexBJetTags","simpleSecondaryVertexHighEffBJetTags","simpleSecondaryVertexHighPurBJetTags","softMuonBJetTags","jetProbabilityBJetTags","jetBProbabilityBJetTags","combinedSecondaryVertexBJetTags"),
 	jetHLTmatching      = cms.vstring("jetMatchHLTJets"),
         jetmetProducer      = cms.VPSet(

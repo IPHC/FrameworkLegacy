@@ -76,6 +76,7 @@ struct ConfigType
   double 	      jet_cut_pt;
   double 	      jet_cut_eta;
   std::vector<std::string> jetBTagList;
+  std::vector<std::string> jetIDList;
   std::vector<std::string> jetHLTmatching;
   VParameters   jetmetProducer;
 

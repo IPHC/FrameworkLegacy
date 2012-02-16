@@ -87,6 +87,7 @@ MiniTreeProducer::MiniTreeProducer (const edm::ParameterSet & iConfig)
   cfg.doMuonCorrection = iConfig.getParameter<bool>        ("doMuonCorrection");
   cfg.jet_cut_pt       = iConfig.getParameter<double>      ("jet_cut_pt");
   cfg.jet_cut_eta      = iConfig.getParameter<double>      ("jet_cut_eta");
+  cfg.jetIDList        = iConfig.getParameter<std::vector<std::string> > ("jetIDList"); 
   cfg.jetBTagList      = iConfig.getParameter<std::vector<std::string> > ("jetBTagList"); 
   cfg.jetHLTmatching   = iConfig.getParameter<std::vector<std::string> > ("jetHLTmatching");
   cfg.jetmetProducer   = iConfig.getParameter<VParameters> ("jetmetProducer");
@@ -1952,27 +1953,6 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
                                 patJet->correctedP4(0).Pz(),
                                 patJet->correctedP4(0).E());
 		myjet->jetArea   = patJet->jetArea();
- 
-    // --------------------- JetID -----------------------
-
-		if (patJet->isCaloJet() || patJet->isJPTJet())
-    {
-	  	pat::strbitset ret = jetIDLoose.getBitTemplate();
-		  pat::strbitset rett = jetIDTight.getBitTemplate();
-		  ret.set(false);
-		  rett.set(false);
-      myjet->isLOOSE = jetIDLoose (*it, ret);
-      myjet->isTIGHT = jetIDTight (*it, rett);
-		}
-		if (patJet->isPFJet())
-    {
-		  pat::strbitset retpf = PfjetIDLoose.getBitTemplate();
-  		pat::strbitset rettpf = PfjetIDTight.getBitTemplate();
-	  	retpf.set(false);
-	  	rettpf.set(false);
-			myjet->isLOOSE = PfjetIDLoose (*it, retpf);
-			myjet->isTIGHT = PfjetIDTight (*it, rettpf);
-  	}
 
     // --------------------- JetEnergy -----------------------
 
@@ -2109,6 +2089,42 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
  
     // Saving ids
     myjet->bTag.Fill(ids);
+
+    // --------------------- JET ID -----------------------
+
+    ids.clear();
+    for (unsigned int i=0;i<cfg.jetIDList.size();i++)
+    {
+      if (cfg.jetIDList[i]=="") continue;
+      ids[cfg.jetIDList[i]] = patJet->bDiscriminator(cfg.jetIDList[i]);
+    }
+
+
+    // --------------------- JetID -----------------------
+
+    /*
+		if (patJet->isCaloJet() || patJet->isJPTJet())
+    {
+	  	pat::strbitset ret = jetIDLoose.getBitTemplate();
+		  pat::strbitset rett = jetIDTight.getBitTemplate();
+		  ret.set(false);
+		  rett.set(false);
+      myjet->isLOOSE = jetIDLoose (*it, ret);
+      myjet->isTIGHT = jetIDTight (*it, rett);
+		}
+		if (patJet->isPFJet())
+    {
+		  pat::strbitset retpf = PfjetIDLoose.getBitTemplate();
+  		pat::strbitset rettpf = PfjetIDTight.getBitTemplate();
+	  	retpf.set(false);
+	  	rettpf.set(false);
+			myjet->isLOOSE = PfjetIDLoose (*it, retpf);
+			myjet->isTIGHT = PfjetIDTight (*it, rettpf);
+  	}
+    */
+ 
+    // Saving ids
+    myjet->ID.Fill(ids);
 
     // --------------------- HLT-object matching -----------------------
     if (cfg.doTrigger)
