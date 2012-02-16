@@ -2092,17 +2092,7 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
 
     // --------------------- JET ID -----------------------
 
-    ids.clear();
-    for (unsigned int i=0;i<cfg.jetIDList.size();i++)
-    {
-      if (cfg.jetIDList[i]=="") continue;
-      ids[cfg.jetIDList[i]] = patJet->bDiscriminator(cfg.jetIDList[i]);
-    }
-
-
-    // --------------------- JetID -----------------------
-
-    /*
+    // Two available id : LOOSE & TIGHT
 		if (patJet->isCaloJet() || patJet->isJPTJet())
     {
 	  	pat::strbitset ret = jetIDLoose.getBitTemplate();
@@ -2121,8 +2111,15 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
 			myjet->isLOOSE = PfjetIDLoose (*it, retpf);
 			myjet->isTIGHT = PfjetIDTight (*it, rettpf);
   	}
-    */
- 
+
+    ids.clear();
+    for (unsigned int i=0;i<cfg.jetIDList.size();i++)
+    {
+      if (cfg.jetIDList[i]=="LOOSE") { ids["LOOSE"]=myjet->isLOOSE; }
+      else if (cfg.jetIDList[i]=="TIGHT") { ids["TIGHT"]=myjet->isTIGHT; }
+      else { ERROR("FillJetMET") << "Jet ID labeled '" << cfg.jetIDList[i] << "' is not found" << std::endl; }
+    }
+
     // Saving ids
     myjet->ID.Fill(ids);
 
