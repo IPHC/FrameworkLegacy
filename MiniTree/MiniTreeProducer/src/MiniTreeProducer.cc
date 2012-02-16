@@ -7,6 +7,10 @@
 // ----------------------------------------------------------------------------
 MiniTreeProducer::MiniTreeProducer (const edm::ParameterSet & iConfig)
 {
+  // Measuring Start time
+  StartTime = std::clock();
+
+  // Display Beginning
 	std::cout << "Constructor of MiniTreeProducer - BEGIN" << std::endl;
 
   // Extract MiniTreeProducer settings
@@ -115,6 +119,37 @@ MiniTreeProducer::MiniTreeProducer (const edm::ParameterSet & iConfig)
 // ----------------------------------------------------------------------------
 MiniTreeProducer::~MiniTreeProducer()
 {
+  // Measuring Start time
+  std::clock_t EndTime = std::clock();
+
+  // Failure with clock measurements
+  if (StartTime==-1 || EndTime==-1)
+  {
+    std::cout << "Elapsed time not available" << std::endl;
+  }
+
+  // Success with clock measurements
+  else
+  {
+    // Computing elapsed time (in second)
+    unsigned long ElapsedTime = (EndTime - StartTime) / CLOCKS_PER_SEC;
+
+    // Converting elapsed time in day-hour-minute-second format
+    unsigned int nday  = ElapsedTime/(24*3600); ElapsedTime %= 24*3600;
+    unsigned int nhour = ElapsedTime/3600;      ElapsedTime %= 3600;
+    unsigned int nmin  = ElapsedTime/60;        
+    unsigned int nsec  = ElapsedTime%60;
+
+    // Displaying elapsed time
+    std::cout << "Elapsed time with MiniTreeProducer : ";
+    if (nday !=0) std::cout << nday  << "d";
+    if (nhour!=0) std::cout << nhour << "h";
+    if (nmin !=0) std::cout << nmin  << "m";
+    std::cout << nsec  << "s"<< std::endl;
+  }
+
+  // Program end with SUCCESS code
+  std::cout << "Normal end of program" << std::endl;
 }
 
 
