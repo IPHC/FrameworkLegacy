@@ -691,7 +691,6 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
         fillJetMET(iEvent, iSetup, evt,
                    &(metHandle->front()), jetHandle,
                    algo_,SumMuMetCorr, patTriggerEvent);
-      std::cout << "ERIC : MET = " << evt->met[0].p2.Px() << std::endl;
       }
 			else
 			{ 
@@ -702,9 +701,9 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
   }
     
   // Save the event 
-  std::cout << "Optimize space occupied by the event ..." << std::endl;
+  if (verbose>1) std::cout << "Optimize space occupied by the event ..." << std::endl;
   IPHCTree::MTTransient::InitializeBeforeWriting(evt.get());
-  std::cout << "Save the event in the root file ..." << std::endl; 
+  if (verbose>1) std::cout << "Save the event in the root file ..." << std::endl; 
   iEvent.put(evt);
   if (cfg.verbose>0)
      std::cout << "-> The event is successfully saved in the MiniTree" << std::endl;
@@ -800,8 +799,6 @@ void MiniTreeProducer::fillTriggerInfo(edm::Event& iEvent,
   {
     if ((*iObject)->pt() >= 15) match_pTHLTElectron15 = (*iObject)->pt();
   }
-
-  std::cout << match_pTHLTElectron15 << std::endl;
 }
 
 
@@ -1452,8 +1449,6 @@ void MiniTreeProducer::fillElectrons(edm::Event& iEvent,
       // Get mother, grandmother and grandgrandmother particles
       if (cfg.doGenParticleCollection && genParticles!=0)
       { 
-        std::cout << "ERIC : ELECTRON LEPTO ORIGIN" << std::endl; 
-
         reco::GenParticle genmother;
         reco::GenParticle gengrandmother;
         reco::GenParticle genggrandmother;
@@ -1648,8 +1643,6 @@ void MiniTreeProducer::fillMuons(edm::Event& iEvent,
       // Get mother, grandmother and grandgrandmother particles
       if (cfg.doGenParticleCollection && genParticles!=0)
       { 
-        std::cout << "ERIC : ELECTRON LEPTO ORIGIN" << std::endl; 
-
         reco::GenParticle genmother;
         reco::GenParticle gengrandmother;
         reco::GenParticle genggrandmother;
