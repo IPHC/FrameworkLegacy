@@ -73,9 +73,15 @@ public:
 
  private:
 
+  unsigned int verbose;
+
   // Muon
   bool                     skimTrigger;
   std::vector<std::string> triggerList;
+
+  // Monte Carlo
+  bool                     skimGenParticles;
+  bool                     skimGenTaus;
 
   // Muon
   bool                     skimMuons;
