@@ -104,10 +104,10 @@ void NTupleProducer::analyze (const edm::Event & iEvent,
   // -------------------------------------
   // Saving event in NTuple
   // -------------------------------------
-  std::cout << "Store the event into the ntuple ..." << std::endl; 
+  if (verbose > 0) std::cout << "Store the event into the ntuple ..." << std::endl; 
   IPHCTree::NTTransient::InitializeBeforeWriting(ntuple);
   output->Fill ();
-  std::cout << "--> the event is successfully stored into the ntuple.";
+  if (verbose > 0) std::cout << "--> the event is successfully stored into the ntuple.";
   std::cout << std::endl;
 }
 
