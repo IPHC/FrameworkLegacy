@@ -1,4 +1,4 @@
-## import skeleton process
+# import skeleton process
 #from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 
@@ -443,7 +443,7 @@ process.MiniTreeProduction = cms.EDProducer('MiniTreeProducer',
         doMuonCorrection    = cms.bool(True),
         jet_cut_pt          = cms.double(10),
         jet_cut_eta         = cms.double(2.5), 
-        jetIDList           = cms.vstring(""),
+        jetIDList           = cms.vstring("LOOSE","TIGHT"),
         jetBTagList         = cms.vstring("trackCountingHighEffBJetTags","trackCountingHighPurBJetTags","simpleSecondaryVertexBJetTags","simpleSecondaryVertexHighEffBJetTags","simpleSecondaryVertexHighPurBJetTags","softMuonBJetTags","jetProbabilityBJetTags","jetBProbabilityBJetTags","combinedSecondaryVertexBJetTags"),
 	jetHLTmatching      = cms.vstring("jetMatchHLTJets"),
         jetmetProducer      = cms.VPSet(
