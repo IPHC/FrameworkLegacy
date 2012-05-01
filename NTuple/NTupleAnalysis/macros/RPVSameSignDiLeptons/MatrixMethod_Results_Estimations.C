@@ -48,12 +48,15 @@ void MatrixMethod_Results_Estimations(string selection, string eventType, string
   string Sel[] = {"Tight", "Medium", "Loose"};
   string Type[] = {"Signal", "Wlike", "QCDlike"};
 
-  const int Nd = 17;
+  const int Nd = 24;
   string dataset[Nd] = {"TTbarSignal", "TTbarSemileptonic", "TTbar", "Zjets", 
                        "DYToMuMu_M-20", "DYToMuMu_M-10To20", "DYToTauTau_M-20","DYToTauTau_M-10To20",
-		       "Wjets", "TtW", "TbartW", "WW", "WZ", "ZZ", "Tt", "BBbar_Pt25", "BBbar_Pt15"};
+		       "Wjets", "Tt", "Ts", "TtW", "Tbart", "Tbars", "TbartW", "WW", "WZ", "ZZ", 
+		       "BBbar_Pt25", "BBbar_Pt15", 
+		       "QCD_Pt-50to80_Mu", "QCD_Pt-80to120_Mu", "QCD_Pt-120to150_Mu", "QCD_Pt-150_Mu"};
   int color[Nd] = {kRed+1, kRed-7, kRed-7, kAzure-2, kAzure-2, kAzure-2, kAzure-2, kAzure-2, 
-                   kGreen-3, kMagenta-6, kMagenta-6, kGray+2, kGray+2, kGray+2, kMagenta-6, kYellow+3, kYellow+3};
+                   kGreen-3, kMagenta-6, kMagenta-6, kMagenta-6, kMagenta-6, kMagenta-6, kMagenta-6, kGray+2, kGray+2, kGray+2, 
+		   kYellow+3, kYellow+3, kYellow+3, kYellow+3, kYellow+3, kYellow+3};
 
 
   // Get histos of expected # of events
@@ -87,7 +90,7 @@ void MatrixMethod_Results_Estimations(string selection, string eventType, string
 
   
   const int NdS = 3;
-  unsigned int signallike[] = {0, 12, 13}; 
+  unsigned int signallike[] = {0, 16, 17}; 
 /*  tightSignalLike->Add(tight_TTDilept);
   tightSignalLike->Add(tight_TtW);
   tightSignalLike->Add(tight_TbartW);
@@ -100,13 +103,13 @@ void MatrixMethod_Results_Estimations(string selection, string eventType, string
   tightSignalLike->Add(tight_WZ);
   tightSignalLike->Add(tight_ZZ);*/
 
-  const int NdW = 10;
-  unsigned int wlike[] = {1, 3, 4, 5, 6, 7, 8, 9, 10, 14};
+  const int NdW = 14;
+  unsigned int wlike[] = {1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
   //tightWLike->Add(tight_TTSemi);
   //tightWLike->Add(tight_WJets);
   
-  const int NdQCD = 3;
-  unsigned int qcdlike[] = {2, 15, 16};
+  const int NdQCD = 7;
+  unsigned int qcdlike[] = {2, 18, 19, 20, 21, 22, 23};
 
 
   THStack* hstack[3][3];
