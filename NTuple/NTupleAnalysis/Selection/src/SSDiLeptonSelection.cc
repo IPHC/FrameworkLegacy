@@ -26,9 +26,12 @@ SSDiLeptonSelection::SSDiLeptonSelection ()
   cuts_.push_back ("NbtagJets cut");
 
   //Fill Channels
-  channels_.push_back (string ("ee"));
-  channels_.push_back (string ("emu"));
-  channels_.push_back (string ("mumu"));
+  channels_.push_back (string ("ee_ss"));
+  channels_.push_back (string ("emu_ss"));
+  channels_.push_back (string ("mumu_ss"));
+  channels_.push_back (string ("ee_os"));
+  channels_.push_back (string ("emu_os"));
+  channels_.push_back (string ("mumu_os"));
 }
 
 
@@ -74,8 +77,11 @@ bool SSDiLeptonSelection::GetLeptonPair (const std::vector < IPHCTree::NTMuon >&
                                          const std::vector < IPHCTree::NTElectron >& elec_in, 
                                          std::vector < NTMuon > &muon_out,
                                          std::vector < NTElectron > &elec_out,
-                                         std::string & CandPairType)
+                                         std::string & CandPairType, 
+					 bool isForMM, float iso1_in, float iso2_in)
 {
+  // isForMM -> apply different isolation criteria on both lepton
+
   //important: reset the out collections
   muon_out.clear ();
   elec_out.clear ();
@@ -93,6 +99,9 @@ bool SSDiLeptonSelection::GetLeptonPair (const std::vector < IPHCTree::NTMuon >&
       {
         if (pass_elec) continue;
         if ((elec_in[i].charge == elec_in[j].charge))
+	if( !isForMM || (isForMM && 
+	 ((elec_in[i].RelIso03PF()<iso1_in && elec_in[j].RelIso03PF()<iso2_in) ||
+	 (elec_in[i].RelIso03PF()<iso2_in && elec_in[j].RelIso03PF()<iso1_in))))
         {
           pass_elec = true;
           sum_pT_ee = elec_in[i].p4.Pt () + elec_in[j].p4.Pt ();
@@ -100,6 +109,15 @@ bool SSDiLeptonSelection::GetLeptonPair (const std::vector < IPHCTree::NTMuon >&
           ie2 = j;
         }
       }
+    }
+    if(!pass_elec) // No SS pair found
+    if( !isForMM || (isForMM && 
+     ((elec_in[0].RelIso03PF()<iso1_in && elec_in[1].RelIso03PF()<iso2_in) ||
+     (elec_in[0].RelIso03PF()<iso2_in && elec_in[1].RelIso03PF()<iso1_in))))
+    { 
+      sum_pT_ee = elec_in[0].p4.Pt () + elec_in[1].p4.Pt ();
+      ie1=0;
+      ie2=1;
     }
   }
 
@@ -116,6 +134,9 @@ bool SSDiLeptonSelection::GetLeptonPair (const std::vector < IPHCTree::NTMuon >&
       {
         if (pass_muon)  continue;
         if ((muon_in[i].charge == muon_in[j].charge))
+	if( !isForMM || (isForMM && 
+	((muon_in[i].RelIso03PF()<iso1_in && muon_in[j].RelIso03PF()<iso2_in) ||
+	(muon_in[i].RelIso03PF()<iso2_in && muon_in[j].RelIso03PF()<iso1_in))))
         {
           pass_muon = true;
           sum_pT_mumu = muon_in[i].p4.Pt () + muon_in[j].p4.Pt ();
@@ -124,19 +145,32 @@ bool SSDiLeptonSelection::GetLeptonPair (const std::vector < IPHCTree::NTMuon >&
         }
       }
     }
+    if(!pass_muon) // No SS pair found
+    if( !isForMM || (isForMM && 
+    ((muon_in[0].RelIso03PF()<iso1_in && muon_in[1].RelIso03PF()<iso2_in) ||
+    (muon_in[0].RelIso03PF()<iso2_in && muon_in[1].RelIso03PF()<iso1_in))))
+    { 
+      sum_pT_mumu = muon_in[0].p4.Pt () + muon_in[1].p4.Pt ();
+      imu1=0;
+      imu2=1;
+    }
   }
 
 
   // ElecMu combination
   float sum_pT_emu_start = 0.;
   float sum_pT_emu = 0.;
+  bool pass_emu = false;
   int je1 = -1;
   int jmu2 = -1;
   if (muon_in.size () >= 1 && elec_in.size () >= 1) {
     for (unsigned int i = 0; i < muon_in.size (); i++) {
       for (unsigned int j = 0; j < elec_in.size (); j++) {
         if ((muon_in[i].charge == elec_in[j].charge))
+	if( !isForMM || (isForMM && 
+	( (muon_in[i].RelIso03PF()<iso1_in && elec_in[j].RelIso03PF()<iso2_in))))
         {
+	  pass_emu = true;
           sum_pT_emu = muon_in[i].p4.Pt () + elec_in[j].p4.Pt ();
           if (sum_pT_emu > sum_pT_emu_start) {
             sum_pT_emu_start = sum_pT_emu;
@@ -146,43 +180,88 @@ bool SSDiLeptonSelection::GetLeptonPair (const std::vector < IPHCTree::NTMuon >&
         }
       }
     }
+    if(!pass_emu) // No SS pair found
+    if( !isForMM || (isForMM && 
+    ( (muon_in[0].RelIso03PF()<iso1_in && elec_in[0].RelIso03PF()<iso2_in))))
+    {
+      sum_pT_emu = muon_in[0].p4.Pt () + elec_in[0].p4.Pt ();
+      je1=0;
+      jmu2=0;
+    }
   }
 
-
-  float sum[3] = { sum_pT_ee, sum_pT_mumu, sum_pT_emu };
-  int sortedIndices[3];
-  TMath::Sort (3, sum, sortedIndices);
-  if (sortedIndices[0] == 0 && sum_pT_ee != 0.) {
+  if(pass_elec && !pass_muon) 
+  { 
     elec_out.push_back (elec_in[ie1]);
     elec_out.push_back (elec_in[ie2]);
   }
-  else if (sortedIndices[0] == 1 && sum_pT_mumu != 0.) {
+  if(!pass_elec && pass_muon) 
+  { 
     muon_out.push_back (muon_in[imu1]);
     muon_out.push_back (muon_in[imu2]);
   }
-  else if (sortedIndices[0] == 2 && sum_pT_emu != 0.) {
+  if(pass_elec && pass_muon)
+  {
+    float sum[2] = { sum_pT_ee, sum_pT_mumu};
+    int sortedIndices[2];
+    TMath::Sort (2, sum, sortedIndices);
+    if (sortedIndices[0] == 0 && sum_pT_ee != 0.) {
+      elec_out.push_back (elec_in[ie1]);
+      elec_out.push_back (elec_in[ie2]);
+    }
+    else if (sortedIndices[0] == 1 && sum_pT_mumu != 0.) {
+      muon_out.push_back (muon_in[imu1]);
+      muon_out.push_back (muon_in[imu2]);
+    }    
+  }
+  if(!pass_elec && !pass_muon && pass_emu)
+  {
     elec_out.push_back (elec_in[je1]);
     muon_out.push_back (muon_in[jmu2]);
+    
   }
-
-
+  
+  // No SS pair
+  if(!pass_elec && !pass_muon && !pass_emu)
+  {
+    float sum[3] = { sum_pT_ee, sum_pT_mumu, sum_pT_emu };
+    int sortedIndices[3];
+    TMath::Sort (3, sum, sortedIndices);
+    if (sortedIndices[0] == 0 && sum_pT_ee != 0.) {
+      elec_out.push_back (elec_in[ie1]);
+      elec_out.push_back (elec_in[ie2]);
+    }
+    else if (sortedIndices[0] == 1 && sum_pT_mumu != 0.) {
+      muon_out.push_back (muon_in[imu1]);
+      muon_out.push_back (muon_in[imu2]);
+    }
+    else if (sortedIndices[0] == 2 && sum_pT_emu != 0.) {
+      elec_out.push_back (elec_in[je1]);
+      muon_out.push_back (muon_in[jmu2]);
+    }
+  }
 
 
 
   if (elec_out.size () + muon_out.size () == 2) {
     if (muon_out.size () == 2) {
-      CandPairType = "mumu";
+      if(pass_muon) CandPairType = "mumu_ss";
+      else CandPairType = "mumu_os";
     }
     if (elec_out.size () == 2) {
-      CandPairType = "ee";
+      if(pass_elec) CandPairType = "ee_ss";
+      else CandPairType = "ee_os";
     }
     if (muon_out.size () == 1 && elec_out.size () == 1) {
-      CandPairType = "emu";
+      if(pass_emu) CandPairType = "emu_ss";
+      else CandPairType = "emu_os";
     }
   }
   else CandPairType="false";
 
-  if (CandPairType == "ee" || CandPairType == "emu" || CandPairType == "mumu")
+
+  if (CandPairType == "ee_ss" || CandPairType == "emu_ss" || CandPairType == "mumu_ss"
+       || CandPairType == "ee_os" || CandPairType == "emu_os" || CandPairType == "mumu_os")
     return true;
   else
     return false;
@@ -193,7 +272,12 @@ bool SSDiLeptonSelection::GetLeptonPair (const std::vector < IPHCTree::NTMuon >&
 
 bool SSDiLeptonSelection::GetLeptonPair (std::vector < NTMuon > &muon_out, std::vector < NTElectron > &elec_out, string & CandPairType)
 {
-  return GetLeptonPair (GetSelectedMuons (), GetSelectedElectrons (), muon_out, elec_out, CandPairType);
+  return GetLeptonPair (GetSelectedMuons (), GetSelectedElectrons (), muon_out, elec_out, CandPairType, false);
+}
+
+bool SSDiLeptonSelection::GetLeptonPairForMM (std::vector < NTMuon > &muon_out, std::vector < NTElectron > &elec_out, string & CandPairType, float iso1_in, float iso2_in)
+{
+  return GetLeptonPair (GetSelectedMuonsNoIso (), GetSelectedElectronsNoIso (), muon_out, elec_out, CandPairType, true, iso1_in, iso2_in);
 }
 
 
@@ -310,7 +394,9 @@ bool SSDiLeptonSelection::DiLeptonMassCut (const std::vector < NTMuon > &muons_c
 }
 
 
-int SSDiLeptonSelection::doFullSelection (Dataset * dataset, string channelName, bool print, bool applyJES, float JESParam, bool applyEES, float EESParam, bool applyMES, float MESParam, bool applyJER, float JERFactor, bool applyMETS, float METScale)
+int SSDiLeptonSelection::doFullSelection (Dataset * dataset, string channelName, bool print, 
+          bool isForMM, float iso1_in, float iso2_in, 
+	  bool applyJES, float JESParam, bool applyEES, float EESParam, bool applyMES, float MESParam, bool applyJER, float JERFactor, bool applyMETS, float METScale)
 {
  
   //clear object collections
@@ -352,8 +438,12 @@ int SSDiLeptonSelection::doFullSelection (Dataset * dataset, string channelName,
     if (passTriggerSelection (dataset, channelName)) {
       step_trigger = true;
     //Step 3        Dilepton pair choice
-    if ((GetLeptonPair (GetSelectedMuons(applyMES, MESParam), GetSelectedElectrons(applyEES, EESParam), muon_cand, elec_cand, pairType_) == true) 
-	&& (!applyChannel || (applyChannel && pairType_ == channelName))) {
+    // Rajouter selections avec iso
+    if ((!isForMM && (GetLeptonPair (GetSelectedMuons(applyMES, MESParam), GetSelectedElectrons(applyEES, EESParam), muon_cand, elec_cand, pairType_) == true) 
+	&& (!applyChannel || (applyChannel && pairType_ == channelName))) ||
+	(isForMM && (GetLeptonPair(GetSelectedMuonsNoIso(), GetSelectedElectronsNoIso(), muon_cand, elec_cand, pairType_, true, 10000, 10000)) == true 
+	&& (!applyChannel || (applyChannel && pairType_ == channelName)) && TestIsolationOfPair(iso1_in, iso2_in, muon_cand, elec_cand))
+	) {
       step_pair = true;
       muonsAna = muon_cand;
       electronsAna = elec_cand;
@@ -366,19 +456,22 @@ int SSDiLeptonSelection::doFullSelection (Dataset * dataset, string channelName,
       ostringstream lep2PtxCharge_oss;
       ostringstream lep1RelIso_oss;
       ostringstream lep2RelIso_oss;
-      if (pairType_ == "mumu") {
+      //if (pairType_ == "mumu") {
+      if (pairType_.find("mumu")!=string::npos) {
 	lep1PtxCharge = muon_cand[0].p4.Pt () * muon_cand[0].charge;
 	lep2PtxCharge = muon_cand[1].p4.Pt () * muon_cand[1].charge;
 	lep1RelIso = muon_cand[0].RelIso03PF ();
 	lep2RelIso = muon_cand[1].RelIso03PF ();
       }
-      if (pairType_ == "ee") {
+      //if (pairType_ == "ee") {
+      if (pairType_.find("ee")!=string::npos) {
 	lep1PtxCharge = elec_cand[0].p4.Pt () * elec_cand[0].charge;
 	lep2PtxCharge = elec_cand[1].p4.Pt () * elec_cand[1].charge;
 	lep1RelIso = elec_cand[0].RelIso03PF ();
 	lep2RelIso = elec_cand[1].RelIso03PF ();
       }
-      if (pairType_ == "emu") {
+      //if (pairType_ == "emu") {
+      if (pairType_.find("emu")!=string::npos) {
 	if (elec_cand[0].p4.Pt () > muon_cand[0].p4.Pt ()) {
 
 	  lep1PtxCharge = elec_cand[0].p4.Pt () * elec_cand[0].charge;
@@ -402,7 +495,7 @@ int SSDiLeptonSelection::doFullSelection (Dataset * dataset, string channelName,
       lep2RelIso_oss << lep2RelIso;
       dump += lep1PtxCharge_oss.str () + "," + lep2PtxCharge_oss.str () + " | " + lep1RelIso_oss.str () + "," + lep2RelIso_oss.str () + " | " + dimass_oss.str () + " | ";
       //Step 4     Z mass veto 
-      if (DiLeptonMassCut (muon_cand, elec_cand, channelName)) {
+      if (DiLeptonMassCut (muon_cand, elec_cand, "")) {
 	step_Zveto = true;
       }
       //Step 5    Minimal jet multiplicity 
@@ -609,21 +702,24 @@ bool SSDiLeptonSelection::passTriggerSelection (Dataset * dataset, string channe
 	
   }
 
-  if (channelName == string ("ee")) 
+  //if (channelName == string ("ee")) 
+  if (channelName.find("ee")!=string::npos) 
   {
     if (passEl)
       return true;
     else
       return false;
   }
-  if (channelName == string ("mumu")) 
+//  if (channelName == string ("mumu")) 
+  if (channelName.find("mumu")!=string::npos) 
   {
     if (passMu)
       return true;
     else
       return false;
   }
-  if (channelName == string ("emu")) 
+//  if (channelName == string ("emu")) 
+  if (channelName.find("emu")!=string::npos) 
   {
     bool thereturn = false;
     //     if (  (passEl && skim==1 ) || ( passMu && skim==0 && !passEl ) ) thereturn = true;
@@ -710,7 +806,8 @@ double SSDiLeptonSelection::getLeptonScaleFactor(double pt1, double eta1, double
   
   if(pt2 > 100) pt2 = 99;
   if(fabs(eta2) > 2.5) eta2 = 2.4;
-  if(channel == "ee"){
+  //if(channel == "ee"){
+  if(channel.find("ee")!=string::npos){
      int binx1 = getScaleFactEl()->GetXaxis()->FindBin( pt1 );
      int biny1 = getScaleFactEl()->GetYaxis()->FindBin( fabs(eta1) );
      
@@ -721,7 +818,8 @@ double SSDiLeptonSelection::getLeptonScaleFactor(double pt1, double eta1, double
 
   }
   
-  if(channel == "mumu"){
+  //if(channel == "mumu"){
+  if(channel.find("mumu")!=string::npos){
      int binx1 = getScaleFactMu()->GetXaxis()->FindBin( pt1 );
      int biny1 = getScaleFactMu()->GetYaxis()->FindBin( fabs(eta1) );
      int binx2 = getScaleFactMu()->GetXaxis()->FindBin( pt2 );
@@ -730,7 +828,8 @@ double SSDiLeptonSelection::getLeptonScaleFactor(double pt1, double eta1, double
      the_getScaleFactor = getScaleFactMu()->GetBinContent( binx1, biny1 )*getScaleFactMu()->GetBinContent( binx2, biny2 );
   }
 
-  if(channel == "emu"){
+  //if(channel == "emu"){
+  if(channel.find("emu")!=string::npos){
   
      int binx1 = getScaleFactEl()->GetXaxis()->FindBin( pt1 );
      int biny1 = getScaleFactEl()->GetYaxis()->FindBin( fabs(eta1) );
@@ -758,7 +857,8 @@ double SSDiLeptonSelection::getLeptonScaleFactorError(double pt1, double eta1, d
   if(pt2 > 100) pt2 = 99;
   if(fabs(eta2) > 2.5) eta2 = 2.4;
   
-  if(channel == "ee"){
+  //if(channel == "ee"){
+  if(channel.find("ee")!=string::npos){
      int binx1 = getScaleFactEl()->GetXaxis()->FindBin( pt1 );
      int biny1 = getScaleFactEl()->GetYaxis()->FindBin( fabs(eta1) );
      
@@ -769,7 +869,8 @@ double SSDiLeptonSelection::getLeptonScaleFactorError(double pt1, double eta1, d
 
   }
   
-  if(channel == "mumu"){
+//  if(channel == "mumu"){
+  if(channel.find("mumu")!=string::npos){
   
      int binx1 = getScaleFactMu()->GetXaxis()->FindBin( pt1 );
      int biny1 = getScaleFactMu()->GetYaxis()->FindBin( fabs(eta1) );
@@ -780,7 +881,8 @@ double SSDiLeptonSelection::getLeptonScaleFactorError(double pt1, double eta1, d
      the_getScaleFactor = getScaleFactMu()->GetBinError( binx1, biny1 )*getScaleFactMu()->GetBinContent( binx2, biny2 );
   }
 
-  if(channel == "emu"){
+  //if(channel == "emu"){
+  if(channel.find("emu")!=string::npos){
   
      int binx1 = getScaleFactEl()->GetXaxis()->FindBin( pt1 );
      int biny1 = getScaleFactEl()->GetYaxis()->FindBin( fabs(eta1) );
