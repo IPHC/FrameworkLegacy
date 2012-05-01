@@ -85,11 +85,12 @@ class SSDiLeptonSelection: public Selection
   const std::vector<IPHCTree::NTMuon>& GetMuonsForAna() const
   { return muonsAna; }
 
-  bool GetLeptonPair(const std::vector<IPHCTree::NTMuon>& muon_in,const std::vector<IPHCTree::NTElectron>& elec_in, std::vector<IPHCTree::NTMuon>& muon_out,std::vector<IPHCTree::NTElectron>& elec_out,  string& CandPairType);
+  bool GetLeptonPair(const std::vector<IPHCTree::NTMuon>& muon_in,const std::vector<IPHCTree::NTElectron>& elec_in, std::vector<IPHCTree::NTMuon>& muon_out,std::vector<IPHCTree::NTElectron>& elec_out,  string& CandPairType, bool isForMM = false, float iso1_in = -1., float iso2_in = -1.);
   /** muon_out & elec_out will be filled with the 2 di-leptons candidates \n Returns true if a lepton pair is found \n
       CandPairType = "ee" or "emu" or "mumu" or "false"
 	*/
   bool GetLeptonPair(std::vector<IPHCTree::NTMuon>& muon_out,std::vector<IPHCTree::NTElectron>& elec_out,  string& CandPairType); /** Idem with default GetSelected Electrons & Muons as input*/
+  bool GetLeptonPairForMM(std::vector<IPHCTree::NTMuon>& muon_out,std::vector<IPHCTree::NTElectron>& elec_out,  string& CandPairType, float iso1_in = -1., float iso2_in = -1.); /** Idem with default GetSelectedNoIso Electrons & Muons as input*/
 
 
   int FillTable(SelectionTable& selTable, Dataset* dataset, int idataset, float weight); /** Fill the selectionTable according to the result of doFullSelection  for an 
@@ -112,7 +113,9 @@ class SSDiLeptonSelection: public Selection
    * -  compute also the weight associated to btag
    */
 
-  int doFullSelection(Dataset* dataset, string channelName=string(""), bool print = false, bool applyJES = false, float JESParam = 1., bool applyEES = false, float EESParam = 1., bool applyMES = false, float MESParam = 1., bool applyJER = false, float JERFactor = 0., bool applyMETS = false, float METScale = 1.);
+  int doFullSelection(Dataset* dataset, string channelName=string(""), bool print = false, 
+          bool isForMM = false , float iso1_in = -1., float iso2_in = -1., 
+	  bool applyJES = false, float JESParam = 1., bool applyEES = false, float EESParam = 1., bool applyMES = false, float MESParam = 1., bool applyJER = false, float JERFactor = 0., bool applyMETS = false, float METScale = 1.);
 
 
   bool passTriggerSelection(Dataset* dataset, string channelName = string(""));
