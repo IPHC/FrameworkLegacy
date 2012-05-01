@@ -41,6 +41,28 @@ void ComputeEfficiencyForMC(TH1F* isotight, TH1F* isoloose, TH1F* unweighted_iso
 
 }
 
+void ComputeEfficiencyForMC2D(TH2F* isotight, TH2F* isoloose, TH2F* unweighted_isotight, TH2F* unweighted_isoloose, 
+ int N_binsX, int N_binsY, TH2F* &signaleff){
+
+  for(unsigned int i=0; i<N_binsX; i++){
+    for(unsigned int j=0; j<N_binsY; j++){
+       float num_s_w = (float)isotight->GetBinContent(i+1, j+1);
+       float den_s_w = (float)isoloose->GetBinContent(i+1, j+1);
+       float num_s = (float)unweighted_isotight->GetBinContent(i+1, j+1);
+       float den_s = (float)unweighted_isoloose->GetBinContent(i+1, j+1);
+       float eff_s = 0.;
+       float err_s = 0.;
+       if(den_s != 0. && den_s_w !=0.) {
+	eff_s = sqrt(num_s_w/den_s_w);
+	err_s = (0.5)*sqrt((1-(num_s/den_s))/den_s);
+       }
+       signaleff->SetBinContent(i+1, j+1, eff_s);
+       signaleff->SetBinError(i+1, j+1, err_s);
+    }
+  }
+
+}
+
 void ComputeEfficiencyForData(TH1F* isotight, TH1F* isoloose, int N_bins, TH1F* &signaleff){
 
   for(unsigned int i=0; i<N_bins; i++){
@@ -62,27 +84,6 @@ void ComputeEfficiencyForData(TH1F* isotight, TH1F* isoloose, int N_bins, TH1F* 
 
 }
 
-void ComputeEfficiencyForMC(TH2F* isotight, TH2F* isoloose, TH2F* unweighted_isotight, TH2F* unweighted_isoloose, 
-  int N_bins_X, int N_bins_Y, TH2F* &signaleff){
-
-  for(unsigned int i=0; i<N_bins_X; i++){
-  for(unsigned int j=0; j<N_bins_Y; j++){
-     float num_s_w = (float)isotight->GetBinContent(i+1, j+1);
-     float den_s_w = (float)isoloose->GetBinContent(i+1, j+1);
-     float num_s = (float)unweighted_isotight->GetBinContent(i+1, j+1);
-     float den_s = (float)unweighted_isoloose->GetBinContent(i+1, j+1);
-     float eff_s = 0.;
-     float err_s = 0.;
-     if(den_s != 0. && den_s_w !=0.) {
-      eff_s = sqrt(num_s_w/den_s_w);
-      err_s = (0.5)*sqrt((1-(num_s/den_s))/den_s);
-     }
-     signaleff->SetBinContent(i+1, j+1, eff_s);
-     signaleff->SetBinError(i+1, j+1, err_s);
-  }
-  }
-
-}
 
 
 void ComputeFakeRateForMC(TH1F* isotighteff, TH1F* isolooseeff, TH1F* isotightfake, TH1F* isoloosefake, 
@@ -110,6 +111,32 @@ void ComputeFakeRateForMC(TH1F* isotighteff, TH1F* isolooseeff, TH1F* isotightfa
 
 }
 
+void ComputeFakeRateForMC2D(TH2F* isotighteff, TH2F* isolooseeff, TH2F* isotightfake, TH2F* isoloosefake, 
+ TH2F* unweighted_isotighteff, TH2F* unweighted_isolooseeff, TH2F* unweighted_isotightfake, TH2F* unweighted_isoloosefake, 
+ int N_binsX, int N_binsY, TH2F* &fakerate){
+
+  for(unsigned int i=0; i<N_binsX; i++){
+    for(unsigned int j=0; j<N_binsY; j++){
+       float num_s_w = (float)isotighteff->GetBinContent(i+1, j+1);
+       float den_s_w = (float)isolooseeff->GetBinContent(i+1, j+1);
+       float num_f_w = (float)isotightfake->GetBinContent(i+1, j+1);
+       float den_f_w = (float)isoloosefake->GetBinContent(i+1, j+1);
+       float num_s = (float)unweighted_isotighteff->GetBinContent(i+1, j+1);
+       float den_s = (float)unweighted_isolooseeff->GetBinContent(i+1, j+1);
+       float num_f = (float)unweighted_isotightfake->GetBinContent(i+1, j+1);
+       float den_f = (float)unweighted_isoloosefake->GetBinContent(i+1, j+1);
+       float eff_f = 0.;
+       float err_f = 0.;
+       if(num_s != 0. && den_f != 0. && den_s !=0. && den_s_w != 0. && den_f_w != 0.) {
+	eff_f = (num_f_w/den_f_w)/sqrt(num_s_w/den_s_w);
+	err_f = (sqrt(den_s/num_s)*sqrt(num_f*(1-(num_f/den_f)))/den_f) + (((num_f*den_s)/(den_f*num_s))*0.5*sqrt((1-(num_s/den_s))/den_s));
+       }
+       fakerate->SetBinContent(i+1, j+1, eff_f);
+       fakerate->SetBinError(i+1, j+1, err_f);
+    }
+  }
+
+}
 
 void ComputeFakeRateForData(TH1F* isotight, TH1F* isoloose, int N_bins, TH1F* &fakerate){
 
@@ -199,7 +226,9 @@ void Efficiency_MC_Estimation ( string xmlFileName, bool mc=true, string lepton=
 
   float PT_Min = 0;
   float PT_Max = 300;
-  int PT_N_bins = 60;
+  int PT_N_bins = 11;//60
+  double PT_bins[] = { 10., 15., 20., 25., 30., 40., 50., 60., 80., 100., 150., 300. }; 
+  
 
   float NVTX_Min = -0.5;
   float NVTX_Max = 30.5;
@@ -212,16 +241,29 @@ void Efficiency_MC_Estimation ( string xmlFileName, bool mc=true, string lepton=
   TH1F * IsoTightForEfficiencyEta = new TH1F ("IsoTightForEfficiencyEta","IsoTightForEfficiencyEta", Eta_N_bins, Eta_Min, Eta_Max);
   TH1F * IsoLooseForEfficiencyEta = new TH1F ("IsoLooseForEfficiencyEta","IsoLooseForEfficiencyEta", Eta_N_bins, Eta_Min, Eta_Max);
 
-  TH1F * IsoTightForEfficiencyPT = new TH1F ("IsoTightForEfficiencyPT","IsoTightForEfficiencyPT", PT_N_bins, PT_Min, PT_Max);
-  TH1F * IsoLooseForEfficiencyPT = new TH1F ("IsoLooseForEfficiencyPT","IsoLooseForEfficiencyPT", PT_N_bins, PT_Min, PT_Max);
+  //TH1F * IsoTightForEfficiencyPT = new TH1F ("IsoTightForEfficiencyPT","IsoTightForEfficiencyPT", PT_N_bins, PT_Min, PT_Max);
+  //TH1F * IsoLooseForEfficiencyPT = new TH1F ("IsoLooseForEfficiencyPT","IsoLooseForEfficiencyPT", PT_N_bins, PT_Min, PT_Max);
+  TH1F * IsoTightForEfficiencyPT1 = new TH1F ("IsoTightForEfficiencyPT1","IsoTightForEfficiencyPT1", PT_N_bins, PT_bins);
+  TH1F * IsoLooseForEfficiencyPT1 = new TH1F ("IsoLooseForEfficiencyPT1","IsoLooseForEfficiencyPT1", PT_N_bins, PT_bins);
+  TH1F * IsoTightForEfficiencyPT2 = new TH1F ("IsoTightForEfficiencyPT2","IsoTightForEfficiencyPT2", PT_N_bins, PT_bins);
+  TH1F * IsoLooseForEfficiencyPT2 = new TH1F ("IsoLooseForEfficiencyPT2","IsoLooseForEfficiencyPT2", PT_N_bins, PT_bins); 
 
   TH1F * IsoTightForEfficiencyNVTX = new TH1F ("IsoTightForEfficiencyNVTX","IsoTightForEfficiencyNVTX", NVTX_N_bins, NVTX_Min, NVTX_Max);
   TH1F * IsoLooseForEfficiencyNVTX = new TH1F ("IsoLooseForEfficiencyNVTX","IsoLooseForEfficiencyNVTX", NVTX_N_bins, NVTX_Min, NVTX_Max);
 
-  TH2F * IsoTightForEfficiencyNJetsvsPT = new TH2F ("IsoTightForEfficiencyNJetsvsPT","IsoTightForEfficiencyNJetsvsPT",
-   PT_N_bins, PT_Min, PT_Max, NJets_N_bins, NJets_Min, NJets_Max);
-  TH2F * IsoLooseForEfficiencyNJetsvsPT = new TH2F ("IsoLooseForEfficiencyNJetsvsPT","IsoLooseForEfficiencyNJetsvsPT",
-   PT_N_bins, PT_Min, PT_Max, NJets_N_bins, NJets_Min, NJets_Max);
+  TH2F * IsoTightForEfficiencyNJetsvsPT1 = new TH2F ("IsoTightForEfficiencyNJetsvsPT1","IsoTightForEfficiencyNJetsvsPT1",
+   PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+  TH2F * IsoLooseForEfficiencyNJetsvsPT1 = new TH2F ("IsoLooseForEfficiencyNJetsvsPT1","IsoLooseForEfficiencyNJetsvsPT1",
+   PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+  TH2F * IsoTightForEfficiencyNJetsvsPT2 = new TH2F ("IsoTightForEfficiencyNJetsvsPT2","IsoTightForEfficiencyNJetsvsPT2",
+   PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+  TH2F * IsoLooseForEfficiencyNJetsvsPT2 = new TH2F ("IsoLooseForEfficiencyNJetsvsPT2","IsoLooseForEfficiencyNJetsvsPT2",
+   PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+
+  TH2F * IsoTightForEfficiencyPT1vsPT2 = new TH2F ("IsoTightForEfficiencyPT1vsPT2","IsoTightForEfficiencyPT1vsPT2",
+   PT_N_bins, PT_bins, PT_N_bins, PT_bins);
+  TH2F * IsoLooseForEfficiencyPT1vsPT2 = new TH2F ("IsoLooseForEfficiencyPT1vsPT2","IsoLooseForEfficiencyPT1vsPT2",
+   PT_N_bins, PT_bins, PT_N_bins, PT_bins);
 
 
   TH1F * IsoTightForFakeRateNJets = new TH1F ("IsoTightForFakeRateNJets","IsoTightForFakeRateNJets", NJets_N_bins, NJets_Min, NJets_Max);
@@ -230,11 +272,29 @@ void Efficiency_MC_Estimation ( string xmlFileName, bool mc=true, string lepton=
   TH1F * IsoTightForFakeRateEta = new TH1F ("IsoTightForFakeRateEta","IsoTightForFakeRateEta", Eta_N_bins, Eta_Min, Eta_Max);
   TH1F * IsoLooseForFakeRateEta = new TH1F ("IsoLooseForFakeRateEta","IsoLooseForFakeRateEta", Eta_N_bins, Eta_Min, Eta_Max);
 
-  TH1F * IsoTightForFakeRatePT = new TH1F ("IsoTightForFakeRatePT","IsoTightForFakeRatePT", PT_N_bins, PT_Min, PT_Max);
-  TH1F * IsoLooseForFakeRatePT = new TH1F ("IsoLooseForFakeRatePT","IsoLooseForFakeRatePT", PT_N_bins, PT_Min, PT_Max);
+  //TH1F * IsoTightForFakeRatePT = new TH1F ("IsoTightForFakeRatePT","IsoTightForFakeRatePT", PT_N_bins, PT_Min, PT_Max);
+  //TH1F * IsoLooseForFakeRatePT = new TH1F ("IsoLooseForFakeRatePT","IsoLooseForFakeRatePT", PT_N_bins, PT_Min, PT_Max);
+  TH1F * IsoTightForFakeRatePT1 = new TH1F ("IsoTightForFakeRatePT1","IsoTightForFakeRatePT1", PT_N_bins, PT_bins);
+  TH1F * IsoLooseForFakeRatePT1 = new TH1F ("IsoLooseForFakeRatePT1","IsoLooseForFakeRatePT1", PT_N_bins, PT_bins);
+  TH1F * IsoTightForFakeRatePT2 = new TH1F ("IsoTightForFakeRatePT2","IsoTightForFakeRatePT2", PT_N_bins, PT_bins);
+  TH1F * IsoLooseForFakeRatePT2 = new TH1F ("IsoLooseForFakeRatePT2","IsoLooseForFakeRatePT2", PT_N_bins, PT_bins);
 
   TH1F * IsoTightForFakeRateNVTX = new TH1F ("IsoTightForFakeRateNVTX","IsoTightForFakeRateNVTX", NVTX_N_bins, NVTX_Min, NVTX_Max);
   TH1F * IsoLooseForFakeRateNVTX = new TH1F ("IsoLooseForFakeRateNVTX","IsoLooseForFakeRateNVTX", NVTX_N_bins, NVTX_Min,  NVTX_Max);
+
+  TH2F * IsoTightForFakeRateNJetsvsPT1 = new TH2F ("IsoTightForFakeRateNJetsvsPT1","IsoTightForFakeRateNJetsvsPT1",
+   PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+  TH2F * IsoLooseForFakeRateNJetsvsPT1 = new TH2F ("IsoLooseForFakeRateNJetsvsPT1","IsoLooseForFakeRateNJetsvsPT1",
+   PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+  TH2F * IsoTightForFakeRateNJetsvsPT2 = new TH2F ("IsoTightForFakeRateNJetsvsPT2","IsoTightForFakeRateNJetsvsPT2",
+   PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+  TH2F * IsoLooseForFakeRateNJetsvsPT2 = new TH2F ("IsoLooseForFakeRateNJetsvsPT2","IsoLooseForFakeRateNJetsvsPT2",
+   PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+
+  TH2F * IsoTightForFakeRatePT1vsPT2 = new TH2F ("IsoTightForFakeRatePT1vsPT2","IsoTightForFakeRatePT1vsPT2",
+   PT_N_bins, PT_bins, PT_N_bins, PT_bins);
+  TH2F * IsoLooseForFakeRatePT1vsPT2 = new TH2F ("IsoLooseForFakeRatePT1vsPT2","IsoLooseForFakeRatePT1vsPT2",
+   PT_N_bins, PT_bins, PT_N_bins, PT_bins);
 
 
   TH1F * Unweighted_IsoTightForEfficiencyNJets = new TH1F ("Unweighted_IsoTightForEfficiencyNJets","Unweighted_IsoTightForEfficiencyNJets", NJets_N_bins, NJets_Min, NJets_Max);
@@ -243,16 +303,33 @@ void Efficiency_MC_Estimation ( string xmlFileName, bool mc=true, string lepton=
   TH1F * Unweighted_IsoTightForEfficiencyEta = new TH1F ("Unweighted_IsoTightForEfficiencyEta","Unweighted_IsoTightForEfficiencyEta", Eta_N_bins, Eta_Min, Eta_Max);
   TH1F * Unweighted_IsoLooseForEfficiencyEta = new TH1F ("Unweighted_IsoLooseForEfficiencyEta","Unweighted_IsoLooseForEfficiencyEta", Eta_N_bins, Eta_Min, Eta_Max);
 
-  TH1F * Unweighted_IsoTightForEfficiencyPT = new TH1F ("Unweighted_IsoTightForEfficiencyPT","Unweighted_IsoTightForEfficiencyPT", PT_N_bins, PT_Min, PT_Max);
-  TH1F * Unweighted_IsoLooseForEfficiencyPT = new TH1F ("Unweighted_IsoLooseForEfficiencyPT","Unweighted_IsoLooseForEfficiencyPT", PT_N_bins, PT_Min, PT_Max);
+  //TH1F * Unweighted_IsoTightForEfficiencyPT = new TH1F ("Unweighted_IsoTightForEfficiencyPT","Unweighted_IsoTightForEfficiencyPT", PT_N_bins, PT_Min, PT_Max);
+  //TH1F * Unweighted_IsoLooseForEfficiencyPT = new TH1F ("Unweighted_IsoLooseForEfficiencyPT","Unweighted_IsoLooseForEfficiencyPT", PT_N_bins, PT_Min, PT_Max);
+  TH1F * Unweighted_IsoTightForEfficiencyPT1 = new TH1F ("Unweighted_IsoTightForEfficiencyPT1","Unweighted_IsoTightForEfficiencyPT1", PT_N_bins, PT_bins);
+  TH1F * Unweighted_IsoLooseForEfficiencyPT1 = new TH1F ("Unweighted_IsoLooseForEfficiencyPT1","Unweighted_IsoLooseForEfficiencyPT1", PT_N_bins, PT_bins);
+  TH1F * Unweighted_IsoTightForEfficiencyPT2 = new TH1F ("Unweighted_IsoTightForEfficiencyPT2","Unweighted_IsoTightForEfficiencyPT2", PT_N_bins, PT_bins);
+  TH1F * Unweighted_IsoLooseForEfficiencyPT2 = new TH1F ("Unweighted_IsoLooseForEfficiencyPT2","Unweighted_IsoLooseForEfficiencyPT2", PT_N_bins, PT_bins);
 
   TH1F * Unweighted_IsoTightForEfficiencyNVTX = new TH1F ("Unweighted_IsoTightForEfficiencyNVTX","Unweighted_IsoTightForEfficiencyNVTX", NVTX_N_bins, NVTX_Min, NVTX_Max);
   TH1F * Unweighted_IsoLooseForEfficiencyNVTX = new TH1F ("Unweighted_IsoLooseForEfficiencyNVTX","Unweighted_IsoLooseForEfficiencyNVTX", NVTX_N_bins, NVTX_Min, NVTX_Max);
 
-  TH2F * Unweighted_IsoTightForEfficiencyNJetsvsPT = new TH2F ("Unweighted_IsoTightForEfficiencyNJetsvsPT","Unweighted_IsoTightForEfficiencyNJetsvsPT",
-   PT_N_bins, PT_Min, PT_Max, NJets_N_bins, NJets_Min, NJets_Max);
-  TH2F * Unweighted_IsoLooseForEfficiencyNJetsvsPT = new TH2F ("Unweighted_IsoLooseForEfficiencyNJetsvsPT","Unweighted_IsoLooseForEfficiencyNJetsvsPT",
-   PT_N_bins, PT_Min, PT_Max, NJets_N_bins, NJets_Min, NJets_Max);
+  TH2F * Unweighted_IsoTightForEfficiencyNJetsvsPT1 = 
+   new TH2F("Unweighted_IsoTightForEfficiencyNJetsvsPT1","Unweighted_IsoTightForEfficiencyNJetsvsPT1",
+   PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+  TH2F * Unweighted_IsoLooseForEfficiencyNJetsvsPT1 = 
+   new TH2F("Unweighted_IsoLooseForEfficiencyNJetsvsPT1","Unweighted_IsoLooseForEfficiencyNJetsvsPT1",
+   PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+  TH2F * Unweighted_IsoTightForEfficiencyNJetsvsPT2 = 
+   new TH2F("Unweighted_IsoTightForEfficiencyNJetsvsPT2","Unweighted_IsoTightForEfficiencyNJetsvsPT2",
+   PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+  TH2F * Unweighted_IsoLooseForEfficiencyNJetsvsPT2 = 
+   new TH2F("Unweighted_IsoLooseForEfficiencyNJetsvsPT2","Unweighted_IsoLooseForEfficiencyNJetsvsPT2",
+   PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+
+  TH2F * Unweighted_IsoTightForEfficiencyPT1vsPT2 = new TH2F ("Unweighted_IsoTightForEfficiencyPT1vsPT2","Unweighted_IsoTightForEfficiencyPT1vsPT2",
+   PT_N_bins, PT_bins, PT_N_bins, PT_bins);
+  TH2F * Unweighted_IsoLooseForEfficiencyPT1vsPT2 = new TH2F ("Unweighted_IsoLooseForEfficiencyPT1vsPT2","Unweighted_IsoLooseForEfficiencyPT1vsPT2",
+   PT_N_bins, PT_bins, PT_N_bins, PT_bins);
 
 
   TH1F * Unweighted_IsoTightForFakeRateNJets = new TH1F ("Unweighted_IsoTightForFakeRateNJets","Unweighted_IsoTightForFakeRateNJets", NJets_N_bins, NJets_Min, NJets_Max);
@@ -261,34 +338,73 @@ void Efficiency_MC_Estimation ( string xmlFileName, bool mc=true, string lepton=
   TH1F * Unweighted_IsoTightForFakeRateEta = new TH1F ("Unweighted_IsoTightForFakeRateEta","Unweighted_IsoTightForFakeRateEta", Eta_N_bins, Eta_Min, Eta_Max);
   TH1F * Unweighted_IsoLooseForFakeRateEta = new TH1F ("Unweighted_IsoLooseForFakeRateEta","Unweighted_IsoLooseForFakeRateEta", Eta_N_bins, Eta_Min, Eta_Max);
 
-  TH1F * Unweighted_IsoTightForFakeRatePT = new TH1F ("Unweighted_IsoTightForFakeRatePT","Unweighted_IsoTightForFakeRatePT", PT_N_bins, PT_Min, PT_Max);
-  TH1F * Unweighted_IsoLooseForFakeRatePT = new TH1F ("Unweighted_IsoLooseForFakeRatePT","Unweighted_IsoLooseForFakeRatePT", PT_N_bins, PT_Min, PT_Max);
+  //TH1F * Unweighted_IsoTightForFakeRatePT = new TH1F ("Unweighted_IsoTightForFakeRatePT","Unweighted_IsoTightForFakeRatePT", PT_N_bins, PT_Min, PT_Max);
+  //TH1F * Unweighted_IsoLooseForFakeRatePT = new TH1F ("Unweighted_IsoLooseForFakeRatePT","Unweighted_IsoLooseForFakeRatePT", PT_N_bins, PT_Min, PT_Max);
+  TH1F * Unweighted_IsoTightForFakeRatePT1 = new TH1F ("Unweighted_IsoTightForFakeRatePT1","Unweighted_IsoTightForFakeRatePT1", PT_N_bins, PT_bins);
+  TH1F * Unweighted_IsoLooseForFakeRatePT1 = new TH1F ("Unweighted_IsoLooseForFakeRatePT1","Unweighted_IsoLooseForFakeRatePT1", PT_N_bins, PT_bins);
+  TH1F * Unweighted_IsoTightForFakeRatePT2 = new TH1F ("Unweighted_IsoTightForFakeRatePT2","Unweighted_IsoTightForFakeRatePT2", PT_N_bins, PT_bins);
+  TH1F * Unweighted_IsoLooseForFakeRatePT2 = new TH1F ("Unweighted_IsoLooseForFakeRatePT2","Unweighted_IsoLooseForFakeRatePT2", PT_N_bins, PT_bins);
 
   TH1F * Unweighted_IsoTightForFakeRateNVTX = new TH1F ("Unweighted_IsoTightForFakeRateNVTX","Unweighted_IsoTightForFakeRateNVTX", NVTX_N_bins, NVTX_Min, NVTX_Max);
   TH1F * Unweighted_IsoLooseForFakeRateNVTX = new TH1F ("Unweighted_IsoLooseForFakeRateNVTX","Unweighted_IsoLooseForFakeRateNVTX", NVTX_N_bins, NVTX_Min, NVTX_Max);
 
+  TH2F * Unweighted_IsoTightForFakeRateNJetsvsPT1 = 
+   new TH2F("Unweighted_IsoTightForFakeRateNJetsvsPT1","Unweighted_IsoTightForFakeRateNJetsvsPT1",
+   PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+  TH2F * Unweighted_IsoLooseForFakeRateNJetsvsPT1 = 
+   new TH2F("Unweighted_IsoLooseForFakeRateNJetsvsPT1","Unweighted_IsoLooseForFakeRateNJetsvsPT1",
+   PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+  TH2F * Unweighted_IsoTightForFakeRateNJetsvsPT2 = 
+   new TH2F("Unweighted_IsoTightForFakeRateNJetsvsPT2","Unweighted_IsoTightForFakeRateNJetsvsPT2",
+   PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+  TH2F * Unweighted_IsoLooseForFakeRateNJetsvsPT2 = 
+   new TH2F("Unweighted_IsoLooseForFakeRateNJetsvsPT2","Unweighted_IsoLooseForFakeRateNJetsvsPT2",
+   PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+
+  TH2F * Unweighted_IsoTightForFakeRatePT1vsPT2 = new TH2F ("Unweighted_IsoTightForFakeRatePT1vsPT2","Unweighted_IsoTightForFakeRatePT1vsPT2",
+   PT_N_bins, PT_bins, PT_N_bins, PT_bins);
+  TH2F * Unweighted_IsoLooseForFakeRatePT1vsPT2 = new TH2F ("Unweighted_IsoLooseForFakeRatePT1vsPT2","Unweighted_IsoLooseForFakeRatePT1vsPT2",
+   PT_N_bins, PT_bins, PT_N_bins, PT_bins);
+
 
   TH1F * SignalEfficiencyNJets = new TH1F("SignalEfficiencyNJets", "SignalEfficiencyNJets", NJets_N_bins, NJets_Min, NJets_Max);
   TH1F * SignalEfficiencyEta = new TH1F("SignalEfficiencyEta", "SignalEfficiencyEta", Eta_N_bins, Eta_Min, Eta_Max);
-  TH1F * SignalEfficiencyPT = new TH1F("SignalEfficiencyPT", "SignalEfficiencyPT", PT_N_bins, PT_Min, PT_Max);
+  TH1F * SignalEfficiencyPT1 = new TH1F("SignalEfficiencyPT1", "SignalEfficiencyPT1", PT_N_bins, PT_bins);
+  TH1F * SignalEfficiencyPT2 = new TH1F("SignalEfficiencyPT2", "SignalEfficiencyPT2", PT_N_bins, PT_bins);
   TH1F * SignalEfficiencyNVTX = new TH1F("SignalEfficiencyNVTX", "SignalEfficiencyNVTX", NVTX_N_bins, NVTX_Min, NVTX_Max);
+  TH1F * SignalEfficiencyPTfromPT1vsPT2 = new TH1F("SignalEfficiencyPTfromPT1vsPT2", "SignalEfficiencyPTfromPT1vsPT2", PT_N_bins, PT_bins);
 
-  TH2F * SignalEfficiencyNJetsvsPT = new TH2F("SignalEfficiencyNJetsvsPT", "SignalEfficiencyNJetsvsPT", 
-    PT_N_bins, PT_Min, PT_Max, NJets_N_bins, NJets_Min, NJets_Max);
+  TH2F * SignalEfficiencyNJetsvsPT1 = new TH2F("SignalEfficiencyNJetsvsPT1", "SignalEfficiencyNJetsvsPT1", 
+    PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+  TH2F * SignalEfficiencyNJetsvsPT2 = new TH2F("SignalEfficiencyNJetsvsPT2", "SignalEfficiencyNJetsvsPT2", 
+    PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+  TH2F * SignalEfficiencyPT1vsPT2 = new TH2F("SignalEfficiencyPT1vsPT2", "SignalEfficiencyPT1vsPT2", 
+    PT_N_bins, PT_bins, PT_N_bins, PT_bins);
 
   TH1F * FakeRateNJets = new TH1F("FakeRateNJets", "FakeRateNJets", NJets_N_bins, NJets_Min, NJets_Max);
   TH1F * FakeRateEta = new TH1F("FakeRateEta", "FakeRateEta", Eta_N_bins, Eta_Min, Eta_Max);
-  TH1F * FakeRatePT = new TH1F("FakeRatePT", "FakeRatePT", PT_N_bins, PT_Min, PT_Max);
+  TH1F * FakeRatePT1 = new TH1F("FakeRatePT1", "FakeRatePT1", PT_N_bins, PT_bins);
+  TH1F * FakeRatePT2 = new TH1F("FakeRatePT2", "FakeRatePT2", PT_N_bins, PT_bins);
   TH1F * FakeRateNVTX = new TH1F("FakeRateNVTX", "FakeRateNVTX", NVTX_N_bins, NVTX_Min, NVTX_Max);
+  TH1F * FakeRatePTfromPT1vsPT2 = new TH1F("FakeRatePTfromPT1vsPT2", "FakeRatePTfromPT1vsPT2", PT_N_bins, PT_bins);
+
+  TH2F * FakeRateNJetsvsPT1 = new TH2F("FakeRateNJetsvsPT1", "FakeRateNJetsvsPT1", 
+    PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+  TH2F * FakeRateNJetsvsPT2 = new TH2F("FakeRateNJetsvsPT2", "FakeRateNJetsvsPT2", 
+    PT_N_bins, PT_bins, NJets_N_bins, NJets_Min, NJets_Max);
+  TH2F * FakeRatePT1vsPT2 = new TH2F("FakeRatePT1vsPT2", "FakeRatePT1vsPT2", 
+    PT_N_bins, PT_bins, PT_N_bins, PT_bins);
+  
 
   TH1F * DiLepInvMass = new TH1F("DiLepInvMass", "DiLepInvMass", 150, 0, 150);
   TH1F * Iso_Lep = new TH1F("Iso_Lep", "Iso_Lep", 150, 0, 15);
-  TH1F * PT_Leading_Lep = new TH1F("PT_Leading_Lep", "PT_Leading_Lep", PT_N_bins, PT_Min, PT_Max);
-  TH1F * PT_Inclusive_Lep = new TH1F("PT_Inclusive_Lep", "PT_Inclusive_Lep", PT_N_bins, PT_Min, PT_Max);
+  TH1F * PT_Leading_Lep = new TH1F("PT_Leading_Lep", "PT_Leading_Lep", 60, PT_Min, PT_Max);
+  TH1F * PT_Inclusive_Lep = new TH1F("PT_Inclusive_Lep", "PT_Inclusive_Lep", 60, PT_Min, PT_Max);
   TH1F * NJets = new TH1F("NJets", "NJets", NJets_N_bins, NJets_Min, NJets_Max);
-  TH1F * PT_Leading_Jet = new TH1F("PT_Leading_Jet", "PT_Leading_Jet", PT_N_bins, PT_Min, PT_Max);
-  TH1F * PT_Inclusive_Jet = new TH1F("PT_Inclusive_Jet", "PT_Inclusive_Jet", PT_N_bins, PT_Min, PT_Max);
-
+  TH1F * PT_Leading_Jet = new TH1F("PT_Leading_Jet", "PT_Leading_Jet", 60, PT_Min, PT_Max);
+  TH1F * PT_Inclusive_Jet = new TH1F("PT_Inclusive_Jet", "PT_Inclusive_Jet", 60, PT_Min, PT_Max);
+  TH1F * NVTX = new TH1F("NVTX", "NNTX", NVTX_N_bins, NVTX_Min, NVTX_Max);
+  
 
   for (unsigned int d = 0; d < datasets.size (); d++) {
    datasets[d].eventTree ()->SetBranchAddress ("NTEvent",&event);
@@ -376,11 +492,13 @@ void Efficiency_MC_Estimation ( string xmlFileName, bool mc=true, string lepton=
 	   if(j==0) PT_Leading_Lep->Fill(leptons[j].p4.Perp());
 	   PT_Inclusive_Lep->Fill(leptons[j].p4.Perp());
         }
+	NVTX->Fill(selVertices.size());
 	NJets->Fill(jets_Tight.size());
         for (unsigned int j = 0; j < jets_Tight.size(); j++) {
 	   if(j==0) PT_Leading_Jet->Fill(jets_Tight[j].p4.Perp());
 	   PT_Inclusive_Jet->Fill(jets_Tight[j].p4.Perp());
         }
+	
 
 
        //------------------//
@@ -416,26 +534,38 @@ void Efficiency_MC_Estimation ( string xmlFileName, bool mc=true, string lepton=
 	             // weight in case several datasets are used
                      IsoLooseForEfficiencyNJets->Fill(jets_Loose.size(),weight);
                      IsoLooseForEfficiencyEta->Fill(leptons[0].p4.Eta(),weight);
-                     IsoLooseForEfficiencyPT->Fill(leptons[0].p4.Perp(),weight);
+                     IsoLooseForEfficiencyPT1->Fill(leptons[0].p4.Perp(),weight);
+                     IsoLooseForEfficiencyPT2->Fill(leptons[1].p4.Perp(),weight);
 		     IsoLooseForEfficiencyNVTX->Fill(selVertices.size(),weight);
-		     IsoLooseForEfficiencyNJetsvsPT->Fill(leptons[0].p4.Perp(), jets_Loose.size(),weight);
+		     IsoLooseForEfficiencyNJetsvsPT1->Fill(leptons[0].p4.Perp(), jets_Loose.size(),weight);
+		     IsoLooseForEfficiencyNJetsvsPT2->Fill(leptons[1].p4.Perp(), jets_Loose.size(),weight);
+		     IsoLooseForEfficiencyPT1vsPT2->Fill(leptons[1].p4.Perp(), leptons[0].p4.Perp(),weight);
                      Unweighted_IsoLooseForEfficiencyNJets->Fill(jets_Loose.size());
                      Unweighted_IsoLooseForEfficiencyEta->Fill(leptons[0].p4.Eta());
-                     Unweighted_IsoLooseForEfficiencyPT->Fill(leptons[0].p4.Perp());
+                     Unweighted_IsoLooseForEfficiencyPT1->Fill(leptons[0].p4.Perp());
+                     Unweighted_IsoLooseForEfficiencyPT2->Fill(leptons[1].p4.Perp());
                      Unweighted_IsoLooseForEfficiencyNVTX->Fill(selVertices.size());
-		     Unweighted_IsoLooseForEfficiencyNJetsvsPT->Fill(leptons[0].p4.Perp(), jets_Loose.size(),weight);
+		     Unweighted_IsoLooseForEfficiencyNJetsvsPT1->Fill(leptons[0].p4.Perp(), jets_Loose.size());
+		     Unweighted_IsoLooseForEfficiencyNJetsvsPT2->Fill(leptons[1].p4.Perp(), jets_Loose.size());
+		     Unweighted_IsoLooseForEfficiencyPT1vsPT2->Fill(leptons[1].p4.Perp(), leptons[0].p4.Perp());
 	  }
 	  if(tight_iso_counter_eff == 2){
                      IsoTightForEfficiencyNJets->Fill(jets_Tight.size(),weight);
                      IsoTightForEfficiencyEta->Fill(leptons[0].p4.Eta(),weight);
-                     IsoTightForEfficiencyPT->Fill(leptons[0].p4.Perp(),weight);
+                     IsoTightForEfficiencyPT1->Fill(leptons[0].p4.Perp(),weight);
+                     IsoTightForEfficiencyPT2->Fill(leptons[1].p4.Perp(),weight);
 		     IsoTightForEfficiencyNVTX->Fill(selVertices.size(),weight);
-		     IsoTightForEfficiencyNJetsvsPT->Fill(leptons[0].p4.Perp(), jets_Tight.size(),weight);
+		     IsoTightForEfficiencyNJetsvsPT1->Fill(leptons[0].p4.Perp(), jets_Tight.size(),weight);
+		     IsoTightForEfficiencyNJetsvsPT2->Fill(leptons[1].p4.Perp(), jets_Tight.size(),weight);
+		     IsoTightForEfficiencyPT1vsPT2->Fill(leptons[1].p4.Perp(), leptons[0].p4.Perp(),weight);
                      Unweighted_IsoTightForEfficiencyNJets->Fill(jets_Tight.size());
                      Unweighted_IsoTightForEfficiencyEta->Fill(leptons[0].p4.Eta());
-                     Unweighted_IsoTightForEfficiencyPT->Fill(leptons[0].p4.Perp());
+                     Unweighted_IsoTightForEfficiencyPT1->Fill(leptons[0].p4.Perp());
+                     Unweighted_IsoTightForEfficiencyPT2->Fill(leptons[1].p4.Perp());
                      Unweighted_IsoTightForEfficiencyNVTX->Fill(selVertices.size());
-		     Unweighted_IsoTightForEfficiencyNJetsvsPT->Fill(leptons[0].p4.Perp(), jets_Tight.size(),weight);
+		     Unweighted_IsoTightForEfficiencyNJetsvsPT1->Fill(leptons[0].p4.Perp(), jets_Tight.size());
+		     Unweighted_IsoTightForEfficiencyNJetsvsPT2->Fill(leptons[1].p4.Perp(), jets_Tight.size());
+		     Unweighted_IsoTightForEfficiencyPT1vsPT2->Fill(leptons[1].p4.Perp(), leptons[0].p4.Perp());
 	  }
 	  }
 
@@ -460,22 +590,38 @@ void Efficiency_MC_Estimation ( string xmlFileName, bool mc=true, string lepton=
 	  if(loose_iso_counter_fake == 2){
                      IsoLooseForFakeRateNJets->Fill(jets_Loose.size(),weight);
                      IsoLooseForFakeRateEta->Fill(leptons[0].p4.Eta(),weight);
-                     IsoLooseForFakeRatePT->Fill(leptons[0].p4.Perp(),weight);
+                     IsoLooseForFakeRatePT1->Fill(leptons[0].p4.Perp(),weight);
+                     IsoLooseForFakeRatePT2->Fill(leptons[1].p4.Perp(),weight);
 		     IsoLooseForFakeRateNVTX->Fill(selVertices.size(),weight);
+		     IsoLooseForFakeRateNJetsvsPT1->Fill(leptons[0].p4.Perp(), jets_Loose.size(),weight);
+		     IsoLooseForFakeRateNJetsvsPT2->Fill(leptons[1].p4.Perp(), jets_Loose.size(),weight);
+		     IsoLooseForFakeRatePT1vsPT2->Fill(leptons[1].p4.Perp(), leptons[0].p4.Perp(),weight);
                      Unweighted_IsoLooseForFakeRateNJets->Fill(jets_Loose.size());
                      Unweighted_IsoLooseForFakeRateEta->Fill(leptons[0].p4.Eta());
-                     Unweighted_IsoLooseForFakeRatePT->Fill(leptons[0].p4.Perp());
+                     Unweighted_IsoLooseForFakeRatePT1->Fill(leptons[0].p4.Perp());
+                     Unweighted_IsoLooseForFakeRatePT2->Fill(leptons[1].p4.Perp());
                      Unweighted_IsoLooseForFakeRateNVTX->Fill(selVertices.size());
+		     Unweighted_IsoLooseForFakeRateNJetsvsPT1->Fill(leptons[0].p4.Perp(), jets_Loose.size());
+		     Unweighted_IsoLooseForFakeRateNJetsvsPT2->Fill(leptons[1].p4.Perp(), jets_Loose.size());
+		     Unweighted_IsoLooseForFakeRatePT1vsPT2->Fill(leptons[1].p4.Perp(), leptons[0].p4.Perp());
 	  }
 	  if(tight_iso_counter_fake == 2){
                      IsoTightForFakeRateNJets->Fill(jets_Tight.size(),weight);
                      IsoTightForFakeRateEta->Fill(leptons[0].p4.Eta(),weight);
-                     IsoTightForFakeRatePT->Fill(leptons[0].p4.Perp(),weight);
+                     IsoTightForFakeRatePT1->Fill(leptons[0].p4.Perp(),weight);
+                     IsoTightForFakeRatePT2->Fill(leptons[1].p4.Perp(),weight);
 		     IsoTightForFakeRateNVTX->Fill(selVertices.size(),weight);
+		     IsoTightForFakeRateNJetsvsPT1->Fill(leptons[0].p4.Perp(), jets_Tight.size(),weight);
+		     IsoTightForFakeRateNJetsvsPT2->Fill(leptons[1].p4.Perp(), jets_Tight.size(),weight);
+		     IsoTightForFakeRatePT1vsPT2->Fill(leptons[1].p4.Perp(), leptons[0].p4.Perp(),weight);
                      Unweighted_IsoTightForFakeRateNJets->Fill(jets_Tight.size());
                      Unweighted_IsoTightForFakeRateEta->Fill(leptons[0].p4.Eta());
-                     Unweighted_IsoTightForFakeRatePT->Fill(leptons[0].p4.Perp());
+                     Unweighted_IsoTightForFakeRatePT1->Fill(leptons[0].p4.Perp());
+                     Unweighted_IsoTightForFakeRatePT2->Fill(leptons[1].p4.Perp());
                      Unweighted_IsoTightForFakeRateNVTX->Fill(selVertices.size());
+		     Unweighted_IsoTightForFakeRateNJetsvsPT1->Fill(leptons[0].p4.Perp(), jets_Tight.size());
+		     Unweighted_IsoTightForFakeRateNJetsvsPT2->Fill(leptons[1].p4.Perp(), jets_Tight.size());
+		     Unweighted_IsoTightForFakeRatePT1vsPT2->Fill(leptons[1].p4.Perp(), leptons[0].p4.Perp());
 	  }
 	  }
        } // End of mc specific part
@@ -510,14 +656,14 @@ void Efficiency_MC_Estimation ( string xmlFileName, bool mc=true, string lepton=
                if (leptons[0].RelIso03PF() < looseIso){ 
                     IsoLooseForFakeRateNJets->Fill(jets_Loose.size());
                     IsoLooseForFakeRateEta->Fill(leptons[0].p4.Eta());
-                    IsoLooseForFakeRatePT->Fill(leptons[0].p4.Perp());
+                    IsoLooseForFakeRatePT1->Fill(leptons[0].p4.Perp());
                     IsoLooseForFakeRateNVTX->Fill(selVertices.size());
                }
    	       if (leptons[0].RelIso03PF() < tightIso){ 
                     IsoTightForFakeRateNJets->Fill(jets_Tight.size());
                     IsoTightForFakeRateEta->Fill(leptons[0].p4.Eta());
-                    IsoTightForFakeRatePT->Fill(leptons[0].p4.Perp());
-                    IsoTightForFakeRateNVTX->Fill(selVertices.size());
+                    IsoTightForFakeRatePT1->Fill(leptons[0].p4.Perp());
+                     IsoTightForFakeRateNVTX->Fill(selVertices.size());
                }
           } // End of QCD events
 
@@ -535,16 +681,16 @@ void Efficiency_MC_Estimation ( string xmlFileName, bool mc=true, string lepton=
               if (leptons[ilep].RelIso03PF() < looseIso){ 
                     IsoLooseForEfficiencyNJets->Fill(jets_Loose.size());
                     IsoLooseForEfficiencyEta->Fill(leptons[ilep].p4.Eta());
-                    IsoLooseForEfficiencyPT->Fill(leptons[ilep].p4.Perp());
+                    IsoLooseForEfficiencyPT1->Fill(leptons[ilep].p4.Perp());
                     IsoLooseForEfficiencyNVTX->Fill(selVertices.size());
-		    IsoLooseForEfficiencyNJetsvsPT->Fill(leptons[0].p4.Perp(), jets_Loose.size(),weight);
+		    IsoLooseForEfficiencyNJetsvsPT1->Fill(leptons[0].p4.Perp(), jets_Loose.size(),weight);
               }
 	      if (leptons[ilep].RelIso03PF() < tightIso){ 
                     IsoTightForEfficiencyNJets->Fill(jets_Tight.size());
                     IsoTightForEfficiencyEta->Fill(leptons[ilep].p4.Eta());
-                    IsoTightForEfficiencyPT->Fill(leptons[ilep].p4.Perp());
+                    IsoTightForEfficiencyPT1->Fill(leptons[ilep].p4.Perp());
                     IsoTightForEfficiencyNVTX->Fill(selVertices.size());
-		    IsoTightForEfficiencyNJetsvsPT->Fill(leptons[0].p4.Perp(), jets_Tight.size(),weight);
+		    IsoTightForEfficiencyNJetsvsPT1->Fill(leptons[ilep].p4.Perp(), jets_Tight.size(),weight);
               }
             }
           }
@@ -589,19 +735,34 @@ void Efficiency_MC_Estimation ( string xmlFileName, bool mc=true, string lepton=
       Unweighted_IsoTightForEfficiencyEta, Unweighted_IsoLooseForEfficiencyEta, Eta_N_bins, 
       SignalEfficiencyEta);
 
-    ComputeEfficiencyForMC (IsoTightForEfficiencyPT, IsoLooseForEfficiencyPT,
-      Unweighted_IsoTightForEfficiencyPT, Unweighted_IsoLooseForEfficiencyPT, PT_N_bins, 
-      SignalEfficiencyPT);
+    ComputeEfficiencyForMC (IsoTightForEfficiencyPT1, IsoLooseForEfficiencyPT1,
+      Unweighted_IsoTightForEfficiencyPT1, Unweighted_IsoLooseForEfficiencyPT1, PT_N_bins, 
+      SignalEfficiencyPT1);
+
+    ComputeEfficiencyForMC (IsoTightForEfficiencyPT2, IsoLooseForEfficiencyPT2,
+      Unweighted_IsoTightForEfficiencyPT2, Unweighted_IsoLooseForEfficiencyPT2, PT_N_bins, 
+      SignalEfficiencyPT2);
 
     ComputeEfficiencyForMC (IsoTightForEfficiencyNVTX, IsoLooseForEfficiencyNVTX,
       Unweighted_IsoTightForEfficiencyNVTX, Unweighted_IsoLooseForEfficiencyNVTX, NVTX_N_bins, 
       SignalEfficiencyNVTX);
 
+    ComputeEfficiencyForMC2D (IsoTightForEfficiencyNJetsvsPT1, IsoLooseForEfficiencyNJetsvsPT1,
+      Unweighted_IsoTightForEfficiencyNJetsvsPT1, Unweighted_IsoLooseForEfficiencyNJetsvsPT1, PT_N_bins, NJets_N_bins,
+      SignalEfficiencyNJetsvsPT1);
 
-    ComputeEfficiencyForMC (IsoTightForEfficiencyNJetsvsPT, IsoLooseForEfficiencyNJetsvsPT,
-      Unweighted_IsoTightForEfficiencyNJetsvsPT, Unweighted_IsoLooseForEfficiencyNJetsvsPT, PT_N_bins, NJets_N_bins,
-      SignalEfficiencyNJetsvsPT);
+    ComputeEfficiencyForMC2D (IsoTightForEfficiencyNJetsvsPT2, IsoLooseForEfficiencyNJetsvsPT2,
+      Unweighted_IsoTightForEfficiencyNJetsvsPT2, Unweighted_IsoLooseForEfficiencyNJetsvsPT2, PT_N_bins, NJets_N_bins,
+      SignalEfficiencyNJetsvsPT2);
 
+    ComputeEfficiencyForMC2D (IsoTightForEfficiencyPT1vsPT2, IsoLooseForEfficiencyPT1vsPT2,
+      Unweighted_IsoTightForEfficiencyPT1vsPT2, Unweighted_IsoLooseForEfficiencyPT1vsPT2, PT_N_bins, PT_N_bins,
+      SignalEfficiencyPT1vsPT2);
+
+    for(unsigned int bin_index=1; bin_index<PT_N_bins+1; bin_index++){
+      SignalEfficiencyPTfromPT1vsPT2->SetBinContent(bin_index, SignalEfficiencyPT1vsPT2->GetBinContent(bin_index, bin_index));
+      SignalEfficiencyPTfromPT1vsPT2->SetBinError(bin_index, SignalEfficiencyPT1vsPT2->GetBinError(bin_index, bin_index));
+    }
 
     ComputeFakeRateForMC (IsoTightForEfficiencyNJets, IsoLooseForEfficiencyNJets, 
       IsoTightForFakeRateNJets, IsoLooseForFakeRateNJets, 
@@ -615,28 +776,58 @@ void Efficiency_MC_Estimation ( string xmlFileName, bool mc=true, string lepton=
       Unweighted_IsoTightForFakeRateEta, Unweighted_IsoLooseForFakeRateEta, Eta_N_bins, 
       FakeRateEta);
 
-    ComputeFakeRateForMC (IsoTightForEfficiencyPT, IsoLooseForEfficiencyPT, 
-      IsoTightForFakeRatePT, IsoLooseForFakeRatePT, 
-      Unweighted_IsoTightForEfficiencyPT, Unweighted_IsoLooseForEfficiencyPT, 
-      Unweighted_IsoTightForFakeRatePT, Unweighted_IsoLooseForFakeRatePT, PT_N_bins, 
-      FakeRatePT);
+    ComputeFakeRateForMC (IsoTightForEfficiencyPT1, IsoLooseForEfficiencyPT1, 
+      IsoTightForFakeRatePT1, IsoLooseForFakeRatePT1, 
+      Unweighted_IsoTightForEfficiencyPT1, Unweighted_IsoLooseForEfficiencyPT1, 
+      Unweighted_IsoTightForFakeRatePT1, Unweighted_IsoLooseForFakeRatePT1, PT_N_bins, 
+      FakeRatePT1);
+
+    ComputeFakeRateForMC (IsoTightForEfficiencyPT2, IsoLooseForEfficiencyPT2, 
+      IsoTightForFakeRatePT2, IsoLooseForFakeRatePT2, 
+      Unweighted_IsoTightForEfficiencyPT2, Unweighted_IsoLooseForEfficiencyPT2, 
+      Unweighted_IsoTightForFakeRatePT2, Unweighted_IsoLooseForFakeRatePT2, PT_N_bins, 
+      FakeRatePT2);
 
     ComputeFakeRateForMC (IsoTightForEfficiencyNVTX, IsoLooseForEfficiencyNVTX, 
       IsoTightForFakeRateNVTX, IsoLooseForFakeRateNVTX, 
       Unweighted_IsoTightForEfficiencyNVTX, Unweighted_IsoLooseForEfficiencyNVTX, 
       Unweighted_IsoTightForFakeRateNVTX, Unweighted_IsoLooseForFakeRateNVTX, NVTX_N_bins, 
       FakeRateNVTX);
+      
+    ComputeFakeRateForMC2D (IsoTightForEfficiencyNJetsvsPT1, IsoLooseForEfficiencyNJetsvsPT1, 
+      IsoTightForFakeRateNJetsvsPT1, IsoLooseForFakeRateNJetsvsPT1, 
+      Unweighted_IsoTightForEfficiencyNJetsvsPT1, Unweighted_IsoLooseForEfficiencyNJetsvsPT1, 
+      Unweighted_IsoTightForFakeRateNJetsvsPT1, Unweighted_IsoLooseForFakeRateNJetsvsPT1, PT_N_bins, NJets_N_bins,
+      FakeRateNJetsvsPT1);
+      
+    ComputeFakeRateForMC2D (IsoTightForEfficiencyNJetsvsPT2, IsoLooseForEfficiencyNJetsvsPT2, 
+      IsoTightForFakeRateNJetsvsPT2, IsoLooseForFakeRateNJetsvsPT2, 
+      Unweighted_IsoTightForEfficiencyNJetsvsPT2, Unweighted_IsoLooseForEfficiencyNJetsvsPT2, 
+      Unweighted_IsoTightForFakeRateNJetsvsPT2, Unweighted_IsoLooseForFakeRateNJetsvsPT2, PT_N_bins, NJets_N_bins,
+      FakeRateNJetsvsPT2);
+      
+    ComputeFakeRateForMC2D (IsoTightForEfficiencyPT1vsPT2, IsoLooseForEfficiencyPT1vsPT2, 
+      IsoTightForFakeRatePT1vsPT2, IsoLooseForFakeRatePT1vsPT2, 
+      Unweighted_IsoTightForEfficiencyPT1vsPT2, Unweighted_IsoLooseForEfficiencyPT1vsPT2, 
+      Unweighted_IsoTightForFakeRatePT1vsPT2, Unweighted_IsoLooseForFakeRatePT1vsPT2, PT_N_bins, PT_N_bins,
+      FakeRatePT1vsPT2);
+    
+    for(unsigned int bin_index=1; bin_index<PT_N_bins+1; bin_index++){
+      FakeRatePTfromPT1vsPT2->SetBinContent(bin_index, FakeRatePT1vsPT2->GetBinContent(bin_index, bin_index));
+      FakeRatePTfromPT1vsPT2->SetBinError(bin_index, FakeRatePT1vsPT2->GetBinError(bin_index, bin_index));
+    }
+    
   }
   else { // DATA
   
     ComputeEfficiencyForData (IsoTightForEfficiencyNJets, IsoLooseForEfficiencyNJets, NJets_N_bins, SignalEfficiencyNJets);
     ComputeEfficiencyForData (IsoTightForEfficiencyEta, IsoLooseForEfficiencyEta, Eta_N_bins, SignalEfficiencyEta);
-    ComputeEfficiencyForData (IsoTightForEfficiencyPT, IsoLooseForEfficiencyPT, PT_N_bins, SignalEfficiencyPT);
+    ComputeEfficiencyForData (IsoTightForEfficiencyPT1, IsoLooseForEfficiencyPT1, PT_N_bins, SignalEfficiencyPT1);
     ComputeEfficiencyForData (IsoTightForEfficiencyNVTX, IsoLooseForEfficiencyNVTX, NVTX_N_bins, SignalEfficiencyNVTX);
 
     ComputeFakeRateForData (IsoTightForFakeRateNJets, IsoLooseForFakeRateNJets, NJets_N_bins, FakeRateNJets);
     ComputeFakeRateForData (IsoTightForFakeRateEta, IsoLooseForFakeRateEta, Eta_N_bins, FakeRateEta);
-    ComputeFakeRateForData (IsoTightForFakeRatePT, IsoLooseForFakeRatePT, PT_N_bins, FakeRatePT);
+    ComputeFakeRateForData (IsoTightForFakeRatePT1, IsoLooseForFakeRatePT1, PT_N_bins, FakeRatePT1);
     ComputeFakeRateForData (IsoTightForFakeRateNVTX, IsoLooseForFakeRateNVTX, NVTX_N_bins, FakeRateNVTX);
   }
 
@@ -703,7 +894,7 @@ void Efficiency_MC_Estimation ( string xmlFileName, bool mc=true, string lepton=
   cout << "\\\\ \\hline" << std::endl;
   cout << "$\\epsilon_{s}$ "<<leptonname<<" case";
   for(unsigned int bin_index=0; bin_index<PT_N_bins; bin_index++){
-   cout << " & " << SignalEfficiencyPT->GetBinContent(bin_index) << "$\\pm$" << SignalEfficiencyPT->GetBinError(bin_index);
+   cout << " & " << SignalEfficiencyPT1->GetBinContent(bin_index) << "$\\pm$" << SignalEfficiencyPT1->GetBinError(bin_index);
   }
   cout << "\\\\ \\hline" << std::endl;
   cout << "\\end{tabular}" << std::endl;
@@ -776,7 +967,7 @@ void Efficiency_MC_Estimation ( string xmlFileName, bool mc=true, string lepton=
   cout << "\\\\ \\hline" << std::endl;
   cout << "$\\epsilon_{f}$ "<<leptonname<<" case";
   for(unsigned int bin_index=0; bin_index<PT_N_bins; bin_index++){
-   cout << " & " << FakeRatePT->GetBinContent(bin_index) << "$\\pm$" << FakeRatePT->GetBinError(bin_index);
+   cout << " & " << FakeRatePT1->GetBinContent(bin_index) << "$\\pm$" << FakeRatePT1->GetBinError(bin_index);
   }
   cout << "\\\\ \\hline" << std::endl;
   cout << "\\end{tabular}" << std::endl;
@@ -799,8 +990,9 @@ void Efficiency_MC_Estimation ( string xmlFileName, bool mc=true, string lepton=
   delete PT_Inclusive_Jet;
   NJets->Write();
   delete NJets;
-  
-
+  NVTX->Write();
+  delete NVTX;
+ 
   SignalEfficiencyNJets->Write();
   delete SignalEfficiencyNJets;
   FakeRateNJets->Write();
@@ -809,16 +1001,35 @@ void Efficiency_MC_Estimation ( string xmlFileName, bool mc=true, string lepton=
   delete SignalEfficiencyEta;
   FakeRateEta->Write();
   delete FakeRateEta;
-  SignalEfficiencyPT->Write();
-  delete SignalEfficiencyPT;
-  FakeRatePT->Write();
-  delete FakeRatePT;
+  SignalEfficiencyPT1->Write();
+  delete SignalEfficiencyPT1;
+  FakeRatePT1->Write();
+  delete FakeRatePT1;
+  SignalEfficiencyPT2->Write();
+  delete SignalEfficiencyPT2;
+  FakeRatePT2->Write();
+  delete FakeRatePT2;
   SignalEfficiencyNVTX->Write();
   delete SignalEfficiencyNVTX;
   FakeRateNVTX->Write();
   delete FakeRateNVTX;
-  SignalEfficiencyNJetsvsPT->Write();
-  delete SignalEfficiencyNJetsvsPT;
+  SignalEfficiencyNJetsvsPT1->Write();
+  delete SignalEfficiencyNJetsvsPT1;
+  FakeRateNJetsvsPT1->Write();
+  delete FakeRateNJetsvsPT1;
+  SignalEfficiencyNJetsvsPT2->Write();
+  delete SignalEfficiencyNJetsvsPT2;
+  FakeRateNJetsvsPT2->Write();
+  delete FakeRateNJetsvsPT2;
+  SignalEfficiencyPT1vsPT2->Write();
+  delete SignalEfficiencyPT1vsPT2;
+  FakeRatePT1vsPT2->Write();
+  delete FakeRatePT1vsPT2;
+  SignalEfficiencyPTfromPT1vsPT2->Write();
+  delete SignalEfficiencyPTfromPT1vsPT2;
+  FakeRatePTfromPT1vsPT2->Write();
+  delete FakeRatePTfromPT1vsPT2;
+ 
 
   file_MM->Write();
   file_MM->Close();
