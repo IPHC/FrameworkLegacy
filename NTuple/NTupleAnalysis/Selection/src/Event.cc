@@ -153,7 +153,7 @@ bool Event::LoadEvent(const IPHCTree::NTEvent* evt)
   }
 
   // get only one electron collection 
-  if (JetMetEnabled_)
+  if (ElectronEnabled_)
   {
     electrons_ = evt->electrons.GetCollection(ElectronType_);
     if(electrons_==0)

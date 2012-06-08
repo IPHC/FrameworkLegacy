@@ -16,8 +16,8 @@ void JetHistoManager::CreateHistos(){
 	AddHisto(string("Eta"),string("Eta(jet)"),string("#eta(jet)"),60,-3,3);	
 	AddHisto(string("Phi"),string("Phi(jet)"),string("#phi(jet)"),64,-3.2,3.2);	
 	AddHisto(string("TCDisc"),string("TCDisc(jet)"),string("TCDisc(jet)"),10,-50,50);	
-	AddHisto(string("SVDisc"),string("SVDisc(jet)"),string("SVDisc(jet)"),10,-50,50);	
-	AddHisto(string("SMDisc"),string("SMDisc(jet)"),string("SMDisc(jet)"),10,-50,50);	
+	AddHisto(string("CVDisc"),string("CVDisc(jet)"),string("CVDisc(jet)"),10,-50,50);	
+	AddHisto(string("JPDisc"),string("JPDisc(jet)"),string("JPDisc(jet)"),10,-50,50);	
 	AddHisto(string("Pt1"),string("Pt(jet1)"),string("p_{T}(jet1)"),50,0,100);	
 	AddHisto(string("Eta1"),string("Eta(jet1)"),string("#eta(jet1)"),60,-3,3);	
 	AddHisto(string("Pt2"),string("Pt(jet2)"),string("p_{T}(jet2)"),50,0,100);	
@@ -41,8 +41,8 @@ void JetHistoManager::FillSelStep(const vector<NTJet>& jets, const int& iSelStep
 		Histos[2][iChannel][iSelStep][iDataset].Fill(jets[i].p4.Eta(),weight);
 		Histos[3][iChannel][iSelStep][iDataset].Fill(jets[i].p4.Phi(),weight);
 		Histos[4][iChannel][iSelStep][iDataset].Fill(jets[i].bTag["trackCountingHighEffBJetTags"],weight);
-		Histos[5][iChannel][iSelStep][iDataset].Fill(jets[i].bTag["simpleSecondaryVertexBJetTags"],weight);
-		Histos[6][iChannel][iSelStep][iDataset].Fill(jets[i].bTag["softMuonBJetTags"],weight);
+		Histos[5][iChannel][iSelStep][iDataset].Fill(jets[i].bTag["combinedSecondaryVertexBJetTags"],weight);
+		Histos[6][iChannel][iSelStep][iDataset].Fill(jets[i].bTag["jetProbabilityBJetTags"],weight);
 	}
 	if(jets.size()>0){
 		Histos[7][iChannel][iSelStep][iDataset].Fill(jets[0].p4.Pt(),weight);

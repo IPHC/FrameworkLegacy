@@ -1,4 +1,5 @@
 #include "Selection/interface/Selection.h"
+#include "Tools/interface/FileExists.h"
 
 // ----------------------------------------------------------------------------
 // Global functions
@@ -100,8 +101,46 @@ std::vector<IPHCTree::NTVertex> Selection::GetSelectedVertex() const
 } 
     
 
+
 // ----------------------------------------------------------------------------
-// GetSelectedVertex
+// GetCleanJets
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTJet> Selection::GetCleanJets(
+                       std::vector<IPHCTree::NTJet> jet_cand, 
+		       std::vector<IPHCTree::NTMuon> muon_cand, 
+		       std::vector<IPHCTree::NTElectron> elec_cand) const
+{
+
+  std::vector<IPHCTree::NTJet> cleanJets;
+ 
+  for(unsigned int i=0;i<jet_cand.size();i++){
+      if(fabs(jet_cand[i].p4.Eta())> cfg.JetEtaThreshold_ || 
+           jet_cand[i].p4.Pt()<cfg.JetPtThreshold_) continue;
+      
+      double deltaRmu = 10000;
+      double deltaRel = 10000;
+      
+      for(unsigned int imu=0; imu< muon_cand.size(); imu++){
+	double deltaR = jet_cand[i].p4.DeltaR(muon_cand[imu].p4);
+	if(deltaR < deltaRmu) deltaRmu = deltaR;
+      }
+      
+      for(unsigned int iel=0; iel< elec_cand.size(); iel++){
+	double deltaR = jet_cand[i].p4.DeltaR(elec_cand[iel].p4);
+	if(deltaR < deltaRel) deltaRel = deltaR;
+      }
+      
+      if( deltaRmu > 0.4  && deltaRel > 0.4) cleanJets.push_back(jet_cand[i]);
+      
+  }
+  std::sort(cleanJets.begin(),cleanJets.end(),HighestPt());
+  return cleanJets;
+
+}
+
+
+// ----------------------------------------------------------------------------
+// GetScaledJets
 // ----------------------------------------------------------------------------
 std::vector<IPHCTree::NTJet> Selection::GetScaledJets(float scale) const
 {
@@ -297,6 +336,134 @@ IPHCTree::NTMET Selection::GetSelectedMET(bool applyJES, float scale,
 }
 
 
+//*******************************************************
+//tools for Type1 MET calculated ourselves, on the flight.
+//*******************************************************
+
+IPHCTree::NTMET Selection::GetScaledType1MET(IPHCTree::NTMET &themet, float scale) const
+{
+    double missetX = 0.;
+    double missetY = 0.;
+
+    const std::vector<IPHCTree::NTJet>* jets  = GetPointer2Jets();
+    for (unsigned int i=0; i<jets->size(); i++){
+      missetX += (1-scale) * (*jets)[i].p4.Px();
+      missetY += (1-scale) * (*jets)[i].p4.Py();
+    }
+    IPHCTree::NTMET newMET = themet;
+    newMET.p2.Set( themet.p2.Px()+missetX, themet.p2.Py()+missetY);
+    return newMET;
+}
+
+IPHCTree::NTMET  Selection::GetSmearedType1MET(IPHCTree::NTMET &themet, vector<IPHCTree::NTJet> injets, float jetResFactor) const
+{
+    double missetX = 0.;
+    double missetY = 0.;
+
+    for (unsigned int i=0; i<injets.size(); i++){
+      double gen_pt = injets[i].p4Gen.Pt(); //to be changed: should be the pt of genjet !
+      double jet_pt = injets[i].p4.Pt();
+      double deltapt = (jet_pt - gen_pt) * jetResFactor;
+      double ptscale = ((jet_pt + deltapt) / jet_pt);
+      if(ptscale <0 ) ptscale = 0;
+      missetX   = (ptscale-1)*injets[i].p4.Px();
+      missetY   = (ptscale-1)*injets[i].p4.Py();
+    }
+
+    const IPHCTree::NTMET* met  = GetPointer2MET();
+    IPHCTree::NTMET newMET = *met;
+    newMET.p2.Set( themet.p2.Px()+missetX, themet.p2.Py()+missetY);
+    return newMET;
+}
+
+
+IPHCTree::NTMET Selection::GetType1MET( vector<IPHCTree::NTJet> injets, bool applyJES, float scale, bool applyJER, float ResFactor) const{
+	//WARNING: force to not apply the JES - it's due to JES/JEC correction scenario in PAT
+	
+	double missetX = 0.;
+        double missetY = 0.;
+ 
+        //JLA Info corrJES is not available in NTuples
+	/*for (unsigned int i=0; i<injets.size(); i++){
+	  if(injets[i].p4.Pt() < 10 ) continue;
+          missetX   += - injets[i].corrJES*injets[i].p4.Px() + injets[i].p4.Px();
+          missetY   += - injets[i].corrJES*injets[i].p4.Py() + injets[i].p4.Py();
+        }*/
+	std::cout<<" JLA WARNING : GetType1MET, corrJES not available."<<std::endl;
+		
+        const IPHCTree::NTMET* met  = GetPointer2MET();
+	IPHCTree::NTMET themet = *met;
+        themet.p2.Set( themet.p2.Px()+missetX, themet.p2.Py()+missetY);
+	  
+	
+	if(applyJES){
+        	if(applyJER){
+			return GetSmearedType1MET(themet, GetScaledJets(scale),ResFactor );
+		}
+		return GetScaledType1MET(themet, scale); 
+	}
+        if(applyJER){
+		return GetSmearedType1MET(themet, GetJets(), ResFactor);
+	}
+	else return themet;
+}
+
+
+
+IPHCTree::NTMET Selection::GetScaledType1METWithJER(vector<IPHCTree::NTJet> injets, bool applyJES, float scale, bool applyJER, float ResFactor) const{
+    
+    double missetX = 0.;
+    double missetY = 0.;
+ 
+    IPHCTree::NTMET themet = GetType1MET(injets, applyJES, scale, applyJER, ResFactor);
+    
+    double MCkfac[4];
+    MCkfac[0] = 1.06177;
+    MCkfac[1] = 1.08352;
+    MCkfac[2] = 1.02911;
+    MCkfac[3] = 1.15288;
+    
+    for (unsigned int i=0; i<injets.size(); i++){
+	  if(injets[i].p4.Pt() < 10 ) continue;
+	  double  DeltaPt = injets[i].p4.Pt() - injets[i].p4Gen.Pt();
+	  double kfac = 0;
+	  if(fabs(injets[i].p4.Eta()) < 1.1                                   ) kfac = MCkfac[0];
+	  if(fabs(injets[i].p4.Eta()) > 1.1 && fabs(injets[i].p4.Eta()) < 1.7 ) kfac = MCkfac[1];
+	  if(fabs(injets[i].p4.Eta()) > 1.7 && fabs(injets[i].p4.Eta()) < 2.3 ) kfac = MCkfac[2];
+	  if(fabs(injets[i].p4.Eta()) >2.3                                    ) kfac = MCkfac[3];
+	  
+	  double pt_smear = injets[i].p4.Pt() + (kfac-1)*DeltaPt;
+	   
+	  double pt_ratio = pt_smear/injets[i].p4.Pt();
+	  
+          missetX   += -pt_ratio*injets[i].p4.Px() + injets[i].p4.Px();
+          missetY   += -pt_ratio*injets[i].p4.Py() + injets[i].p4.Py();
+          //missetX   += - injets[i].corrJES*injets[i].p4.Px() + injets[i].p4.Px();
+          //missetY   += - injets[i].corrJES*injets[i].p4.Py() + injets[i].p4.Py();
+    }
+    
+    
+    IPHCTree::NTMET newMET = themet;  
+    newMET.p2.Set( themet.p2.Px()+missetX, themet.p2.Py()+missetY);
+    return newMET;
+}
+
+
+IPHCTree::NTMET Selection::GetGenMET(std::vector<IPHCTree::WDecaysMC> &wAndDecays)
+{
+    IPHCTree::NTMET theGenMET ;  
+    TLorentzVector p4GenMET;
+    for(unsigned int i = 0; i < wAndDecays.size(); i++){
+       p4GenMET += (wAndDecays)[i].p4_Neu_gen;
+    }
+    
+    theGenMET.p2.Set( -p4GenMET.Px(), -p4GenMET.Py());
+    return theGenMET;
+}
+
+//*******************************************************
+
+
 // ----------------------------------------------------------------------------
 // GetSelectedJets
 // ----------------------------------------------------------------------------
@@ -320,7 +487,10 @@ std::vector<IPHCTree::NTJet> Selection::GetSelectedJets(
   {
     if (fabs(scaledJets[i].p4.Eta())> cfg.JetEtaThreshold_ ||
         scaledJets[i].p4.Pt()<cfg.JetPtThreshold_) continue;
+	
+    if (!scaledJets[i].ID["TIGHT"]) continue;
     
+        
     double deltaRmu = 10000;
     double deltaRel = 10000;
     
@@ -399,6 +569,42 @@ std::vector<IPHCTree::NTJet> Selection::GetSelectedJets(
   return selectedJets;
 }
 
+// ----------------------------------------------------------------------------
+// GetSelectedJets
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTJet> Selection::GetSelectedJets(
+                  const std::vector<IPHCTree::NTTau>& tau_cand, 
+		  bool applyJES, float scale, 
+		  bool applyJER, float ResFactor) const
+{
+  // Container for output
+  std::vector<IPHCTree::NTJet> selectedJets;
+  std::vector<IPHCTree::NTJet> scaledJets;
+
+  // Get scaled jets
+  if(applyJES) scaledJets = GetScaledJets(scale);
+  else if (GetPointer2Jets()!=0) scaledJets = *GetPointer2Jets();
+  if(applyJER) scaledJets = GetSmearedJets(scaledJets, ResFactor);
+ 
+  for(unsigned int i=0;i<scaledJets.size();i++)
+  {
+    if(fabs(scaledJets[i].p4.Eta()) > cfg.JetEtaThreshold_ || 
+        scaledJets[i].p4.Pt() < cfg.JetPtThreshold_) continue;
+   
+    double deltaRtau = 10000;
+    
+    for(unsigned int itau=0; itau< tau_cand.size(); itau++)
+    {
+      double deltaR = scaledJets[i].p4.DeltaR(tau_cand[itau].p4);
+      if(deltaR < deltaRtau) deltaRtau = deltaR;  
+    }
+    
+    if(deltaRtau > 0.5) selectedJets.push_back(scaledJets[i]);
+	
+  }
+  std::sort(selectedJets.begin(),selectedJets.end(),HighestPt());
+  return selectedJets;
+}
 
 // ----------------------------------------------------------------------------
 // GetSelectedJets
@@ -464,31 +670,18 @@ std::vector<IPHCTree::NTJet> Selection::GetSelectedBJets(
                     const int& algo, const float & discricut ) const
 {
   std::vector<IPHCTree::NTJet> btagjets;
-  for(unsigned int j=0;j<SelectedJets.size();j++){
-    switch(algo){
-    case 0 :
-      if(SelectedJets[j].bTag["trackCountingHighEffBJetTags"]>=discricut){
-        btagjets.push_back(SelectedJets[j]);
-      }
-      break;
-    case 1 :
-      if(SelectedJets[j].bTag["simpleSecondaryVertexBJetTags"]>=discricut){
-        btagjets.push_back(SelectedJets[j]);
-      }
-      break;
-    case 2 :
-      if(SelectedJets[j].bTag["softMuonBJetTags"]>=discricut){
-        btagjets.push_back(SelectedJets[j]);
-      }
-      break;
-    default:
-      std::cerr << "btagAlgo doesn't exist !"<<endl;
-      break;
-    }
+  for(unsigned int j=0;j<SelectedJets.size();j++)
+  {
+    if (passBtagSelection(SelectedJets[j], algo, discricut)) 
+      btagjets.push_back(SelectedJets[j]);
   }
   return btagjets;
 }
 
+bool Selection::passBtagSelection(const NTJet & jet, const int& algo, const float & discricut) const
+{
+  return (sfb_.getBtagDiscr(jet, algo) >= discricut);
+}
 
 // ----------------------------------------------------------------------------
 // GetScaledElectrons
@@ -710,9 +903,37 @@ std::vector<IPHCTree::NTElectron> Selection::GetSelectedElectronsIsoNonID(
   return selectedElectrons;
 }
 
+// ----------------------------------------------------------------------------
+// GetSelectedElectronNoIsoNonId
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTElectron> Selection::GetSelectedElectronsNoIsoNonID(
+                      bool applyLES, float scale, 
+		      bool applyLER , float resol ) const
+{
+  
+  std::vector<IPHCTree::NTElectron> selectedElectrons;
+  std::vector<IPHCTree::NTElectron> localElectrons;
+  
+  if(applyLES) localElectrons = GetScaledElectrons(scale); 
+  else localElectrons = *GetPointer2Electrons();
+  
+  if(applyLER) localElectrons = GetSmearedElectrons(resol); 
+  else localElectrons = *GetPointer2Electrons();
+ 
+  for(unsigned int i=0;i<localElectrons.size();i++)
+  {
+    if(localElectrons[i].p4.Pt()        < cfg.ElectronPtThreshold_ ) continue;
+    if(fabs(localElectrons[i].p4.Eta()) > cfg.ElectronEtaThreshold_) continue;
+    if(!localElectrons[i].isGsfElectron) continue; 
+    
+    selectedElectrons.push_back(localElectrons[i]);
+  }
+  std::sort(selectedElectrons.begin(),selectedElectrons.end(),HighestPt());
+  return selectedElectrons;
+}
 
 // ----------------------------------------------------------------------------
-// GetSelectedElectronIsoNonId
+// GetSelectedElectronNoIso
 // ----------------------------------------------------------------------------
 std::vector<IPHCTree::NTElectron> Selection::GetSelectedElectronsNoIso(
                                  bool applyLES, float scale,
@@ -1043,15 +1264,17 @@ std::vector<IPHCTree::NTTau> Selection::GetSelectedTaus(
     if ( isoLevel ==2 &&  localTaus[i].ID["byTightIsolation"]  != 1)  continue;
     if(antiLep)
     {
-      if ( localTaus[i].ID["againstElectronLoose"] != 1) continue;
-      if ( localTaus[i].ID["againstMuonLoose"] != 1)     continue;
+      if ( localTaus[i].ID["againstElectronTight"] != 1) continue;
+      if ( localTaus[i].ID["againstMuonTight"] != 1)     continue;
     }
     if(fabs(localTaus[i].p4.Eta())>=EtaThr)              continue;
-    if(localTaus[i].p4.Pt()<PtThr)                       continue;
+    if(fabs(localTaus[i].p4.Eta())<1.566 && fabs(localTaus[i].p4.Eta())>1.4442) continue;
+     if(localTaus[i].p4.Pt()<PtThr)                      continue;
 
     if ( fabs( localTaus[i].vertex.Z() - GetSelectedVertex()[0].p3.Z() )
           > cfg.TauVertexMatchThr_ ) continue;
-    selectedTaus.push_back(localTaus[i]);
+    if( fabs( localTaus[i].D0)  >= 0.04 )     continue;
+     selectedTaus.push_back(localTaus[i]);
   }
 
   // Sort taus according to PT rank
@@ -1201,11 +1424,27 @@ void Selection::InitSFBWeight (int flagb, int methodb,
   sfb_.SFBinit (btagAlgo_, btagDiscriCut_, NofBtagJets_);
   if (flagb>0)
   {
-    sfb_.LoadInfo();
-    sfb_.LoadInfo2();
+    sfb_.LoadInfo("efficacite_btag.root");
+    sfb_.LoadInfo2("eff_from_ttmadgraph_summer11_multiwp.root");
+    sfb_.InitAlgoAndWP(btagAlgo_, btagDiscriCut_);
   }
 }
 
+void Selection::ReInitSFBWeight (int flagb, int methodb,
+                                 int systb, int btagAlgo_,
+				 float btagDiscriCut_, int NofBtagJets_)
+{
+  flag_btagweight_ = flagb;
+  methodb_ = methodb;
+  systb_ = systb;
+
+  sfb_.SFBinit (btagAlgo_, btagDiscriCut_, NofBtagJets_);
+  if (flagb>0) {
+    //sfb_.LoadInfo();
+    //sfb_.LoadInfo2();
+    sfb_.InitAlgoAndWP(btagAlgo_, btagDiscriCut_);
+  }
+}
 
 // ----------------------------------------------------------------------------
 // ResetParameters4Bweight
@@ -1218,8 +1457,8 @@ void Selection::ResetParameters4Bweight (int flagb, int methodb, int systb)
 
   if (sfb_.GetHistoSFB()==0)
   {
-    sfb_.LoadInfo();
-    sfb_.LoadInfo2();
+    sfb_.LoadInfo("efficacite_btag.root");
+    sfb_.LoadInfo2("eff_from_ttmadgraph_summer11_multiwp.root");
   }
 }
 
@@ -1305,9 +1544,15 @@ float Selection::GetPUWeight()
 // ----------------------------------------------------------------------------
 void Selection::LoadElScaleFactors()
 {
-  TFile *f_Data_El = new TFile("/opt/sbg/data/data1/cms/ccollard/CMSSW/CMSSW_4_2_5/src/MiniTreeAnalysis/IPHCTree::NTupleAnalysis/macros/data/electronSF.root");
+  string fileName(getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/electronSF.root"));
+  std::cout<<"Reading the ElScaleFactors file "<<fileName<<endl;
+  fexists(fileName, true);
+  TFile *f_Data_El = new TFile(fileName.c_str());
   f_Data_El->cd();
-  scaleFactEl = (TH2F*)gROOT->FindObject("thehistSF");
+  scaleFactEl = (TH2F*)gROOT->FindObject("thehistSF")->Clone("");
+  scaleFactEl->SetDirectory(0);
+  f_Data_El->Close();
+  delete f_Data_El;
 } 
 
 
@@ -1316,9 +1561,15 @@ void Selection::LoadElScaleFactors()
 // ----------------------------------------------------------------------------
 void Selection::LoadMuScaleFactors()
 {
-  TFile *f_Data_Mu = new TFile("/opt/sbg/data/data1/cms/ccollard/CMSSW/CMSSW_4_2_5/src/MiniTreeAnalysis/IPHCTree::NTupleAnalysis/macros/data/muonSF.root"); 
+  string fileName(getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/muonSF.root"));
+  std::cout<<"Reading the MuScaleFactors file "<<fileName<<endl;
+  fexists(fileName, true);
+  TFile *f_Data_Mu = new TFile(fileName.c_str());
   f_Data_Mu->cd();
-  scaleFactMu = (TH2F*)gROOT->FindObject("thehistSF");
+  scaleFactMu = (TH2F*)gROOT->FindObject("thehistSF")->Clone("");
+  scaleFactMu->SetDirectory(0);
+  f_Data_Mu->Close();
+  delete f_Data_Mu;
 } 
 
 
@@ -1327,27 +1578,16 @@ void Selection::LoadMuScaleFactors()
 // ----------------------------------------------------------------------------
 void Selection::InitJESUnc()
 {
-  TFile* f1 = new TFile("/opt/sbg/data/data1/cms/ccollard/CMSSW/CMSSW_4_2_5/src/MiniTreeAnalysis/IPHCTree::NTupleAnalysis/macros/data/JESUncMC.root");
+  string fileName(getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/JESUncMC.root"));
+  std::cout<<"Reading the JES Uncertainty file "<<fileName<<endl;
+  fexists(fileName, true);
+  TFile* f1 = new TFile(fileName.c_str());
   f1->cd();
   histo_jesunc_    = (TH2F*) f1->Get("JESUncHisto")->Clone("JESUncHisto") ;
-  std::cout << "Reading the JES Uncertainty file " 
-            << histo_jesunc_->GetEntries()
-            << std::endl;
-  histo_jesunc_->SetDirectory(0);
+  std::cout<<"Entries: "<< histo_jesunc_->GetEntries()<<std::endl;
+  histo_jesunc_->SetDirectory(0); // 
   f1->Close();
   delete f1;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 

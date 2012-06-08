@@ -8,7 +8,7 @@
 #include "TObject.h"
 #include "tinyxml/tinyxml.h"
 #include "Selection/interface/Selection.h"
-//#include "Selection/interface/DiLeptonSelection.h"
+#include "Selection/interface/DiLeptonSelection.h"
 #include "Selection/interface/SSDiLeptonSelection.h"
 //#include "Selection/interface/SemiLeptonicTauSelection.h"
 //#include "Measurements/interface/PLRMeasurement.h"
@@ -96,14 +96,14 @@ public:
   void LoadSamples(vector<Dataset>& datasets);/** Read the xml file and fill a vector of datasets */
   void LoadSamples(vector<Dataset>& datasets, string name);/** Read the xml file and fill a vector of datasets */
   void LoadSelection(Selection& sel); /** Read the xml file and update the selection parameters */
-  //  void LoadDiLeptonSelection(DiLeptonSelection& sel); /** Read the xml file and update the DiLeptonSelection parameters */
+  void LoadDiLeptonSelection(DiLeptonSelection& sel); /** Read the xml file and update the DiLeptonSelection parameters */
   void LoadSSDiLeptonSelection(SSDiLeptonSelection& sel);
   //  void LoadSemiLeptonicTauSelection(SemiLeptonicTauSelection& sel); /** Read the xml file and update the SemiLeptonicTauSelection parameters */
   void LoadGeneralInfo(int& DataType, float& Luminosity, int& verbosity );/** Read general information from the xml file - DataType = 0 for MC, 1 for Data, 2 for MC&Data */
   void LoadGeneralInfo(int& DataType, float& Luminosity, float& LumiError, int& verbosity );/** Read general information from the xml file - DataType = 0 for MC, 1 for Data, 2 for MC&Data */
 //<<<<<<< AnalysisEnvironmentLoader.h
   void LoadGeneralInfo(int& DataType, float& Luminosity, float& LumiError, int& verbosity, int& btagAlgo_, float& btagDiscriCut_ );
- void LoadGeneralInfo(int& DataType, float& Luminosity, float& LumiError,string& PUWeightFile, int& verbosity );
+  void LoadGeneralInfo(int& DataType, float& Luminosity, float& LumiError,string& PUWeightFile, int& verbosity );
 
 
  
@@ -113,7 +113,7 @@ public:
   void LoadSystematics(string name, ExtendedSyst&  SysValues); /** Read the xml file and update the 3 parameters for a given systematic: mean & +/- 1 sigma */
   void LoadSystematicsEffect(string name, string channel, SystEffect& SysValues); /** Read the xml file and update the 4 parameters for a given systematic: +/- 1 sigma  eff +/- 1 sigma */
   void LoadObservables(vector<Observable>& obs);
-  //  void LoadWeight(DiLeptonSelection& sel); /** Read the xml file and initialize the SFBweight class for b-tag */
+  void LoadWeight(DiLeptonSelection& sel); /** Read the xml file and initialize the SFBweight class for b-tag */
   void LoadXExtraction(string channel, XExtractionChannel& xec);
   //  void LoadBgkInformation(PLRMeasurement& plr);
   //  void LoadPLRInformation(PLRMeasurement& plr, int& doPseudoExp, int& NofPseudoExp);

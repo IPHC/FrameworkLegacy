@@ -973,3 +973,20 @@ void HistoManager::SetCutFlowAxisTitle(vector<TH1F>& hlist, string v, string dat
   }   
 
 }  
+
+void HistoManager::SetCutFlowAxisTitleFCNCMonotop(vector<TH1F>& hlist, string v, string datasetname){
+
+  for (unsigned int i=0; i < hlist.size(); i++){
+  
+     hlist[i].GetXaxis()->SetLabelSize(0.07);
+     hlist[i].GetXaxis()->SetBinLabel(1, "trigger");
+     hlist[i].GetXaxis()->SetBinLabel(2, "lept. sel.");
+     hlist[i].GetXaxis()->SetBinLabel(3, "Z mass");
+     hlist[i].GetXaxis()->SetBinLabel(4, "Njets");
+     hlist[i].GetXaxis()->SetBinLabel(5, "NBjets");
+    
+     
+     
+  }   
+
+}  

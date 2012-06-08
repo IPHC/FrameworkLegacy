@@ -42,6 +42,7 @@ class HistoManager{
         void MergeHistos(vector<TH1F>& , string , string );
 	
 	void SetCutFlowAxisTitle(vector<TH1F>& , string , string );
+        void SetCutFlowAxisTitleFCNCMonotop(vector<TH1F>& , string , string );
 
 //modif 2D : duplicate 1D functions to cope with 2D histograms --> get a "2D" in the name ;)
 	void AddHisto2D(string name, string title, string xaxis, const int& nxbins, const float& xmin, const float& xmax, string yaxis, const int& nybins, const float& ymin, const float& ymax);

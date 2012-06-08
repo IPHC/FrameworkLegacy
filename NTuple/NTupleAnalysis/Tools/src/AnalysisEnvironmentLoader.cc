@@ -731,6 +731,7 @@ void AnalysisEnvironmentLoader::LoadSelection (Selection& sel)
 {
 
   Reset();
+  std::cout<<"Selection loading .."<<std::endl;
   elem = NodeLoader(string("Selection"));
   if(!elem) return;
   while (elem)
@@ -738,6 +739,7 @@ void AnalysisEnvironmentLoader::LoadSelection (Selection& sel)
     string type = elem->Attribute ("type");
     if (type == string ("Vertex"))
     {
+      std::cout<<"Vertex loading .."<<std::endl;
       int loaded=0;
       string Algo;
       float VertexNdofThr=0;
@@ -751,9 +753,11 @@ void AnalysisEnvironmentLoader::LoadSelection (Selection& sel)
    		elem->QueryIntAttribute("Loaded", &loaded);
       if (loaded==0) sel.DisableVertexCollection(); else sel.EnableVertexCollection();
       sel.cfg.SetVertexRequirements(VertexNdofThr, VertexZThr, VertexRhoThr);
+      std::cout<<"Vertex loaded"<<std::endl;
     }
     if (type == string ("Electron"))
     {
+      std::cout<<"Electron loading .."<<std::endl;
       int loaded=0;
       string Algo;
       float PtThreshold=0;
@@ -775,9 +779,11 @@ void AnalysisEnvironmentLoader::LoadSelection (Selection& sel)
    		elem->QueryIntAttribute("Loaded", &loaded);
       if (loaded==0) sel.DisableElectronCollection(); else sel.EnableElectronCollection();
   	  sel.cfg.SetElectronRequirements(PtThreshold,EtaThreshold,RelIso,D0Cut,VertexMatchThr,ElectronETSCThr,DRemuThr);
+      std::cout<<"Electron loaded"<<std::endl;
     }
     if (type == string ("Muon"))
     {
+      std::cout<<"Muon loading .."<<std::endl;
       int loaded=0;
       string Algo;
       float PtThreshold=0;
@@ -801,9 +807,11 @@ void AnalysisEnvironmentLoader::LoadSelection (Selection& sel)
    		elem->QueryIntAttribute("Loaded", &loaded);
       if (loaded==0) sel.DisableMuonCollection(); else sel.EnableMuonCollection();
   	  sel.cfg.SetMuonRequirements(PtThreshold,EtaThreshold,RelIso,D0Cut,VertexMatchThr,NofValidHits,NofValidTkHits,NormChi2);
+      std::cout<<"Muon loaded"<<std::endl;
     }
     if (type == string ("Tau"))
     {
+      std::cout<<"Tau loading .."<<std::endl;
       int loaded=0;
       string Algo;
       float PtThreshold=0;
@@ -819,9 +827,11 @@ void AnalysisEnvironmentLoader::LoadSelection (Selection& sel)
    		elem->QueryIntAttribute("Loaded", &loaded);
       if (loaded==0) sel.DisableTauCollection(); else sel.EnableTauCollection();
   	  sel.cfg.SetTauRequirements(PtThreshold,EtaThreshold,VertexMatchThr,TauLeadTrkPtCut);
+      std::cout<<"Tau loaded"<<std::endl;
     }
     if (type == string ("Jet"))
     {
+      std::cout<<"Jet loading .."<<std::endl;
       int loaded=0;
       string Algo;
       float PtThreshold=0;
@@ -833,13 +843,15 @@ void AnalysisEnvironmentLoader::LoadSelection (Selection& sel)
       sel.SetJetMetCollectionLabel(Algo);
    		elem->QueryIntAttribute("Loaded", &loaded);
       if (loaded==0) sel.DisableJetMetCollection(); else sel.EnableJetMetCollection();
+      std::cout<<"Jet loaded"<<std::endl;
     }
     elem = elem->NextSiblingElement ();	// iteration
   }
+  std::cout<<"Selection loaded "<<std::endl;
 }
 
 
-/*void AnalysisEnvironmentLoader::LoadDiLeptonSelection (DiLeptonSelection& sel)
+void AnalysisEnvironmentLoader::LoadDiLeptonSelection (DiLeptonSelection& sel)
 {
 
   LoadSelection(dynamic_cast<Selection&>(sel));
@@ -864,9 +876,9 @@ void AnalysisEnvironmentLoader::LoadSelection (Selection& sel)
       elem->QueryIntAttribute ("btagAlgo", &btagAlgo);
       elem->QueryFloatAttribute ("btagDiscriCut", &btagDiscriCut);
       elem->QueryIntAttribute ("NofBtagJets", &NofBtagJets);
-      sel.cfg.SetParameters(MinMassCut, pair<float,float> (METEMu,METLL), pair<float,float> (ZMassWindowMin,ZMassWindowMax), btagAlgo, btagDiscriCut, NofBtagJets);
+      sel.SetParameters(MinMassCut, pair<float,float> (METEMu,METLL), pair<float,float> (ZMassWindowMin,ZMassWindowMax), btagAlgo, btagDiscriCut, NofBtagJets);
 }
-*/
+
 
 void AnalysisEnvironmentLoader::LoadSSDiLeptonSelection (SSDiLeptonSelection& sel)
 {
@@ -917,7 +929,7 @@ void AnalysisEnvironmentLoader::LoadSSDiLeptonSelection (SSDiLeptonSelection& se
       sel.cfg.SetParameters(btagAlgo, btagDiscriCut, NofBtagJets, METCut);
 }
 */
-/*void AnalysisEnvironmentLoader::LoadWeight (DiLeptonSelection& sel)
+void AnalysisEnvironmentLoader::LoadWeight (DiLeptonSelection& sel)
 {
   LoadSelection(dynamic_cast<Selection&>(sel));
   Reset();
@@ -938,7 +950,7 @@ void AnalysisEnvironmentLoader::LoadSSDiLeptonSelection (SSDiLeptonSelection& se
       int btagNjet = sel.GetNofBtagJetsCut();
       sel.InitSFBWeight(flag, methodb, systb, btagAlgo, btagDiscriCut, btagNjet);
       sel.InitJESUnc();
-      }*/
+}
 
 void AnalysisEnvironmentLoader::StringSeparator(string s, string sep, vector<int>& out)
 {

@@ -1,4 +1,10 @@
-#include "../interface/SFBweight.h"
+// Revision du 13 avril 2012
+
+#include "EffEstimation/interface/SFBweight.h"
+#include "Tools/interface/FileExists.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 SFBweight::SFBweight(){
   btag_algo_=-1;
@@ -24,6 +30,67 @@ SFBweight::SFBweight(){
   histo_errmcc_=0;
   histo_errmcl_=0;
 
+  map_effmcb_.clear();
+  map_effmcc_.clear();
+  map_effmcl_.clear();
+  map_errmcb_.clear();
+  map_errmcc_.clear();
+  map_errmcl_.clear();
+
+  tt_sf = 0.;
+  tt_sf_err = 0.;
+}
+
+
+SFBweight::SFBweight(const SFBweight& w){
+  cout<<"Call the copy constructor of SFBweight"<<endl;
+  btag_algo_= w.btag_algo_;
+  btag_discri_= w.btag_discri_;
+  n_bjets_= w.n_bjets_;
+  method_origin1_= w.method_origin1_;
+  method_origin2_= w.method_origin2_;
+
+  if(histo_sfvalb_!=0) histo_sfvalb_ = (TH2D*)  w.histo_sfvalb_->Clone("");
+  if(histo_sferrb_!=0) histo_sferrb_ = (TH2D*)  w.histo_sferrb_->Clone("");
+  if(histo_sfvall_!=0) histo_sfvall_ = (TH2D*)  w.histo_sfvall_->Clone("");
+  if(histo_sferrl_!=0) histo_sferrl_ = (TH2D*)  w.histo_sferrl_->Clone("");
+
+  if(histo_effvalb_!=0) histo_effvalb_ = (TH2D*)  w.histo_effvalb_->Clone("");
+  if(histo_efferrb_!=0) histo_efferrb_ = (TH2D*)  w.histo_efferrb_->Clone("");
+  if(histo_effvall_!=0) histo_effvall_ = (TH2D*)  w.histo_effvall_->Clone("");         
+  if(histo_efferrl_!=0) histo_efferrl_ = (TH2D*)  w.histo_efferrl_->Clone("");
+
+  if(histo_effmcb_!=0) histo_effmcb_ = (TH2D*)  w.histo_effmcb_->Clone("");
+  if(histo_effmcc_!=0) histo_effmcc_ = (TH2D*)  w.histo_effmcc_->Clone("");
+  if(histo_effmcl_!=0) histo_effmcl_ = (TH2D*)  w.histo_effmcl_->Clone("");
+  if(histo_errmcb_!=0) histo_errmcb_ = (TH2D*)  w.histo_errmcb_->Clone("");
+  if(histo_errmcc_!=0) histo_errmcc_ = (TH2D*)  w.histo_errmcc_->Clone("");
+  if(histo_errmcl_!=0) histo_errmcl_ = (TH2D*)  w.histo_errmcl_->Clone("");
+ 
+  //clear maps
+  map_effmcc_.clear(); 
+  map_effmcb_.clear(); 
+  map_effmcl_.clear(); 
+  map_errmcc_.clear(); 
+  map_errmcb_.clear(); 
+  map_errmcl_.clear(); 
+
+
+  //normaly a copy of the map is needed ....
+  map<string,TH2D*>::iterator it;
+  
+  //for ( it=w.map_effmcc_.begin() ; it != w.map_effmcc_.end(); it++ ) cout<<"toto"<<endl;//map_effmcc_.insert(pair<string,TH2D*>(it->first,(TH2D*) it->second->Clone("")));
+  /*
+  for ( it=w.map_effmcc_.begin() ; it != w.map_effmcc_.end(); it++ ) map_effmcc_.insert(pair<string,TH2D*>(it->first,(TH2D*) it->second->Clone("")));
+  for ( it=w.map_effmcb_.begin() ; it != w.map_effmcb_.end(); it++ ) map_effmcb_.insert(pair<string,TH2D*>(it->first,(TH2D*) it->second->Clone("")));
+  for ( it=w.map_effmcl_.begin() ; it != w.map_effmcl_.end(); it++ ) map_effmcl_.insert(pair<string,TH2D*>(it->first,(TH2D*) it->second->Clone("")));
+  for ( it=w.map_effmcc_.begin() ; it != w.map_effmcc_.end(); it++ ) map_effmcc_.insert(pair<string,TH2D*>(it->first,(TH2D*) it->second->Clone("")));
+  for ( it=w.map_effmcb_.begin() ; it != w.map_effmcb_.end(); it++ ) map_effmcb_.insert(pair<string,TH2D*>(it->first,(TH2D*) it->second->Clone("")));
+  for ( it=w.map_effmcl_.begin() ; it != w.map_effmcl_.end(); it++ ) map_effmcl_.insert(pair<string,TH2D*>(it->first,(TH2D*) it->second->Clone("")));
+  */
+   tt_sf = w.getTTsf();
+   tt_sf_err = w.getTTsfErr();
+       
 }
 
 SFBweight::SFBweight(int btag_algo, float btag_discri, int n_bjets){
@@ -36,20 +103,27 @@ SFBweight::~SFBweight(){
 
 void SFBweight::SFBinit(int btag_algo, float btag_discri, int n_bjets){
 
-         std::cout << " initialisation of SFBweight " << std::endl;
+         //std::cout << " initialisation of SFBweight " << std::endl;
          btag_algo_=btag_algo;
          btag_discri_=btag_discri;
          n_bjets_=n_bjets;
-         std::string algoname; 
-         std ::cout << " ALGO " <<  btag_algo << " & DISCRI CUT " << btag_discri << std::endl;
+  	//is it usefull if methodb=2 ??
+         //std ::cout << " ALGO " <<  btag_algo << " & DISCRI CUT " << btag_discri << std::endl;
          if (btag_algo==0) {
              // TrackCounting
              algoname="TCHE";
-             if (btag_discri>1.69 &&  btag_discri<1.71) { 
+             if (btag_discri>1.69 &&  btag_discri<1.71) {
                     method_origin1_="BTAG"+algoname+"L";
                     method_origin2_="MISTAG"+algoname+"L";
+		    wp = "L";
              }
-             else if (btag_discri>3.29 && btag_discri<3.3) { 
+             else if (btag_discri>3.29 && btag_discri<3.31) {
+                    method_origin1_="BTAG"+algoname+"M";
+                    method_origin2_="MISTAG"+algoname+"M";
+		    wp = "M";
+             }
+             else if (btag_discri>10.19 && btag_discri<10.21) {
+                    //cout << " version hackee par Caro car TCHET pas dans DB " << endl;
                     method_origin1_="BTAG"+algoname+"M";
                     method_origin2_="MISTAG"+algoname+"M";
              }
@@ -61,11 +135,15 @@ void SFBweight::SFBinit(int btag_algo, float btag_discri, int n_bjets){
          else if (btag_algo==1) {
               // SecondaryVertex
               algoname="SSVHE";
-              if (btag_discri>1.73 && btag_discri<1.75) { 
-//                    method_origin1_="BTAG"+algoname+"M";
-//                    method_origin2_="MISTAG"+algoname+"M";
-                    method_origin1_="default";
-                    method_origin2_="default";
+              if (btag_discri>1.73 && btag_discri<1.75) {
+                    method_origin1_="BTAG"+algoname+"M";
+                    method_origin2_="MISTAG"+algoname+"M";
+              }
+              else if (btag_discri>3.04 && btag_discri<3.06) {
+                    //cout << " version hackee par Caro car SSVHET pas dans DB " << endl;
+                    method_origin1_="BTAG"+algoname+"M";
+                    method_origin2_="MISTAG"+algoname+"M";
+		    wp = "M";
               }
               else {
                     method_origin1_="default";
@@ -73,48 +151,148 @@ void SFBweight::SFBinit(int btag_algo, float btag_discri, int n_bjets){
               }
          }
          else if (btag_algo==2) {
-              // SM : non code!
-             std::cout << " SM : no information for the moment " << std::endl;
- 
+             // TrackCounting
+             algoname="TCHP";
+             if (btag_discri>1.92 &&  btag_discri<1.94) {
+                    method_origin1_="BTAG"+algoname+"M";
+                    method_origin2_="MISTAG"+algoname+"M";
+		    wp = "M";
+             }
+             else if (btag_discri>3.40 && btag_discri<3.42) {
+                    method_origin1_="BTAG"+algoname+"T";
+                    method_origin2_="MISTAG"+algoname+"T";
+		    wp = "T";
+              }
+             else if (btag_discri>1.18 && btag_discri<1.20) {
+                    //cout << " version hackee par Caro car TCHPL pas dans DB " << endl;
+                    method_origin1_="BTAG"+algoname+"M";
+                    method_origin2_="MISTAG"+algoname+"M";
+              }
+              else {
+                    method_origin1_="default";
+                    method_origin2_="default";
+              }
+         }
+         else if (btag_algo==3) {
+             // SecondaryVertex
+              algoname="SSVHP";
+             if (btag_discri>1.99 && btag_discri<2.01) {
+                    method_origin1_="BTAG"+algoname+"T";
+                    method_origin2_="MISTAG"+algoname+"T";
+		    wp = "T";
+              }
+              else {
+                    method_origin1_="default";
+                    method_origin2_="default";
+              }
+         }
+         else if (btag_algo==4) {
+             // JP
+              algoname="JP";
+             if (btag_discri>0.274 && btag_discri<0.276) {
+                    method_origin1_="BTAG"+algoname+"L";
+                    method_origin2_="MISTAG"+algoname+"L";
+		    wp = "L";
+             }
+             else if (btag_discri>0.544 && btag_discri<0.546) {
+                    method_origin1_="BTAG"+algoname+"M";
+                    method_origin2_="MISTAG"+algoname+"M";
+		    wp = "M";
+             }      
+             else if (btag_discri>0.78 && btag_discri<0.8) {
+                    method_origin1_="BTAG"+algoname+"T";
+                    method_origin2_="MISTAG"+algoname+"T";
+		    wp = "T";
+              }     
+              else {
+                    method_origin1_="default";
+                    method_origin2_="default";
+              }
+         }   
+         else if (btag_algo==5) { 
+             // JBP 
+              algoname="JBP";
+             if (btag_discri>1.32 && btag_discri<1.34) {
+                    method_origin1_="BTAG"+algoname+"L";
+                    method_origin2_="MISTAG"+algoname+"L";
+		    wp = "L";
+             }      
+             else if (btag_discri>2.54 && btag_discri<2.56) {
+                    method_origin1_="BTAG"+algoname+"M";
+                    method_origin2_="MISTAG"+algoname+"M";
+		    wp = "M";
+             }      
+             else if (btag_discri>3.73 && btag_discri<3.75) {
+                    method_origin1_="BTAG"+algoname+"T";
+                    method_origin2_="MISTAG"+algoname+"T";
+		    wp = "T";
+              }
+              else {
+                    method_origin1_="default";
+                    method_origin2_="default";
+              }     
+         }    
+         else if (btag_algo==6) {
+             // CSV 
+              algoname="CSV";
+             if (btag_discri>0.243 && btag_discri<0.245) {
+                    method_origin1_="BTAG"+algoname+"L";
+                    method_origin2_="MISTAG"+algoname+"L";
+		    wp = "L";
+             }
+             else if (btag_discri>0.678 && btag_discri<0.68) {
+                    method_origin1_="BTAG"+algoname+"M";
+                    method_origin2_="MISTAG"+algoname+"M";
+		    wp = "M";
+             }
+             else if (btag_discri>0.897 && btag_discri<0.899) {
+                    method_origin1_="BTAG"+algoname+"T";
+                    method_origin2_="MISTAG"+algoname+"T";
+		    wp = "T";
+              }
+              else {
+                    method_origin1_="default";
+                    method_origin2_="default";
+              }
          }
          else {
              std::cout << " WHICH B-TAG ALGO DO YOU WANT??? " << std::endl;
              method_origin1_="default";
              method_origin2_="default";
          }
-         std::cout << " --> ALGO : " << algoname << ", METHODS for SF&Eff : " << method_origin1_ << " and " << method_origin2_ << std::endl;
-//         std::cout << " !! ATTENTION : For the moment, no SF(b-quark) information in MCCalo !!  " << std::endl; 
-//         std::cout << " !! ATTENTION : --> 0.95 +/- 0.10 (hard coded for TCHEL) !!  " << std::endl; 
+         //std::cout << " --> ALGO : " << algoname << ", METHODS for SF&Eff : " << method_origin1_ << " and " << method_origin2_ << std::endl;
+
+
 }
 
-void SFBweight::LoadInfo(){
+void SFBweight::LoadInfo(string fileName){
 
 
-
-        TFile* f = TFile::Open("/opt/sbg/data/data1/cms/ccollard/CMSSW/CMSSW_4_2_5/src/MiniTreeAnalysis/NTupleAnalysis/macros/data/efficacite_btag.root");
+  string fullFileName(getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/")+fileName);
+  std::cout<<"Reading the b-tag info from file "<<fullFileName<<endl;
+  fexists(fullFileName, true);
+  TFile* f = new TFile(fullFileName.c_str());
 
         std::string histo_name1= "h_" + method_origin1_ + "_BTAG" + "B" +"EFFCORR";
         std::string histo_name2= "h_" + method_origin1_ + "_BTAG" + "B" +"ERRCORR";
-//        std::string histo_name3= "h_" + method_origin1_ + "_BTAG" + "B" +"EFF";
-//        std::string histo_name4= "h_" + method_origin1_ + "_BTAG" + "B" +"ERR";
+//        std::string histo_name3= "h_" + method_origin1_ + "_BTAG" + "B" +"EFF";  // no Eff in DB for b-quark
+//        std::string histo_name4= "h_" + method_origin1_ + "_BTAG" + "B" +"ERR";  // no Err(Eff) in DB for b-quark
         std::string histo_name3= "h_" + method_origin1_ + "_BTAG" + "B" +"EFFCORR";
         std::string histo_name4= "h_" + method_origin1_ + "_BTAG" + "B" +"ERRCORR";
         std::string histo_name5= "h_" + method_origin2_ + "_BTAG" + "L" +"EFFCORR";
         std::string histo_name6= "h_" + method_origin2_ + "_BTAG" + "L" +"ERRCORR";
-//        std::string histo_name7= "h_" + method_origin2_ + "_BTAG" + "L" +"EFF";
-//        std::string histo_name8= "h_" + method_origin2_ + "_BTAG" + "L" +"ERR";
-        std::string histo_name7= "h_" + method_origin2_ + "_BTAG" + "L" +"EFFCORR";
-        std::string histo_name8= "h_" + method_origin2_ + "_BTAG" + "L" +"ERRCORR";
+        std::string histo_name7= "h_" + method_origin2_ + "_BTAG" + "L" +"EFF";
+        std::string histo_name8= "h_" + method_origin2_ + "_BTAG" + "L" +"ERR";
  
         if (method_origin1_ !="default" && method_origin2_!="default") {
-         histo_sfvalb_    = (TH2D*) gDirectory->Get( histo_name1.c_str() ) ;
-         histo_sferrb_    = (TH2D*) gDirectory->Get( histo_name2.c_str() ) ;
-         histo_effvalb_   = (TH2D*) gDirectory->Get( histo_name3.c_str() ) ;
-         histo_efferrb_   = (TH2D*) gDirectory->Get( histo_name4.c_str() ) ;
-         histo_sfvall_    = (TH2D*) gDirectory->Get( histo_name5.c_str() ) ;
-         histo_sferrl_    = (TH2D*) gDirectory->Get( histo_name6.c_str() ) ;
-         histo_effvall_   = (TH2D*) gDirectory->Get( histo_name7.c_str() ) ;
-         histo_efferrl_   = (TH2D*) gDirectory->Get( histo_name8.c_str() ) ;
+         histo_sfvalb_    = (TH2D*) gDirectory->Get( histo_name1.c_str() )->Clone("") ;
+         histo_sferrb_    = (TH2D*) gDirectory->Get( histo_name2.c_str() )->Clone("") ;
+         histo_effvalb_   = (TH2D*) gDirectory->Get( histo_name3.c_str() )->Clone("") ;
+         histo_efferrb_   = (TH2D*) gDirectory->Get( histo_name4.c_str() )->Clone("") ;
+         histo_sfvall_    = (TH2D*) gDirectory->Get( histo_name5.c_str() )->Clone("") ;
+         histo_sferrl_    = (TH2D*) gDirectory->Get( histo_name6.c_str() )->Clone("") ;
+         histo_effvall_   = (TH2D*) gDirectory->Get( histo_name7.c_str() )->Clone("") ;
+         histo_efferrl_   = (TH2D*) gDirectory->Get( histo_name8.c_str() )->Clone("") ;
 
 
 
@@ -145,153 +323,157 @@ void SFBweight::LoadInfo(){
 
 
 
-void SFBweight::LoadInfo2(){
 
-/*
+void SFBweight::LoadInfo2(string fileName){
 
-//        TFile* f2 = TFile::Open("/opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root/eff_from_ttmadgraph_skimlept.root");
+  bool debug = true;
 
-	bool found = false;
-	string filename;
-	// The values are hard-coded ... This could be changed in the future.
-	if(btag_algo_ == 0 && fabs(btag_discri_-0.7)<0.00001){
-		filename = string("/opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root/eff_from_ttmadgraph_tche_0.7.root");
-		found = true;
-	}
-	if(btag_algo_ == 0 && fabs(btag_discri_-0.9)<0.00001){
-		filename = string("/opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root/eff_from_ttmadgraph_tche_0.9.root");
-		found = true;
-	}
-	if(btag_algo_ == 0 && fabs(btag_discri_-1.1)<0.00001){
-		filename = string("/opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root/eff_from_ttmadgraph_tche_1.1.root");
-		found = true;
-	}
-	if(btag_algo_ == 0 && fabs(btag_discri_-1.3)<0.00001){
-		filename = string("/opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root/eff_from_ttmadgraph_tche_1.3.root");
-		found = true;
-	}
-	if(btag_algo_ == 0 && fabs(btag_discri_-1.5)<0.00001){
-		filename = string("/opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root/eff_from_ttmadgraph_tche_1.5.root");
-		found = true;
-	}
-	if(btag_algo_ == 0 && fabs(btag_discri_-1.7)<0.00001){
-		//filename = string("/opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root/eff_from_ttmadgraph_tche_l.root");
-//		filename = string("/opt/sbg/data/data1/cms/echabert/RootFiles/eff_from_ttmadgraph_414_tchel.root");
-		//filename = string("/opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root2011/eff_from_ttmadgraph_summer11.root");
-		filename = string("/opt/sbg/data/data1/cms/echabert/RootFiles/eff_from_ttmadgraph_TCHEL.root");
-		found = true;
-	}
-	if(btag_algo_ == 0 && fabs(btag_discri_-3.3)<0.00001){
-		//filename = string("/opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root/eff_from_ttmadgraph_tche_m.root");
-		filename = string("/opt/sbg/data/data1/cms/echabert/RootFiles/eff_from_ttmadgraph_TCHEM.root");
-		found = true;
-	}
-	if(btag_algo_ == 0 && fabs(btag_discri_-5.0)<0.00001){
-		filename = string("/opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root/eff_from_ttmadgraph_tche_5.0.root");
-		found = true;
-	}
-	if(btag_algo_ == 0 && fabs(btag_discri_-7.5)<0.00001){
-		filename = string("/opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root/eff_from_ttmadgraph_tche_7.5.root");
-		found = true;
-	}
-	if(btag_algo_ == 0 && fabs(btag_discri_-10.2)<0.00001){
-		//filename = string("/opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root/eff_from_ttmadgraph_tche_t.root");
-		filename = string("/opt/sbg/data/data1/cms/echabert/RootFiles/eff_from_ttmadgraph_TCHET.root");
-		found = true;
-	}
-	if(btag_algo_ == 1 && fabs(btag_discri_-1.74)<0.00001){
-		//filename = string("/opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root/eff_from_ttmadgraph_ssvhe_m.root");
-		filename = string("/opt/sbg/data/data1/cms/echabert/RootFiles/eff_from_ttmadgraph_SSVHEL.root");
-		found = true;
-	}
-	if(btag_algo_ == 1 && fabs(btag_discri_-3.05)<0.00001){
-		//filename = string("/opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root/eff_from_ttmadgraph_ssvhe_t.root");
-		filename = string("/opt/sbg/data/data1/cms/echabert/RootFiles/eff_from_ttmadgraph_SSVHET.root");
-		found = true;
-	}
-	if(!found){ 
-//		filename = string("/opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root/eff_from_ttmadgraph.root");
-		filename = string("/opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root2011/eff_from_ttmadgraph_summer11.root");
-		cerr<<"SFBweight::LoadInfo2:: Uses the default file. No specification of b-tagging algo & W.P. given"<<endl;
-	}
-	cout<<"SFBweight::LoadInfo2:: Loading the file "<<filename<<endl;
-        TFile* f2 = TFile::Open(filename.c_str());
+  if(debug) cout<<"SFBweight::LoadInfo2"<<endl;
+  
+  //////////////////////////////////////
+  // Reinitialize the maps
+  //////////////////////////////////////
+  map_effmcb_.clear();
+  map_effmcc_.clear();
+  map_effmcl_.clear();
+  map_errmcb_.clear();
+  map_errmcc_.clear();
+  map_errmcl_.clear();
 
-//        gDirectory->ls(); 
+	string fullFileName(getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/")+fileName);
+	if(debug) cout<<"SFBweight::LoadInfo2:: Loading the file "<<fullFileName<<endl;
+	fexists(fullFileName, true);
+        TFile* f2 = TFile::Open(fullFileName.c_str());
+
+	TDirectoryFile* newdir = 0;
+	for(int i=0;i<f2->GetListOfKeys()->GetSize();i++){
+		if(f2->Get(f2->GetListOfKeys()->At(i)->GetName())->ClassName()==string("TDirectoryFile")){
+			newdir = (TDirectoryFile*) f2->Get(f2->GetListOfKeys()->At(i)->GetName());
+			string keyname = string(newdir->GetName());
+			if(debug) cout<<"Loading histograms from the directory "<<keyname<<endl;
+			if(newdir!=0){
+        			map_effmcb_.insert(pair<string,TH2D*>(keyname,(TH2D*) newdir->Get( "h_eff_bq" )->Clone("") ));
+        			map_effmcc_.insert(pair<string,TH2D*>(keyname,(TH2D*) newdir->Get( "h_eff_cq" )->Clone("") ));
+        			map_effmcl_.insert(pair<string,TH2D*>(keyname,(TH2D*) newdir->Get( "h_eff_lq" )->Clone("") ));
+       				map_errmcb_.insert(pair<string,TH2D*>(keyname,(TH2D*) newdir->Get( "h_err_bq" )->Clone("") ));
+       				map_errmcc_.insert(pair<string,TH2D*>(keyname,(TH2D*) newdir->Get( "h_err_cq" )->Clone("") ));
+    			   	map_errmcl_.insert(pair<string,TH2D*>(keyname,(TH2D*) newdir->Get( "h_err_lq" )->Clone("") ));
+			}
+		}
+	}
+
+	//SetDirectory(0);
+	//This is needed before closing the file
+
+	map<string,TH2D*>::iterator it;
+	for ( it=map_effmcb_.begin() ; it != map_effmcb_.end(); it++ ) it->second->SetDirectory(0);
+	for ( it=map_effmcc_.begin() ; it != map_effmcc_.end(); it++ ) it->second->SetDirectory(0);
+	for ( it=map_effmcl_.begin() ; it != map_effmcl_.end(); it++ ) it->second->SetDirectory(0);
+	for ( it=map_errmcb_.begin() ; it != map_errmcb_.end(); it++ ) it->second->SetDirectory(0);
+	for ( it=map_errmcc_.begin() ; it != map_errmcc_.end(); it++ ) it->second->SetDirectory(0);
+	for ( it=map_errmcl_.begin() ; it != map_errmcl_.end(); it++ ) it->second->SetDirectory(0);
         
-//        histo_effmcb_  = (TH2D*) gDirectory->Get( "histo_eff_bq" ) ;
-//        histo_effmcl_  = (TH2D*) gDirectory->Get( "histo_eff_lq" ) ;
-        histo_effmcb_  = (TH2D*) f2->Get( "h_eff_bq" ) ;
-        histo_effmcc_  = (TH2D*) f2->Get( "h_eff_cq" ) ;
-        histo_effmcl_  = (TH2D*) f2->Get( "h_eff_lq" ) ;
-        histo_errmcb_  = (TH2D*) f2->Get( "h_err_bq" ) ;
-        histo_errmcc_  = (TH2D*) f2->Get( "h_err_cq" ) ;
-        histo_errmcl_  = (TH2D*) f2->Get( "h_err_lq" ) ;
-
-*/
-
-        string filename; 
-        filename = string("/opt/sbg/data/data1/cms/ccollard/CMSSW/CMSSW_4_2_5/src/MiniTreeAnalysis/NTupleAnalysis/macros/data/eff_from_ttmadgraph_summer11_multiwp.root");
-	cout<<"SFBweight::LoadInfo2:: Loading the file "<<filename<<endl;
-        TFile* f2 = TFile::Open(filename.c_str());
-        char newdirname[30];
-        sprintf(newdirname,"algo_%i_discri_%4.2f",btag_algo_,btag_discri_);
-        TDirectoryFile* newdir= (TDirectoryFile*) f2->Get(newdirname);
-        if (newdir==0) { 
-          cerr<<"SFBweight::LoadInfo2:: No btag efficiency computed for the given b-tagging algo & W.P. --> use TCHEL info by default"<<endl;
-          sprintf(newdirname,"algo_0_discri_1.70");
-        }
-        cout << "used directory in the file " << newdirname << endl;
-
-        newdir->cd();
-        histo_effmcb_  = (TH2D*) newdir->Get( "h_eff_bq" ) ;
-        histo_effmcc_  = (TH2D*) newdir->Get( "h_eff_cq" ) ;
-        histo_effmcl_  = (TH2D*) newdir->Get( "h_eff_lq" ) ;
-        histo_errmcb_  = (TH2D*) newdir->Get( "h_err_bq" ) ;
-        histo_errmcc_  = (TH2D*) newdir->Get( "h_err_cq" ) ;
-        histo_errmcl_  = (TH2D*) newdir->Get( "h_err_lq" ) ;
-
-
-        if (histo_effmcb_!=0) std::cout << " loaded histo: h_eff_bq " << std::endl;
-        if (histo_effmcc_!=0) std::cout << " loaded histo: h_eff_cq " << std::endl;
-        if (histo_effmcl_!=0) std::cout << " loaded histo: h_eff_lq " << std::endl;
-        if (histo_errmcb_!=0) std::cout << " loaded histo: h_err_bq " << std::endl;
-        if (histo_errmcc_!=0) std::cout << " loaded histo: h_err_cq " << std::endl;
-        if (histo_errmcl_!=0) std::cout << " loaded histo: h_err_lq " << std::endl;
-
-/*
-
-        histo_effmcb_->SetDirectory(0); // 
-        histo_effmcc_->SetDirectory(0); // 
-        histo_effmcl_->SetDirectory(0); // 
-
-
-//        f2->Close();
-*/
-
+	f2->Close();
+	delete f2;
 }
 
-float SFBweight::GetWeight(int info,  int quarkorigin, float pt, float eta){
+void SFBweight::LoadTTsf(string fileName){
+  string fullFileName(getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/")+fileName);
+  cout<<"SFBweight::LoadTTsf:: Loading the file "<<fullFileName<<endl;
+  fexists(fullFileName, true);
+  std::ifstream file(fullFileName.c_str());
+  string algo;
+  float sf, sf_err;
+  cout <<algoname+wp<<endl;
+  
+  while (!file.eof()) {
+    file >> algo >> sf >> sf_err;
+    // cout<<algo << sf << sf_err<<endl;
+    if ((algoname+wp)==algo) {
+      tt_sf = sf;
+      tt_sf_err = sf_err;
+      break;
+    }
+  }
 
+  
+}
 
+void SFBweight::InitAlgoAndWP(int algo, float wp){
 
-//         std::cout << "debug " << info << " " << quarkorigin << "--> " ;
+	bool debug = false;
 
-         std::string whichquark;
-         if (quarkorigin==5) {
-           whichquark="B";
-         }
-         else if (quarkorigin==0) {
-           whichquark="L";
-         }
-         else if (quarkorigin==4) {
-              whichquark="C";
-         }
-         else {
-            whichquark="N";
-            std::cout << " Choose another value for quarkorigin (5 =b or 0= light or 4=c) " << quarkorigin << std::endl;
-            return -1.;
+	if(debug) cout<<"SFBweight::InitAlgoAndWP"<<endl;
+	
+  	stringstream ss (stringstream::in | stringstream::out);
+  	string str_algo;
+  	string str_discri;
+  	ss << btag_discri_;
+	ss << " ";
+  	ss << btag_algo_;
+  	ss >> str_discri;
+  	ss >> str_algo;
+	//solve the problem of 2 which should be 2.0
+  	if(str_discri.find(".")>str_discri.size()) str_discri+=".0";
+
+	if(debug) cout<<"Algo: "<<str_algo<<" DiscriCut: "<<str_discri<<endl;
+  	string keyname = string("algo_")+str_algo+string("_discri_")+str_discri;
+	if(debug) cout<<"Try to access: "<<keyname;
+        if (map_effmcb_.find(keyname) == map_effmcb_.end()) {
+		if(debug) cout<<": not found "<<endl;
+		keyname +="0";
+		if(debug) cout<<"Try to access: "<<keyname;
+        	if (map_effmcb_.find(keyname) == map_effmcb_.end()) {
+			if(debug) cout<<": not found "<<endl;
+			keyname +="0";
+			if(debug) cout<<"Try to access: "<<keyname;
+        		if (map_effmcb_.find(keyname) == map_effmcb_.end()){ 
+				if(debug) cout<<": not found"<<endl;
+			}
+			else if(debug) cout<<" found !"<<endl;
+		}
+		else if(debug) cout<<" found !"<<endl;
+	} 
+	else if(debug) cout<<" found !"<<endl;
+        if (map_effmcb_.find(keyname) == map_effmcb_.end()) {
+          cerr<<"SFBweight::LoadInfo2:: No btag efficiency computed for the given b-tagging algo & W.P. "<< keyname <<" --> use TCHEL info by default"<<endl;
+          keyname = map_effmcb_.begin()->first;
         }
+        if(debug) cout << "We will access to " << keyname << endl;
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//Change the pointers: now point to the indicated algo and working point 
+	//////////////////////////////////////////////////////////////////////////////////
+
+         if(map_effmcb_.find(keyname)!=map_effmcb_.end()) histo_effmcb_ = map_effmcb_.find(keyname)->second;
+	 else cerr<<"SFweight::InitAlgoAndWP:: histo effmcb not loaded for "<<keyname<<endl;
+         if(map_effmcc_.find(keyname)!=map_effmcb_.end()) histo_effmcc_ = map_effmcc_.find(keyname)->second;
+	 else cerr<<"SFweight::InitAlgoAndWP:: histo effmcc not loaded for "<<keyname<<endl;
+         if(map_effmcl_.find(keyname)!=map_effmcb_.end()) histo_effmcl_ = map_effmcl_.find(keyname)->second;
+	 else cerr<<"SFweight::InitAlgoAndWP:: histo effmcl not loaded for "<<keyname<<endl;
+
+         if(map_errmcb_.find(keyname)!=map_effmcb_.end()) histo_errmcb_ = map_errmcb_.find(keyname)->second;
+	 else cerr<<"SFweight::InitAlgoAndWP:: histo errmcb not loaded for "<<keyname<<endl;
+         if(map_errmcc_.find(keyname)!=map_effmcb_.end()) histo_errmcc_ = map_errmcc_.find(keyname)->second;
+	 else cerr<<"SFweight::InitAlgoAndWP:: histo errmcc not loaded for "<<keyname<<endl;
+         if(map_errmcl_.find(keyname)!=map_effmcb_.end()) histo_errmcl_ = map_errmcl_.find(keyname)->second;
+	 else cerr<<"SFweight::InitAlgoAndWP:: histo errmcl not loaded for "<<keyname<<endl;
+}
+
+  /**
+   * What you get depends on the info variable (but you never get a weight...) 
+   *   0: SF from jet-enriched muon events (same for b and c jets)
+   *   1: error on SF from jet-enriched muon events (for c jets, you get the b jet error, so use 2x err)
+   *   2: data efficiency for b or light jets from jet-enriched muon events (there is no c-jet eff provided)
+   *   3: error on data efficiency for b or light jets from jet-enriched muon events (there is no c-jet eff provided)
+   *   4: MC efficiency from tt events
+   *   5: error on MC efficiency from tt events
+   *   6: SF from tt events (only for b & c jets)
+   *   7: error on SF from tt events (only for b & c jets)
+   */
+
+float SFBweight::GetWeight(int info,  int quarkorigin, float pt, float eta) const{
+
 
 //        std::cout << " Extraction of weight for info = " << info << ", pt = " << pt << ", eta = " << eta 
 //                  << " (" << whichquark << "-jet) " << std::endl;
@@ -300,14 +482,26 @@ float SFBweight::GetWeight(int info,  int quarkorigin, float pt, float eta){
             std::cout << " NOT THE CORRECT METHODS ==> return -1!" << std::endl;
             return -1.;
         }
- 
-        TH2D* histo_local;
+
+        TH2D* histo_local = 0;
 
         if (quarkorigin==5 || quarkorigin==4) {
           if (info==0){ histo_local= histo_sfvalb_; }
           else if (info==1) { histo_local= histo_sferrb_; }
-          else if (info==2) { histo_local= histo_effvalb_; }
-          else if (info==3) { histo_local= histo_efferrb_; }
+          else if (info==2)  {
+               if (quarkorigin==5) histo_local= histo_effvalb_; 
+               else  { 
+	         std::cout << "Data efficiency for c jets from jet-enriched muon events does not exist"<< std::endl;
+                 return -1.;
+               }
+          }
+          else if (info==3) {
+               if (quarkorigin==5) histo_local= histo_efferrb_; 
+               else  { 
+	         std::cout << "Data efficiency for c jets from jet-enriched muon events does not exist"<< std::endl;
+                 return -1.;
+               }
+	  }
           else if (info==4) {
                if (quarkorigin==5) histo_local= histo_effmcb_; 
                else  histo_local= histo_effmcc_; 
@@ -316,7 +510,13 @@ float SFBweight::GetWeight(int info,  int quarkorigin, float pt, float eta){
                if (quarkorigin==5) histo_local= histo_errmcb_; 
                else  histo_local= histo_errmcc_; 
           }
-          else { std::cout << "This option for info doesn't exist ! Choose another info value : [0,4]"<< std::endl;
+	  else if (info==6) {
+               return tt_sf;
+          }
+	  else if (info==7) {
+               return tt_sf_err;
+          }
+          else { std::cout << "This option for info doesn't exist ! Choose another info value : [0,7]"<< std::endl;
                 return -1.;
           }
         }
@@ -328,62 +528,27 @@ float SFBweight::GetWeight(int info,  int quarkorigin, float pt, float eta){
           else if (info==3) { histo_local=  histo_efferrl_; }
           else if (info==4) { histo_local= histo_effmcl_; }
           else if (info==5) { histo_local= histo_errmcl_; }
-          else { std::cout << "This option for info doesn't exist ! Choose another info value : [0,4]"<< std::endl;
+          else { std::cout << "This option for info doesn't exist ! Choose another info value : [0,5]"<< std::endl;
                 return -1.;
           }
         }
 
         float aa = -1.;
-//      No guaranty that the binWidth is constant!
-/*
-        bool found = false;
-        for( int binX = 1; binX <= histo_local->GetNbinsX(); binX++ )
-        {
-               for( int binY = 1; binY <= histo_local->GetNbinsY(); binY++ )
-               {
-                  if  (histo_local->GetXaxis()->GetBinLowEdge( binX ) <= pt &&
-                       pt < histo_local->GetXaxis()->GetBinUpEdge( binX )   &&
-                       histo_local->GetYaxis()->GetBinLowEdge( binY ) <= eta &&
-                       eta < histo_local->GetYaxis()->GetBinUpEdge( binY ) )
-                   {
-                      aa= histo_local->GetBinContent( binX, binY);
-		      found = true;
-		      break;
-                   }
-               }
-	       if(found) break;
-        }
-*/
 
         if (quarkorigin==5 && pt>=240) pt=239;  // because limit in DB
 	if (quarkorigin==0 && pt>=520) pt=519;  // because limit in DB
         aa= histo_local->GetBinContent( histo_local->FindBin(pt,eta) );
 
-        histo_local= new TH2D("aa","",10,0,1,10,0,1);
-        histo_local->Delete();
-        
-//        if ((quarkorigin==5 || quarkorigin==4) && info==0) aa=1.0;
-//        if (quarkorigin==0 && info==0) aa=1.0;
-/*
-        // hard coded here : SF(b-quark) +/- error
-        if ((quarkorigin==5 || quarkorigin==4) && info==0) aa=0.95;
-        if ((quarkorigin==5 || quarkorigin==4) && info==1) aa=0.095;
-
-        // hard coded here : SF(l-quark) +/- error
-        if (quarkorigin==0 && info==0) aa=1.11;
-        if (quarkorigin==0 && info==1) aa=0.12;
-*/
-
-//        if (info==0) std::cout << "debug quarkorigin" << quarkorigin << " SF= " << aa << std::endl;
-//        else if (info==1) std::cout << "debug quarkorigin" << quarkorigin << " Error= " << aa << std::endl;
+//         histo_local= new TH2D("aa","",10,0,1,10,0,1);
+//         histo_local->Delete();
 
         return aa;
 }
-vector<float> SFBweight::GetWeigth4BSel(int method_b,  int syst_b, const std::vector<NTJet> &  selJets){
+vector<float> SFBweight::GetWeigth4BSel(int method_b,  int syst_b, const std::vector<NTJet> &  selJets) const{
       return GetWeigth4BSel(method_b,  syst_b, selJets, -1., -1.);
 }
 
-vector<float> SFBweight::GetWeigth4BSel(int method_b,  int syst_b, const std::vector<NTJet> &  selJets, float sf_val_for_b, float sf_val_for_l){
+vector<float> SFBweight::GetWeigth4BSel(int method_b,  int syst_b, const std::vector<NTJet> &  selJets, float sf_val_for_b, float sf_val_for_l) const{
        std::vector<float> proba_jetb;
        vector<float> weight;
        weight.push_back(1); // weightb of the event
@@ -395,51 +560,10 @@ vector<float> SFBweight::GetWeigth4BSel(int method_b,  int syst_b, const std::ve
              // only quark from a defined quarkorigin_
              int sectectedflavour=0;
              int quarkorigin=-1;
-             // LIGHT QUARKS 
-             if (abs(selJets[j].partonFlavour)==1) sectectedflavour=1; //d quark
-             if (abs(selJets[j].partonFlavour)==2) sectectedflavour=1; //u quark
-             if (abs(selJets[j].partonFlavour)==3) sectectedflavour=1; //s quark
-             if (abs(selJets[j].partonFlavour)==21) sectectedflavour=1; //gluon 
-             if (abs(selJets[j].partonFlavour)==21) sectectedflavour=1; //gluon 
-             if (sectectedflavour==1) quarkorigin=0;
-             // B QUARKS
-             if (abs(selJets[j].partonFlavour)==5) {
-                  sectectedflavour=1;
-                  quarkorigin=5;
-             }
-             // C QUARKS 
-             else if (abs(selJets[j].partonFlavour)==4) {
-                  sectectedflavour=1;
-                  quarkorigin=4;
+	     flavour(selJets[j], sectectedflavour, quarkorigin);
 
-             }
-             // NOT RECOGNIZED --> LIGHT QUARKS, for the moment
-             else if (selJets[j].partonFlavour ==0) {
-                  sectectedflavour=1;
-                  quarkorigin=0;
-             }
-
-             if (sectectedflavour==0) {
-                //DEBUG
-                std::cout << " partonFlavour " << selJets[j].partonFlavour << std::endl;
-             }
-             float discri_val=0.;
-             switch(btag_algo_){
-                         case 0 :
-                                 discri_val=selJets[j].bTag["TCDiscri"];
-                                 break;
-                         case 1 :
-                                 discri_val=selJets[j].bTag["SVDiscri"];
-                                 break;
-                         case 2 :
-                                 discri_val=selJets[j].bTag["SMDiscri"];
-                                 break;
-                         default:
-                                 cerr << "btagAlgo doesn't exist !"<<endl;
-                                 break;
-              }
-
-
+             float discri_val=getBtagDiscr(selJets[j], btag_algo_);
+ 
               float pt_val_jet = selJets[j].p4.Pt();
               if (pt_val_jet>1000.) pt_val_jet=997.;
               float eta_val_jet = selJets[j].p4.Eta();
@@ -702,7 +826,118 @@ vector<float> SFBweight::GetWeigth4BSel(int method_b,  int syst_b, const std::ve
 
 }
 
+void SFBweight::flavour(const NTJet & jet, int & sectectedflavour, int & quarkorigin) const
+{
+  sectectedflavour=0;
+  quarkorigin=-1;
+  // LIGHT QUARKS 
+  if (abs(jet.partonFlavour)==1) sectectedflavour=1; //d quark
+  if (abs(jet.partonFlavour)==2) sectectedflavour=1; //u quark
+  if (abs(jet.partonFlavour)==3) sectectedflavour=1; //s quark
+  if (abs(jet.partonFlavour)==21) sectectedflavour=1; //gluon 
+  if (abs(jet.partonFlavour)==21) sectectedflavour=1; //gluon 
+  if (sectectedflavour==1) quarkorigin=0;
+  // B QUARKS
+  if (abs(jet.partonFlavour)==5) {
+       sectectedflavour=1;
+       quarkorigin=5;
+  }
+  // C QUARKS 
+  else if (abs(jet.partonFlavour)==4) {
+       sectectedflavour=1;
+       quarkorigin=4;
 
-TH2D* SFBweight::GetHistoSFB(){
+  }
+  // NOT RECOGNIZED --> LIGHT QUARKS, for the moment
+  else if (jet.partonFlavour ==0) {
+       sectectedflavour=1;
+       quarkorigin=0;
+  }
+
+  if (sectectedflavour==0) {
+     //DEBUG
+     std::cout << " partonFlavour " << jet.partonFlavour << std::endl;
+  }
+}
+
+
+double SFBweight::getBtagDiscr(const NTJet & jet, const int& algo) const
+{
+ switch (algo) {
+   case 0:
+     return jet.bTag["trackCountingHighEffBJetTags"];
+     break;
+   case 1:
+     return jet.bTag["simpleSecondaryVertexHighEffBJetTags"];
+     break;
+   case 2:
+     return jet.bTag["trackCountingHighPurBJetTags"];
+     break;
+   case 3:
+     return jet.bTag["simpleSecondaryVertexHighPurBJetTags"];
+     break;
+   case 4:
+     return jet.bTag["jetProbabilityBJetTags"];
+     break;
+   case 5:
+     return jet.bTag["jetBProbabilityBJetTags"];
+     break;
+   case 6:
+     return jet.bTag["combinedSecondaryVertexBJetTags"];
+     break;
+   default:
+     cerr << "btagAlgo doesn't exist !" << endl;
+     return -10000000;
+     break;
+   }
+}
+
+
+float SFBweight::efficiency(const NTJet & jet,
+	bool applySFlSyst, float factorSFlSyst,
+	bool applySFbcSyst, float factorSFbcSyst ) const
+{
+  int sectectedflavour=0;
+  int quarkorigin=-1;
+  flavour(jet, sectectedflavour, quarkorigin);
+
+//   float discri_val=getBtagDiscr(jet, btag_algo_);
+
+  float pt_val_jet = min(997., jet.p4.Pt());
+  float eta_val_jet = min (2.339, fabs(jet.p4.Eta()));
+  if (quarkorigin==5 || quarkorigin==4){
+	float sf = tt_sf;
+	if (applySFbcSyst) {
+	  if (factorSFbcSyst>1.) sf += tt_sf_err*(quarkorigin==4?2:1);
+	  else  sf -= tt_sf_err*(quarkorigin==4?2:1);
+	}
+	//cout << "use SFbc " << sf<<" +- "<<tt_sf_err*(quarkorigin==4?2:1)<<endl;
+	return (GetWeight(4, quarkorigin, pt_val_jet, eta_val_jet) * sf);
+  } else {
+	float sf = GetWeight(0, quarkorigin, pt_val_jet, eta_val_jet);
+	if (applySFlSyst) {
+	  if (factorSFlSyst>1.) sf += GetWeight(1, quarkorigin, pt_val_jet, eta_val_jet);
+	  else  sf -= GetWeight(1, quarkorigin, pt_val_jet, eta_val_jet);
+	}
+	//cout << "use SFl  " << sf<<" +- "<< GetWeight(1, quarkorigin, pt_val_jet, eta_val_jet) <<endl;
+	//cout <<pt_val_jet <<" "<<eta_val_jet<<endl;
+	return (GetWeight(4, quarkorigin, pt_val_jet, eta_val_jet) * sf);
+  }
+}
+
+
+const TH2D* SFBweight::GetHistoSFB() const{
     return histo_sfvalb_;
+}
+
+const TH2D* SFBweight::GetHistoEffMCb() const{
+	return histo_effmcb_;
+}
+
+const TH2D* SFBweight::GetHistoEffMCc() const{
+	return histo_effmcc_;
+}
+
+const TH2D* SFBweight::GetHistoEffMCl() const{
+	return histo_effmcl_;
 }

@@ -535,15 +535,15 @@ int SSDiLeptonSelection::doFullSelection (Dataset * dataset, string channelName,
 	  }
 	  break;
 	case 1:
-	  if (SelectedJets[j].bTag["simpleSecondaryVertexBJetTags"] >= btagDiscriCut_) {
+	  if (SelectedJets[j].bTag["combinedSecondaryVertexBJetTags"] >= btagDiscriCut_) {
 	    btagjets.push_back (SelectedJets[j]);
-	    btagDiscri.push_back (SelectedJets[j].bTag["simpleSecondaryVertexBJetTags"]);
+	    btagDiscri.push_back (SelectedJets[j].bTag["combinedSecondaryVertexBJetTags"]);
 	  }
 	  break;
 	case 2:
-	  if (SelectedJets[j].bTag["softMuonBJetTags"] >= btagDiscriCut_) {
+	  if (SelectedJets[j].bTag["jetProbabilityBJetTags"] >= btagDiscriCut_) {
 	    btagjets.push_back (SelectedJets[j]);
-	    btagDiscri.push_back (SelectedJets[j].bTag["softMuonBJetTags"]);
+	    btagDiscri.push_back (SelectedJets[j].bTag["jetProbabilityBJetTags"]);
 	  }
 	  break;
 	default:
@@ -574,15 +574,15 @@ int SSDiLeptonSelection::doFullSelection (Dataset * dataset, string channelName,
 	  }
 	  break;
 	case 1:
-	  if (SelectedJets[j].bTag["simpleSecondaryVertexBJetTags"] >= btagDiscriCut_) {
+	  if (SelectedJets[j].bTag["combinedSecondaryVertexBJetTags"] >= btagDiscriCut_) {
 	    btagjets.push_back (SelectedJets[j]);
-	    btagDiscri.push_back (SelectedJets[j].bTag["simpleSecondaryVertexBJetTags"]);
+	    btagDiscri.push_back (SelectedJets[j].bTag["combinedSecondaryVertexBJetTags"]);
 	  }
 	  break;
 	case 2:
-	  if (SelectedJets[j].bTag["softMuonBJetTags"] >= btagDiscriCut_) {
+	  if (SelectedJets[j].bTag["jetProbabilityBJetTags"] >= btagDiscriCut_) {
 	    btagjets.push_back (SelectedJets[j]);
-	    btagDiscri.push_back (SelectedJets[j].bTag["softMuonBJetTags"]);
+	    btagDiscri.push_back (SelectedJets[j].bTag["jetProbabilityBJetTags"]);
 	  }
 	  break;
 	default:
@@ -673,9 +673,13 @@ bool SSDiLeptonSelection::passTriggerSelection (Dataset * dataset, string channe
   //  if(runNumber == 1){
   if (!dataset->isData ()) 	//MC
   {
-    passMu = GetPointer2Trigger()->IsFired("HLT_DoubleMu6_v1");
-    passEl = GetPointer2Trigger()->IsFired("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v2");
-    passElMu = GetPointer2Trigger()->IsFired("HLT_Mu8_Ele17_CaloIdL_v2");
+    //GetPointer2Trigger()->Dump();
+    passMu = (GetPointer2Trigger()->IsFired("HLT_DoubleMu6_v1") // Summer11
+               || GetPointer2Trigger()->IsFired("HLT_DoubleMu6_v8")); // Fall11
+    passEl = (GetPointer2Trigger()->IsFired("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v2") // Summer11
+               || GetPointer2Trigger()->IsFired("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8")); // Fall11
+    passElMu = (GetPointer2Trigger()->IsFired("HLT_Mu8_Ele17_CaloIdL_v2") || GetPointer2Trigger()->IsFired("HLT_Mu10_Ele10_CaloIdL_v3") // Summer11
+               || GetPointer2Trigger()->IsFired("HLT_Mu8_Ele17_CaloIdL_v9")); // Fall11
   }
   else
   {
@@ -785,10 +789,10 @@ double SSDiLeptonSelection::getBtagDiscr(const NTJet & jet) const
     return jet.bTag["trackCountingHighEffBJetTags"];
     break;
   case 1:
-    return jet.bTag["simpleSecondaryVertexBJetTags"];
+    return jet.bTag["combinedSecondaryVertexBJetTags"];
     break;
   case 2:
-    return jet.bTag["softMuonBJetTags"];
+    return jet.bTag["jetProbabilityBJetTags"];
     break;
   default:
     cerr << "btagAlgo doesn't exist !" << endl;
