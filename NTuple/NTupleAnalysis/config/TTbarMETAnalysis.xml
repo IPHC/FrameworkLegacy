@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!-- ex with eqlumi <d name="ttJets" add="1" color="4" ls="1" lw="1" normf="0.000437334" xsection="414" filenames="/user/echabert/TopTree_Prod229/TopTree_TTJets.root" EqLumi="2287."/> -->
+<!-- ex with NofEvts <d name="ttJets" add="1" color="4" ls="1" lw="1" normf="0.000437334" xsection="414" filenames="/user/echabert/TopTree_Prod229/TopTree_TTJets.root" NofEvts="946644"/> -->
+<!-- ex with PreselEff NofPSEvts <d name="ttJets" add="1" color="4" ls="1" lw="1" normf="0.000437334" xsection="414" filenames="/user/echabert/TopTree_Prod229/TopTree_TTJets.root" PreselEff="0.2307" NofEvts="218404"/> -->
+
+<Datasets>
+<!-- add = 1 : run on the sample
+     add = 0 : do not run on the sample
+     isData = 1 for data; = 0  for MC
+     ls = lineStyle //not yet used
+     lw = lineWidth //not yet used
+     !! important:
+	2 of the 3 information need to be filled
+		- normf (normalisation factor - default = 1)
+		- xsection (cross-section of the processus if it's MC - default = 1)
+		- NofEvts (could be lower than the size of the file. If it's higher or equal to the size, the program will run on the full sample)
+     Preselection
+	if a preselection has been applied before use
+		- PreselEff
+		- NofPSEvts instead of NofEvts 
+ -->
+
+<!-- xsection fausses : pour Lmu ou LL ... 
+<d name="DataMu" add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1" filenames="/opt/sbg/data/data1/cms/gele/MCData/CMSSW_4_2_3/V1/DiLeptonDataDoubleMu/DoubleMuNTuple.root" />
+<d name="WZ" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.61" filenames="/opt/sbg/data/data1/cms/jlagram/data/Summer11/WZ.root"/>
+-->
+
+<d name="signal" add="0" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.61" filenames="/opt/sbg/data/data1/cms/ccollard/files/TTbarMet/Signal_v1/IPHC428_ttbarMET_t1A0_semilep_350_100/NTuple_1_1_GKP.root"/>
+<d name="ttbar" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="157.5" filenames="/storage2/cms/jlagram/data/MC_428p7/TTJets_*.root" NofEvts="150000"/>
+
+</Datasets>
+
+<Analysis>
+<!--
+	DataType = 0: MC
+	DataType = 1: Data
+	DataType = 2: Data & MC
+	Luminosity in in pb-1
+-->
+<!--a type="General" Verbosity="3" DataType="0" Luminosity="38.35"/>
+<a type="General" Verbosity="3" DataType="0" Luminosity="204.2" LumiError="12." PUWeightFile="/opt/sbg/data/data1/cms/echabert/TopDilep/CMSSW_4_1_4/src/MiniTreeAnalysis/NTupleAnalysis/macros/pudist_200pb.root" />
+-->
+<a type="General" Verbosity="3" DataType="0" Luminosity="4900." LumiError="245." PUWeightFile="/opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root2011/pileup_160404_167151.root" />
+</Analysis>
+
+<Selection>
+<s type="Electron" Loaded="1" Algo="selectedPatElectronsPF2PAT" PtThreshold="10." EtaThreshold="2.5" RelIso="0.17" D0Cut="0.04" VertexMatchThr="1." DElectronETSCThr="15" RemuThr="0.1"/>
+<s type="Muon"     Loaded="1" Algo="selectedPatMuonsPF2PAT" PtThreshold="10." EtaThreshold="2.4" RelIso="0.20" D0Cut="0.02" VertexMatchThr="1." NofValidHits="0"  NofValidTkHits="10" NormChi2="10" />
+<s type="Tau"      Loaded="0" Algo="selectedPatTaus" PtThreshold="20." EtaThreshold="2.5" RelIso="0.15" D0Cut="0.04" VertexMatchThr="1." TauLeadTrkPtCut="10."/>
+<s type="Vertex"   Loaded="1" Algo="offlinePrimaryVertices" VertexNdofThr="4" VertexZThr="24."   VertexRhoThr="2." />
+<s type="Jet" Loaded="1" Algo="pf" PtThreshold="10." EtaThreshold="2.5" />   
+</Selection>
+
+<SSDiLeptonSelection>
+<!-- btagAlgo = 
+0 for TrackCounting
+1 for SecondarayVertex
+2 for SM
+-->
+<s MinMassCut="0." METCutsEMU="50." METCutsLL="50." ZMassWindowMin="9999." ZMassWindowMax="0." btagAlgo="0" btagDiscriCut="1.7" NofBtagJets="0" />
+</SSDiLeptonSelection>
+
