@@ -138,30 +138,61 @@ class Selection : public Event
 
   // -------- accessor to lepton + jet collections ------------
       
-  //! GetSelected muons for jets
-  std::vector<IPHCTree::NTMuon> GetSelectedMuonsForMuJets(
+  //! GetSelected muons for l+jets
+  std::vector<IPHCTree::NTMuon> GetSelectedMuonsForLJets(
+                                    const std::vector<IPHCTree::NTJet>& SelectedJets,
                                     bool applyLES = false, 
                                     float scale = 1.) const;
 
-  //! GetSelected no iso muons for jets
-  std::vector<IPHCTree::NTMuon> GetSelectedMuonsNoIsoForMuJets(
+  std::vector<IPHCTree::NTMuon> GetSelectedMuonsNoIsoForLJets(
+                                    const std::vector<IPHCTree::NTJet>& SelectedJets,
                                float PtThr, float EtaThr,
                                bool applyLES = false, float scale = 1.) const;
 
-  //! GetSelected muons for jets
-  std::vector<IPHCTree::NTMuon> GetSelectedMuonsForMuJets(
+  std::vector<IPHCTree::NTMuon> GetSelectedMuonsForLJets(
+                                    const std::vector<IPHCTree::NTJet>& SelectedJets,
                                float PtThr, float EtaThr, 
                                float MuonRelIso, bool applyLES = false,
                                float scale = 1.) const;
+
+  std::vector<IPHCTree::NTMuon> GetVetoMuonsForLJets(
+                              bool applyLES = false, float scale = 1.) const;
+
+  //! GetSelected electrons for l+jets
+  std::vector<IPHCTree::NTElectron> GetSelectedElectronsForLJets(
+                                    const std::vector<IPHCTree::NTJet>& SelectedJets,
+                                bool applyLES = false, float scale = 1.,
+                                bool applyLER = false, float resol = 1.) const;
+
+  std::vector<IPHCTree::NTElectron> GetSelectedElectronsNoIsoForLJets(
+                                    const std::vector<IPHCTree::NTJet>& SelectedJets,
+                                           float PtThr, float EtaThr,
+                                           bool applyLES = false, float scale = 1.,
+                                           bool applyLER = false, float resol = 1.) const;
+
+  std::vector<IPHCTree::NTElectron> GetSelectedElectronsForLJets(
+                                    const std::vector<IPHCTree::NTJet>& SelectedJets,
+                               float PtThr, float EtaThr,
+                               float ElectronRelIso,
+                               bool applyLES = false, float scale = 1.,
+                               bool applyLER = false, float resol = 1.) const;
+
+ std::vector<IPHCTree::NTElectron> GetVetoElectronsForLJets(
+                               bool applyLES = false, float scale = 1.,
+                               bool applyLER = false, float resol = 1.) const;
+
+
+
 
   //! GetSelected loose muons for jets
   std::vector<IPHCTree::NTMuon> GetSelectedLooseMuonsForMuJets(
                                bool applyLES = false, float scale = 1.) const;
 
-  //! GetSelected loose electrons for jetes
+  //! GetSelected loose electrons for jets
   std::vector<IPHCTree::NTElectron> GetSelectedLooseElectronsForMuJets(
                                bool applyLES = false,
                                float scale = 1.) const;
+
 
   // -------------- accessor to jet collections -------------
 
@@ -211,6 +242,17 @@ class Selection : public Event
                           float PtThr, float EtaThr,
                           bool applyJES = false, float scale = 1.,
                           bool applyJER = false, float ResFactor = 0.) const;
+
+  //! Get selected jets For L+Jets
+  std::vector<IPHCTree::NTJet> GetSelectedJetsForLJets(
+                          bool applyJES = false, float scale = 1.,
+                          bool applyJER = false, float ResFactor = 0.) const;
+  std::vector<IPHCTree::NTJet> GetSelectedJetsForLJets(
+                          const std::vector<IPHCTree::NTMuon>& muon_cand,
+                          const std::vector<IPHCTree::NTElectron>& elec_cand,
+                          bool applyJES = false, float scale = 1.,
+                          bool applyJER = false, float ResFactor = 0.) const;
+
 
   //! Get selected B jets
   std::vector<IPHCTree::NTJet> GetSelectedBJets(

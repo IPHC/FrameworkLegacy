@@ -26,7 +26,7 @@
 -->
 
 <d name="signal" add="0" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.61" filenames="/opt/sbg/data/data1/cms/ccollard/files/TTbarMet/Signal_v1/IPHC428_ttbarMET_t1A0_semilep_350_100/NTuple_1_1_GKP.root"/>
-<d name="ttbar" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="157.5" filenames="/storage2/cms/jlagram/data/MC_428p7/TTJets_*.root" NofEvts="150000"/>
+<d name="ttbar" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="157.5" filenames="/storage2/cms/jlagram/data/MC_428p7/TTJets_*.root" NofEvts="1500"/>
 
 </Datasets>
 
@@ -44,19 +44,9 @@
 </Analysis>
 
 <Selection>
-<s type="Electron" Loaded="1" Algo="selectedPatElectronsPF2PAT" PtThreshold="10." EtaThreshold="2.5" RelIso="0.17" D0Cut="0.04" VertexMatchThr="1." DElectronETSCThr="15" RemuThr="0.1"/>
-<s type="Muon"     Loaded="1" Algo="selectedPatMuonsPF2PAT" PtThreshold="10." EtaThreshold="2.4" RelIso="0.20" D0Cut="0.02" VertexMatchThr="1." NofValidHits="0"  NofValidTkHits="10" NormChi2="10" />
+<s type="Electron" Loaded="1" Algo="selectedPatElectronsPF2PAT" PtThreshold="35." EtaThreshold="2.4" RelIso="0.10" D0Cut="0.02" VertexMatchThr="9999." DElectronETSCThr="99999." RemuThr="0.1"/>
+<s type="Muon"     Loaded="1" Algo="selectedPatMuonsPF2PAT" PtThreshold="35." EtaThreshold="2.1" RelIso="0.125" D0Cut="0.02" VertexMatchThr="1." NofValidHits="0"  NofValidTkHits="10" NormChi2="10" />
 <s type="Tau"      Loaded="0" Algo="selectedPatTaus" PtThreshold="20." EtaThreshold="2.5" RelIso="0.15" D0Cut="0.04" VertexMatchThr="1." TauLeadTrkPtCut="10."/>
 <s type="Vertex"   Loaded="1" Algo="offlinePrimaryVertices" VertexNdofThr="4" VertexZThr="24."   VertexRhoThr="2." />
 <s type="Jet" Loaded="1" Algo="pf" PtThreshold="10." EtaThreshold="2.5" />   
 </Selection>
-
-<SSDiLeptonSelection>
-<!-- btagAlgo = 
-0 for TrackCounting
-1 for SecondarayVertex
-2 for SM
--->
-<s MinMassCut="0." METCutsEMU="50." METCutsLL="50." ZMassWindowMin="9999." ZMassWindowMax="0." btagAlgo="0" btagDiscriCut="1.7" NofBtagJets="0" />
-</SSDiLeptonSelection>
-

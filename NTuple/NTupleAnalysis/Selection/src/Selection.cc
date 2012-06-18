@@ -661,6 +661,75 @@ std::vector<IPHCTree::NTJet> Selection::GetSelectedJets(
   return selectedJets;
 }
 
+// ----------------------------------------------------------------------------
+// GetSelectedJetsForLJets
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTJet> Selection::GetSelectedJetsForLJets(
+                               bool applyJES, float scale, 
+                               bool applyJER, float ResFactor) const
+{
+  // Container for output
+  std::vector<IPHCTree::NTJet> selectedJets;
+  std::vector<IPHCTree::NTJet> scaledJets;
+
+  // Get scaled jets
+  if(applyJES) scaledJets = GetScaledJets(scale);
+  else if (GetPointer2Jets()!=0) scaledJets = *GetPointer2Jets();
+  if(applyJER) scaledJets = GetSmearedJets(scaledJets, ResFactor);
+
+  for(unsigned int i=0;i<scaledJets.size();i++)
+  {
+    if (scaledJets[i].ID["LOOSE"] != 1.) continue;
+    if (fabs(scaledJets[i].p4.Eta())> cfg.JetEtaThreshold_ ||
+        scaledJets[i].p4.Pt()< cfg.JetPtThreshold_) continue;   
+    selectedJets.push_back(scaledJets[i]);
+	
+  }
+  std::sort(selectedJets.begin(),selectedJets.end(),HighestPt());
+  return selectedJets;
+}
+
+std::vector<IPHCTree::NTJet> Selection::GetSelectedJetsForLJets(
+            const std::vector<IPHCTree::NTMuon>& muon_cand,
+            const std::vector<IPHCTree::NTElectron>& elec_cand,
+                               bool applyJES, float scale, 
+                               bool applyJER, float ResFactor) const
+{
+  // Container for output
+  std::vector<IPHCTree::NTJet> selectedJets;
+  std::vector<IPHCTree::NTJet> scaledJets;
+
+  // Get scaled jets
+  if(applyJES) scaledJets = GetScaledJets(scale);
+  else if (GetPointer2Jets()!=0) scaledJets = *GetPointer2Jets();
+  if(applyJER) scaledJets = GetSmearedJets(scaledJets, ResFactor);
+
+  for(unsigned int i=0;i<scaledJets.size();i++)
+  {
+    if (scaledJets[i].ID["LOOSE"] != 1.) continue;
+    if (fabs(scaledJets[i].p4.Eta())> cfg.JetEtaThreshold_ ||
+        scaledJets[i].p4.Pt()< cfg.JetPtThreshold_) continue;   
+    double deltaRmu = 10000;
+    double deltaRel = 10000;
+    
+    for(unsigned int imu=0; imu< muon_cand.size(); imu++)
+    {
+      double deltaR = scaledJets[i].p4.DeltaR(muon_cand[imu].p4);
+      if(deltaR < deltaRmu) deltaRmu = deltaR;
+    }
+    
+    for(unsigned int iel=0; iel< elec_cand.size(); iel++)
+    {
+      double deltaR = scaledJets[i].p4.DeltaR(elec_cand[iel].p4);
+      if(deltaR < deltaRel) deltaRel = deltaR;
+    }
+    
+    if( deltaRmu > 0.3  && deltaRel > 0.3) 
+                         selectedJets.push_back(scaledJets[i]);
+  }
+  std::sort(selectedJets.begin(),selectedJets.end(),HighestPt());
+  return selectedJets;
+}
 
 // ----------------------------------------------------------------------------
 // GetSelectedBJets
@@ -960,6 +1029,131 @@ std::vector<IPHCTree::NTElectron> Selection::GetSelectedElectrons(
 }
 
 
+// ----------------------------------------------------------------------------
+// GetSelectedElectronForLJets
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTElectron> Selection::GetSelectedElectronsForLJets(
+                              const std::vector<IPHCTree::NTJet>& SelectedJets,
+                              bool applyLES, float scale,
+                              bool applyLER, float resol ) const
+{
+        return GetSelectedElectronsForLJets(SelectedJets, cfg.ElectronPtThreshold_,
+                              cfg.ElectronEtaThreshold_,
+                              cfg.ElectronRelIso_,
+                              applyLES, scale,
+                              applyLER, resol);
+} 
+
+
+std::vector<IPHCTree::NTElectron> Selection::GetSelectedElectronsNoIsoForLJets(
+                               const std::vector<IPHCTree::NTJet>& SelectedJets,
+                                           float PtThr, float EtaThr,
+                                           bool applyLES, float scale,
+                         	                 bool applyLER, float resol) const
+{
+  // Containers for output
+  std::vector<IPHCTree::NTElectron> selectedElectrons;
+  std::vector<IPHCTree::NTElectron> localElectrons;
+  
+  // Get new electrons
+  if (applyLES ) { localElectrons = GetScaledElectrons(scale); }
+  else { if(!applyLER) localElectrons = *GetPointer2Electrons();}
+  
+  if(applyLER ) { localElectrons = GetSmearedElectrons(resol); }
+  else{ if(!applyLES) localElectrons = *GetPointer2Electrons();}
+  
+  // Loop over electrons
+  for(unsigned int i=0;i<localElectrons.size();i++)
+  {
+    bool hadId = localElectrons[i].hadId(
+        static_cast<unsigned int>(localElectrons[i].ID["cicHyperTight1MC"]) & 0x1   
+                                );
+  
+    if (!localElectrons[i].isGsfElectron) continue; 
+    if(localElectrons[i].p4.Pt()        <=PtThr)               continue;
+    if(fabs(localElectrons[i].p4.Eta()) >=EtaThr)              continue;
+    // missing cut on ETA_SC PATElectron.superCluster()->eta())
+    // excluding EB-EE transition region 1.4442 < abs(eta_sc) < 1.5660
+    if(fabs(localElectrons[i].D0)       >=cfg.ElectronD0Cut_)  continue; 
+
+    // dR(e,jet)>0.3 where jet is any jet passing the jet requirements 
+    /*
+    double deltaRel  = 10000;
+    for(unsigned int ijet=0; ijet< SelectedJets.size(); ijet++){
+      double deltaR = SelectedJets[ijet].p4.DeltaR(localElectrons[i].p4);
+      if(deltaR < deltaRel) deltaRel = deltaR;
+      if (deltaR<0.3) cout << " ze jet " << SelectedJets[ijet].p4.Pt() << " eta " << SelectedJets[ijet].p4.Eta() << " phi " << SelectedJets[ijet].p4.Phi()
+                           << " ze el " << localElectrons[i].p4.Pt() << " eta " << localElectrons[i].p4.Eta() << " phi " << localElectrons[i].p4.Phi() 
+                           << " dR " << deltaR << endl;
+    }
+    if( deltaRel <= 0.3) continue;
+    */
+
+    if(localElectrons[i].nLost>0) continue;
+    if( fabs(localElectrons[i].deltaCotTheta)<0.02 or
+               fabs(localElectrons[i].deltaDistance)<0.02     )   continue;
+    if (!hadId)                  continue;
+
+    // plus utilise on dirait...
+    //if(!localElectrons[i].isEcalDriven)                        continue;
+    //if(localElectrons[i].ET_SC          <=cfg.ElectronETSCThr_)continue;
+    //if(GetSelectedVertex().size() == 0) continue;
+    //if ( fabs( localElectrons[i].vertex.Z() - 
+    //     GetSelectedVertex()[0].p3.Z() ) > cfg.ElectronVertexMatchThr_ )
+    //    continue;
+     
+    // DR computed between localElectrons candidates
+    // and all Global or Tracker Muon
+    /*
+    bool SharedCone = false;
+    const std::vector<IPHCTree::NTMuon>* muons = GetPointer2Muons();
+    for(unsigned int j=0;j<muons->size();j++)
+    {
+      if( (*muons)[j].isGlobalMuon || 
+          (*muons)[j].isTrackerMuon   )
+      {
+        if(localElectrons[i].p4.DeltaR((*muons)[j].p4)<0.1)
+        {
+          SharedCone = true;
+          break;
+        }
+      }
+    }
+    if(SharedCone)                      continue;  // encore utilise ou pas? top projection???
+    */
+
+    selectedElectrons.push_back(localElectrons[i]);
+  }
+  std::sort(selectedElectrons.begin(),selectedElectrons.end(),HighestPt());
+  return selectedElectrons;
+}
+
+
+// ----------------------------------------------------------------------------
+// GetSelectedElectrons
+// ----------------------------------------------------------------------------
+std::vector<IPHCTree::NTElectron> Selection::GetSelectedElectronsForLJets(
+                               const std::vector<IPHCTree::NTJet>& SelectedJets,
+                               float PtThr, float EtaThr,
+                               float ElectronRelIso, bool applyLES,
+                               float scale, bool applyLER , float resol) const
+{
+  std::vector<IPHCTree::NTElectron> selectedElectrons;
+
+  std::vector<IPHCTree::NTElectron> electrons = 
+              GetSelectedElectronsNoIsoForLJets(SelectedJets, PtThr, EtaThr, applyLES,
+                                        scale, applyLER, resol);
+
+  for(unsigned int i=0;i<electrons.size();i++)
+  {
+    if ( static_cast<double>(electrons[i].RelIso03PF()) 
+                                        > ElectronRelIso) continue;
+    selectedElectrons.push_back(electrons[i]);
+  }
+  std::sort(selectedElectrons.begin(),selectedElectrons.end(),HighestPt());
+  return selectedElectrons;
+}
+
 
 
 // ----------------------------------------------------------------------------
@@ -1093,12 +1287,15 @@ std::vector<IPHCTree::NTMuon> Selection::GetSelectedMuons(
 
 
 // ----------------------------------------------------------------------------
-// GetSelectedMuonsNoIsoForMuJets
+// GetSelectedMuonsNoIsoForLJets
 // ----------------------------------------------------------------------------
-std::vector<IPHCTree::NTMuon> Selection::GetSelectedMuonsNoIsoForMuJets(
+std::vector<IPHCTree::NTMuon> Selection::GetSelectedMuonsNoIsoForLJets(
+                               const std::vector<IPHCTree::NTJet>& SelectedJets,
                                    float PtThr, float EtaThr,
                                    bool applyLES, float scale) const
 {
+  // originally developped by Camille & Jeremy
+  // modified by Caroline for TTbarMET in lepton+jets+met
 
   // Containers for output 
   std::vector<IPHCTree::NTMuon> selectedMuons;
@@ -1111,17 +1308,34 @@ std::vector<IPHCTree::NTMuon> Selection::GetSelectedMuonsNoIsoForMuJets(
   // Loop over muons
   for(unsigned int i=0;i<localMuons.size();i++)
   {
+
     if(!localMuons[i].isGlobalMuon)  continue;
-    if(!localMuons[i].isTrackerMuon) continue;
+    if(!localMuons[i].isTrackerMuon) continue;   // pas en 2012
+    if(localMuons[i].p4.Pt()        <PtThr)                      continue;
+    if(fabs(localMuons[i].p4.Eta()) >= EtaThr)                   continue;
     if(localMuons[i].Chi2           >= cfg.MuonNormChi2_)        continue;
-    if(localMuons[i].NTrValidHits   <= cfg.MuonNofValidTrHits_)  continue;
+    // if(localMuons[i].NTrValidHits   <= cfg.MuonNofValidTrHits_)  continue;  // remplace trackerLayersWithMeasurement() ?
+    // missing cut on muon.innerTrack()->hitPattern().trackerLayersWithMeasurement() > 8  // 2012 >5
+    // missing cut on muon.innerTrack()->hitPattern().pixelLayersWithMeasurement() >=1    // 2012 >0 
+    // missing cut on numberOfMatchedStations() >1                                        // 2012 >1
     if(localMuons[i].NValidHits     <= cfg.MuonNofValidHits_  )  continue;
     if(fabs(localMuons[i].D0Inner)  >= cfg.MuonD0Cut_)           continue;
-    if(fabs(localMuons[i].p4.Eta()) >= EtaThr)                   continue;
-    if(localMuons[i].p4.Pt()        <PtThr)                      continue;
     if(GetSelectedVertex().size() == 0)  continue;
     if ( fabs( localMuons[i].vertex.Z() - 
       GetSelectedVertex()[0].p3.Z()) > cfg.MuonVertexMatchThr_ ) continue;
+    // dR(μ,jet)>0.3 where jet is any jet passing the jet requirements
+    /*
+    double deltaRmu  = 10000;
+    for(unsigned int ijet=0; ijet< SelectedJets.size(); ijet++){
+      double deltaR = SelectedJets[ijet].p4.DeltaR(localMuons[i].p4);
+      if(deltaR < deltaRmu) deltaRmu = deltaR;
+      if (deltaR<0.3) cout << " ze jet " << SelectedJets[ijet].p4.Pt() << " eta " << SelectedJets[ijet].p4.Eta() << " phi " << SelectedJets[ijet].p4.Phi()
+                           << " ze mu " << localMuons[i].p4.Pt() << " eta " << localMuons[i].p4.Eta() << " phi " << localMuons[i].p4.Phi() 
+                           << " dR " << deltaR << endl;
+    }
+    if( deltaRmu <= 0.3) continue;
+    */
+
     selectedMuons.push_back(localMuons[i]);
   }
   std::sort(selectedMuons.begin(),selectedMuons.end(),HighestPt());
@@ -1130,9 +1344,10 @@ std::vector<IPHCTree::NTMuon> Selection::GetSelectedMuonsNoIsoForMuJets(
 
 
 // ----------------------------------------------------------------------------
-// GetSelectedMuonsForMuJets
+// GetSelectedMuonsForLJets
 // ----------------------------------------------------------------------------
-std::vector<IPHCTree::NTMuon> Selection::GetSelectedMuonsForMuJets(
+std::vector<IPHCTree::NTMuon> Selection::GetSelectedMuonsForLJets(
+                               const std::vector<IPHCTree::NTJet>& SelectedJets,
                              float PtThr, float EtaThr,
                              float MuonRelIso, bool applyLES,
                              float scale) const
@@ -1143,7 +1358,7 @@ std::vector<IPHCTree::NTMuon> Selection::GetSelectedMuonsForMuJets(
 
   // Get muons
   std::vector<IPHCTree::NTMuon> muons = 
-            GetSelectedMuonsNoIso(PtThr,EtaThr,applyLES,scale);
+            GetSelectedMuonsNoIsoForLJets(SelectedJets, PtThr,EtaThr,applyLES,scale);
 
   // Loop over muons
   for(unsigned int i=0;i<muons.size();i++)
@@ -1157,18 +1372,129 @@ std::vector<IPHCTree::NTMuon> Selection::GetSelectedMuonsForMuJets(
 
 
 // ----------------------------------------------------------------------------
-// GetSelectedMuonsForMuJets
+// GetSelectedMuonsForLJets
 // ----------------------------------------------------------------------------
-std::vector<IPHCTree::NTMuon> Selection::GetSelectedMuonsForMuJets(
+std::vector<IPHCTree::NTMuon> Selection::GetSelectedMuonsForLJets(
+                               const std::vector<IPHCTree::NTJet>& SelectedJets,
                               bool applyLES, float scale) const
 {
-	return GetSelectedMuonsForMuJets(cfg.MuonPtThreshold_,
+	return GetSelectedMuonsForLJets(SelectedJets, cfg.MuonPtThreshold_,
                                    cfg.MuonEtaThreshold_,
                                    cfg.MuonRelIso_,
                                    applyLES, scale);
 }
 
+// ----------------------------------------------------------------------------
+// GetVetoMuonsForLJets
+// ----------------------------------------------------------------------------
 
+std::vector<IPHCTree::NTMuon> Selection::GetVetoMuonsForLJets(
+                              bool applyLES, float scale) const
+{       
+
+  // for 2012 ana!
+
+  // Containers for output 
+  std::vector<IPHCTree::NTMuon> selectedMuons;
+  std::vector<IPHCTree::NTMuon> localMuons;
+
+  // Get Muons
+  if(applyLES) localMuons = GetScaledMuons(scale); 
+  else localMuons = *GetPointer2Muons();
+
+  // Loop over muons
+  for(unsigned int i=0;i<localMuons.size();i++)
+  {
+    if(!localMuons[i].isGlobalMuon && !localMuons[i].isTrackerMuon)  continue;
+    if(localMuons[i].p4.Pt()        <10.)                      continue;
+    if(fabs(localMuons[i].p4.Eta()) >= 2.5)                   continue;
+    if((localMuons[i].RelIso03PF()) > 0.20)                   continue;
+
+
+/*  // autres cuts aussi ou pas????
+
+    if(localMuons[i].Chi2           >= cfg.MuonNormChi2_)        continue;
+    // if(localMuons[i].NTrValidHits   <= cfg.MuonNofValidTrHits_)  continue;  // remplace trackerLayersWithMeasurement() ?
+    // missing cut on muon.innerTrack()->hitPattern().trackerLayersWithMeasurement() > 8
+    // missing cut on muon.innerTrack()->hitPattern().pixelLayersWithMeasurement() >=1
+    // missing cut on numberOfMatchedStations() >1
+    if(localMuons[i].NValidHits     <= cfg.MuonNofValidHits_  )  continue;
+    if(fabs(localMuons[i].D0Inner)  >= cfg.MuonD0Cut_)           continue;
+    if(GetSelectedVertex().size() == 0)  continue;
+    if ( fabs( localMuons[i].vertex.Z() - 
+      GetSelectedVertex()[0].p3.Z()) > cfg.MuonVertexMatchThr_ ) continue;
+    // dR(μ,jet)>0.3 where jet is any jet passing the jet requirements   ???? top projection???
+*/
+
+    selectedMuons.push_back(localMuons[i]);
+  }
+  std::sort(selectedMuons.begin(),selectedMuons.end(),HighestPt());
+  return selectedMuons;
+
+
+}
+
+
+std::vector<IPHCTree::NTElectron> Selection::GetVetoElectronsForLJets(
+                              bool applyLES, float scale,
+                              bool applyLER, float resol ) const
+{
+  // Containers for output
+  std::vector<IPHCTree::NTElectron> selectedElectrons;
+  std::vector<IPHCTree::NTElectron> localElectrons;
+  
+  // Get new electrons
+  if (applyLES ) { localElectrons = GetScaledElectrons(scale); }
+  else { if(!applyLER) localElectrons = *GetPointer2Electrons();}
+  
+  if(applyLER ) { localElectrons = GetSmearedElectrons(resol); }
+  else{ if(!applyLES) localElectrons = *GetPointer2Electrons();}
+  
+  // Loop over electrons
+  for(unsigned int i=0;i<localElectrons.size();i++)
+  {
+    bool hadId = localElectrons[i].hadId(
+        static_cast<unsigned int>(localElectrons[i].ID["cicLooseMC"]) & 0x1   
+                                );
+  
+    if (!localElectrons[i].isGsfElectron) continue; 
+    if (!hadId)                  continue;
+    if(localElectrons[i].p4.Pt()        <=15)               continue;
+    if(fabs(localElectrons[i].p4.Eta()) >=2.5)              continue;
+    // missing cut on ETA_SC PATElectron.superCluster()->eta())
+    // excluding EB-EE transition region 1.4442 < abs(eta_sc) < 1.5660
+    if ( localElectrons[i].RelIso03PF() > 0.2)              continue;
+
+
+    // if(fabs(localElectrons[i].D0)       >=cfg.ElectronD0Cut_)  continue; 
+
+    // dR(e,jet)>0.3 where jet is any jet passing the jet requirements  ??? top projection? 
+
+    // DR computed between localElectrons candidates
+    // and all Global or Tracker Muon
+    bool SharedCone = false;
+    const std::vector<IPHCTree::NTMuon>* muons = GetPointer2Muons();
+    for(unsigned int j=0;j<muons->size();j++)
+    {
+      if( (*muons)[j].isGlobalMuon || 
+          (*muons)[j].isTrackerMuon   )
+      {
+        if(localElectrons[i].p4.DeltaR((*muons)[j].p4)<0.1)
+        {
+          SharedCone = true;
+          break;
+        }
+      }
+    }
+    if(SharedCone)                      continue;  // encore utilise ou pas? top projection???
+
+    selectedElectrons.push_back(localElectrons[i]);
+  }
+  std::sort(selectedElectrons.begin(),selectedElectrons.end(),HighestPt());
+  return selectedElectrons;
+
+
+} 
 // ----------------------------------------------------------------------------
 // GetSelectedLooseMuonForMuJets
 // ----------------------------------------------------------------------------
