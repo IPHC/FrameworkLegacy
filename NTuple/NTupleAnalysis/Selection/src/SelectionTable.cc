@@ -14,7 +14,7 @@ SelectionTable::SelectionTable(vector<string> listOfCuts, vector<Dataset> listOf
 	listOfDatasets_ = listOfDatasets;
 	for(unsigned int i=0;i<listOfCuts.size();i++){
 		vector<float> a;
-		for(unsigned int j=0;j<listOfCuts.size();j++){
+		for(unsigned int j=0;j<listOfDatasets.size();j++){
 			float tmp = 0;
 			a.push_back(tmp);
 		}
