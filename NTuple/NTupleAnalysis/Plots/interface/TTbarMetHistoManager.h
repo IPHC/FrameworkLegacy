@@ -11,6 +11,7 @@
 #include "BJetHistoManager.h"
 #include "METHistoManager.h"
 #include "NofEventsHistoManager.h"
+#include "Kin4TTbarMetHistoManager.h"
 
 #include <TH1F.h>
 
@@ -46,6 +47,7 @@ class TTbarMetHistoManager{
 	BJetHistoManager bjetHistos;
 	METHistoManager metHistos;
 	NofEventsHistoManager nofEvtHistos;
+	Kin4TTbarMetHistoManager  kinHistos;
 };
 
 #endif

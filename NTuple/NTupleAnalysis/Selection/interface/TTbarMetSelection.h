@@ -118,14 +118,28 @@ class TTbarMetSelection: public Selection
   /** Invariant mass of the two leptons.
    *  It is only filled during the doFullSelection method.
    */
-  float HT() const {return all_hadronic.Pt();}
-  float M3() const {return top_hadronic.M();}
-  float M_topleptonic() const {return top_leptonic.M();}
-  float MT_wleptonic;
+  float HT() const             { return all_hadronic.Pt();}
+  float M3() const             { return top_hadronic.M();}
+  float M_topleptonic() const  { return top_leptonic.M();}
+  float MT_wleptonic() const   { return sqrt( 2.* the_lepton.Pt() * the_met.Pt() *(1. - cos( the_lepton.Phi() - the_met.Phi()) )) ;}
+  float PT_tophad() const      { return top_hadronic.Pt();}
+  float PT_topleptonic() const { return top_leptonic.Pt();}
+  float PT_wleptonic()  const  { return w_leptonic.Pt();}
+  float Dphi_lmet() const      { return the_lepton.DeltaPhi(the_met);}
+  float Dphi_ljet4() const     { return the_lepton.DeltaPhi(the_4thjet);}
+  float Dphi_tops() const      { return top_hadronic.DeltaPhi(top_leptonic);}
+  float Deta_lth() const       { 
+      float deta_e_tophad= the_lepton.Eta() - top_hadronic.Eta();
+      if (deta_e_tophad<0.) deta_e_tophad*=-1.;
+     return deta_e_tophad; }
+  float Deta_ljet4() const     { 
+      float deta_e_jet4= the_lepton.Eta() - the_4thjet.Eta();
+      if (deta_e_jet4<0.) deta_e_jet4*=-1.;
+     return deta_e_jet4; }
 
   int GetLeptonType() {
-    if (LeptonType=="mu") return 0;
-    else if (LeptonType=="e") return 1;
+    if (LeptonType=="e") return 0;
+    else if (LeptonType=="mu") return 1;
     else return -1;
   }
       

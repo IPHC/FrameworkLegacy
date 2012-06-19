@@ -78,21 +78,19 @@ int main (int argc, char *argv[])
   int systOriginal= sel.GetSystb();
   std::cout << " For btag : flag " << flagOriginal << ", method " << methodOriginal << ", syst " << systOriginal << std::endl;
 */
-  cout << " CARO 2 " << endl;
   IPHCTree::NTEvent * event = 0;
   //Selection table
-  cout << " CARO 3 " << endl;
 
+/*
   vector<string> listCaro=sel.GetCutList ();
   cout << listCaro.size() << endl;
   for (int ii=0; ii<listCaro.size(); ii++) {
     cout << listCaro[ii] << endl;
   }
+*/
   SelectionTable selTable_e (sel.GetCutList (), datasets, string ("e"));
-  cout << " CARO 4 " << endl;
   SelectionTable selTable_mu (sel.GetCutList (), datasets, string ("mu"));
   
-  cout << " CARO 5 " << endl;
   //Book keeping of standard histos
   bool doHistoManager = true;
   TTbarMetHistoManager histoManager;
@@ -173,22 +171,54 @@ int main (int argc, char *argv[])
       sel.LoadEvent(event);
 
       // Selection
-      string chan1= "e";
-      string chan2= "mu";
-      int selLastStep_e = sel.doFullSelection (&(datasets[d]), chan1, false);
-      int selLastStep_mu = sel.doFullSelection (&(datasets[d]), chan2, false);
-      if (selLastStep_e+selLastStep_mu>0) cout << ievt << "-->  Selection  e= " << selLastStep_e << " mu= " << selLastStep_mu << endl;
+      int selLastStep = sel.doFullSelection (&(datasets[d]), string("all"), false);
 
       // Table
-      int cut_size = 5;
-      for (unsigned int i = 0; i < cut_size + 1; i++) {
-        if (selLastStep_e >= (int) i)  selTable_e.Fill (d, i, weight);
-        if (selLastStep_mu >= (int) i) selTable_mu.Fill (d, i, weight);
+      //  1. No Selection 
+      selTable_e.Fill (d, 0, weight);
+      selTable_mu.Fill (d, 0, weight);
+      bool trigger_mu=false;
+      bool trigger_e=false;
+      //  2. Trigger
+      if (selLastStep>0) {
+       if (selLastStep>30) {
+         trigger_e=true;
+         trigger_mu=true;
+         selLastStep-=30;
+         selTable_e.Fill (d, 1, weight);
+         selTable_mu.Fill (d, 1, weight);
+       }
+       else if (selLastStep>20) {
+         trigger_mu=true;
+         selLastStep-=20;
+         selTable_mu.Fill (d, 1, weight);
+       }
+       else if (selLastStep>10) {
+         trigger_e=true;
+         selLastStep-=10;
+         selTable_e.Fill (d, 1, weight);
+       }
+      }
+      //  3. Suite de la Table
+      int lep = sel.GetLeptonType();
+      for (unsigned int i = 2; i < (sel.GetCutList()).size() ; i++) {
+        if (selLastStep >= (int) i && lep==0)  selTable_e.Fill (d, i, weight);
+        if (selLastStep >= (int) i && lep==1)  selTable_mu.Fill (d, i, weight);
       }
 
       // Histo
-      histoManager.Fill(sel, event, sel.GetMuonsForAna(), sel.GetElectronsForAna(), selLastStep_e, sel.GetChannel(chan1), d, weight);
-      histoManager.Fill(sel, event, sel.GetMuonsForAna(), sel.GetElectronsForAna(), selLastStep_mu, sel.GetChannel(chan2), d, weight);
+      bool plot_e = false;
+      bool plot_mu =false;
+      if (selLastStep==0) { 
+        plot_e=true;  
+        plot_mu=true;
+      }
+      else {
+        if (trigger_e  && (selLastStep==1 || lep==0)) plot_e=true;
+        if (trigger_mu && (selLastStep==1 || lep==1)) plot_mu=true;
+      }
+      if (plot_e)  histoManager.Fill(sel, event, sel.GetMuonsForAna(), sel.GetElectronsForAna(), selLastStep, 0, d, weight);
+      if (plot_mu) histoManager.Fill(sel, event, sel.GetMuonsForAna(), sel.GetElectronsForAna(), selLastStep, 1, d, weight);
 
 
 

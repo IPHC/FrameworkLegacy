@@ -25,8 +25,8 @@
 <d name="WZ" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.61" filenames="/opt/sbg/data/data1/cms/jlagram/data/Summer11/WZ.root"/>
 -->
 
-<d name="signal" add="0" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.61" filenames="/opt/sbg/data/data1/cms/ccollard/files/TTbarMet/Signal_v1/IPHC428_ttbarMET_t1A0_semilep_350_100/NTuple_1_1_GKP.root"/>
-<d name="ttbar" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="157.5" filenames="/storage2/cms/jlagram/data/MC_428p7/TTJets_*.root" NofEvts="1500"/>
+<d name="signal" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="2.20" filenames="/opt/sbg/data/data1/cms/ccollard/files/TTbarMet/Signal_v1/IPHC428_ttbarMET_t1A0_semilep_350_100/NTuple_1_1_GKP.root"/>
+<d name="ttbar" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="164.0" filenames="/storage2/cms/jlagram/data/MC_428p7/TTJets_*.root" NofEvts="50000"/>
 
 </Datasets>
 

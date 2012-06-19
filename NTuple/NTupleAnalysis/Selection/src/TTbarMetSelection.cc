@@ -65,7 +65,11 @@ int TTbarMetSelection::doFullSelection (Dataset * dataset, string channelName, b
 
   //boolean for the selection step: true = pass the cut
   bool step_trigger = false;
+  bool step_trigger_e = false;
+  bool step_trigger_mu = false;
   bool step_1lepton = false;
+  bool step_1lepton_e = false;
+  bool step_1lepton_mu = false;
   bool step_vetomu = false;
   bool step_jets = false;
   bool step_bjets = false;
@@ -88,15 +92,28 @@ int TTbarMetSelection::doFullSelection (Dataset * dataset, string channelName, b
   int FinalStep = 0;
 
   //Step 1        Trigger
-  //if (passTriggerSelection (dataset, channelName)) {
-  {
-     step_trigger = true;
-
+  /*
+  step_trigger_e = passTriggerSelection (dataset, string("e") );
+  step_trigger_mu = passTriggerSelection (dataset, string("mu") );
+  */
+  // ici a true pour le moment!
+  step_trigger_e=true;
+  step_trigger_mu=true;
+  if (step_trigger_e || step_trigger_mu) step_trigger= true;
+  if (step_trigger) {
     //Step 2        Le Lepton Isole
-     if (electronsAna.size()+muonsAna.size()==1 
-        && ( (channelName=="mu" && muonsAna.size()==1) || (channelName=="e" && electronsAna.size()==1)) ) {
+     if (electronsAna.size()+muonsAna.size()==1) {
+//        && ( (channelName=="mu" && muonsAna.size()==1) || (channelName=="e" && electronsAna.size()==1)) ) {
       step_1lepton = true;
-      LeptonType=channelName;
+      if (electronsAna.size()==1) {
+         step_1lepton_e = true;
+         LeptonType="e";
+      }
+      else if (muonsAna.size()==1) {
+         step_1lepton_mu = true;
+         LeptonType="mu";
+      }
+//      LeptonType=channelName;
 
       // Step 3 Veto muon
       std::vector < NTMuon > muVeto = GetVetoMuonsForLJets (applyMES, MESParam);
@@ -142,6 +159,7 @@ int TTbarMetSelection::doFullSelection (Dataset * dataset, string channelName, b
     } // step 2
   } // step 1
 
+
   //compute FinalStep
   if (step_trigger) {
     FinalStep++;
@@ -158,6 +176,12 @@ int TTbarMetSelection::doFullSelection (Dataset * dataset, string channelName, b
       }
     }
   }
+  if (step_trigger_e) {
+    FinalStep+=10;
+  }
+  if (step_trigger_mu) {
+    FinalStep+=20;
+  }
 
   return FinalStep;
 }
@@ -166,6 +190,19 @@ void TTbarMetSelection::FillKinematicP4(const std::vector < IPHCTree::NTMuon >& 
                       const std::vector < IPHCTree::NTElectron >& elec_kin,
                       const IPHCTree::NTMET& met_kin,
                       const std::vector < IPHCTree::NTJet >& jet_kin) {
+
+      // 0. Reset
+      TLorentzVector resetvector(0.,0.,0.,0.);
+      the_lepton=resetvector;
+      all_hadronic=resetvector;
+      top_hadronic=resetvector;
+      the_met=resetvector;
+      the_lepton=resetvector;
+      the_4thjet=resetvector;
+      w_leptonic=resetvector;
+      top_leptonic=resetvector;
+      
+
 
       // 1. The Lepton
       if (muon_kin.size()==1) {
@@ -176,10 +213,9 @@ void TTbarMetSelection::FillKinematicP4(const std::vector < IPHCTree::NTMuon >& 
       }
       
       // 2. The leptonic W
-      TLorentzVector w_leptonic;
-      TLorentzVector the_met(met_kin.p2.Px(),met_kin.p2.Py(),0.,met_kin.p2.Mod());
+      TLorentzVector met_initial(met_kin.p2.Px(),met_kin.p2.Py(),0.,met_kin.p2.Mod());
+      the_met=met_initial;
       w_leptonic = the_lepton + the_met;
-      MT_wleptonic = sqrt( 2.* the_lepton.Pt() * the_met.Pt() *(1. - cos( the_lepton.Phi() - the_met.Phi()) ));
 
       // 3. Total hadronic activity
       for (UInt_t ind=0;ind<jet_kin.size();ind++) {
@@ -277,7 +313,7 @@ bool TTbarMetSelection::passTriggerSelection (Dataset * dataset, string channelN
   }
 
   //if (channelName == string ("ee")) 
-  if (channelName.find("ee")!=string::npos) 
+  if (channelName.find("e")!=string::npos) 
   {
     if (passEl)
       return true;
@@ -285,7 +321,7 @@ bool TTbarMetSelection::passTriggerSelection (Dataset * dataset, string channelN
       return false;
   }
 //  if (channelName == string ("mumu")) 
-  if (channelName.find("mumu")!=string::npos) 
+  if (channelName.find("mu")!=string::npos) 
   {
     if (passMu)
       return true;

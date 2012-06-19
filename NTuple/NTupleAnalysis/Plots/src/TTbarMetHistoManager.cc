@@ -15,6 +15,7 @@ void TTbarMetHistoManager::LoadDatasets(vector<Dataset> datasets){
 	metHistos.LoadDatasets(datasets);
 	bjetHistos.LoadDatasets(datasets);
 	nofEvtHistos.LoadDatasets(datasets);
+	kinHistos.LoadDatasets(datasets);
 }    
  	
 
@@ -25,6 +26,7 @@ void TTbarMetHistoManager::LoadSelectionSteps(vector<string> selectionSteps){
 	metHistos.LoadSelectionSteps(selectionSteps);
 	bjetHistos.LoadSelectionSteps(selectionSteps);
 	nofEvtHistos.LoadSelectionSteps(selectionSteps);
+	kinHistos.LoadSelectionSteps(selectionSteps);
 }
 	
  
@@ -35,6 +37,7 @@ void TTbarMetHistoManager::LoadChannels(vector<string> channels){
 	metHistos.LoadChannels(channels);
 	bjetHistos.LoadChannels(channels);
 	nofEvtHistos.LoadChannels(channels);
+	kinHistos.LoadChannels(channels);
 }
 
 void TTbarMetHistoManager::Clear(){
@@ -44,6 +47,7 @@ void TTbarMetHistoManager::Clear(){
 	metHistos.Clear();
 	bjetHistos.Clear();
 	nofEvtHistos.Clear();
+	kinHistos.Clear();
 }
 
 
@@ -54,6 +58,7 @@ void TTbarMetHistoManager::CreateHistos(){
 	metHistos.CreateHistos();
 	bjetHistos.CreateHistos();
 	nofEvtHistos.CreateHistos();
+	kinHistos.CreateHistos();
 }
 
 void TTbarMetHistoManager::Fill(const TTbarMetSelection& sel, NTEvent* event, const vector<NTMuon>& candMuon, const vector<NTElectron>& candElec, const int& maxSelStep, const int& iChannel, const int& iDataset, const float& weight){
@@ -63,6 +68,7 @@ void TTbarMetHistoManager::Fill(const TTbarMetSelection& sel, NTEvent* event, co
         metHistos.Fill(sel.GetMET(), maxSelStep, iChannel, iDataset, weight);
         bjetHistos.Fill(sel.GetBJetsForAna().size(), maxSelStep, iChannel, iDataset, weight, weight);
 	nofEvtHistos.Fill(maxSelStep, iChannel, iDataset, weight);
+	kinHistos.Fill(sel,maxSelStep, iChannel, iDataset, weight);
 }
 
 void TTbarMetHistoManager::Fill(const TTbarMetSelection& sel, const int& maxSelStep, const int& iChannel, const int& iDataset, const float& weight){
@@ -72,6 +78,7 @@ void TTbarMetHistoManager::Fill(const TTbarMetSelection& sel, const int& maxSelS
         metHistos.Fill(sel.GetMET(), maxSelStep, iChannel, iDataset, weight);
         bjetHistos.Fill(sel.GetBJetsForAna().size(), maxSelStep, iChannel, iDataset, weight, weight);
 	nofEvtHistos.Fill(maxSelStep, iChannel, iDataset, weight);
+	kinHistos.Fill(sel,maxSelStep, iChannel, iDataset, weight);
 }
 
 
@@ -83,6 +90,7 @@ void TTbarMetHistoManager::Compute(){
 	metHistos.MergeChannels();
 	bjetHistos.MergeChannels();
 	nofEvtHistos.MergeChannels();
+	kinHistos.MergeChannels();
 
 	//MCStack
 	elecHistos.DoMCStack();
@@ -91,6 +99,7 @@ void TTbarMetHistoManager::Compute(){
 	metHistos.DoMCStack();
 	bjetHistos.DoMCStack();
 	nofEvtHistos.DoMCStack();
+	kinHistos.DoMCStack();
 
 	//MCDatasets
 	elecHistos.MergeMCDatasets();
@@ -99,6 +108,7 @@ void TTbarMetHistoManager::Compute(){
 	metHistos.MergeMCDatasets();
 	bjetHistos.MergeMCDatasets();
 	nofEvtHistos.MergeMCDatasets();
+	kinHistos.MergeMCDatasets();
 
 	//Cut by cut
 	elecHistos.PlotsCutByCut();
@@ -107,6 +117,7 @@ void TTbarMetHistoManager::Compute(){
 	metHistos.PlotsCutByCut();
 	bjetHistos.PlotsCutByCut();
 	nofEvtHistos.PlotsCutByCut();
+	kinHistos.PlotsCutByCut();
 
 }
 
@@ -119,6 +130,7 @@ void TTbarMetHistoManager::ComputeForProof(){
         metHistos.MergeChannels();
         bjetHistos.MergeChannels();
 	nofEvtHistos.MergeChannels();
+	kinHistos.MergeChannels();
 
         //Cut by cut not done, because Proof can not merge Canvas 
 
@@ -147,6 +159,9 @@ void TTbarMetHistoManager::Write(TFile* file){
         dir = fdir->GetDirectory("BJets");
         if(!dir) dir = fdir->mkdir("BJets");
 	bjetHistos.Write(dir);
+        dir = fdir->GetDirectory("KinPlots");
+        if(!dir) dir = fdir->mkdir("KinPlots");
+	kinHistos.Write(dir);
 	dir = 0;
 	delete dir;
 }
