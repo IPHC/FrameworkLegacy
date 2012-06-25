@@ -839,7 +839,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
   vector<NTVertex>   selVertices  = sel.GetSelectedVertex();
   // cout << "Vertices loaded " << endl;
   // cout<<sel.GetPointer2Electrons()<<endl;
-  vector<IPHCTree::NTElectron> selElectrons;// = sel.GetSelectedElectrons();
+  vector<IPHCTree::NTElectron> selElectrons = sel.GetSelectedElectrons();
   // cout << "Electrons loaded " << endl;
   vector<NTMuon>     selMuons     = sel.GetSelectedMuons();
   // cout << "Muons loaded " << endl;
@@ -1081,30 +1081,6 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
       if(IChannel == 2) MyhistoManager.FillHisto(ErrCutFlow_eemu,     "ErrCutFlow_eemu"   , 0, datasetName, IsSignal, EventYieldWeightError);
       if(IChannel == 3) MyhistoManager.FillHisto(ErrCutFlow_eee,      "ErrCutFlow_eee"    , 0, datasetName, IsSignal, EventYieldWeightError);
 	
-
-      vector<IPHCTree::NTElectron> candElec;
-      vector<IPHCTree::NTMuon> candMuon;
-      string CandType ;
-      
-      //*****************************************************************L
-      // pselection 3 lepton candidates
-      //*****************************************************************  
-      if(datasetName=="DataEG" || datasetName=="DataMu"  
-	 ||  datasetName=="DataEGMu" ||  datasetName=="DataMuEG"){
-	//sel.GetLeptonPairElectronScaled(candMuon, candElec, CandType, 1. ); 
-	scaleElec = 1.00;
-	sel.GetLeptonPairElectronScaled(candMuon, candElec, CandType, scaleElec ); 
-      }
-      
-      if(datasetName!="DataEG" && datasetName!="DataMu"  
-	 &&  datasetName!="DataMuEG" &&  datasetName!="DataEGMu"){
-	//cout << "mc.TMEME " << event->mc.TMEME << endl;
-	//sel.GetLeptonPairElectronSmeared(candMuon, candElec, CandType, 1, 0 ); 
-	resolElec= 0.00;
-	sel.GetLeptonPairElectronSmeared(candMuon, candElec, CandType, resolElec ); 
-      }
-      
-      //cout << "line 887" << endl;
       
       //*****************************************************************
       // pass 3 lepton requirements
@@ -1162,7 +1138,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	  bool matchElec=false;
           for(unsigned int iel2 = 0; iel2 < ZeeCand.size(); iel2++){
              
-	     if(fabs(selElectronsNonIso[iel1].p4.Pt() - ZeeCand[iel2].p4.Pt()) <  0.0001)  WeCand.push_back(selElectronsNonIso[iel1]);
+	     if(fabs(selElectronsNonIso[iel1].p4.Pt() - ZeeCand[iel2].p4.Pt()) <  0.0001)  matchElec=true;
 	   
           }
 	  if(!matchElec) WeCand.push_back(selElectronsNonIso[iel1]);
@@ -1232,7 +1208,6 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
       
       if( (WmuCand.size()+ZmumuCand.size()+WeCand.size()+ZeeCand.size()) == 3) {
        
-	//cout << candMuon.size() <<  " " << candElec.size() << " " << thirdMuon.size() << " " << thirdElec.size()  << endl;
 	string cand3leptonChannel = "";
 	if( ZmumuCand.size() == 2 ) {
 	  if(WmuCand.size() == 1 ) cand3leptonChannel = "mumumu";
