@@ -90,6 +90,7 @@ int main (int argc, char *argv[])
 */
   SelectionTable selTable_e (sel.GetCutList (), datasets, string ("e"));
   SelectionTable selTable_mu (sel.GetCutList (), datasets, string ("mu"));
+  SelectionTable selTable_l (sel.GetCutList (), datasets, string ("lepton"));
   
   //Book keeping of standard histos
   bool doHistoManager = true;
@@ -177,10 +178,12 @@ int main (int argc, char *argv[])
       //  1. No Selection 
       selTable_e.Fill (d, 0, weight);
       selTable_mu.Fill (d, 0, weight);
+      selTable_l.Fill (d, 0, weight);
       bool trigger_mu=false;
       bool trigger_e=false;
       //  2. Trigger
       if (selLastStep>0) {
+       selTable_l.Fill (d, 1, weight);
        if (selLastStep>30) {
          trigger_e=true;
          trigger_mu=true;
@@ -204,21 +207,19 @@ int main (int argc, char *argv[])
       for (unsigned int i = 2; i < (sel.GetCutList()).size() ; i++) {
         if (selLastStep >= (int) i && lep==0)  selTable_e.Fill (d, i, weight);
         if (selLastStep >= (int) i && lep==1)  selTable_mu.Fill (d, i, weight);
+        if (selLastStep >= (int) i) selTable_l.Fill (d, i, weight);
       }
+      
 
       // Histo
-      bool plot_e = false;
-      bool plot_mu =false;
-      if (selLastStep==0) { 
-        plot_e=true;  
-        plot_mu=true;
-      }
-      else {
-        if (trigger_e  && (selLastStep==1 || lep==0)) plot_e=true;
-        if (trigger_mu && (selLastStep==1 || lep==1)) plot_mu=true;
-      }
-      if (plot_e)  histoManager.Fill(sel, event, sel.GetMuonsForAna(), sel.GetElectronsForAna(), selLastStep, 0, d, weight);
-      if (plot_mu) histoManager.Fill(sel, event, sel.GetMuonsForAna(), sel.GetElectronsForAna(), selLastStep, 1, d, weight);
+      int selLastStep_e=0;
+      int selLastStep_mu=0;
+      if (trigger_e) selLastStep_e=1;
+      if (trigger_mu) selLastStep_mu=1;
+      if (trigger_e && lep==0) selLastStep_e=selLastStep;
+      if (trigger_mu && lep==1) selLastStep_mu=selLastStep;
+      histoManager.Fill(sel, event, sel.GetMuonsForAna(), sel.GetElectronsForAna(), selLastStep_e, 0, d, weight);
+      histoManager.Fill(sel, event, sel.GetMuonsForAna(), sel.GetElectronsForAna(), selLastStep_mu, 1, d, weight);
 
 
 
@@ -253,56 +254,56 @@ int main (int argc, char *argv[])
   else ofilename = string("CrossSectionTable.tex");
   ofstream ofile (ofilename.c_str());
   ofile << "\\documentclass[8pt]{article}" << endl;
+  ofile << "\\usepackage{lscape}" << endl;
   ofile << "\\begin{document}" << endl;
+  ofile << "\\begin{landscape}" << endl;
+  
 //  ofile << "\\usepackage{geometry}" << endl;
 //  ofile << "\\geometry{a4paper, textwidth=19cm, textheight=23cm}" << endl;
 
  //Merge channels consistently
-/*
   vector < string > mergenames;
-  mergenames.push_back ("QCD1");
-  mergenames.push_back ("QCD2");
-  mergenames.push_back ("QCD3");
-  mergenames.push_back ("QCD4");
-  mergenames.push_back ("QCD5");
-  mergenames.push_back ("QCD6");
-  mergenames.push_back ("QCD7");
-  mergenames.push_back ("QCD8");
-  selTable_ee.MergeDatasets (mergenames, string ("QCD1"));
-  selTable_emu.MergeDatasets (mergenames, string ("QCD1"));
-  selTable_mumu.MergeDatasets (mergenames, string ("QCD1"));
+  mergenames.push_back ("W1Jet");
+  mergenames.push_back ("W2Jet");
+  mergenames.push_back ("W3Jet");
+  mergenames.push_back ("W4Jet");
+  selTable_e.MergeDatasets (mergenames, string ("W+Jets"));
+  selTable_mu.MergeDatasets (mergenames, string ("W+Jets"));
+  selTable_l.MergeDatasets (mergenames, string ("W+Jets"));
   mergenames.clear ();
-  mergenames.push_back ("QCD9");
-  mergenames.push_back ("QCD10");
-  mergenames.push_back ("QCD11");
-  mergenames.push_back ("QCD12");
-  mergenames.push_back ("QCD13"); 
-  selTable_ee.MergeDatasets (mergenames, string ("QCD2"));
-  selTable_emu.MergeDatasets (mergenames, string ("QCD2"));
-  selTable_mumu.MergeDatasets (mergenames, string ("QCD2"));
+  mergenames.push_back ("DY1");
+  mergenames.push_back ("DY2");
+  selTable_e.MergeDatasets (mergenames, string ("Z+Jets"));
+  selTable_mu.MergeDatasets (mergenames, string ("Z+Jets"));
+  selTable_l.MergeDatasets (mergenames, string ("Z+Jets"));
   mergenames.clear ();
-  mergenames.push_back ("DYToEE1");
-  mergenames.push_back ("DYToEE2");
-  mergenames.push_back ("DYToMuMu1");
-  mergenames.push_back ("DYToMuMu2");
-  mergenames.push_back ("DYToTauTau1");
-  mergenames.push_back ("DYToTauTau2");
-  selTable_ee.MergeDatasets (mergenames, string ("DYToLL"));
-  selTable_emu.MergeDatasets (mergenames, string ("DYToLL"));
-  selTable_mumu.MergeDatasets (mergenames, string ("DYToLL"));
-  
-  //Define signal
-  selTable_ee.DefineFirstDataset (string ("LM1"));
-  selTable_emu.DefineFirstDataset (string ("LM1"));
-  selTable_mumu.DefineFirstDataset (string ("LM1"));
-//  selTable_allChannels.DefineFirstDataset (string ("TTbarSignal"));
-*/
+  mergenames.push_back ("WW");
+  mergenames.push_back ("WZ");
+  mergenames.push_back ("ZZ");
+  selTable_e.MergeDatasets (mergenames, string ("Diboson"));
+  selTable_mu.MergeDatasets (mergenames, string ("Diboson"));
+  selTable_l.MergeDatasets (mergenames, string ("Diboson"));
+  mergenames.clear ();
+  mergenames.push_back ("singleTop1");
+  mergenames.push_back ("singleTop2");
+  mergenames.push_back ("singleTop3");
+  mergenames.push_back ("singleTop4");
+  mergenames.push_back ("singleTop5");
+  mergenames.push_back ("singleTop6");
+  selTable_e.MergeDatasets (mergenames, string ("SingleTop"));
+  selTable_mu.MergeDatasets (mergenames, string ("SingleTop"));
+  selTable_l.MergeDatasets (mergenames, string ("SingleTop"));
+
+
   //Calculations
   selTable_e.TableCalculator ();
   selTable_mu.TableCalculator ();
+  selTable_l.TableCalculator ();
   //Write
   selTable_e.Write (ofile);
   selTable_mu.Write (ofile);
+  selTable_l.Write (ofile);
+  ofile << "\\end{landscape}" << endl;
   ofile << "\\end{document}" << endl;
   system (Form("pdflatex %s", ofilename.data()));
 

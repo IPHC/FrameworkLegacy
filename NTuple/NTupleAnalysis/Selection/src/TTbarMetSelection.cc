@@ -17,7 +17,8 @@ TTbarMetSelection::TTbarMetSelection ()
   cuts_.push_back ("1 Lepton");
   cuts_.push_back ("Veto on other leptons");
   cuts_.push_back ("NJets cut");
-  cuts_.push_back ("NbtagJets cut");
+  cuts_.push_back ("NbtagJets cut1");
+  cuts_.push_back ("NbtagJets cut2");
 
   //Fill Channels
   channels_.push_back (string ("e"));
@@ -72,7 +73,8 @@ int TTbarMetSelection::doFullSelection (Dataset * dataset, string channelName, b
   bool step_1lepton_mu = false;
   bool step_vetomu = false;
   bool step_jets = false;
-  bool step_bjets = false;
+  bool step_bjets1 = false;
+  bool step_bjets2 = false;
 
 
   //Collection of selected objects
@@ -92,11 +94,11 @@ int TTbarMetSelection::doFullSelection (Dataset * dataset, string channelName, b
   int FinalStep = 0;
 
   //Step 1        Trigger
-  /*
+/*
   step_trigger_e = passTriggerSelection (dataset, string("e") );
   step_trigger_mu = passTriggerSelection (dataset, string("mu") );
-  */
-  // ici a true pour le moment!
+*/
+// ici a true pour le moment!
   step_trigger_e=true;
   step_trigger_mu=true;
   if (step_trigger_e || step_trigger_mu) step_trigger= true;
@@ -153,7 +155,8 @@ int TTbarMetSelection::doFullSelection (Dataset * dataset, string channelName, b
             btagDiscri.push_back (jetsAna[j].bTag[btag_algo]);
          }
         }
-        if ((int) bjetsAna.size () >= NofBtagJets_) step_bjets = true;
+        if ((int) bjetsAna.size () >= NofBtagJets_) step_bjets1 = true;
+        if ((int) bjetsAna.size () >= 2) step_bjets2 = true;
        } // step 4
       } // step 3
     } // step 2
@@ -169,8 +172,11 @@ int TTbarMetSelection::doFullSelection (Dataset * dataset, string channelName, b
        FinalStep++;
        if (step_jets) {
 	  FinalStep++;
-	  if (step_bjets) {
+	  if (step_bjets1) {
 	    FinalStep++;
+	    if (step_bjets2) {
+	      FinalStep++;
+	    }
 	  }
        }
       }

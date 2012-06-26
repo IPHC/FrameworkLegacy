@@ -136,6 +136,7 @@ class TTbarMetSelection: public Selection
       float deta_e_jet4= the_lepton.Eta() - the_4thjet.Eta();
       if (deta_e_jet4<0.) deta_e_jet4*=-1.;
      return deta_e_jet4; }
+  float Met() const            { return the_met.Pt(); }
 
   int GetLeptonType() {
     if (LeptonType=="e") return 0;

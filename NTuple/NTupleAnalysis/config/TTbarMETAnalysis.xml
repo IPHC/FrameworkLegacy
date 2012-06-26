@@ -26,7 +26,29 @@
 -->
 
 <d name="signal" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="2.20" filenames="/opt/sbg/data/data1/cms/ccollard/files/TTbarMet/Signal_v1/IPHC428_ttbarMET_t1A0_semilep_350_100/NTuple_1_1_GKP.root"/>
+<!-- ttbar MC de TOP-11-005 -->
 <d name="ttbar" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="164.0" filenames="/storage2/cms/jlagram/data/MC_428p7/TTJets_*.root" NofEvts="50000"/>
+<!-- W+jets https://hypernews.cern.ch/HyperNews/CMS/get/generators/1324.html && http://cms.cern.ch/iCMS/prep/requestmanagement?campid=Fall11_R2 -->
+<!-- PREP * 31314/27770  NLO -->
+<d name="W1Jet" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="5051.7" filenames="/storage2/cms/jlagram/data/MC_428p7/W1Jet_*.root" NofEvts="50000"/>
+<d name="W2Jet" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="1618.1" filenames="/storage2/cms/jlagram/data/MC_428p7/W2Jets.root" NofEvts="50000"/>
+<d name="W3Jet" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="342.8" filenames="/storage2/cms/jlagram/data/MC_428p7/W3Jets.root" NofEvts="50000"/>
+<d name="W4Jet" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="194.6" filenames="/storage2/cms/jlagram/data/MC_428p7/W4Jets.root" NofEvts="50000"/>
+<!-- DY https://twiki.cern.ch/twiki/bin/view/CMS/TTbarHiggs#Background  NLO-->
+<d name="DY1" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="12782.6" filenames="/storage2/cms/jlagram/data/MC_428p7/DYJets_M-10To50_*.root" NofEvts="50000"/>
+<d name="DY2" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="3048" filenames="/storage2/cms/jlagram/data/MC_428p7/DYJets_M50_*.root" NofEvts="50000"/>
+<!-- diboson : https://twiki.cern.ch/twiki/bin/view/CMS/TTbarHiggs#Background  NLO -->
+<d name="WW" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="43" filenames="/storage2/cms/jlagram/data/MC_428p7/WW.root" NofEvts="50000"/>
+<d name="WZ" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="18.2" filenames="/storage2/cms/jlagram/data/MC_428p7/WZ.root" NofEvts="50000"/>
+<d name="ZZ" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="5.9" filenames="/storage2/cms/jlagram/data/MC_428p7/ZZ.root" NofEvts="50000"/>
+<!-- single top : https://twiki.cern.ch/twiki/bin/viewauth/CMS/TWikiTop2011DataMCTrig Reference sample Summer11 (42X) -->
+<!-- aussi sur https://twiki.cern.ch/twiki/bin/view/CMS/TTbarHiggs#Background  NLO mais ambiguite T_s : 3.19 ou 3.17??? -->
+<d name="singleTop1" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="3.19" filenames="/storage2/cms/jlagram/data/MC_428p7/T_s.root" NofEvts="50000"/>
+<d name="singleTop2" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="41.92" filenames="/storage2/cms/jlagram/data/MC_428p7/T_t.root" NofEvts="50000"/>
+<d name="singleTop3" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.87" filenames="/storage2/cms/jlagram/data/MC_428p7/T_tW.root" NofEvts="50000"/>
+<d name="singleTop4" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="1.44" filenames="/storage2/cms/jlagram/data/MC_428p7/Tbar_s.root" NofEvts="50000"/>
+<d name="singleTop5" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="22.65" filenames="/storage2/cms/jlagram/data/MC_428p7/Tbar_t.root" NofEvts="50000"/>
+<d name="singleTop6" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.87" filenames="/storage2/cms/jlagram/data/MC_428p7/Tbar_tW.root" NofEvts="50000"/>
 
 </Datasets>
 
@@ -48,5 +70,5 @@
 <s type="Muon"     Loaded="1" Algo="selectedPatMuonsPF2PAT" PtThreshold="35." EtaThreshold="2.1" RelIso="0.125" D0Cut="0.02" VertexMatchThr="1." NofValidHits="0"  NofValidTkHits="10" NormChi2="10" />
 <s type="Tau"      Loaded="0" Algo="selectedPatTaus" PtThreshold="20." EtaThreshold="2.5" RelIso="0.15" D0Cut="0.04" VertexMatchThr="1." TauLeadTrkPtCut="10."/>
 <s type="Vertex"   Loaded="1" Algo="offlinePrimaryVertices" VertexNdofThr="4" VertexZThr="24."   VertexRhoThr="2." />
-<s type="Jet" Loaded="1" Algo="pf" PtThreshold="10." EtaThreshold="2.5" />   
+<s type="Jet" Loaded="1" Algo="pf" PtThreshold="30." EtaThreshold="2.5" />   
 </Selection>
