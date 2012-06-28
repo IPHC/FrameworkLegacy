@@ -58,69 +58,15 @@ ProofSelectorMyCutFlow::ProofSelectorMyCutFlow()
   applyDYscale = true ;
   applyFakescale = true  ;
   
-  producePLRPlots       = true; 
   IReweight		= true;
   IDYestimateWithMetCut = true;
   IReweight_puUp	= false;
   IReweight_puDown	= false;
   
   
-  doLinearity 	= true;
-  
   useNonIsoWcand = false;
   
-  /*initMCevents["TTbar"]	        = 3701947;
-  initMCevents["DYToLL_M10-50"] = 31480628;
-  initMCevents["Zjets"]	        = 36277961;	
-  initMCevents["Wjets"]	        = 81352581;	
-  initMCevents["TtW"]	        = 814390;  	
-  initMCevents["TbartW"]        = 809984;	
-  initMCevents["WZ"]	        = 4265243;		
-  initMCevents["ZZ"]	        = 4187885;		
-  initMCevents["WW"]	        = 4221676;*/
-  
-  initMCevents["TTbar"]	        = 3631452;
-  
-  //initMCevents["TTbar"]	        = int(3631452./2.);
   rand.SetSeed(102994949221);
-  
-  
-  initMCevents["TTbarScaleUp"]    = 912748;
-  initMCevents["TTbarScaleDown"]  = 948880;
-  initMCevents["TTbarMatchUp"]    = 1043119;
-  initMCevents["TTbarMatchDown"]  = 1043771;
-  
-  initMCevents["TTbarMass161"]  = 1589234;
-  initMCevents["TTbarMass163"]  = 1601897;
-  initMCevents["TTbarMass166"]  = 1637204;
-  initMCevents["TTbarMass169"]  = 1575820;
-  initMCevents["TTbarMass175"]  = 1509012;
-  initMCevents["TTbarMass178"]  = 1617587;
-  initMCevents["TTbarMass181"]  = 1634464;
-  initMCevents["TTbarMass184"]  = 1640594;
-  
-  
-  
-  initMCevents["DYToLL_M10-50"] = 31480628; // from DAS
-  initMCevents["Zjets"]	        = 36050575;	
-  initMCevents["Wjets"]	        = 81352581;	
-  initMCevents["TtW"]	        = 812544;  	
-  initMCevents["TbartW"]        = 808154;
-  initMCevents["TtWScaleUp"]    = 436624;
-  initMCevents["TtWScaleDown"]  = 436971;
-  initMCevents["TtWMatchingUp"]       = 0;
-  initMCevents["TtWMatchingDown"]     = 0;
-  initMCevents["TbartWScaleUp"]       = 436714;
-  initMCevents["TbartWScaleDown"]     = 436991;
-  initMCevents["TbartWMatchingUp"]    = 0;
-  initMCevents["TbartWMatchingDown"]  = 0;	   
-  initMCevents["WZ"]	        = 4265239;		
-  initMCevents["ZZ"]	        = 4187882;		
-  initMCevents["WW"]	        = 4221674;
-  
-  initMCevents["FCNCkut"]	        = 247995;	 
-
-
 
 }
 
@@ -189,8 +135,6 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   cout << "dataset name " << datasetName << endl;
   TNamed *xfname = (TNamed *) fInput->FindObject("PROOF_XMLFILENAME");
   string xmlFileName = xfname->GetTitle();
-  //gProof->GetManager()->GetFile(xmlFileName.c_str(),"local.xml");
-  //anaEL = new AnalysisEnvironmentLoader("/tmp/local.xml");
   anaEL = new AnalysisEnvironmentLoader(xmlFileName.c_str());
   anaEL->LoadSamples (datasets, datasetName); // now the list of datasets written in the xml file is known
   
@@ -787,6 +731,8 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
     }
   }
   
+  JEC_L2L3Residuals.LoadCorrections();
+
   //************************************
   
   //cout << "618 " <<  endl;
@@ -823,6 +769,12 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
   branch->GetEntry(entry);
   
   IPHCTree::NTTransient::InitializeAfterReading(event);
+
+  bool isData = false;    
+  if(datasetName=="DataEG" || datasetName=="DataMu" || 
+     datasetName=="DataMuEG" || datasetName=="DataEGMu" ||
+     datasetName=="MET1" || datasetName=="MET2") isData = true;
+  if(isData) JEC_L2L3Residuals.ApplyCorrections(event); // n'appliquer la correction que pour les donnees
     
   // cout << "line 646 " << endl;
   
@@ -866,8 +818,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
   }   
   
    
-  //double weightITypeMC_save = Luminosity*dataset->Xsection()/dataset->getNSkimmedEvent();
-  double weightITypeMC_save = Luminosity*dataset->Xsection()/initMCevents[datasetName];
+  double weightITypeMC_save = Luminosity*dataset->Xsection()/dataset->getNSkimmedEvent();
   double weightITypeMC=0;
   
   
@@ -891,9 +842,6 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
     if (IChannel==2 && (datasetName=="DataMu" || datasetName=="DataEG")  ) continue;
     if (IChannel==3 && (datasetName=="DataMu" || datasetName=="DataMuEG")) continue;
    
-    bool isData = false;
-    
-    if(datasetName=="DataEG" || datasetName=="DataMuEG" || datasetName=="DataMu") isData = true;
     
     
     //*****************************************************************
@@ -928,7 +876,6 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
     
     bool IsTTbarDilept = false;
     bool IsSignal = false;
-    bool IsData = false;
     double WeightForBranchingRatio = 1.;
     bool IsLJ = false;
     
@@ -1038,11 +985,8 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
     if ( datasetName=="DataEG" || datasetName=="DataMu" || 
 	 datasetName=="DataMuEG" || datasetName=="DataEGMu" ||
 	 datasetName=="MET1" || datasetName=="MET2") { 
-      ITypeMC = 100; IsData = true;  Dweight[ITypeMC]= weightITypeMC; 
+      ITypeMC = 100;  Dweight[ITypeMC]= weightITypeMC; 
       EventYieldWeightError = Dweight[ITypeMC]*Dweight[ITypeMC];   
-      
-      
-
       
       
     }

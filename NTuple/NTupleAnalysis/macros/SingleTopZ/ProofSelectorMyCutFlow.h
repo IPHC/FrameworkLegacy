@@ -26,11 +26,9 @@
 #include "Tools/interface/AnalysisEnvironmentLoader.h"
 #include "Selection/interface/DiLeptonSelection.h"
 #include "Plots/interface/DiLepAnaHistoManager.h"
-//#include "BckgdEstimation/interface/DYEstimation.h"
-//#include "../../BckgdEstimation/interface/MMEstimation.h"
-//#include "Measurements/interface/PLRPlotsFurnisher.h"
 #include "Tools/interface/PUWeighting.h"
 #include "Tools/interface/LumiReweightingStandAlone.h"
+#include "Tools/interface/JetCorrector.h"
 
 
 #include <TFile.h>
@@ -77,6 +75,8 @@ class ProofSelectorMyCutFlow : public TSelector {
   int DataType;
   //Info analysis macro specific 
   
+
+  JetCorrector JEC_L2L3Residuals;
   
   
   reweight::LumiReWeighting *LumiWeights;
@@ -85,8 +85,6 @@ class ProofSelectorMyCutFlow : public TSelector {
   reweight::PoissonMeanShifter PShiftUp_;
   reweight::PoissonMeanShifter PShiftDown_;
 
-  bool producePLRPlots ;
-  
   
   // Here define the studied channel (ee/mumu/emu)
   //  string ChannelName  = "ee";  // "mumu", "ee", "emu"
@@ -149,7 +147,6 @@ class ProofSelectorMyCutFlow : public TSelector {
   bool PUdown;
   
   TRandom rand;
-  bool doLinearity;
   
    
   std::vector<double> vSF_DY_ee ;
@@ -197,12 +194,7 @@ class ProofSelectorMyCutFlow : public TSelector {
   int ITypeMC ;
   int ICut    ;  
   
-  
-  //For PLR plots
-  //PLRPlotsFurnisher plotsFurnisher;
-  
-  
-  
+    
   
   TH1F* fHist;
   
