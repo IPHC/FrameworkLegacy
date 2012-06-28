@@ -21,36 +21,36 @@
  -->
 
 
-<d name="DataMu"       add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"     filenames="/opt/sbg/data/data1/cms/jlagram/data/Data_2011/DoubleMu_2011_part*.root" />
-<!--
-<d name="DataEG"       add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"     filenames="/opt/sbg/data/data1/cms/jlagram/data/Data_2011/DoubleElectron_2011_part*.root" />
+<d name="DataMu"       add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"     filenames="/opt/sbg/data/data1/cms/jlagram/data/Data_2011/skim_3lept/DoubleMu_2011_part*.root" />
 
-<d name="DataMuEG"     add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"     filenames="/opt/sbg/data/data1/cms/jlagram/data/Data_2011/MuEG_2011_part*.root" />
--->
+<d name="DataEG"       add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"     filenames="/opt/sbg/data/data1/cms/jlagram/data/Data_2011/skim_3lept/DoubleElectron_2011_part*.root" />
+
+<d name="DataMuEG"     add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"     filenames="/opt/sbg/data/data1/cms/jlagram/data/Data_2011/skim_3lept/MuEG_2011_part*.root" />
+
 
 <!--d name="MET1" add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"       filenames="/opt/sbg/data/data1/cms/jandrea/428_p7Summer11/Data/NTuple_MetIso1._MET1.root" />
 <d name="MET2" add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"       filenames="/opt/sbg/data/data1/cms/jandrea/428_p7Summer11/Data/NTuple_MetIso1._MET2.root" /-->
 
-<!--d name="FCNCkut"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1.448"   filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/FCNC_kut.root" /-->
+<d name="FCNCkut"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1.448"   filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/FCNC_kut.root" />
 
 
-<!--d name="TTbar"        add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="164"   filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/TTJets_*.root" /> 
+<d name="TTbar"        add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="164"   filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/TTJets_*.root" /> 
 
  
-<d name="DYToLL_M10-50"add="1" isData="0" color="4" ls="1" lw="2" normf="1" xsection="11908.83"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/DYJets_M-10To50*.root" /-->
-
-<!--
-<d name="Zjets"        add="1" isData="0" color="4" ls="1" lw="2" normf="1" xsection="3048"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/DYJets_M50*.root" />
-<d name="Wjets"        add="1" isData="0" color="4" ls="1" lw="2" normf="1" xsection="31314" filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/W1Jet_*.root" />
-
-<d name="TtW"          add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.87"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/T_tW.root" />
-<d name="TbartW"       add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.87"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/Tbar_tW.root" />
+<d name="DYToLL_M10-50"add="1" isData="0" color="4" ls="1" lw="2" normf="1" xsection="11908.83"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/DYJets_M-10To50*.root" />
 
 
-<d name="WZ"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="18.2"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/WZ.root" />
-<d name="ZZ"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.67"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/ZZ.root" />
-<d name="WW"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="47.04" filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/WW.root" />
--->
+<d name="Zjets"        add="1" isData="0" color="4" ls="1" lw="2" normf="1" xsection="3048"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/DYJets_M50*.root" />
+<d name="Wjets"        add="1" isData="0" color="4" ls="1" lw="2" normf="1" xsection="31314" filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/W1Jet_*.root" />
+
+<d name="TtW"          add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.87"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/T_tW*.root" />
+<d name="TbartW"       add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.87"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/Tbar_tW*.root" />
+
+
+<d name="WZ"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="18.2"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/WZ*.root" />
+<d name="ZZ"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.67"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/ZZ*.root" />
+<d name="WW"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="47.04" filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/WW*.root" />
+
 
 </Datasets>
 
