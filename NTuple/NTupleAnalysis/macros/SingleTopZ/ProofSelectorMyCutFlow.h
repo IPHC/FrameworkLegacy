@@ -148,6 +148,9 @@ class ProofSelectorMyCutFlow : public TSelector {
   
   TRandom rand;
   
+  
+  
+  
    
   std::vector<double> vSF_DY_ee ;
   std::vector<double> vSF_DY_mm ;
@@ -372,6 +375,29 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> MET_eemu_afterbjetsel;
   std::vector<TH1F> MET_eee_afterbjetsel;
   
+  std::vector<TH1F> Asym_mumumu_afterbjetsel;
+  std::vector<TH1F> Asym_mumue_afterbjetsel;
+  std::vector<TH1F> Asym_eemu_afterbjetsel;
+  std::vector<TH1F> Asym_eee_afterbjetsel;
+  
+  
+  std::vector<TH1F> RecoPtZ_mumumu_afterbjetsel;
+  std::vector<TH1F> RecoPtZ_mumue_afterbjetsel;
+  std::vector<TH1F> RecoPtZ_eemu_afterbjetsel;
+  std::vector<TH1F> RecoPtZ_eee_afterbjetsel;
+  
+  
+  
+  std::vector<TH1F> RecoTopMass_mumumu_afterbjetsel;
+  std::vector<TH1F> RecoTopMass_mumue_afterbjetsel;
+  std::vector<TH1F> RecoTopMass_eemu_afterbjetsel;
+  std::vector<TH1F> RecoTopMass_eee_afterbjetsel;
+  
+  
+  std::vector<TH1F> deltaPhilb_mumumu_afterbjetsel;
+  std::vector<TH1F> deltaPhilb_mumue_afterbjetsel;
+  std::vector<TH1F> deltaPhilb_eemu_afterbjetsel;
+  std::vector<TH1F> deltaPhilb_eee_afterbjetsel;
   
   std::vector<TH2D> HT_vs_MET_mumumu_afterleptsel;
   std::vector<TH2D> HT_vs_MET_mumue_afterleptsel;
@@ -405,6 +431,18 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH2D> HT_vs_Mll_eemu_afterleptsel;
   std::vector<TH2D> HT_vs_Mll_eee_afterleptsel;
   
+  
+  //TTree and banches used for BDT
+  TTree *TheTree;
+  
+  
+  float tree_topMass;
+  float tree_deltaPhilb;
+  float tree_asym;
+  float tree_Zpt;
+  int   tree_SampleType;
+  int   tree_Channel;
+  float tree_EvtWeight;
   
   ofstream ofile;
   
