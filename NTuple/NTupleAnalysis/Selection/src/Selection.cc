@@ -872,18 +872,25 @@ std::vector<IPHCTree::NTElectron> Selection::GetSelectedElectronsNoIso(
   // Loop over electrons
   for(unsigned int i=0;i<localElectrons.size();i++)
   {
+    //bool hadId = localElectrons[i].hadId(
+    //    static_cast<unsigned int>(localElectrons[i].ID["simpleEleId90relIso"]) & 0x1
+    //                            );
+				
     bool hadId = localElectrons[i].hadId(
-        static_cast<unsigned int>(localElectrons[i].ID["simpleEleId90relIso"]) & 0x1
+        static_cast<unsigned int>(localElectrons[i].ID["simpleEleId90cIso"]) & 0x1
                                 );
-  
+    
     //useless 
     if (!localElectrons[i].isGsfElectron) continue; 
-    if (!hadId)                  continue;
-
+    if (!hadId)                           continue;
+   
     // TO DO 
-    //    if ( electron.nlost >=2 || 
-    //         ( fabs(electron.deltaCotTheta)<0.02 && 
-    //           fabs(electron.deltaDistance)<0.02)     )   continue;
+     //   if ( localElectrons[i].nlost >=2 || 
+     //        ( fabs(localElectrons[i].deltaCotTheta)<0.02 && 
+     //          fabs(localElectrons[i].deltaDistance)<0.02)     )   continue;
+    if ( localElectrons[i].nLost >=2 || 
+             ( fabs(localElectrons[i].deltaCotTheta)<0.02 && 
+               fabs(localElectrons[i].deltaDistance)<0.02)     )   continue;
 
     if(!localElectrons[i].isEcalDriven)                        continue;
     if(fabs(localElectrons[i].D0)       >=cfg.ElectronD0Cut_)  continue; 
