@@ -61,7 +61,7 @@ bool NTTrigger::GetSubTable(const std::string& name,
   for (std::set<std::string>::const_iterator it = names_.begin();
        it != names_.end(); it++)
   {
-    if (NameCompatible(*it,name))
+    if (NameCompatible(name, *it))
     {
       unsigned int index = std::distance(names_.begin(),it);
       subtable.push_back(IPHCTree::NTTriggerPathType(*it,
