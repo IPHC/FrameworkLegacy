@@ -38,7 +38,7 @@
     PlotStack("LeptPt_",jchan,"_afterjetsel", i, k);
     PlotStack("LeptPt_",jchan,"_afterbjetsel", i, k);*/
     
-    PlotStack("LeptZPt_",jchan,"_afterleptsel", i, k);
+     PlotStack("LeptZPt_",jchan,"_afterleptsel", i, k);
     PlotStack("LeptZPt_",jchan,"_afterjetsel", i, k);
     PlotStack("LeptZPt_",jchan,"_afterbjetsel", i, k);
     
@@ -58,6 +58,12 @@
     PlotStack("JetPt_",jchan,"_afterleptsel", i, k);
     PlotStack("JetPt_",jchan,"_afterjetsel", i, k);
     PlotStack("JetPt_",jchan,"_afterbjetsel", i, k);
+    
+    
+    PlotStack("RecoTopMass_",jchan,"_afterbjetsel", i, k);
+    PlotStack("RecoPtZ_",jchan,"_afterbjetsel", i, k);
+    PlotStack("Asym_",jchan,"_afterbjetsel", i, k);
+    PlotStack("deltaPhilb_",jchan,"_afterbjetsel", i, k);
     
    
    

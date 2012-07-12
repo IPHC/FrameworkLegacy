@@ -255,7 +255,11 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   //filename="backup_outputProof05-12-11_11-02-25/proof.root";
   //filename="backup_outputProof26-01-12_19-38-49_forcutFlow_and_Plots/proof.root";
   //filename="backup_outputProof12-04-12_14-26-17//proof.root";
-  filename="backup_outputProof22-04-12_23-37-00/proof.root";
+  //filename="backup_outputProof22-04-12_23-37-00/proof.root";
+  filename="backup_outputProof12-07-12_16-39-28/proof.root";
+ 
+ 
+ 
  
   TFile * filechannel = new TFile(filename);
 
@@ -693,6 +697,52 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   }
   
   
+  if(plotname =="Asym_" ){
+    int bins = 2;
+    hmc->Rebin(bins);
+    histo_VV->Rebin(bins);
+    histo_Wjets->Rebin(bins);
+    histo_SingleToptW->Rebin(bins);
+    histo_TTbarBkg->Rebin(bins);
+    histo_Zjets->Rebin(bins);
+    histo_Data->Rebin(bins);
+    histo_FCNCkut->Rebin(bins);
+  }
+  
+  if(plotname =="RecoTopMass_" ){
+    int bins = 10;
+    hmc->Rebin(bins);
+    histo_VV->Rebin(bins);
+    histo_Wjets->Rebin(bins);
+    histo_SingleToptW->Rebin(bins);
+    histo_TTbarBkg->Rebin(bins);
+    histo_Zjets->Rebin(bins);
+    histo_Data->Rebin(bins);
+    histo_FCNCkut->Rebin(bins);
+  }
+  if(plotname =="RecoPtZ_" ){
+    int bins = 10;
+    hmc->Rebin(bins);
+    histo_VV->Rebin(bins);
+    histo_Wjets->Rebin(bins);
+    histo_SingleToptW->Rebin(bins);
+    histo_TTbarBkg->Rebin(bins);
+    histo_Zjets->Rebin(bins);
+    histo_Data->Rebin(bins);
+    histo_FCNCkut->Rebin(bins);
+  }
+  if(plotname =="deltaPhilb_" ){
+    int bins = 20;
+    hmc->Rebin(bins);
+    histo_VV->Rebin(bins);
+    histo_Wjets->Rebin(bins);
+    histo_SingleToptW->Rebin(bins);
+    histo_TTbarBkg->Rebin(bins);
+    histo_Zjets->Rebin(bins);
+    histo_Data->Rebin(bins);
+    histo_FCNCkut->Rebin(bins);
+  }
+  
   histo_ratio = (TH1F*) histo_Data->Clone();
   
   
@@ -1098,7 +1148,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     //ratio.Draw("e")
     
     histo_ratio->SetMinimum(0.0);
-    histo_ratio->SetMaximum(2.0);
+    histo_ratio->SetMaximum(5.0);
     histo_ratio->Draw("E1X0");
     
     c1->cd();
@@ -1107,8 +1157,8 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   }
   
   TString end_name;
-  if(setlogy) end_name="_Logy.pdf";
-  else end_name=".pdf"; 
+  if(setlogy) end_name="_Logy.gif";
+  else end_name=".gif"; 
   TString ratname;
   if (ratio) ratname="_r";
   else ratname="_r";
