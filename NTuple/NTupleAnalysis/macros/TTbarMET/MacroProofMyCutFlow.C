@@ -13,13 +13,13 @@ int main(int argc, char* argv[]){
   
   //This line could be commented if you don't want display while running, by example using screen.
   //TApplication theApp("App",&argc,argv);
-  TApplication theApp("App",&argc,argv);
+  //TApplication theApp("App",&argc,argv);
   
   //---------------------------------------//
   // Global variables: could be give as argument later
   //---------------------------------------//
   
-  int nwnodes = 6; //8 to 10 is the optimal
+  int nwnodes = 4; //8 to 10 is the optimal
   string macroName = "ProofSelectorMyCutFlow.C+"; //"+" should be put at the end to use ACLIC complication - This macro should inherit from TSelector 
   //In order to allow the node to access the xml, the name should be given with the full path
 //  string xmlFileName = string("/opt/sbg/data/data1/cms/echabert/ProdBtagging/HybridVersionDATA/CMSSW_4_2_3/src/MiniTreeAnalysis/NTupleAnalysis/config/MyCutFlow.xml");

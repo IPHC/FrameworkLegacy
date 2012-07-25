@@ -9,6 +9,10 @@
 #include "Tools/interface/Dataset.h"
 #include "Tools/interface/AnalysisEnvironmentLoader.h"
 #include "Plots/interface/TTbarMetHistoManager.h"
+#include "Tools/interface/PUWeighting.h"
+#include "Tools/interface/LumiReweightingStandAlone.h"
+#include "Tools/interface/JetCorrector.h"
+
 
 
 #include <TFile.h>
@@ -59,6 +63,12 @@ int main (int argc, char *argv[])
   int DataType = 0;
   int verbosity = -1;
 
+//  JetCorrector JEC_L2L3Residuals;
+
+
+  reweight::LumiReWeighting *LumiWeights;
+
+
   //////////////////////
 
   //////////////////////
@@ -101,6 +111,13 @@ int main (int argc, char *argv[])
   	histoManager.LoadChannels (sel.GetChannelList ());
   	histoManager.CreateHistos ();
   }
+
+
+    // JEC from JL's code
+//    JEC_L2L3Residuals.LoadCorrections();
+
+
+   //////////////////////
 
   
   //////////////////////
@@ -147,13 +164,53 @@ int main (int argc, char *argv[])
     cout << "TTbarMET> NEvents to run over = "<<datasets[d].NofEvtsToRunOver()<<endl;
 
 
+   // PU from JL's code
+   if (datasets[d].isData() == false) {
+//   if(datasets[d].Name() == "DY1" || datasets[d].Name() == "signal" ){
+//      string datafile = "/opt/sbg/data/data1/cms/ccollard/CMSSW/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/data/PUdata.root";
+//      string mcfile   = "/opt/sbg/data/data1/cms/ccollard/CMSSW/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/data/PU3DMC_Fall11.root";
+//
+//      LumiWeights    = new reweight::LumiReWeighting(mcfile, datafile, "histoMCPU", "pileup" );
+//    }
+//    else{
+      string datafile = "/opt/sbg/data/data1/cms/ccollard/CMSSW/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/data/default73.5mb.root";
+      string mcfile   = "/opt/sbg/data/data1/cms/ccollard/CMSSW/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/data/PU3DMC.root";
+
+      LumiWeights    = new reweight::LumiReWeighting(mcfile, datafile, "histoMCPU", "pileup" );
+      LumiWeights->weight3D_init( 1. );
+
+//    }
+    }
+
+
+
     //LOOP OVER THE EVENTS
     for (unsigned int ievt = 0; ievt < datasets[d].NofEvtsToRunOver(); ievt++)
     {
-      float weight = 1.;
-      if(datasets[d].isData() == false) weight = datasets[d].NormFactor()*Luminosity; //if Data , weight = 1
+
+
       datasets[d].eventTree()->GetEntry(ievt);
       IPHCTree::NTTransient::InitializeAfterReading(event);
+
+
+
+      float weight = 1.;
+      if(datasets[d].isData() == false) weight = datasets[d].NormFactor()*Luminosity; //if Data , weight = 1
+
+      float weightpu=1.;
+      if(datasets[d].isData() == false) { // MC
+//        if( datasets[d].Name() == "DY1" || datasets[d].Name() == "signal")  {
+//          double ave_npu = (event->pileup.before_npu+event->pileup.intime_npu+event->pileup.after_npu)/3.;
+//          weightpu = LumiWeights->ITweight3BX(ave_npu);
+//        }
+//        else {
+          weightpu = LumiWeights->weight3D(event->pileup.before_npu, event->pileup.intime_npu, event->pileup.after_npu);
+//        }
+//        weight *= weightpu; //if Data , weight = 1
+      }
+//      else { // DATA
+//         JEC_L2L3Residuals.ApplyCorrections(event); // n'appliquer la correction que pour les donnees
+//      }
 
       if (ievt==0) {
 	      cout << "TTbarMET> weight : " << weight << endl;
@@ -220,6 +277,7 @@ int main (int argc, char *argv[])
       if (trigger_mu && lep==1) selLastStep_mu=selLastStep;
       histoManager.Fill(sel, event, sel.GetMuonsForAna(), sel.GetElectronsForAna(), selLastStep_e, 0, d, weight);
       histoManager.Fill(sel, event, sel.GetMuonsForAna(), sel.GetElectronsForAna(), selLastStep_mu, 1, d, weight);
+      //histoManager.Fill(sel, event, sel.GetMuonsForAna(), sel.GetElectronsForAna(), selLastStep, 2, d, weight);
 
 
 
@@ -308,6 +366,7 @@ int main (int argc, char *argv[])
   system (Form("pdflatex %s", ofilename.data()));
 
 
+
   if (verbosity > 0) {
     cout << "#########################" << endl;
     cout << " Write output root file " << endl;
@@ -324,6 +383,7 @@ int main (int argc, char *argv[])
   if(doHistoManager) histoManager.Clear ();
 
   delete fout;
+
 
 
   if (verbosity > 0) {

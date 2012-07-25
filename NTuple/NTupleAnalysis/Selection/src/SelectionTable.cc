@@ -261,6 +261,9 @@ void SelectionTable::Write(ofstream& fout, bool WithError, int maxColumns){
 		while(istart<listOfDatasets_.size())
 		{ 
 		  if (istop > listOfDatasets_.size()) istop = listOfDatasets_.size();
+                  fout.setf(ios::fixed);
+                  fout.precision(1);
+
   		  ////////////////////////////
 		  fout<<"\\begin{table}"<<endl;
   		  fout<<"\\centering"<<endl;
@@ -275,6 +278,7 @@ void SelectionTable::Write(ofstream& fout, bool WithError, int maxColumns){
   		  fout<<"\\label{tab:SelectionTable_"<<channelName_<<"}"<<endl;
   		  fout<<"\\end{table}"<<endl;
   		  ////////////////////////////
+                  fout.precision(3);
 		  fout<<"\\begin{table}"<<endl;
   		  fout<<"\\centering"<<endl;
   		  fout<<"\\begin{tabular}{|c|";

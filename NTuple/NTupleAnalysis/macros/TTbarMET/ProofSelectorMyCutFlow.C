@@ -39,7 +39,8 @@ ProofSelectorMyCutFlow::ProofSelectorMyCutFlow(): idataset(0)
    anaEL = 0;
    verbosity = 0;
    DataType = 0;
-   Luminosity = 0;
+   Luminosity_e = 0;
+   Luminosity_mu = 0;
    histoManager = 0;
 }
 
@@ -109,7 +110,7 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
 	}
    }
    anaEL->LoadSelection (sel); // now the parameters for the selection are given to the selection
-   anaEL->LoadGeneralInfo(DataType, Luminosity, LumiError, verbosity );
+   anaEL->LoadGeneralInfo(DataType, Luminosity_e, Luminosity_mu, verbosity );
 
 
    //--------------------------------------//
@@ -123,10 +124,37 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
    histoManager->CreateHistos ();
 
 
+   // PU from JL's code
+   if (dataset->isData() == false) {
+/*
+    if(datasetName == "DY1" || datasetName == "signal" ){
+      string datafile = "/opt/sbg/data/data1/cms/ccollard/CMSSW/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/data/PUdata.root";
+      string mcfile   = "/opt/sbg/data/data1/cms/ccollard/CMSSW/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/data/PU3DMC_Fall11.root";
+   
+      LumiWeights    = new reweight::LumiReWeighting(mcfile, datafile, "histoMCPU", "pileup" );
+     }
+     else{
+*/
+      string datafile = "/opt/sbg/data/data1/cms/ccollard/CMSSW/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/data/default73.5mb.root";
+      string mcfile   = "/opt/sbg/data/data1/cms/ccollard/CMSSW/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/data/PU3DMC.root";
+
+      LumiWeights    = new reweight::LumiReWeighting(mcfile, datafile, "histoMCPU", "pileup" );
+      LumiWeights->weight3D_init( 1. );
+
+/*
+     }
+*/
+    }
+//    else {
+//      // JEC from JL's code  ALREADY IN CARO's SKIMS
+//      JEC_L2L3Residuals.LoadCorrections();
+//    }
+
+
    //////////////////////
 
    cout << "The verbosity mode is " << verbosity << endl;
-   cout << "The luminosity is equal to " << Luminosity << endl;
+   cout << "The luminosity is equal to " << Luminosity_e << " for e  and " << Luminosity_mu << " for mu " << endl;
    cout << "The DataType is ";
    switch (DataType) {
    case 0:
@@ -176,8 +204,31 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
    branch->GetEntry(entry);
    IPHCTree::NTTransient::InitializeAfterReading(event);
   
-   float weight=1;
-   if(dataset->isData() == false) weight = dataset->NormFactor()*Luminosity; //if Data , weight = 1
+   float weight_e=1;
+   float weight_mu=1;
+   float weightpu=1;
+   if(dataset->isData() == false) { // MC
+
+/*
+        if( datasetName == "DY1" || datasetName == "signal")  { 
+          double ave_npu = (event->pileup.before_npu+event->pileup.intime_npu+event->pileup.after_npu)/3.;
+          weightpu = LumiWeights->ITweight3BX(ave_npu);
+        }
+        else {
+*/
+          weightpu = LumiWeights->weight3D(event->pileup.before_npu, event->pileup.intime_npu, event->pileup.after_npu);
+/*
+        }               
+*/
+
+
+
+     weight_e = dataset->NormFactor()*Luminosity_e  * weightpu; //if Data , weight = 1
+     weight_mu = dataset->NormFactor()*Luminosity_mu * weightpu; //if Data , weight = 1
+   }
+//   else { // DATA
+//      JEC_L2L3Residuals.ApplyCorrections(event); // ALREADY IN CARO's SKIMS
+//   }
 
    //---------------------------------------------------//
    //         Doing the analysis event by event
@@ -215,15 +266,15 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
    if (trigger_mu) selLastStep_mu=1;
    if (trigger_e && lep==0) selLastStep_e=selLastStep;
    if (trigger_mu && lep==1) selLastStep_mu=selLastStep;
-
-  
+   
    /////////////////
    // Fill histos 
    /////////////////
 
-   histoManager->Fill(sel, event, sel.GetMuonsForAna(), sel.GetElectronsForAna(), selLastStep_e, 0, idataset, weight);
-   histoManager->Fill(sel, event, sel.GetMuonsForAna(), sel.GetElectronsForAna(), selLastStep_mu, 1, idataset, weight);
-   histoManager->Fill(sel, event, sel.GetMuonsForAna(), sel.GetElectronsForAna(), selLastStep, 2, idataset, weight);
+   histoManager->Fill(sel, event, sel.GetMuonsForAna(), sel.GetElectronsForAna(), selLastStep_e, 0, idataset, weight_e);
+   histoManager->Fill(sel, event, sel.GetMuonsForAna(), sel.GetElectronsForAna(), selLastStep_mu, 1, idataset, weight_mu);
+   //LA SELECTION 1LEPTON PERD UN PEU DE SON SENS SI 2 LUMI DIFFERENTES POUR E ET MU --> SE BASER SUR LE MERGED!
+   //histoManager->Fill(sel, event, sel.GetMuonsForAna(), sel.GetElectronsForAna(), selLastStep, 2, idataset, weight);
 
 
    return kTRUE;

@@ -1,4 +1,3 @@
-
 //////////////////////////////////////////////////////////
 //
 // Example of TSelector implementation to do a Monte Carlo
@@ -22,6 +21,10 @@
 #include "Tools/interface/Dataset.h"
 #include "Tools/interface/AnalysisEnvironmentLoader.h"
 #include "Plots/interface/TTbarMetHistoManager.h"
+#include "Tools/interface/PUWeighting.h"
+#include "Tools/interface/LumiReweightingStandAlone.h"
+#include "Tools/interface/JetCorrector.h"
+
 
 
 #include <TFile.h>
@@ -63,14 +66,18 @@ class ProofSelectorMyCutFlow : public TSelector {
   Dataset* dataset;
   int idataset;
   TTbarMetSelection sel; 
-  float Luminosity;
-  float LumiError;
+  float Luminosity_e;
+  float Luminosity_mu;
   int verbosity;
   // 0: MC - 1: Data - 2 Data & MC
   int DataType;
   //Info analysis macro specific 
   
-  
+   JetCorrector JEC_L2L3Residuals;
+
+
+  reweight::LumiReWeighting *LumiWeights;
+
   
   //------------------------------------
   //Definition of the various histograms

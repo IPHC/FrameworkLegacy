@@ -23,6 +23,7 @@ TTbarMetSelection::TTbarMetSelection ()
   //Fill Channels
   channels_.push_back (string ("e"));
   channels_.push_back (string ("mu"));
+//  channels_.push_back (string ("lepton"));
 }
 
 
@@ -94,44 +95,47 @@ int TTbarMetSelection::doFullSelection (Dataset * dataset, string channelName, b
   int FinalStep = 0;
 
   //Step 1        Trigger
-/*
+//  GetPointer2Trigger()->Dump();
   step_trigger_e = passTriggerSelection (dataset, string("e") );
   step_trigger_mu = passTriggerSelection (dataset, string("mu") );
-*/
 // ici a true pour le moment!
+/*
   step_trigger_e=true;
   step_trigger_mu=true;
+*/
   if (step_trigger_e || step_trigger_mu) step_trigger= true;
   if (step_trigger) {
     //Step 2        Le Lepton Isole
-     if (electronsAna.size()+muonsAna.size()==1) {
+//     if (electronsAna.size()+muonsAna.size()==1) {
 //        && ( (channelName=="mu" && muonsAna.size()==1) || (channelName=="e" && electronsAna.size()==1)) ) {
-      step_1lepton = true;
-      if (electronsAna.size()==1) {
+     if (electronsAna.size()==1 && step_trigger_e && muonsAna.size()==0) {
+         step_1lepton = true;
          step_1lepton_e = true;
          LeptonType="e";
-      }
-      else if (muonsAna.size()==1) {
+     }
+     else if (muonsAna.size()==1 && step_trigger_mu && electronsAna.size()==0) {
+         step_1lepton = true;
          step_1lepton_mu = true;
          LeptonType="mu";
-      }
-//      LeptonType=channelName;
+     }
+     if (step_1lepton) {
 
       // Step 3 Veto muon
-      std::vector < NTMuon > muVeto = GetVetoMuonsForLJets (applyMES, MESParam);
-      std::vector < NTElectron > elVeto = GetVetoElectronsForLJets (applyEES, EESParam);
       bool veto_mu=false;
       bool veto_el=false;
-      if (muVeto.size()-muonsAna.size()==0) veto_mu=true;
-       if (LeptonType=="e") {
-         if (elVeto.size()==1) veto_el=true;
-         else {
-           // en fait pour les electrons le thr en pt est a 20 GeV!
-           if (elVeto[1].p4.Pt()<20) veto_el=true;
-         }
+      std::vector < NTMuon > muVeto = GetVetoMuonsForLJets (applyMES, MESParam);
+      std::vector < NTElectron > elVeto = GetVetoElectronsForLJets (applyEES, EESParam);
+      if (step_1lepton_e) {   
+        if (muVeto.size()==0) veto_mu=true;
+        if (elVeto.size()==1) veto_el=true;
+        else if (elVeto.size()==2 && elVeto[1].p4.Pt()<20) veto_el=true;
+        else if (elVeto.size()==3 && elVeto[1].p4.Pt()<20 && elVeto[2].p4.Pt()<20) veto_el=true;
+        else if (elVeto.size()==4 && elVeto[1].p4.Pt()<20 && elVeto[2].p4.Pt()<20 && elVeto[3].p4.Pt()<20) veto_el=true;
+        else if (elVeto.size()>4) cout << " plus que 4 electrons dans le fichier! " << endl;
       }
-      else {
-         if (elVeto.size()==0) veto_el=true;
+      if (step_1lepton_mu) {
+        if (muVeto.size()==1) veto_mu=true;
+        if (elVeto.size()==0) veto_el=true;
       }
       if (veto_mu && veto_el) {
        step_vetomu = true; 
@@ -300,21 +304,76 @@ bool TTbarMetSelection::passTriggerSelection (Dataset * dataset, string channelN
   
   if (!dataset->isData ()) 	//MC
   {
-    passMu = GetPointer2Trigger()->IsFired("HLT_Mu21_v1") || GetPointer2Trigger()->IsFired("HLT_Mu25_v1") 
-             || GetPointer2Trigger()->IsFired("HLT_IsoMu17_v4");
 
-    passEl = GetPointer2Trigger()->IsFired("HLT_Ele32_SW_TighterEleId_L1R_v2");
+
+    std::vector<IPHCTree::NTTriggerPathType> myPaths0;
+//    GetPointer2Trigger()->GetSubTable("HLT_Mu30_v*",myPaths0);
+    GetPointer2Trigger()->GetSubTable("HLT_IsoMu24_v*",myPaths0);
+    for (unsigned int i=0;i<myPaths0.size();i++) {
+      if (myPaths0[i].fired==1) {
+        passMu=true;
+        if (myPaths0[i].prescale>1) cout << " warning TRIGGER " << myPaths0[i].name << " is PRESCALED with a factor " << myPaths0[i].prescale << endl;
+      }
+    }
+
+    // signal
+    std::vector<IPHCTree::NTTriggerPathType> myPaths1;
+    GetPointer2Trigger()->GetSubTable("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v*",myPaths1) ;
+    for (unsigned int i=0;i<myPaths1.size();i++) {
+      if (myPaths1[i].fired==1) {
+        passEl=true;
+        if (myPaths1[i].prescale>1) cout << " warning TRIGGER " << myPaths1[i].name << " is PRESCALED with a factor " << myPaths1[i].prescale << endl;
+      }
+    }
+
+    // ttbar 
+    std::vector<IPHCTree::NTTriggerPathType> myPaths2;
+    GetPointer2Trigger()->GetSubTable("HLT_Ele25_CaloIdVT_TrkIdT_TriCentralJet30_v*",myPaths2) ;
+    for (unsigned int i=0;i<myPaths2.size();i++) {
+      if (myPaths2[i].fired==1) {
+        passEl=true;
+        if (myPaths2[i].prescale>1) cout << " warning TRIGGER " << myPaths2[i].name << " is PRESCALED with a factor " << myPaths2[i].prescale << endl;
+      }
+    }
   }
   else
   {
-      // Mu+jets : from AN2011_210_v7 && 
-      if (160431<= getRunNumber() && getRunNumber() < 173692 && GetPointer2Trigger()->IsFired("HLT_Mu30_v*")) passMu = true;      // Run2011A
-    
-      // E+jets : from Lukasz Kreczko 22 mai 2012
-      if (160404<= getRunNumber() && getRunNumber() < 163869 && GetPointer2Trigger()->IsFired("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v*")) passEl = true;
-      else if (163869<= getRunNumber() && getRunNumber() < 165633 && GetPointer2Trigger()->IsFired("HLT_Ele25_CaloIdVT_TrkIdT_TriCentralJet30_v*")) passEl = true;
-      else if (165633<= getRunNumber() && getRunNumber() < 178380 && GetPointer2Trigger()->IsFired("HLT_Ele25_CaloIdVT+CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v*")) passEl = true;
-      else if (178380<= getRunNumber()                            && GetPointer2Trigger()->IsFired("HLT_Ele25_CaloIdVT+CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v*")) passEl = true;
+      // Mu+jets : AN2012_239_v3 
+      std::vector<IPHCTree::NTTriggerPathType> myPaths0;
+      if (getRunNumber() <= 173236) {
+       GetPointer2Trigger()->GetSubTable("HLT_IsoMu24_v*",myPaths0);
+      }
+      else {
+       GetPointer2Trigger()->GetSubTable("HLT_IsoMu24_eta2p1_v*",myPaths0);
+      }
+      for (unsigned int i=0;i<myPaths0.size();i++) {
+       if (myPaths0[i].fired==1) {
+          passMu=true;
+          if (myPaths0[i].prescale>1) cout << " warning TRIGGER " << myPaths0[i].name << " is PRESCALED with a factor " << myPaths0[i].prescale << endl;
+        }
+      }
+     
+      // E+jets : AN2012_211_v2.pdf
+      std::vector<IPHCTree::NTTriggerPathType> myPaths1;
+      if (160404<= getRunNumber() && getRunNumber() <= 163869) {
+        GetPointer2Trigger()->GetSubTable("HLT_Ele25_CaloIdVT_TrkIdT_CentralTriJet30_v*",myPaths1);
+      }
+      else if (165088<= getRunNumber() && getRunNumber() <= 165633) { 
+        GetPointer2Trigger()->GetSubTable("HLT_Ele25_CaloIdVT_TrkIdT_TriCentralJet30_v*",myPaths1);
+      }
+      else if (165970<= getRunNumber() && getRunNumber() <= 178380) {
+        GetPointer2Trigger()->GetSubTable("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralJet30_v*",myPaths1);
+      }
+      else if (178420<= getRunNumber() && getRunNumber() <= 180252) {
+        GetPointer2Trigger()->GetSubTable("HLT_Ele25_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_TriCentralPFJet30_v*",myPaths1);
+      }
+      for (unsigned int i=0;i<myPaths1.size();i++) {
+       if (myPaths1[i].fired==1) {
+          passEl=true;
+          if (myPaths1[i].prescale>1) cout << " warning TRIGGER " << myPaths1[i].name << " is PRESCALED with a factor " << myPaths1[i].prescale << endl;
+        }
+      }
+
 
   }
 
