@@ -46,10 +46,21 @@
 <d name="TtW"          add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.87"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/T_tW*.root" />
 <d name="TbartW"       add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.87"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/Tbar_tW*.root" />
 
+<d name="TtChan"       add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="42.6"  filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/T_TuneZ2_t/NTuple_T_TuneZ2_t.root" />
+<d name="TbartChan"    add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="22.0"  filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/Tbar_TuneZ2_t/NTuple_Tbar_TuneZ2_t.root" />
 
-<d name="WZ"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="18.2"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/WZ*.root" />
+<d name="TsChan"       add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="2.72"  filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/T_TuneZ2_s/NTuple_T_TuneZ2_s.root" />
+<d name="TbarsChan"    add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="1.49"  filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/Tbar_TuneZ2_s/NTuple_Tbar_TuneZ2_s.root" />
+
+
+<d name="WZ"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.328912"   filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/WZ/NTuple_WZ_MG.root" />
+<d name="ZZ"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.0553641"  filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/ZZ/NTuple_ZZ.root" />
+<d name="WW"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="3.0073"     filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/WW/NTuple_WW.root" />
+
+
+<!--d name="WZ"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="18.2"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/WZ*.root" />
 <d name="ZZ"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.67"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/ZZ*.root" />
-<d name="WW"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="47.04" filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/WW*.root" />
+<d name="WW"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="47.04" filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/WW*.root" /-->
 
 
 </Datasets>
@@ -70,8 +81,8 @@
 
 <Selection>
 <s type="Electron" Loaded="1" Algo="selectedPatElectronsPF2PAT" PtThreshold="20." EtaThreshold="2.5" RelIso="0.17" D0Cut="0.04" VertexMatchThr="1." DElectronETSCThr="15" RemuThr="0.1"/>
-<s type="Muon"     Loaded="1" Algo="selectedPatMuonsPF2PAT" PtThreshold="20." EtaThreshold="2.4" RelIso="0.20" D0Cut="0.02" VertexMatchThr="1." NofValidHits="0"  NofValidTkHits="10" NormChi2="10" />
-<s type="Tau"      Loaded="0" Algo="selectedPatTaus" PtThreshold="20." EtaThreshold="2.5" RelIso="0.15" D0Cut="0.04" VertexMatchThr="1." TauLeadTrkPtCut="10."/>
+<s type="Muon"     Loaded="1" Algo="selectedPatMuonsPF2PAT"     PtThreshold="20." EtaThreshold="2.4" RelIso="0.20" D0Cut="0.02" VertexMatchThr="1." NofValidHits="0"  NofValidTkHits="10" NormChi2="10" />
+<s type="Tau"      Loaded="0" Algo="selectedPatTaus"            PtThreshold="20." EtaThreshold="2.5" RelIso="0.15" D0Cut="0.04" VertexMatchThr="1." TauLeadTrkPtCut="10."/>
 <s type="Vertex"   Loaded="1" Algo="offlinePrimaryVertices" VertexNdofThr="4" VertexZThr="24."   VertexRhoThr="2." />  
 <!--s type="Jet" Algo="tc" PtThreshold="30." EtaThreshold="2.5" /-->
 <s type="Jet" Loaded="1" Algo="pf" PtThreshold="30." EtaThreshold="2.5" />  
