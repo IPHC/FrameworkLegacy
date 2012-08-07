@@ -60,7 +60,7 @@ void CutFlow(){
   //*********************************
   
   
-  TFile *f_data  = new TFile("backup_outputProof10-07-12_14-53-12/proof.root");
+  TFile *f_data  = new TFile("backup_outputProof07-08-12_10-21-30/proof.root");
   
   f_data->cd();
   
@@ -94,6 +94,18 @@ void CutFlow(){
   if ( CutFlow_mumumu_TtW==NULL) std::cout<<"WARNING "<<"CutFlow_mumumu_TtW empty"<<std::endl;
   TH1F *  CutFlow_mumumu_TbartW     = (TH1F*)gROOT->FindObject("CutFlow_mumumu_TbartW");
   if ( CutFlow_mumumu_TbartW==NULL) std::cout<<"WARNING "<<"CutFlow_mumumu_TbartW empty"<<std::endl;
+  
+  TH1F *  CutFlow_mumumu_TtChan        = (TH1F*)gROOT->FindObject("CutFlow_mumumu_TtChan");
+  if ( CutFlow_mumumu_TtChan==NULL) std::cout<<"WARNING "<<"CutFlow_mumumu_TtChan empty"<<std::endl;
+  TH1F *  CutFlow_mumumu_TbartChan     = (TH1F*)gROOT->FindObject("CutFlow_mumumu_TbartChan");
+  if ( CutFlow_mumumu_TbartChan==NULL) std::cout<<"WARNING "<<"CutFlow_mumumu_TbartChan empty"<<std::endl;
+  
+  TH1F *  CutFlow_mumumu_TsChan        = (TH1F*)gROOT->FindObject("CutFlow_mumumu_TsChan");
+  if ( CutFlow_mumumu_TsChan==NULL) std::cout<<"WARNING "<<"CutFlow_mumumu_TsChan empty"<<std::endl;
+  TH1F *  CutFlow_mumumu_TbarsChan     = (TH1F*)gROOT->FindObject("CutFlow_mumumu_TbarsChan");
+  if ( CutFlow_mumumu_TbarsChan==NULL) std::cout<<"WARNING "<<"CutFlow_mumumu_TbarsChan empty"<<std::endl;
+  
+  
   TH1F *  CutFlow_mumumu_WW         = (TH1F*)gROOT->FindObject("CutFlow_mumumu_WW");
   if ( CutFlow_mumumu_WW==NULL) std::cout<<"WARNING "<<"CutFlow_mumumu_WW empty"<<std::endl;
   TH1F *  CutFlow_mumumu_WZ         = (TH1F*)gROOT->FindObject("CutFlow_mumumu_WZ");
@@ -114,10 +126,24 @@ void CutFlow(){
   if (ErrCutFlow_mumumu_Zjets ==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumumu_Zjets empty"<<std::endl;
   TH1F *  ErrCutFlow_mumumu_Wjets      = (TH1F*)gROOT->FindObject("ErrCutFlow_mumumu_Wjets");
   if ( ErrCutFlow_mumumu_Wjets==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumumu_Wjets empty"<<std::endl;
+
+
   TH1F *  ErrCutFlow_mumumu_TtW        = (TH1F*)gROOT->FindObject("ErrCutFlow_mumumu_TtW");
   if ( ErrCutFlow_mumumu_TtW==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumumu_TtW empty"<<std::endl;
   TH1F *  ErrCutFlow_mumumu_TbartW     = (TH1F*)gROOT->FindObject("ErrCutFlow_mumumu_TbartW");
   if ( ErrCutFlow_mumumu_TbartW==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumumu_TbartW empty"<<std::endl;
+
+  TH1F *  ErrCutFlow_mumumu_TtChan        = (TH1F*)gROOT->FindObject("ErrCutFlow_mumumu_TtChan");
+  if ( ErrCutFlow_mumumu_TtChan==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumumu_TtChan empty"<<std::endl;
+  TH1F *  ErrCutFlow_mumumu_TbartChan     = (TH1F*)gROOT->FindObject("ErrCutFlow_mumumu_TbartChan");
+  if ( ErrCutFlow_mumumu_TbartChan==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumumu_TbartChan empty"<<std::endl;
+
+  TH1F *  ErrCutFlow_mumumu_TsChan        = (TH1F*)gROOT->FindObject("ErrCutFlow_mumumu_TsChan");
+  if ( ErrCutFlow_mumumu_TsChan==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumumu_TsChan empty"<<std::endl;
+  TH1F *  ErrCutFlow_mumumu_TbarsChan     = (TH1F*)gROOT->FindObject("ErrCutFlow_mumumu_TbarsChan");
+  if ( ErrCutFlow_mumumu_TbarsChan==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumumu_TbarsChan empty"<<std::endl;
+
+
   TH1F *  ErrCutFlow_mumumu_WW         = (TH1F*)gROOT->FindObject("ErrCutFlow_mumumu_WW");
   if ( ErrCutFlow_mumumu_WW==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumumu_WW empty"<<std::endl;
   TH1F *  ErrCutFlow_mumumu_WZ         = (TH1F*)gROOT->FindObject("ErrCutFlow_mumumu_WZ");
@@ -139,9 +165,22 @@ void CutFlow(){
   if (CutFlow_mumue_Zjets ==NULL) std::cout<<"WARNING "<<"CutFlow_mumue_Zjets empty"<<std::endl;
   TH1F *  CutFlow_mumue_Wjets      = (TH1F*)gROOT->FindObject("CutFlow_mumue_Wjets");
   if ( CutFlow_mumue_Wjets==NULL) std::cout<<"WARNING "<<"CutFlow_mumue_Wjets empty"<<std::endl;
+  
+  
   TH1F *  CutFlow_mumue_TtW        = (TH1F*)gROOT->FindObject("CutFlow_mumue_TtW");
   if ( CutFlow_mumue_TtW==NULL) std::cout<<"WARNING "<<"CutFlow_mumue_TtW empty"<<std::endl;
   TH1F *  CutFlow_mumue_TbartW     = (TH1F*)gROOT->FindObject("CutFlow_mumue_TbartW");
+  
+  TH1F *  CutFlow_mumue_TtChan        = (TH1F*)gROOT->FindObject("CutFlow_mumue_TtChan");
+  if ( CutFlow_mumue_TtChan==NULL) std::cout<<"WARNING "<<"CutFlow_mumue_TtChan empty"<<std::endl;
+  TH1F *  CutFlow_mumue_TbartChan     = (TH1F*)gROOT->FindObject("CutFlow_mumue_TbartChan");
+  
+  TH1F *  CutFlow_mumue_TsChan        = (TH1F*)gROOT->FindObject("CutFlow_mumue_TsChan");
+  if ( CutFlow_mumue_TsChan==NULL) std::cout<<"WARNING "<<"CutFlow_mumue_TsChan empty"<<std::endl;
+  TH1F *  CutFlow_mumue_TbarsChan     = (TH1F*)gROOT->FindObject("CutFlow_mumue_TbarsChan");
+  
+  
+  
   if ( CutFlow_mumue_TbartW==NULL) std::cout<<"WARNING "<<"CutFlow_mumue_TbartW empty"<<std::endl;
   TH1F *  CutFlow_mumue_WW         = (TH1F*)gROOT->FindObject("CutFlow_mumue_WW");
   if ( CutFlow_mumue_WW==NULL) std::cout<<"WARNING "<<"CutFlow_mumue_WW empty"<<std::endl;
@@ -163,10 +202,23 @@ void CutFlow(){
   if (ErrCutFlow_mumue_Zjets ==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumue_Zjets empty"<<std::endl;
   TH1F *  ErrCutFlow_mumue_Wjets      = (TH1F*)gROOT->FindObject("ErrCutFlow_mumue_Wjets");
   if ( ErrCutFlow_mumue_Wjets==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumue_Wjets empty"<<std::endl;
+  
   TH1F *  ErrCutFlow_mumue_TtW        = (TH1F*)gROOT->FindObject("ErrCutFlow_mumue_TtW");
   if ( ErrCutFlow_mumue_TtW==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumue_TtW empty"<<std::endl;
   TH1F *  ErrCutFlow_mumue_TbartW     = (TH1F*)gROOT->FindObject("ErrCutFlow_mumue_TbartW");
   if ( ErrCutFlow_mumue_TbartW==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumue_TbartW empty"<<std::endl;
+  
+  
+  TH1F *  ErrCutFlow_mumue_TtChan        = (TH1F*)gROOT->FindObject("ErrCutFlow_mumue_TtChan");
+  if ( ErrCutFlow_mumue_TtChan==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumue_TtChan empty"<<std::endl;
+  TH1F *  ErrCutFlow_mumue_TbartChan     = (TH1F*)gROOT->FindObject("ErrCutFlow_mumue_TbartChan");
+  if ( ErrCutFlow_mumue_TbartChan==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumue_TbartChan empty"<<std::endl;
+  
+  TH1F *  ErrCutFlow_mumue_TsChan        = (TH1F*)gROOT->FindObject("ErrCutFlow_mumue_TsChan");
+  if ( ErrCutFlow_mumue_TsChan==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumue_TsChan empty"<<std::endl;
+  TH1F *  ErrCutFlow_mumue_TbarsChan     = (TH1F*)gROOT->FindObject("ErrCutFlow_mumue_TbarsChan");
+  if ( ErrCutFlow_mumue_TbarsChan==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumue_TbarsChan empty"<<std::endl;
+  
   TH1F *  ErrCutFlow_mumue_WW         = (TH1F*)gROOT->FindObject("ErrCutFlow_mumue_WW");
   if ( ErrCutFlow_mumue_WW==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumue_WW empty"<<std::endl;
   TH1F *  ErrCutFlow_mumue_WZ         = (TH1F*)gROOT->FindObject("ErrCutFlow_mumue_WZ");
@@ -188,10 +240,25 @@ void CutFlow(){
   if (CutFlow_eemu_Zjets ==NULL) std::cout<<"WARNING "<<"CutFlow_eemu_Zjets empty"<<std::endl;
   TH1F *  CutFlow_eemu_Wjets      = (TH1F*)gROOT->FindObject("CutFlow_eemu_Wjets");
   if ( CutFlow_eemu_Wjets==NULL) std::cout<<"WARNING "<<"CutFlow_eemu_Wjets empty"<<std::endl;
+  
+  
   TH1F *  CutFlow_eemu_TtW        = (TH1F*)gROOT->FindObject("CutFlow_eemu_TtW");
   if ( CutFlow_eemu_TtW==NULL) std::cout<<"WARNING "<<"CutFlow_eemu_TtW empty"<<std::endl;
-  TH1F *  CutFlow_eemu_TbartW     = (TH1F*)gROOT->FindObject("CutFlow_eemu_TbartW");
+  TH1F *  CutFlow_eemu_TbartW     = (TH1F*)gROOT->FindObject("CutFlow_eemu_TbartW");  
   if ( CutFlow_eemu_TbartW==NULL) std::cout<<"WARNING "<<"CutFlow_eemu_TbartW empty"<<std::endl;
+  
+  TH1F *  CutFlow_eemu_TtChan        = (TH1F*)gROOT->FindObject("CutFlow_eemu_TtChan");
+  if ( CutFlow_eemu_TtChan==NULL) std::cout<<"WARNING "<<"CutFlow_eemu_TtChan empty"<<std::endl;
+  TH1F *  CutFlow_eemu_TbartChan     = (TH1F*)gROOT->FindObject("CutFlow_eemu_TbartChan");  
+  if ( CutFlow_eemu_TbartChan==NULL) std::cout<<"WARNING "<<"CutFlow_eemu_TbartChan empty"<<std::endl;
+  
+  TH1F *  CutFlow_eemu_TsChan        = (TH1F*)gROOT->FindObject("CutFlow_eemu_TsChan");
+  if ( CutFlow_eemu_TsChan==NULL) std::cout<<"WARNING "<<"CutFlow_eemu_TsChan empty"<<std::endl;
+  TH1F *  CutFlow_eemu_TbarsChan     = (TH1F*)gROOT->FindObject("CutFlow_eemu_TbarsChan");  
+  if ( CutFlow_eemu_TbarsChan==NULL) std::cout<<"WARNING "<<"CutFlow_eemu_TbarsChan empty"<<std::endl;
+  
+  
+  
   TH1F *  CutFlow_eemu_WW         = (TH1F*)gROOT->FindObject("CutFlow_eemu_WW");
   if ( CutFlow_eemu_WW==NULL) std::cout<<"WARNING "<<"CutFlow_eemu_WW empty"<<std::endl;
   TH1F *  CutFlow_eemu_WZ         = (TH1F*)gROOT->FindObject("CutFlow_eemu_WZ");
@@ -211,10 +278,24 @@ void CutFlow(){
   if (ErrCutFlow_eemu_Zjets ==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eemu_Zjets empty"<<std::endl;
   TH1F *  ErrCutFlow_eemu_Wjets      = (TH1F*)gROOT->FindObject("ErrCutFlow_eemu_Wjets");
   if ( ErrCutFlow_eemu_Wjets==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eemu_Wjets empty"<<std::endl;
+  
+  
   TH1F *  ErrCutFlow_eemu_TtW        = (TH1F*)gROOT->FindObject("ErrCutFlow_eemu_TtW");
   if ( ErrCutFlow_eemu_TtW==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eemu_TtW empty"<<std::endl;
   TH1F *  ErrCutFlow_eemu_TbartW     = (TH1F*)gROOT->FindObject("ErrCutFlow_eemu_TbartW");
   if ( ErrCutFlow_eemu_TbartW==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eemu_TbartW empty"<<std::endl;
+  
+  TH1F *  ErrCutFlow_eemu_TtChan        = (TH1F*)gROOT->FindObject("ErrCutFlow_eemu_TtChan");
+  if ( ErrCutFlow_eemu_TtChan==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eemu_TtChan empty"<<std::endl;
+  TH1F *  ErrCutFlow_eemu_TbartChan     = (TH1F*)gROOT->FindObject("ErrCutFlow_eemu_TbartChan");
+  if ( ErrCutFlow_eemu_TbartChan==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eemu_TbartChan empty"<<std::endl;
+  
+  TH1F *  ErrCutFlow_eemu_TsChan        = (TH1F*)gROOT->FindObject("ErrCutFlow_eemu_TsChan");
+  if ( ErrCutFlow_eemu_TsChan==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eemu_TsChan empty"<<std::endl;
+  TH1F *  ErrCutFlow_eemu_TbarsChan     = (TH1F*)gROOT->FindObject("ErrCutFlow_eemu_TbarsChan");
+  if ( ErrCutFlow_eemu_TbarsChan==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eemu_TbarsChan empty"<<std::endl;
+  
+  
   TH1F *  ErrCutFlow_eemu_WW         = (TH1F*)gROOT->FindObject("ErrCutFlow_eemu_WW");
   if ( ErrCutFlow_eemu_WW==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eemu_WW empty"<<std::endl;
   TH1F *  ErrCutFlow_eemu_WZ         = (TH1F*)gROOT->FindObject("ErrCutFlow_eemu_WZ");
@@ -235,10 +316,25 @@ void CutFlow(){
   if (CutFlow_eee_Zjets ==NULL) std::cout<<"WARNING "<<"CutFlow_eee_Zjets empty"<<std::endl;
   TH1F *  CutFlow_eee_Wjets      = (TH1F*)gROOT->FindObject("CutFlow_eee_Wjets");
   if ( CutFlow_eee_Wjets==NULL) std::cout<<"WARNING "<<"CutFlow_eee_Wjets empty"<<std::endl;
+  
   TH1F *  CutFlow_eee_TtW        = (TH1F*)gROOT->FindObject("CutFlow_eee_TtW");
   if ( CutFlow_eee_TtW==NULL) std::cout<<"WARNING "<<"CutFlow_eee_TtW empty"<<std::endl;
   TH1F *  CutFlow_eee_TbartW     = (TH1F*)gROOT->FindObject("CutFlow_eee_TbartW");
   if ( CutFlow_eee_TbartW==NULL) std::cout<<"WARNING "<<"CutFlow_eee_TbartW empty"<<std::endl;
+  
+  
+  TH1F *  CutFlow_eee_TtChan        = (TH1F*)gROOT->FindObject("CutFlow_eee_TtChan");
+  if ( CutFlow_eee_TtChan==NULL) std::cout<<"WARNING "<<"CutFlow_eee_TtChan empty"<<std::endl;
+  TH1F *  CutFlow_eee_TbartChan     = (TH1F*)gROOT->FindObject("CutFlow_eee_TbartChan");
+  if ( CutFlow_eee_TbartChan==NULL) std::cout<<"WARNING "<<"CutFlow_eee_TbartChan empty"<<std::endl;
+  
+  
+  
+  TH1F *  CutFlow_eee_TsChan        = (TH1F*)gROOT->FindObject("CutFlow_eee_TsChan");
+  if ( CutFlow_eee_TsChan==NULL) std::cout<<"WARNING "<<"CutFlow_eee_TsChan empty"<<std::endl;
+  TH1F *  CutFlow_eee_TbarsChan     = (TH1F*)gROOT->FindObject("CutFlow_eee_TbarsChan");
+  if ( CutFlow_eee_TbarsChan==NULL) std::cout<<"WARNING "<<"CutFlow_eee_TbarsChan empty"<<std::endl;
+  
   TH1F *  CutFlow_eee_WW         = (TH1F*)gROOT->FindObject("CutFlow_eee_WW");
   if ( CutFlow_eee_WW==NULL) std::cout<<"WARNING "<<"CutFlow_eee_WW empty"<<std::endl;
   TH1F *  CutFlow_eee_WZ         = (TH1F*)gROOT->FindObject("CutFlow_eee_WZ");
@@ -258,10 +354,24 @@ void CutFlow(){
   if (ErrCutFlow_eee_Zjets ==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eee_Zjets empty"<<std::endl;
   TH1F *  ErrCutFlow_eee_Wjets      = (TH1F*)gROOT->FindObject("ErrCutFlow_eee_Wjets");
   if ( ErrCutFlow_eee_Wjets==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eee_Wjets empty"<<std::endl;
+  
+  
   TH1F *  ErrCutFlow_eee_TtW        = (TH1F*)gROOT->FindObject("ErrCutFlow_eee_TtW");
   if ( ErrCutFlow_eee_TtW==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eee_TtW empty"<<std::endl;
   TH1F *  ErrCutFlow_eee_TbartW     = (TH1F*)gROOT->FindObject("ErrCutFlow_eee_TbartW");
   if ( ErrCutFlow_eee_TbartW==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eee_TbartW empty"<<std::endl;
+  
+  TH1F *  ErrCutFlow_eee_TtChan        = (TH1F*)gROOT->FindObject("ErrCutFlow_eee_TtChan");
+  if ( ErrCutFlow_eee_TtChan==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eee_TtChan empty"<<std::endl;
+  TH1F *  ErrCutFlow_eee_TbartChan     = (TH1F*)gROOT->FindObject("ErrCutFlow_eee_TbartChan");
+  if ( ErrCutFlow_eee_TbartChan==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eee_TbartChan empty"<<std::endl;
+  
+  TH1F *  ErrCutFlow_eee_TsChan        = (TH1F*)gROOT->FindObject("ErrCutFlow_eee_TsChan");
+  if ( ErrCutFlow_eee_TsChan==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eee_TsChan empty"<<std::endl;
+  TH1F *  ErrCutFlow_eee_TbarsChan     = (TH1F*)gROOT->FindObject("ErrCutFlow_eee_TbarsChan");
+  if ( ErrCutFlow_eee_TbarsChan==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eee_TbarsChan empty"<<std::endl;
+  
+  
   TH1F *  ErrCutFlow_eee_WW         = (TH1F*)gROOT->FindObject("ErrCutFlow_eee_WW");
   if ( ErrCutFlow_eee_WW==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eee_WW empty"<<std::endl;
   TH1F *  ErrCutFlow_eee_WZ         = (TH1F*)gROOT->FindObject("ErrCutFlow_eee_WZ");
@@ -342,7 +452,38 @@ void CutFlow(){
 	TabFlow2[0][4][i] += ErrCutFlow_mumumu_TbartW->GetBinContent(i+1);
         TabFlow1[4][4][i] += CutFlow_mumumu_TbartW->GetBinContent(i+1);
 	TabFlow2[4][4][i] += ErrCutFlow_mumumu_TbartW->GetBinContent(i+1);
+      }
+      
+      
+      if ( CutFlow_mumumu_TtChan!=NULL ) { 
+        TabFlow1[0][4][i] = CutFlow_mumumu_TtChan->GetBinContent(i+1);
+	TabFlow2[0][4][i] = ErrCutFlow_mumumu_TtChan->GetBinContent(i+1);
+        TabFlow1[4][4][i] += CutFlow_mumumu_TtChan->GetBinContent(i+1);
+	TabFlow2[4][4][i] += ErrCutFlow_mumumu_TtChan->GetBinContent(i+1);
       }	
+      if ( CutFlow_mumumu_TbartChan!=NULL ) {
+        TabFlow1[0][4][i] += CutFlow_mumumu_TbartChan->GetBinContent(i+1);
+	TabFlow2[0][4][i] += ErrCutFlow_mumumu_TbartChan->GetBinContent(i+1);
+        TabFlow1[4][4][i] += CutFlow_mumumu_TbartChan->GetBinContent(i+1);
+	TabFlow2[4][4][i] += ErrCutFlow_mumumu_TbartChan->GetBinContent(i+1);
+      }
+      
+      if ( CutFlow_mumumu_TsChan!=NULL ) { 
+        TabFlow1[0][4][i] = CutFlow_mumumu_TsChan->GetBinContent(i+1);
+	TabFlow2[0][4][i] = ErrCutFlow_mumumu_TsChan->GetBinContent(i+1);
+        TabFlow1[4][4][i] += CutFlow_mumumu_TsChan->GetBinContent(i+1);
+	TabFlow2[4][4][i] += ErrCutFlow_mumumu_TsChan->GetBinContent(i+1);
+      }	
+      if ( CutFlow_mumumu_TbarsChan!=NULL ) {
+        TabFlow1[0][4][i] += CutFlow_mumumu_TbarsChan->GetBinContent(i+1);
+	TabFlow2[0][4][i] += ErrCutFlow_mumumu_TbarsChan->GetBinContent(i+1);
+        TabFlow1[4][4][i] += CutFlow_mumumu_TbarsChan->GetBinContent(i+1);
+	TabFlow2[4][4][i] += ErrCutFlow_mumumu_TbarsChan->GetBinContent(i+1);
+      }
+      
+      
+      
+      	
       if ( CutFlow_mumumu_WZ!=NULL ) {
         TabFlow1[0][5][i] = CutFlow_mumumu_WZ->GetBinContent(i+1) ;
 	TabFlow2[0][5][i] = ErrCutFlow_mumumu_WZ->GetBinContent(i+1) ;
@@ -419,6 +560,35 @@ void CutFlow(){
         TabFlow1[4][4][i] += CutFlow_mumue_TbartW->GetBinContent(i+1);
 	TabFlow2[4][4][i] += ErrCutFlow_mumue_TbartW->GetBinContent(i+1);
       }	
+      
+      
+      if ( CutFlow_mumue_TtChan!=NULL ) { 
+        TabFlow1[1][4][i] = CutFlow_mumue_TtChan->GetBinContent(i+1);
+	TabFlow2[1][4][i] = ErrCutFlow_mumue_TtChan->GetBinContent(i+1);
+        TabFlow1[4][4][i] += CutFlow_mumue_TtChan->GetBinContent(i+1);
+	TabFlow2[4][4][i] += ErrCutFlow_mumue_TtChan->GetBinContent(i+1);
+      }	
+      if ( CutFlow_mumue_TbartChan!=NULL ) {
+        TabFlow1[1][4][i] += CutFlow_mumue_TbartChan->GetBinContent(i+1);
+	TabFlow2[1][4][i] += ErrCutFlow_mumue_TbartChan->GetBinContent(i+1);
+        TabFlow1[4][4][i] += CutFlow_mumue_TbartChan->GetBinContent(i+1);
+	TabFlow2[4][4][i] += ErrCutFlow_mumue_TbartChan->GetBinContent(i+1);
+      }	
+      
+      if ( CutFlow_mumue_TsChan!=NULL ) { 
+        TabFlow1[1][4][i] = CutFlow_mumue_TsChan->GetBinContent(i+1);
+	TabFlow2[1][4][i] = ErrCutFlow_mumue_TsChan->GetBinContent(i+1);
+        TabFlow1[4][4][i] += CutFlow_mumue_TsChan->GetBinContent(i+1);
+	TabFlow2[4][4][i] += ErrCutFlow_mumue_TsChan->GetBinContent(i+1);
+      }	
+      if ( CutFlow_mumue_TbarsChan!=NULL ) {
+        TabFlow1[1][4][i] += CutFlow_mumue_TbarsChan->GetBinContent(i+1);
+	TabFlow2[1][4][i] += ErrCutFlow_mumue_TbarsChan->GetBinContent(i+1);
+        TabFlow1[4][4][i] += CutFlow_mumue_TbarsChan->GetBinContent(i+1);
+	TabFlow2[4][4][i] += ErrCutFlow_mumue_TbarsChan->GetBinContent(i+1);
+      }	
+      
+      
       if ( CutFlow_mumue_WZ!=NULL ) {
         TabFlow1[1][5][i] = CutFlow_mumue_WZ->GetBinContent(i+1) ;
 	TabFlow2[1][5][i] = ErrCutFlow_mumue_WZ->GetBinContent(i+1) ;
@@ -493,6 +663,36 @@ void CutFlow(){
         TabFlow1[4][4][i] += CutFlow_eemu_TbartW->GetBinContent(i+1);
 	TabFlow2[4][4][i] += ErrCutFlow_eemu_TbartW->GetBinContent(i+1);
       }	
+      
+      if ( CutFlow_eemu_TtChan!=NULL ) { 
+        TabFlow1[2][4][i] = CutFlow_eemu_TtChan->GetBinContent(i+1);
+	TabFlow2[2][4][i] = ErrCutFlow_eemu_TtChan->GetBinContent(i+1);
+        TabFlow1[4][4][i] += CutFlow_eemu_TtChan->GetBinContent(i+1);
+	TabFlow2[4][4][i] += ErrCutFlow_eemu_TtChan->GetBinContent(i+1);
+      }	
+      if ( CutFlow_eemu_TbartChan!=NULL ) {
+        TabFlow1[2][4][i] += CutFlow_eemu_TbartChan->GetBinContent(i+1);
+	TabFlow2[2][4][i] += ErrCutFlow_eemu_TbartChan->GetBinContent(i+1);
+        TabFlow1[4][4][i] += CutFlow_eemu_TbartChan->GetBinContent(i+1);
+	TabFlow2[4][4][i] += ErrCutFlow_eemu_TbartChan->GetBinContent(i+1);
+      }	
+      
+      if ( CutFlow_eemu_TsChan!=NULL ) { 
+        TabFlow1[2][4][i] = CutFlow_eemu_TsChan->GetBinContent(i+1);
+	TabFlow2[2][4][i] = ErrCutFlow_eemu_TsChan->GetBinContent(i+1);
+        TabFlow1[4][4][i] += CutFlow_eemu_TsChan->GetBinContent(i+1);
+	TabFlow2[4][4][i] += ErrCutFlow_eemu_TsChan->GetBinContent(i+1);
+      }	
+      if ( CutFlow_eemu_TbarsChan!=NULL ) {
+        TabFlow1[2][4][i] += CutFlow_eemu_TbarsChan->GetBinContent(i+1);
+	TabFlow2[2][4][i] += ErrCutFlow_eemu_TbarsChan->GetBinContent(i+1);
+        TabFlow1[4][4][i] += CutFlow_eemu_TbarsChan->GetBinContent(i+1);
+	TabFlow2[4][4][i] += ErrCutFlow_eemu_TbarsChan->GetBinContent(i+1);
+      }	
+      
+      
+      
+      
       if ( CutFlow_eemu_WZ!=NULL ) {
         TabFlow1[2][5][i] = CutFlow_eemu_WZ->GetBinContent(i+1) ;
 	TabFlow2[2][5][i] = ErrCutFlow_eemu_WZ->GetBinContent(i+1) ;
@@ -565,6 +765,35 @@ void CutFlow(){
         TabFlow1[4][4][i] += CutFlow_eee_TbartW->GetBinContent(i+1);
 	TabFlow2[4][4][i] += ErrCutFlow_eee_TbartW->GetBinContent(i+1);
       }	
+      
+      if ( CutFlow_eee_TtChan!=NULL ) { 
+        TabFlow1[3][4][i] = CutFlow_eee_TtChan->GetBinContent(i+1);
+	TabFlow2[3][4][i] = ErrCutFlow_eee_TtChan->GetBinContent(i+1);
+        TabFlow1[4][4][i] += CutFlow_eee_TtChan->GetBinContent(i+1);
+	TabFlow2[4][4][i] += ErrCutFlow_eee_TtChan->GetBinContent(i+1);
+      }	
+      if ( CutFlow_eee_TbartChan!=NULL ) {
+        TabFlow1[3][4][i] += CutFlow_eee_TbartChan->GetBinContent(i+1);
+	TabFlow2[3][4][i] += ErrCutFlow_eee_TbartChan->GetBinContent(i+1);
+        TabFlow1[4][4][i] += CutFlow_eee_TbartChan->GetBinContent(i+1);
+	TabFlow2[4][4][i] += ErrCutFlow_eee_TbartChan->GetBinContent(i+1);
+      }	
+      
+      if ( CutFlow_eee_TsChan!=NULL ) { 
+        TabFlow1[3][4][i] = CutFlow_eee_TsChan->GetBinContent(i+1);
+	TabFlow2[3][4][i] = ErrCutFlow_eee_TsChan->GetBinContent(i+1);
+        TabFlow1[4][4][i] += CutFlow_eee_TsChan->GetBinContent(i+1);
+	TabFlow2[4][4][i] += ErrCutFlow_eee_TsChan->GetBinContent(i+1);
+      }	
+      if ( CutFlow_eee_TbarsChan!=NULL ) {
+        TabFlow1[3][4][i] += CutFlow_eee_TbarsChan->GetBinContent(i+1);
+	TabFlow2[3][4][i] += ErrCutFlow_eee_TbarsChan->GetBinContent(i+1);
+        TabFlow1[4][4][i] += CutFlow_eee_TbarsChan->GetBinContent(i+1);
+	TabFlow2[4][4][i] += ErrCutFlow_eee_TbarsChan->GetBinContent(i+1);
+      }	
+      
+      
+      
       if ( CutFlow_eee_WZ!=NULL ) {
         TabFlow1[3][5][i] = CutFlow_eee_WZ->GetBinContent(i+1) ;
 	TabFlow2[3][5][i] = ErrCutFlow_eee_WZ->GetBinContent(i+1) ;

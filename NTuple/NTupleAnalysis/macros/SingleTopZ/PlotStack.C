@@ -256,8 +256,8 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   //filename="backup_outputProof26-01-12_19-38-49_forcutFlow_and_Plots/proof.root";
   //filename="backup_outputProof12-04-12_14-26-17//proof.root";
   //filename="backup_outputProof22-04-12_23-37-00/proof.root";
-  filename="backup_outputProof12-07-12_16-39-28/proof.root";
- 
+  //filename="backup_outputProof12-07-12_17-58-41/proof.root";
+ filename="backup_outputProof07-08-12_10-21-30/proof.root";
  
  
  
@@ -279,6 +279,12 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   TH1F * histo_SingleToptW;
   TH1F * histo_TtW;
   TH1F * histo_TbartW;
+  TH1F * histo_SingleToptChan;
+  TH1F * histo_TtChan;
+  TH1F * histo_TbartChan;
+  TH1F * histo_SingleTopsChan;
+  TH1F * histo_TsChan;
+  TH1F * histo_TbarsChan;
   TH1F * histo_ratio;
   
   
@@ -505,7 +511,90 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   }
   
 
+  TString histo_SingleToptChan_name = plotname+channel+selection+"_SingleToptChan";
+  histo_SingleToptChan         = (TH1F*)filechannel->Get(histo_SingleToptChan_name);
+  //     if (namechan=="all") {
+  //         TString h_name2_SingleToptChan=plotname+"mumu"+selection+"_SingleToptChan";
+  //         TH1F * h_2_SingleToptChan = (TH1F*)filechannel->Get(h_name2_SingleToptChan);
+  //         TString h_name3_SingleToptChan=plotname+"emu"+selection+"_SingleToptChan";
+  //         TH1F * h_3_SingleToptChan = (TH1F*)filechannel->Get(h_name3_SingleToptChan);
+  //         histo_SingleToptChan->Add(histo_SingleToptChan, h_2_SingleToptChan     , 1, 1);
+  //         histo_SingleToptChan->Add(histo_SingleToptChan, h_3_SingleToptChan     , 1, 1);
+  //     }
   
+
+  TString histo_TtChan_name = plotname+channel+selection+"_TtChan";
+  histo_TtChan         = (TH1F*)filechannel->Get(histo_TtChan_name);
+  if (namechan=="all") {
+    TString h_name2_TtChan=plotname+"mumue"+selection+"_TtChan";
+    TH1F * h_2_TtChan = (TH1F*)filechannel->Get(h_name2_TtChan);
+    TString h_name3_TtChan=plotname+"eemu"+selection+"_TtChan";
+    TH1F * h_3_TtChan = (TH1F*)filechannel->Get(h_name3_TtChan);
+    TString h_name4_TtChan=plotname+"eee"+selection+"_TtChan";
+    TH1F * h_4_TtChan = (TH1F*)filechannel->Get(h_name4_TtChan);
+    histo_TtChan->Add(histo_TtChan, h_2_TtChan     , 1, 1);
+    histo_TtChan->Add(histo_TtChan, h_3_TtChan     , 1, 1);
+    histo_TtChan->Add(histo_TtChan, h_4_TtChan     , 1, 1);
+  }
+  
+
+  
+  TString histo_TbartChan_name = plotname+channel+selection+"_TbartChan";
+  histo_TbartChan         = (TH1F*)filechannel->Get(histo_TbartChan_name);
+  if (namechan=="all") {
+    TString h_name2_TbartChan=plotname+"mumue"+selection+"_TbartChan";
+    TH1F * h_2_TbartChan = (TH1F*)filechannel->Get(h_name2_TbartChan);
+    TString h_name3_TbartChan=plotname+"eemu"+selection+"_TbartChan";
+    TH1F * h_3_TbartChan = (TH1F*)filechannel->Get(h_name3_TbartChan);
+    TString h_name4_TbartChan=plotname+"eee"+selection+"_TbartChan";
+    TH1F * h_4_TbartChan = (TH1F*)filechannel->Get(h_name4_TbartChan);
+    histo_TbartChan->Add(histo_TbartChan, h_2_TbartChan     , 1, 1);
+    histo_TbartChan->Add(histo_TbartChan, h_3_TbartChan     , 1, 1);
+    histo_TbartChan->Add(histo_TbartChan, h_4_TbartChan     , 1, 1);
+  }
+  
+  
+  TString histo_SingleTopsChan_name = plotname+channel+selection+"_SingleTopsChan";
+  histo_SingleTopsChan         = (TH1F*)filechannel->Get(histo_SingleTopsChan_name);
+  //     if (namechan=="all") {
+  //         TString h_name2_SingleTopsChan=plotname+"mumu"+selection+"_SingleTopsChan";
+  //         TH1F * h_2_SingleTopsChan = (TH1F*)filechannel->Get(h_name2_SingleTopsChan);
+  //         TString h_name3_SingleTopsChan=plotname+"emu"+selection+"_SingleTopsChan";
+  //         TH1F * h_3_SingleTopsChan = (TH1F*)filechannel->Get(h_name3_SingleTopsChan);
+  //         histo_SingleTopsChan->Add(histo_SingleTopsChan, h_2_SingleTopsChan     , 1, 1);
+  //         histo_SingleTopsChan->Add(histo_SingleTopsChan, h_3_SingleTopsChan     , 1, 1);
+  //     }
+  
+
+  TString histo_TsChan_name = plotname+channel+selection+"_TsChan";
+  histo_TsChan         = (TH1F*)filechannel->Get(histo_TsChan_name);
+  if (namechan=="all") {
+    TString h_name2_TsChan=plotname+"mumue"+selection+"_TsChan";
+    TH1F * h_2_TsChan = (TH1F*)filechannel->Get(h_name2_TsChan);
+    TString h_name3_TsChan=plotname+"eemu"+selection+"_TsChan";
+    TH1F * h_3_TsChan = (TH1F*)filechannel->Get(h_name3_TsChan);
+    TString h_name4_TsChan=plotname+"eee"+selection+"_TsChan";
+    TH1F * h_4_TsChan = (TH1F*)filechannel->Get(h_name4_TsChan);
+    histo_TsChan->Add(histo_TsChan, h_2_TsChan     , 1, 1);
+    histo_TsChan->Add(histo_TsChan, h_3_TsChan     , 1, 1);
+    histo_TsChan->Add(histo_TsChan, h_4_TsChan     , 1, 1);
+  }
+  
+
+  
+  TString histo_TbarsChan_name = plotname+channel+selection+"_TbarsChan";
+  histo_TbarsChan         = (TH1F*)filechannel->Get(histo_TbarsChan_name);
+  if (namechan=="all") {
+    TString h_name2_TbarsChan=plotname+"mumue"+selection+"_TbarsChan";
+    TH1F * h_2_TbarsChan = (TH1F*)filechannel->Get(h_name2_TbarsChan);
+    TString h_name3_TbarsChan=plotname+"eemu"+selection+"_TbarsChan";
+    TH1F * h_3_TbarsChan = (TH1F*)filechannel->Get(h_name3_TbarsChan);
+    TString h_name4_TbarsChan=plotname+"eee"+selection+"_TbarsChan";
+    TH1F * h_4_TbarsChan = (TH1F*)filechannel->Get(h_name4_TbarsChan);
+    histo_TbarsChan->Add(histo_TbarsChan, h_2_TbarsChan     , 1, 1);
+    histo_TbarsChan->Add(histo_TbarsChan, h_3_TbarsChan     , 1, 1);
+    histo_TbarsChan->Add(histo_TbarsChan, h_4_TbarsChan     , 1, 1);
+  }
   
   TString histo_VV_name = plotname+channel+selection+"_VV";
   histo_VV                  = (TH1F*)filechannel->Get(histo_VV_name);
@@ -576,6 +665,10 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   if ( histo_SingleToptW==NULL ) { 
     histo_SingleToptW=(TH1F*)histo_TtW->Clone("SingleToptW");
     histo_SingleToptW->Add(histo_SingleToptW, histo_TbartW     , 1, 1);
+    histo_SingleToptW->Add(histo_SingleToptW, histo_TtChan     , 1, 1);
+    histo_SingleToptW->Add(histo_SingleToptW, histo_TbartChan  , 1, 1);
+    histo_SingleToptW->Add(histo_SingleToptW, histo_TsChan     , 1, 1);
+    histo_SingleToptW->Add(histo_SingleToptW, histo_TbarsChan  , 1, 1);
   }
   
   if ( histo_VV==NULL ) {
