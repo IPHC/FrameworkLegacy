@@ -381,11 +381,35 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> Asym_eee_afterbjetsel;
   
   
+  
+  std::vector<TH1F> mWT_mumumu_afterjetsel;
+  std::vector<TH1F> mWT_mumue_afterjetsel;
+  std::vector<TH1F> mWT_eemu_afterjetsel;
+  std::vector<TH1F> mWT_eee_afterjetsel;
+  
+  
+  
   std::vector<TH1F> RecoPtZ_mumumu_afterbjetsel;
   std::vector<TH1F> RecoPtZ_mumue_afterbjetsel;
   std::vector<TH1F> RecoPtZ_eemu_afterbjetsel;
   std::vector<TH1F> RecoPtZ_eee_afterbjetsel;
   
+  std::vector<TH1F> RecoPtZ_mumumu_afterbjetveto;
+  std::vector<TH1F> RecoPtZ_mumue_afterbjetveto;
+  std::vector<TH1F> RecoPtZ_eemu_afterbjetveto;
+  std::vector<TH1F> RecoPtZ_eee_afterbjetveto;
+  
+  
+  std::vector<TH1F> RecoPtZ_mumumu_afterleptsel;
+  std::vector<TH1F> RecoPtZ_mumue_afterleptsel;
+  std::vector<TH1F> RecoPtZ_eemu_afterleptsel;
+  std::vector<TH1F> RecoPtZ_eee_afterleptsel;
+  
+  
+  std::vector<TH1F> RecoPtZ_mumumu_afterleptsel_nojet;
+  std::vector<TH1F> RecoPtZ_mumue_afterleptsel_nojet;
+  std::vector<TH1F> RecoPtZ_eemu_afterleptsel_nojet;
+  std::vector<TH1F> RecoPtZ_eee_afterleptsel_nojet;
   
   
   std::vector<TH1F> RecoTopMass_mumumu_afterbjetsel;
@@ -398,6 +422,35 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> deltaPhilb_mumue_afterbjetsel;
   std::vector<TH1F> deltaPhilb_eemu_afterbjetsel;
   std::vector<TH1F> deltaPhilb_eee_afterbjetsel;
+  
+  
+  
+  
+  std::vector<TH1F> deltaR_mumumu_afterleptsel;
+  std::vector<TH1F> deltaR_mumue_afterleptsel;
+  std::vector<TH1F> deltaR_eemu_afterleptsel;
+  std::vector<TH1F> deltaR_eee_afterleptsel;
+  
+  
+  
+  
+  std::vector<TH1F> WmissAssing_mumumu_afterleptsel;
+  std::vector<TH1F> WmissAssing_mumue_afterleptsel;
+  std::vector<TH1F> WmissAssing_eemu_afterleptsel;
+  std::vector<TH1F> WmissAssing_eee_afterleptsel;
+  
+  
+  std::vector<TH1F> mWT_mumumu_afterleptsel;
+  std::vector<TH1F> mWT_mumue_afterleptsel;
+  std::vector<TH1F> mWT_eemu_afterleptsel;
+  std::vector<TH1F> mWT_eee_afterleptsel;
+  
+  
+  std::vector<TH1F> mWT_mumumu_afterbjetsel;
+  std::vector<TH1F> mWT_mumue_afterbjetsel;
+  std::vector<TH1F> mWT_eemu_afterbjetsel;
+  std::vector<TH1F> mWT_eee_afterbjetsel;
+  
   
   std::vector<TH2D> HT_vs_MET_mumumu_afterleptsel;
   std::vector<TH2D> HT_vs_MET_mumue_afterleptsel;

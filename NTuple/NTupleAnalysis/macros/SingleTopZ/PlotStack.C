@@ -35,6 +35,24 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   
   
   
+  TString filename;
+  //filename="CrossSection_MPU1.root";
+  //filename="CrossSection_electronCorr.root";
+  //filename="backup_outputProof26-09-11_13-17-47/proof_WW.root";
+  //filename="backup_outputProof14-11-11_13-07-13//proof.root";
+  //filename="backup_outputProof04-11-11_15-45-51/proof.root"; // ref value 
+  //filename="backup_outputProof04-11-11_17-45-51/proof.root"; // pile up +
+  //filename="backup_outputProof21-11-11_16-39-37/proof.root";
+  //filename="backup_outputProof24-11-11_19-09-10/proof.root";
+  //filename="backup_outputProof05-12-11_11-02-25/proof.root";
+  //filename="backup_outputProof26-01-12_19-38-49_forcutFlow_and_Plots/proof.root";
+  //filename="backup_outputProof12-04-12_14-26-17//proof.root";
+  //filename="backup_outputProof22-04-12_23-37-00/proof.root";
+  //filename="backup_outputProof12-07-12_17-58-41/proof.root";
+ //filename="backup_outputProof10-08-12_14-51-51//proof.root";
+ filename="backup_outputProof24-09-12_16-04-38/proof.root";
+  
+  
   TString channel;
   if (namechan!="all") channel=namechan;
   else channel="mumumu";
@@ -241,23 +259,6 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     else {
     c1->SetLogy(setlogy);
     }*/
-  
-  
-  TString filename;
-  //filename="CrossSection_MPU1.root";
-  //filename="CrossSection_electronCorr.root";
-  //filename="backup_outputProof26-09-11_13-17-47/proof_WW.root";
-  //filename="backup_outputProof14-11-11_13-07-13//proof.root";
-  //filename="backup_outputProof04-11-11_15-45-51/proof.root"; // ref value 
-  //filename="backup_outputProof04-11-11_17-45-51/proof.root"; // pile up +
-  //filename="backup_outputProof21-11-11_16-39-37/proof.root";
-  //filename="backup_outputProof24-11-11_19-09-10/proof.root";
-  //filename="backup_outputProof05-12-11_11-02-25/proof.root";
-  //filename="backup_outputProof26-01-12_19-38-49_forcutFlow_and_Plots/proof.root";
-  //filename="backup_outputProof12-04-12_14-26-17//proof.root";
-  //filename="backup_outputProof22-04-12_23-37-00/proof.root";
-  //filename="backup_outputProof12-07-12_17-58-41/proof.root";
- filename="backup_outputProof07-08-12_10-21-30/proof.root";
  
  
  
@@ -729,7 +730,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   
   
   if(plotname =="MET_" ){
-    int bins = 1;
+    int bins = 5;
     hmc->Rebin(bins);
     histo_VV->Rebin(bins);
     histo_Wjets->Rebin(bins);
@@ -740,7 +741,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_FCNCkut->Rebin(bins);
   }
   
-  if(plotname =="Mt_" ){
+  if(plotname =="Mt_" || plotname == "mWT_"){
     int bins = 5;
     hmc->Rebin(bins);
     histo_VV->Rebin(bins);
