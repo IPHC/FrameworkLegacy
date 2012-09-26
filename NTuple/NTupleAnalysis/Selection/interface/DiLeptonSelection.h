@@ -201,6 +201,8 @@ event of weight "weight" of a given dataset idataset - Returns the integer of do
       bool passBtagSelection(const NTJet & jet) const;
 
 
+      double getLeptonScaleFactor(double pt, double eta, string lepton);
+      double getLeptonScaleFactorError(double pt, double eta, string lepton);
       double getLeptonScaleFactor(double pt1, double eta1, double pt2, double eta2, string channel);
       double getLeptonScaleFactorError(double pt1, double eta1, double pt2, double eta2, string channel);
 

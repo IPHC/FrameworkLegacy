@@ -1486,6 +1486,50 @@ bool DiLeptonSelection::passBtagSelection(const NTJet & jet) const
 }
 
 
+double DiLeptonSelection::getLeptonScaleFactor(double pt, double eta, string lepton){
+
+  double the_getScaleFactor = 0;
+
+  if(pt > 100) pt = 99;
+  if(fabs(eta) > 2.5) eta = 2.4;
+
+  if(lepton == "e"){
+     int binx = getScaleFactEl()->GetXaxis()->FindBin( pt );
+     int biny = getScaleFactEl()->GetYaxis()->FindBin( fabs(eta) );
+     the_getScaleFactor = getScaleFactEl()->GetBinContent( binx, biny );
+  }
+  if(lepton == "mu"){
+     int binx = getScaleFactMu()->GetXaxis()->FindBin( pt );
+     int biny = getScaleFactMu()->GetYaxis()->FindBin( fabs(eta) );
+     the_getScaleFactor = getScaleFactMu()->GetBinContent( binx, biny );
+  }
+
+  return the_getScaleFactor;
+}
+
+double DiLeptonSelection::getLeptonScaleFactorError(double pt, double eta, string lepton){
+
+  double the_getScaleFactor = 0;
+
+  if(pt > 100) pt = 99;
+  if(fabs(eta) > 2.5) eta = 2.4;
+
+  if(lepton == "e"){
+     int binx = getScaleFactEl()->GetXaxis()->FindBin( pt );
+     int biny = getScaleFactEl()->GetYaxis()->FindBin( fabs(eta) );
+
+     the_getScaleFactor = getScaleFactEl()->GetBinError( binx, biny );
+  }
+  if(lepton == "mu"){
+     int binx = getScaleFactMu()->GetXaxis()->FindBin( pt );
+     int biny = getScaleFactMu()->GetYaxis()->FindBin( fabs(eta) );
+
+     the_getScaleFactor = getScaleFactMu()->GetBinError( binx, biny );
+  }
+
+  return the_getScaleFactor;
+}
+
 double DiLeptonSelection::getLeptonScaleFactor(double pt1, double eta1, double pt2, double eta2, string channel){
   double the_getScaleFactor = 0;
   
