@@ -1199,14 +1199,31 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
         // apply lepton scale factors
         //*****************************************************************    
         
-    
-        if(ApplyLeptonSF){
-          //to be updated for 3 leptons selection
-	  //if(IChannel == 0 && cand3leptonChannel == "mumumu")
-          //if(IChannel == 1 && cand3leptonChannel == "mumue" )
-	  //if(IChannel == 2 && cand3leptonChannel == "eemu"  )
-	  //if(IChannel == 3 && cand3leptonChannel == "eee"   )
-      
+        double LeptonSF      = 0.;
+        double LeptonSFError = 0.;
+ 
+        if(ApplyLeptonSF && !isData){
+
+          if(IChannel == 0 && cand3leptonChannel == "mumumu")
+           LeptonSF = sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "mu") 
+                       * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "mu") 
+                       * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "mu");
+          if(IChannel == 0 && cand3leptonChannel == "mumue")
+           LeptonSF = sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "mu")
+                       * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "mu")
+                       * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "e");
+          if(IChannel == 0 && cand3leptonChannel == "eemu")
+           LeptonSF = sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "e")
+                       * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "e")
+                       * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "mu");
+          if(IChannel == 0 && cand3leptonChannel == "eee")
+           LeptonSF = sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "e")
+                       * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "e")
+                       * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "e");
+
+          if(event->general.eventNb%10==0) cout<<cand3leptonChannel<<" SF "<<LeptonSF<<endl; 
+          Dweight[ITypeMC]*=LeptonSF;
+
         }
 	 
 	
