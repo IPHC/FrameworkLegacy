@@ -96,52 +96,28 @@ class ProofSelectorMyCutFlow : public TSelector {
   bool IDYestimateWithMetCut ;
   
   bool useNonIsoWcand;
+  bool applyTrigger ;
   
-  bool applyDYscale ;
+  bool applyWZ ;
   bool applyFakescale ;
+  bool applyLeptonSF;
   
   //Here define Scale Factors
   //SF_trigger applied for mumu
-  double SF_trig_mu ;  
+  double SF_trig_mumu ;  
   double SF_trig_emu;  
   double SF_trig_ee ;  
   
-  double SF_trig_mu_error ;  
+  double SF_trig_mumu_error ;  
   double SF_trig_emu_error;  
   double SF_trig_ee_error ;  
   
-  double SF_e  ;  
-  double SF_mu ; 
-    
   double SF_BranchingRatio_ll ; 
   double SF_BranchingRatio_lj ; 
   double SF_BranchingRatio_had ; 
     
-  double SF_DY_ee ;
-  double SF_DY_mm ;
-  double SF_DY_em ;
-  
-  double  SF_DY_Njets_ee ;
-  double  SF_DY_Njets_mm ;
-  double  SF_DY_Njets_em ;
-  
-  /*double SF_met_mumu;
-  double SF_met_emu;
-  double SF_met_ee;
-
-  double SF_met_mumu_error;
-  double SF_met_emu_error;
-  double SF_met_ee_error;*/
    
-  
-  std::vector<double> vSF_met_ee ;
-  std::vector<double> vSF_met_mumu ;
-  std::vector<double> vSF_met_emu ;
-  
-  std::vector<double> vSF_met_ee_error ;
-  std::vector<double> vSF_met_mumu_error ;
-  std::vector<double> vSF_met_emu_error ;
-  
+   
   
   bool PUup;
   bool PUdown;
@@ -150,24 +126,7 @@ class ProofSelectorMyCutFlow : public TSelector {
   
   
   
-  
-   
-  std::vector<double> vSF_DY_ee ;
-  std::vector<double> vSF_DY_mm ;
-  std::vector<double> vSF_DY_em ;
-   
-  std::vector<double> vSF_DY_ee_error ;
-  std::vector<double> vSF_DY_mm_error ;
-  std::vector<double> vSF_DY_em_error ;
-  
-  std::vector<double> vSF_FakeBck_ee; 
-  std::vector<double> vSF_FakeBck_mm; 
-  std::vector<double> vSF_FakeBck_em; 
-  
-  
-  std::vector<double> vSF_FakeBck_ee_error; 
-  std::vector<double> vSF_FakeBck_mm_error; 
-  std::vector<double> vSF_FakeBck_em_error; 
+ 
   
   double sumSFlept_ee;
   double sumSFlept_mumu;
@@ -191,7 +150,6 @@ class ProofSelectorMyCutFlow : public TSelector {
   double resolElec; // 0 to switch off
   
   
-  bool ApplyLeptonSF;
   
   
   int ITypeMC ;
@@ -221,6 +179,19 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> NJet_mumue_afterZsel;
   std::vector<TH1F> NJet_eemu_afterZsel;
   std::vector<TH1F> NJet_eee_afterZsel;
+  
+  
+  std::vector<TH1F> NJet_mumumu_afterbsel;
+  std::vector<TH1F> NJet_mumue_afterbsel;
+  std::vector<TH1F> NJet_eemu_afterbsel;
+  std::vector<TH1F> NJet_eee_afterbsel;
+  
+  
+  std::vector<TH1F> NLept_mumumu_afterbsel;
+  std::vector<TH1F> NLept_mumue_afterbsel;
+  std::vector<TH1F> NLept_eemu_afterbsel;
+  std::vector<TH1F> NLept_eee_afterbsel;
+  
   
   std::vector<TH1F> NBJet_mumumu_afterZsel;
   std::vector<TH1F> NBJet_mumue_afterZsel;

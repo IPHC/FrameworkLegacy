@@ -55,8 +55,11 @@ ProofSelectorMyCutFlow::ProofSelectorMyCutFlow()
    
   
   
-  applyDYscale = true ;
-  applyFakescale = true  ;
+  applyFakescale = false;
+  applyLeptonSF  = true;
+  applyWZ        = false;
+  applyTrigger   = true;
+  
   
   IReweight		= true;
   IDYestimateWithMetCut = true;
@@ -177,50 +180,19 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   
   
   
-  SF_trig_mu = 0.977; 
+  SF_trig_mumu = 0.977; 
   SF_trig_emu= 1.008; 
   SF_trig_ee = 0.962; 
   
-  SF_trig_mu_error  = 0.014; 
+  SF_trig_mumu_error  = 0.014; 
   SF_trig_emu_error = 0.007; 
   SF_trig_ee_error  = 0.016; 
   
-  SF_e  =1.0; 
-  SF_mu =1.0; 
-  
-  /*SF_met_mumu = 1.00237;
-    SF_met_emu  = 1.0;
-    SF_met_ee   = 1.00237;
-    
-    
-    SF_met_mumu_error = 0.00629333;
-    SF_met_emu_error  = 0;
-    SF_met_ee_error   = 0.00629333;*/
   
   
-  //**************************************
-  //**************************************
-  //******* DY DD estimate ***************
-  //**************************************
-  //**************************************
-  
-  
-  // for PLR plot
-  SF_DY_ee = 1.;
-  SF_DY_mm = 1.;
-  SF_DY_em = 1.;
   
   double lumisf = 1./1.037;
-  
-  if(applyDYscale){ 
-    
-    
-    
-    
-  }else{
-    
-  }
-  
+ 
   
   
   
@@ -247,7 +219,6 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   scaleElec = 1.0; // 1 to switch off
   resolElec = 0.0; // 0 to switch off
   
-  ApplyLeptonSF = true;
   
   ITypeMC     = -1;
   ICut        = -1;  
@@ -257,32 +228,15 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   //For trigger systematics 
   
   if(datasetName=="TTbarTriggerUp"){
-    SF_trig_mu += SF_trig_mu_error;
+    SF_trig_mumu += SF_trig_mumu_error;
     SF_trig_emu+= SF_trig_emu_error;  
     SF_trig_ee += SF_trig_ee_error; 
   } 
   if(datasetName=="TTbarTriggerDown"){
-    SF_trig_mu  -= SF_trig_mu_error;
+    SF_trig_mumu  -= SF_trig_mumu_error;
     SF_trig_emu -= SF_trig_emu_error;  
     SF_trig_ee  -= SF_trig_ee_error; 
   } 
-  
-  //************************************
-  
-  //************************************
-  //For MET systematics 
-  
-  
-  /*if(datasetName=="TTbarMETUp"){
-    SF_met_mumu  += SF_met_mumu_error;
-    SF_met_emu += SF_met_emu_error;  
-    SF_met_ee  += SF_met_ee_error; 
-    } 
-    if(datasetName=="TTbarMETDown"){
-    SF_met_mumu  -= SF_met_mumu_error;
-     SF_met_emu -= SF_met_emu_error;  
-     SF_met_ee  -= SF_met_ee_error; 
-     } */
   
   
   
@@ -352,6 +306,19 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   MyhistoManager.CreateHisto(NJet_eemu_afterZsel  , "NJet_eemu_afterZsel"  , datasetName,"Njets", "Entries",5,-0.5,4.5);
   MyhistoManager.CreateHisto(NJet_eee_afterZsel   , "NJet_eee_afterZsel"   , datasetName,"Njets", "Entries",5,-0.5,4.5);
   
+  MyhistoManager.CreateHisto(NJet_mumumu_afterbsel, "NJet_mumumu_afterbsel", datasetName,"Njets", "Entries",5,-0.5,4.5);
+  MyhistoManager.CreateHisto(NJet_mumue_afterbsel , "NJet_mumue_afterbsel" , datasetName,"Njets", "Entries",5,-0.5,4.5);
+  MyhistoManager.CreateHisto(NJet_eemu_afterbsel  , "NJet_eemu_afterbsel"  , datasetName,"Njets", "Entries",5,-0.5,4.5);
+  MyhistoManager.CreateHisto(NJet_eee_afterbsel   , "NJet_eee_afterbsel"   , datasetName,"Njets", "Entries",5,-0.5,4.5);
+  
+  
+  MyhistoManager.CreateHisto(NLept_mumumu_afterbsel, "NLept_mumumu_afterbsel", datasetName,"NLepts", "Entries",5,-0.5,4.5);
+  MyhistoManager.CreateHisto(NLept_mumue_afterbsel , "NLept_mumue_afterbsel" , datasetName,"NLepts", "Entries",5,-0.5,4.5);
+  MyhistoManager.CreateHisto(NLept_eemu_afterbsel  , "NLept_eemu_afterbsel"  , datasetName,"NLepts", "Entries",5,-0.5,4.5);
+  MyhistoManager.CreateHisto(NLept_eee_afterbsel   , "NLept_eee_afterbsel"   , datasetName,"NLepts", "Entries",5,-0.5,4.5);
+  
+  
+  
   MyhistoManager.CreateHisto(NBJet_mumumu_afterZsel, "NBJet_mumumu_afterZsel", datasetName,"NBjets", "Entries",5,-0.5,4.5);
   MyhistoManager.CreateHisto(NBJet_mumue_afterZsel , "NBJet_mumue_afterZsel" , datasetName,"NBjets", "Entries",5,-0.5,4.5);
   MyhistoManager.CreateHisto(NBJet_eemu_afterZsel  , "NBJet_eemu_afterZsel"  , datasetName,"NBjets", "Entries",5,-0.5,4.5);
@@ -363,6 +330,11 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   MyhistoManager.CreateHisto(NBJet_eee_afterjetsel   , "NBJet_eee_afterjetsel"   , datasetName,"NBjets", "Entries",2,-0.5,1.5);	
   
   
+  /*MyhistoManager.CreateHisto(NBJet_mumumu_afterjetsel, "NBJet_mumumu_afterjetsel", datasetName,"NBjets", "Entries",5,-0.5,4.5);
+  MyhistoManager.CreateHisto(NBJet_mumue_afterjetsel , "NBJet_mumue_afterjetsel" , datasetName,"NBjets", "Entries",5,-0.5,4.5);
+  MyhistoManager.CreateHisto(NBJet_eemu_afterjetsel  , "NBJet_eemu_afterjetsel"  , datasetName,"NBjets", "Entries",5,-0.5,4.5);
+  MyhistoManager.CreateHisto(NBJet_eee_afterjetsel   , "NBJet_eee_afterjetsel"   , datasetName,"NBjets", "Entries",5,-0.5,4.5); 
+  */
    
   
   MyhistoManager.CreateHisto(InvM_ll_mumumu_afterleptsel_highSumPt, "InvM_ll_mumumu_afterleptsel_highSumPt" , datasetName,"Minv",
@@ -380,15 +352,15 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   MyhistoManager.CreateHisto(InvM_ll_eemu_afterleptsel,   "InvM_ll_eemu_afterleptsel"   , datasetName,"Minv", "Entries",350,0.,1000);
   MyhistoManager.CreateHisto(InvM_ll_eee_afterleptsel,    "InvM_ll_eee_afterleptsel"    , datasetName,"Minv", "Entries",350,0.,1000);
 
-  MyhistoManager.CreateHisto(InvM_ll_mumumu_afterjetsel, "InvM_ll_mumumu_afterjetsel" , datasetName,"Minv", "Entries",350, 0., 350);
-  MyhistoManager.CreateHisto(InvM_ll_mumue_afterjetsel,  "InvM_ll_mumue_afterjetsel"  , datasetName,"Minv", "Entries",350, 0., 350);
-  MyhistoManager.CreateHisto(InvM_ll_eemu_afterjetsel,   "InvM_ll_eemu_afterjetsel"   , datasetName,"Minv", "Entries",350, 0., 350);
-  MyhistoManager.CreateHisto(InvM_ll_eee_afterjetsel,    "InvM_ll_eee_afterjetsel"    , datasetName,"Minv", "Entries",350, 0., 350);
+  MyhistoManager.CreateHisto(InvM_ll_mumumu_afterjetsel, "InvM_ll_mumumu_afterjetsel" , datasetName,"Minv", "Entries",350, 0., 1000);
+  MyhistoManager.CreateHisto(InvM_ll_mumue_afterjetsel,  "InvM_ll_mumue_afterjetsel"  , datasetName,"Minv", "Entries",350, 0., 1000);
+  MyhistoManager.CreateHisto(InvM_ll_eemu_afterjetsel,   "InvM_ll_eemu_afterjetsel"   , datasetName,"Minv", "Entries",350, 0., 1000);
+  MyhistoManager.CreateHisto(InvM_ll_eee_afterjetsel,    "InvM_ll_eee_afterjetsel"    , datasetName,"Minv", "Entries",350, 0., 1000);
   
-  MyhistoManager.CreateHisto(InvM_ll_mumumu_afterbjetsel, "InvM_ll_mumumu_afterbjetsel" , datasetName,"Minv", "Entries",350,0.,350);
-  MyhistoManager.CreateHisto(InvM_ll_mumue_afterbjetsel,  "InvM_ll_mumue_afterbjetsel"  , datasetName,"Minv", "Entries",350,0.,350);
-  MyhistoManager.CreateHisto(InvM_ll_eemu_afterbjetsel,   "InvM_ll_eemu_afterbjetsel"   , datasetName,"Minv", "Entries",350,0.,350);
-  MyhistoManager.CreateHisto(InvM_ll_eee_afterbjetsel,    "InvM_ll_eee_afterbjetsel"    , datasetName,"Minv", "Entries",350,0.,350);
+  MyhistoManager.CreateHisto(InvM_ll_mumumu_afterbjetsel, "InvM_ll_mumumu_afterbjetsel" , datasetName,"Minv", "Entries",350,0.,1000);
+  MyhistoManager.CreateHisto(InvM_ll_mumue_afterbjetsel,  "InvM_ll_mumue_afterbjetsel"  , datasetName,"Minv", "Entries",350,0.,1000);
+  MyhistoManager.CreateHisto(InvM_ll_eemu_afterbjetsel,   "InvM_ll_eemu_afterbjetsel"   , datasetName,"Minv", "Entries",350,0.,1000);
+  MyhistoManager.CreateHisto(InvM_ll_eee_afterbjetsel,    "InvM_ll_eee_afterbjetsel"    , datasetName,"Minv", "Entries",350,0.,1000);
 
     
   
@@ -521,10 +493,10 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   MyhistoManager.CreateHisto(RecoPtZ_eemu_afterbjetveto  , "RecoPtZ_eemu_afterbjetveto"  , datasetName, "RecoPtZ", "Entries", 200, 0, 500);
   MyhistoManager.CreateHisto(RecoPtZ_eee_afterbjetveto   , "RecoPtZ_eee_afterbjetveto"   , datasetName, "RecoPtZ", "Entries", 200, 0, 500);
    
-  MyhistoManager.CreateHisto(RecoPtZ_mumumu_afterleptsel, "RecoPtZ_mumumu_afterleptsel", datasetName, "RecoPtZ", "Entries", 200, 0, 100);
-  MyhistoManager.CreateHisto(RecoPtZ_mumue_afterleptsel , "RecoPtZ_mumue_afterleptsel" , datasetName, "RecoPtZ", "Entries", 200, 0, 100);
-  MyhistoManager.CreateHisto(RecoPtZ_eemu_afterleptsel  , "RecoPtZ_eemu_afterleptsel"  , datasetName, "RecoPtZ", "Entries", 200, 0, 100);
-  MyhistoManager.CreateHisto(RecoPtZ_eee_afterleptsel   , "RecoPtZ_eee_afterleptsel"   , datasetName, "RecoPtZ", "Entries", 200, 0, 100);
+  MyhistoManager.CreateHisto(RecoPtZ_mumumu_afterleptsel, "RecoPtZ_mumumu_afterleptsel", datasetName, "RecoPtZ", "Entries", 200, 0, 500);
+  MyhistoManager.CreateHisto(RecoPtZ_mumue_afterleptsel , "RecoPtZ_mumue_afterleptsel" , datasetName, "RecoPtZ", "Entries", 200, 0, 500);
+  MyhistoManager.CreateHisto(RecoPtZ_eemu_afterleptsel  , "RecoPtZ_eemu_afterleptsel"  , datasetName, "RecoPtZ", "Entries", 200, 0, 500);
+  MyhistoManager.CreateHisto(RecoPtZ_eee_afterleptsel   , "RecoPtZ_eee_afterleptsel"   , datasetName, "RecoPtZ", "Entries", 200, 0, 500);
    
   MyhistoManager.CreateHisto(RecoPtZ_mumumu_afterleptsel_nojet, "RecoPtZ_mumumu_afterleptsel_nojet", datasetName, "RecoPtZ", "Entries", 200, 0, 100);
   MyhistoManager.CreateHisto(RecoPtZ_mumue_afterleptsel_nojet , "RecoPtZ_mumue_afterleptsel_nojet" , datasetName, "RecoPtZ", "Entries", 200, 0, 100);
@@ -616,16 +588,16 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   
  
   
-  TString treename = "Ttree_"+datasetName;
+  //TString treename = "Ttree_"+datasetName;
   
-  TheTree = new TTree(treename.Data(),treename.Data());
+  /*TheTree = new TTree(treename.Data(),treename.Data());
   TheTree->Branch("tree_topMass",     &tree_topMass,     "tree_topMass/F"   );
   TheTree->Branch("tree_deltaPhilb",  &tree_deltaPhilb,  "tree_deltaPhilb/F");
   TheTree->Branch("tree_asym",        &tree_asym,        "tree_asym/F"      );
   TheTree->Branch("tree_Zpt",         &tree_Zpt,         "tree_Zpt/F"       );
   TheTree->Branch("tree_EvtWeight",   &tree_EvtWeight,   "tree_EvtWeight/F" );
   TheTree->Branch("tree_SampleType",  &tree_SampleType,  "tree_SampleType/I");
-  TheTree->Branch("tree_Channel",     &tree_Channel,     "tree_Channel/I"   );
+  TheTree->Branch("tree_Channel",     &tree_Channel,     "tree_Channel/I"   );*/
   
   
   
@@ -717,7 +689,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
   vector<NTVertex>   selVertices  = sel.GetSelectedVertex();
   // cout << "Vertices loaded " << endl;
   // cout<<sel.GetPointer2Electrons()<<endl;
-  vector<IPHCTree::NTElectron> selElectrons = sel.GetSelectedElectrons();
+  vector<NTElectron> selElectrons = sel.GetSelectedElectrons();
   // cout << "Electrons loaded " << endl;
   vector<NTMuon>     selMuons     = sel.GetSelectedMuons();
   // cout << "Muons loaded " << endl;
@@ -953,21 +925,11 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
       if(IChannel == 3) MyhistoManager.FillHisto(ErrCutFlow_eee,      "ErrCutFlow_eee"    , 0, datasetName, IsSignal, EventYieldWeightError);
 	
       
-      //*****************************************************************
-      // pass 3 lepton requirements
-      //*****************************************************************    
-      
-      
-      //*****************************************************************
+   
+       //*****************************************************************
       // select Z->ee candidate
       //*****************************************************************    
-      
-      /*cout << "***************************" << endl;
-      cout << "***************************" << endl;
-      cout << "***************************" << endl;
-      
-      cout << "gen invariant mass " << endl;
-      */
+     
       int leptonFlavor = 0;
       
       ZeeCand.clear(); 
@@ -984,7 +946,6 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	  for(unsigned int iel2 = 0; iel2 < selElectrons.size(); iel2++){
 	    if(iel1 == iel2) continue;
 	    TLorentzVector zeecand = selElectrons[iel1].p4 + selElectrons[iel2].p4;
-	    //cout << "origin 1 " << selElectrons[iel1].LeptonOrigin << "  origin2 " << selElectrons[iel2].LeptonOrigin << "  massinv " <<  zeecand.M()<< endl;
 	    if( fabs(zeecand.M() - 91) < fabs(mInv-91) ){
 	      theel1 = iel1;
 	      theel2 = iel2;
@@ -1199,32 +1160,35 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
         // apply lepton scale factors
         //*****************************************************************    
         
+    
         double LeptonSF      = 0.;
         double LeptonSFError = 0.;
  
-        if(ApplyLeptonSF && !isData){
+        if(applyLeptonSF && !isData){
 
           if(IChannel == 0 && cand3leptonChannel == "mumumu")
            LeptonSF = sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "mu") 
-                       * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "mu") 
-                       * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "mu");
-          if(IChannel == 0 && cand3leptonChannel == "mumue")
+                     * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "mu") 
+                     * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "mu");
+          if(IChannel == 1 && cand3leptonChannel == "mumue")
            LeptonSF = sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "mu")
-                       * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "mu")
-                       * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "e");
-          if(IChannel == 0 && cand3leptonChannel == "eemu")
+                     * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "mu")
+                     * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "e");
+          if(IChannel == 2 && cand3leptonChannel == "eemu")
            LeptonSF = sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "e")
-                       * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "e")
-                       * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "mu");
-          if(IChannel == 0 && cand3leptonChannel == "eee")
+                     * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "e")
+                     * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "mu");
+          if(IChannel == 3 && cand3leptonChannel == "eee")
            LeptonSF = sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "e")
-                       * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "e")
-                       * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "e");
+                     * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "e")
+                     * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "e");
 
-          if(event->general.eventNb%10==0) cout<<cand3leptonChannel<<" SF "<<LeptonSF<<endl; 
+          //if(event->general.eventNb%10==0) cout<< IChannel << "  " << cand3leptonChannel<<" SF "<<LeptonSF<<endl; 
           Dweight[ITypeMC]*=LeptonSF;
 
         }
+	
+      
 	 
 	
 
@@ -1232,24 +1196,22 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
         // apply trigger scale factors
         //*****************************************************************  
 	
-	//if(datasetName=="WZ"  ){	
+	if(applyTrigger  &&  !isData ){	
 	
-	  //if(IChannel == 0 && cand3leptonChannel == "mumumu")Dweight[ITypeMC]*=SF_trig_mu;
-          //if(IChannel == 1 && cand3leptonChannel == "mumue" )Dweight[ITypeMC]*=SF_trig_mu;
-	  //if(IChannel == 2 && cand3leptonChannel == "eemu"  )Dweight[ITypeMC]*=SF_trig_mu;
-	  //if(IChannel == 3 && cand3leptonChannel == "eee"   )Dweight[ITypeMC]*=SF_trig_mu;
+	  if(IChannel == 0 && cand3leptonChannel == "mumumu")Dweight[ITypeMC]*=SF_trig_mumu;
+          if(IChannel == 1 && cand3leptonChannel == "mumue" )Dweight[ITypeMC]*=SF_trig_emu;
+	  if(IChannel == 2 && cand3leptonChannel == "eemu"  )Dweight[ITypeMC]*=SF_trig_emu;
+	  if(IChannel == 3 && cand3leptonChannel == "eee"   )Dweight[ITypeMC]*=SF_trig_ee;
 	
-	//}
+	}
 	
 	
 	
         //*****************************************************************
         // apply DY scale factors
         //***************************************************************** 
-	
-	
-	
-	if(datasetName=="Zjets"  ){	
+
+	if(datasetName=="Zjets" && applyFakescale ){	
 	
 	  if(IChannel == 0 && cand3leptonChannel == "mumumu") Dweight[ITypeMC] = 4.36*Dweight[ITypeMC];
           if(IChannel == 1 && cand3leptonChannel == "mumue" ) Dweight[ITypeMC] = 1.18*Dweight[ITypeMC];
@@ -1263,7 +1225,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
         // apply WZ scale factors
         //***************************************************************** 
 	
-	if(datasetName=="WZ"  ){	
+	if(datasetName=="WZ"  && applyWZ ){	
 	
 	  if(IChannel == 0 && cand3leptonChannel == "mumumu") Dweight[ITypeMC] = 0.68*Dweight[ITypeMC];
           if(IChannel == 1 && cand3leptonChannel == "mumue" ) Dweight[ITypeMC] = 0.80*Dweight[ITypeMC];
@@ -1454,7 +1416,30 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	//*****************************************************************  
 	
 	if( fabs(dilept.M()-91) < 15){
-	
+	  
+	  
+	  
+	  if(dilept.M() > 300){
+	    cout << "dileptonIvM " << dileptonIvM
+	    << "  dilept.Pt() "    << dilept.Pt() 
+	    << "  lept1.Pt() "     << lept1.Pt() 
+	    << "  lept2.Pt() "     << lept2.Pt()
+	    << "  lept3.Pt() "     << lept3.Pt()
+	    << "  Njet " << selJets.size();
+	    for(unsigned int ijet=0; ijet<selJets.size(); ijet++) cout <<  "  jet " << ijet << " pt " << selJets[ijet].p4.Pt() << endl;
+	    cout << "  met       " << met.p2.Mod() << endl;
+	    
+	    if(selJets.size()>0) cout << "  deltaphi lept-jet 1 " << lept1.DeltaR(selJets[0].p4) << 
+	                                 "  deltaphi lept-jet 2 " << lept2.DeltaR(selJets[0].p4) <<
+	                                 "  deltaphi lept-jet 3 " << lept3.DeltaR(selJets[0].p4) << endl;
+					 
+	    cout << "  deltaphi lept-met 1 " << lept1.Phi() - met.p2.Phi()  << 
+	            "  deltaphi lept-met 2 " << lept2.Phi() - met.p2.Phi()  <<
+	            "  deltaphi lept-met 3 " << lept3.Phi() - met.p2.Phi()  << endl;
+	  }
+	  
+	  
+	  
  	  if( IChannel == 0 && cand3leptonChannel == "mumumu") MyhistoManager.FillHisto(CutFlow_mumumu, "CutFlow_mumumu", 2, datasetName, IsSignal, Dweight[ITypeMC]);
  	  if( IChannel == 1 && cand3leptonChannel == "mumue" ) MyhistoManager.FillHisto(CutFlow_mumue,  "CutFlow_mumue" , 2, datasetName, IsSignal, Dweight[ITypeMC]);
  	  if( IChannel == 2 && cand3leptonChannel == "eemu"  ) MyhistoManager.FillHisto(CutFlow_eemu,   "CutFlow_eemu"  , 2, datasetName, IsSignal, Dweight[ITypeMC]);
@@ -1628,7 +1613,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	    
 	    if( IChannel == 3 && cand3leptonChannel == "eee"   ){
 	    
-	      MyhistoManager.FillHisto(InvM_ll_eee_afterjetsel, "InvM_ll_eeee_afterjetsel", dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
+	      MyhistoManager.FillHisto(InvM_ll_eee_afterjetsel, "InvM_ll_eee_afterjetsel", dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
 	      MyhistoManager.FillHisto(NBJet_eee_afterjetsel    , "NBJet_eee_afterjetsel"   ,NBtaggedJets, datasetName, IsSignal, Dweight[ITypeMC]);
 	      MyhistoManager.FillHisto(LeptZPt_eee_afterjetsel, "LeptZPt_eee_afterjetsel", lept1.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 	      MyhistoManager.FillHisto(LeptZPt_eee_afterjetsel, "LeptZPt_eee_afterjetsel", lept2.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
@@ -1675,14 +1660,12 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	    if(IChannel == 3 && cand3leptonChannel == "eee"   ) MyhistoManager.FillHisto( mWT_eee_afterbjetsel,    "mWT_eee_afterbjetsel"   , mTW, datasetName, IsSignal, Dweight[ITypeMC]);
 
 	
-	    
-	    
-	    
-	    
-	    
+	    double nlept = selMuons.size()+selElectrons.size();
+	    if(nlept>=4) nlept = 4;   
 	      	  	   
 	      if( IChannel == 0 && cand3leptonChannel == "mumumu"){
-  
+  		MyhistoManager.FillHisto(NJet_mumumu_afterbsel , "NJet_mumumu_afterbsel",NSeljets, datasetName, IsSignal, Dweight[ITypeMC]);
+  		MyhistoManager.FillHisto(NLept_mumumu_afterbsel , "NLept_mumumu_afterbsel",nlept, datasetName, IsSignal, Dweight[ITypeMC]);
 	        MyhistoManager.FillHisto(InvM_ll_mumumu_afterbjetsel, "InvM_ll_mumumu_afterbjetsel", dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
                 MyhistoManager.FillHisto(LeptZPt_mumumu_afterbjetsel, "LeptZPt_mumumu_afterbjetsel", lept1.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 	        MyhistoManager.FillHisto(LeptZPt_mumumu_afterbjetsel, "LeptZPt_mumumu_afterbjetsel", lept2.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
@@ -1699,7 +1682,8 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	  
 	      }
 	      if( IChannel == 1 && cand3leptonChannel == "mumue" ){
-	    
+	        MyhistoManager.FillHisto(NJet_mumue_afterbsel  , "NJet_mumue_afterbsel" ,NSeljets, datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(NLept_mumue_afterbsel  , "NLept_mumue_afterbsel" ,nlept, datasetName, IsSignal, Dweight[ITypeMC]);
 	        MyhistoManager.FillHisto(InvM_ll_mumue_afterbjetsel, "InvM_ll_mumue_afterbjetsel", dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
                 MyhistoManager.FillHisto(LeptZPt_mumue_afterbjetsel, "LeptZPt_mumue_afterbjetsel", lept1.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 	        MyhistoManager.FillHisto(LeptZPt_mumue_afterbjetsel, "LeptZPt_mumue_afterbjetsel", lept2.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
@@ -1716,7 +1700,8 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 
 	      }
 	      if( IChannel == 2 && cand3leptonChannel == "eemu"  ){
-	    
+	        MyhistoManager.FillHisto(NJet_eemu_afterbsel   , "NJet_eemu_afterbsel"  ,NSeljets, datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(NLept_eemu_afterbsel   , "NLept_eemu_afterbsel"  ,nlept, datasetName, IsSignal, Dweight[ITypeMC]);
 	        MyhistoManager.FillHisto(InvM_ll_eemu_afterbjetsel, "InvM_ll_eemu_afterbjetsel", dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
                 MyhistoManager.FillHisto(LeptZPt_eemu_afterbjetsel, "LeptZPt_eemu_afterbjetsel", lept1.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 	        MyhistoManager.FillHisto(LeptZPt_eemu_afterbjetsel, "LeptZPt_eemu_afterbjetsel", lept2.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
@@ -1734,7 +1719,8 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	      }
 	    
 	      if( IChannel == 3 && cand3leptonChannel == "eee"   ){
-
+		MyhistoManager.FillHisto(NJet_eee_afterbsel    , "NJet_eee_afterbsel"   ,NSeljets, datasetName, IsSignal, Dweight[ITypeMC]);
+		MyhistoManager.FillHisto(NLept_eee_afterbsel    , "NLept_eee_afterbsel"   ,nlept, datasetName, IsSignal, Dweight[ITypeMC]);
   	        MyhistoManager.FillHisto(InvM_ll_eee_afterbjetsel, "InvM_ll_eee_afterbjetsel", dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);	    
 	        MyhistoManager.FillHisto(LeptZPt_eee_afterbjetsel, "LeptZPt_eee_afterbjetsel", lept1.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 	        MyhistoManager.FillHisto(LeptZPt_eee_afterbjetsel, "LeptZPt_eee_afterbjetsel", lept2.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
@@ -1796,7 +1782,12 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	      TLorentzVector topCand = neutrino + lept3 + selJets[idxBtag].p4 ;
 	
 	      
-	      
+	      if(dilept.M() > 300){
+	        cout << " topcand mass " << topCand.M()  << endl;
+	        cout << " topcand pT   " << topCand.Pt() << endl;
+		cout << " total mass   " << (topCand+dilept).M() << endl;
+		cout << " channel   " <<  cand3leptonChannel  << "  IChannel " << IChannel << endl;
+	      }
 	      
 	      tree_EvtWeight  = Dweight[ITypeMC];
               tree_topMass    = topCand.M();
@@ -1818,7 +1809,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	      if(datasetName=="WW" )             tree_SampleType   = 10;
 	      
 	      if( IChannel == 0 && cand3leptonChannel == "mumumu") {
-	        tree_Channel = 0; TheTree->Fill();
+	        //tree_Channel = 0; TheTree->Fill();
 		MyhistoManager.FillHisto(Asym_mumumu_afterbjetsel,       "Asym_mumumu_afterbjetsel",         tree_asym,    datasetName, IsSignal, Dweight[ITypeMC]);
 		MyhistoManager.FillHisto(RecoPtZ_mumumu_afterbjetsel,     "RecoPtZ_mumumu_afterbjetsel",     tree_Zpt,     datasetName, IsSignal, Dweight[ITypeMC]);
 		MyhistoManager.FillHisto(RecoTopMass_mumumu_afterbjetsel, "RecoTopMass_mumumu_afterbjetsel", tree_topMass ,datasetName, IsSignal, Dweight[ITypeMC]);
@@ -1827,7 +1818,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 		
 	      }
 	      if( IChannel == 1 && cand3leptonChannel == "mumue" ) {
-	        tree_Channel = 1; TheTree->Fill();
+	        //tree_Channel = 1; TheTree->Fill();
 		MyhistoManager.FillHisto(Asym_mumue_afterbjetsel,         "Asym_mumue_afterbjetsel",          tree_asym,    datasetName, IsSignal, Dweight[ITypeMC]);
 		MyhistoManager.FillHisto(RecoPtZ_mumue_afterbjetsel,      "RecoPtZ_mumue_afterbjetsel",       tree_Zpt,     datasetName, IsSignal, Dweight[ITypeMC]);
 		MyhistoManager.FillHisto(RecoTopMass_mumue_afterbjetsel,  "RecoTopMass_mumue_afterbjetsel" ,  tree_topMass ,datasetName, IsSignal, Dweight[ITypeMC]);
@@ -1836,7 +1827,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 		
 	      }
 	      if( IChannel == 2 && cand3leptonChannel == "eemu"  ) {
-	        tree_Channel = 2; TheTree->Fill();
+	        //tree_Channel = 2; TheTree->Fill();
 		MyhistoManager.FillHisto(Asym_eemu_afterbjetsel,          "Asym_eemu_afterbjetsel",           tree_asym,    datasetName, IsSignal, Dweight[ITypeMC]);
 		MyhistoManager.FillHisto(RecoPtZ_eemu_afterbjetsel,       "RecoPtZ_eemu_afterbjetsel",        tree_Zpt,     datasetName, IsSignal, Dweight[ITypeMC]);
 		MyhistoManager.FillHisto(RecoTopMass_eemu_afterbjetsel,   "RecoTopMass_eemu_afterbjetsel" ,   tree_topMass ,datasetName, IsSignal, Dweight[ITypeMC]);
@@ -1844,7 +1835,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 
 	      }
 	      if( IChannel == 3 && cand3leptonChannel == "eee"   ) {
-	        tree_Channel = 3; TheTree->Fill();
+	        //tree_Channel = 3; TheTree->Fill();
 		MyhistoManager.FillHisto(Asym_eee_afterbjetsel,           "Asym_eee_afterbjetsel",            tree_asym,    datasetName, IsSignal, Dweight[ITypeMC]);
 		MyhistoManager.FillHisto(RecoPtZ_eee_afterbjetsel,        "RecoPtZ_eee_afterbjetsel",         tree_Zpt,     datasetName, IsSignal, Dweight[ITypeMC]);
 	        MyhistoManager.FillHisto(RecoTopMass_eee_afterbjetsel,    "RecoTopMass_eee_afterbjetsel" ,    tree_topMass ,datasetName, IsSignal, Dweight[ITypeMC]);
@@ -1927,6 +1918,18 @@ void ProofSelectorMyCutFlow::SlaveTerminate()
   MyhistoManager.WriteMyHisto(NJet_mumue_afterZsel, "all");
   MyhistoManager.WriteMyHisto(NJet_eemu_afterZsel,  "all");
   MyhistoManager.WriteMyHisto(NJet_eee_afterZsel,   "all");
+  
+  
+  MyhistoManager.WriteMyHisto(NJet_mumumu_afterbsel,"all");
+  MyhistoManager.WriteMyHisto(NJet_mumue_afterbsel, "all");
+  MyhistoManager.WriteMyHisto(NJet_eemu_afterbsel,  "all");
+  MyhistoManager.WriteMyHisto(NJet_eee_afterbsel,   "all");
+  
+  
+  MyhistoManager.WriteMyHisto(NLept_mumumu_afterbsel,"all");
+  MyhistoManager.WriteMyHisto(NLept_mumue_afterbsel, "all");
+  MyhistoManager.WriteMyHisto(NLept_eemu_afterbsel,  "all");
+  MyhistoManager.WriteMyHisto(NLept_eee_afterbsel,   "all");
   
   MyhistoManager.WriteMyHisto(NBJet_mumumu_afterZsel, "all");
   MyhistoManager.WriteMyHisto(NBJet_mumue_afterZsel,  "all");
@@ -2216,7 +2219,7 @@ void ProofSelectorMyCutFlow::SlaveTerminate()
   
   
   
-  TheTree->Write();
+  //TheTree->Write();
   
   
   
