@@ -38,7 +38,7 @@
     PlotStack("LeptPt_",jchan,"_afterjetsel", i, k);
     PlotStack("LeptPt_",jchan,"_afterbjetsel", i, k);*/
     
-     PlotStack("LeptZPt_",jchan,"_afterleptsel", i, k);
+    PlotStack("LeptZPt_",jchan,"_afterleptsel", i, k);
     PlotStack("LeptZPt_",jchan,"_afterjetsel", i, k);
     PlotStack("LeptZPt_",jchan,"_afterbjetsel", i, k);
     
@@ -64,8 +64,19 @@
     PlotStack("RecoPtZ_",jchan,"_afterbjetsel", i, k);
     PlotStack("Asym_",jchan,"_afterbjetsel", i, k);
     PlotStack("deltaPhilb_",jchan,"_afterbjetsel", i, k);
+    
+    PlotStack("RecoPtZ_",jchan,"_afterbjetveto", i, k);
+    
+    PlotStack("RecoPtZ_",jchan,"_afterleptsel", i, k);
      
-   
+     
+     
+    PlotStack("mWT_",jchan,"_afterleptsel",i,k);
+    
+    PlotStack("NJet_",jchan,"_afterbsel",i,k);
+    PlotStack("NLept_",jchan,"_afterbsel",i,k);
+    
+    
    
    } // end loop k
   } // end loop i

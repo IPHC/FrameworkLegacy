@@ -28,9 +28,6 @@
 <d name="DataMuEG"     add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"     filenames="/opt/sbg/data/data1/cms/jlagram/data/Data_2011/skim_3lept/MuEG_2011_part*.root" />
 
 
-<!--d name="MET1" add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"       filenames="/opt/sbg/data/data1/cms/jandrea/428_p7Summer11/Data/NTuple_MetIso1._MET1.root" />
-<d name="MET2" add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"       filenames="/opt/sbg/data/data1/cms/jandrea/428_p7Summer11/Data/NTuple_MetIso1._MET2.root" /-->
-
 <d name="FCNCkut"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="0.135"   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedKut.root" />
 
 
@@ -46,14 +43,6 @@
 <d name="TtW"          add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.87"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/T_tW*.root" />
 <d name="TbartW"       add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.87"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/Tbar_tW*.root" />
 
-<!--d name="TtChan"       add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="42.6"  filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/T_TuneZ2_t/NTuple_T_TuneZ2_t.root" />
-<d name="TbartChan"    add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="22.0"  filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/Tbar_TuneZ2_t/NTuple_Tbar_TuneZ2_t.root" />
-
-<d name="TsChan"       add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="2.72"  filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/T_TuneZ2_s/NTuple_T_TuneZ2_s.root" />
-<d name="TbarsChan"    add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="1.49"  filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/Tbar_TuneZ2_s/NTuple_Tbar_TuneZ2_s.root" /-->
-
-
-
 
 
 
@@ -67,30 +56,10 @@
 
 
 
-
-
-<!--d name="WZ"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.328912"   filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/WZ/NTuple_WZ_MG.root" />
-<d name="ZZ"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.0553641"  filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/ZZ/NTuple_ZZ.root" />
-<d name="WW"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="3.0073"     filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/WW/NTuple_WW.root" /-->
-
-<!--d name="WZ"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.598642"   filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/WZ/NTuple_WZ_MG.root" />
-<d name="ZZ"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.48"       filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/ZZ/NTuple_ZZ.root" />
-<d name="WW"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="9.5"        filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/WW/NTuple_WW.root" /-->
-
-
-
-
 <d name="WZ"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="1.558"   filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/WZ/NTuple_WZ_MG.root" />
 <d name="ZZ"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.0782262"  filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/ZZ/NTuple_ZZ.root" />
 <d name="WW"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="4.99003"    filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/WW/NTuple_WW.root" />
 
-
-
-
-
-<!--d name="WZ"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="18.2"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/WZ*.root" />
-<d name="ZZ"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.67"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/ZZ*.root" />
-<d name="WW"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="47.04" filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/WW*.root" /-->
 
 
 </Datasets>
