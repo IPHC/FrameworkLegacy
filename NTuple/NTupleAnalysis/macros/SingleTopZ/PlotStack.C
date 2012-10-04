@@ -36,22 +36,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   
   
   TString filename;
-  //filename="CrossSection_MPU1.root";
-  //filename="CrossSection_electronCorr.root";
-  //filename="backup_outputProof26-09-11_13-17-47/proof_WW.root";
-  //filename="backup_outputProof14-11-11_13-07-13//proof.root";
-  //filename="backup_outputProof04-11-11_15-45-51/proof.root"; // ref value 
-  //filename="backup_outputProof04-11-11_17-45-51/proof.root"; // pile up +
-  //filename="backup_outputProof21-11-11_16-39-37/proof.root";
-  //filename="backup_outputProof24-11-11_19-09-10/proof.root";
-  //filename="backup_outputProof05-12-11_11-02-25/proof.root";
-  //filename="backup_outputProof26-01-12_19-38-49_forcutFlow_and_Plots/proof.root";
-  //filename="backup_outputProof12-04-12_14-26-17//proof.root";
-  //filename="backup_outputProof22-04-12_23-37-00/proof.root";
-  //filename="backup_outputProof12-07-12_17-58-41/proof.root";
- //filename="backup_outputProof10-08-12_14-51-51//proof.root";
- filename="backup_outputProof24-09-12_16-04-38/proof.root";
-  
+  filename="backup_outputProof03-10-12_18-56-43/proof.root";  
   
   TString channel;
   if (namechan!="all") channel=namechan;
@@ -511,6 +496,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_TbartW->Add(histo_TbartW, h_4_TbartW     , 1, 1);
   }
   
+  /*
 
   TString histo_SingleToptChan_name = plotname+channel+selection+"_SingleToptChan";
   histo_SingleToptChan         = (TH1F*)filechannel->Get(histo_SingleToptChan_name);
@@ -596,6 +582,8 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_TbarsChan->Add(histo_TbarsChan, h_3_TbarsChan     , 1, 1);
     histo_TbarsChan->Add(histo_TbarsChan, h_4_TbarsChan     , 1, 1);
   }
+  */
+  
   
   TString histo_VV_name = plotname+channel+selection+"_VV";
   histo_VV                  = (TH1F*)filechannel->Get(histo_VV_name);
@@ -666,10 +654,10 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   if ( histo_SingleToptW==NULL ) { 
     histo_SingleToptW=(TH1F*)histo_TtW->Clone("SingleToptW");
     histo_SingleToptW->Add(histo_SingleToptW, histo_TbartW     , 1, 1);
-    histo_SingleToptW->Add(histo_SingleToptW, histo_TtChan     , 1, 1);
-    histo_SingleToptW->Add(histo_SingleToptW, histo_TbartChan  , 1, 1);
-    histo_SingleToptW->Add(histo_SingleToptW, histo_TsChan     , 1, 1);
-    histo_SingleToptW->Add(histo_SingleToptW, histo_TbarsChan  , 1, 1);
+    //histo_SingleToptW->Add(histo_SingleToptW, histo_TtChan     , 1, 1);
+    //histo_SingleToptW->Add(histo_SingleToptW, histo_TbartChan  , 1, 1);
+    //histo_SingleToptW->Add(histo_SingleToptW, histo_TsChan     , 1, 1);
+    //histo_SingleToptW->Add(histo_SingleToptW, histo_TbarsChan  , 1, 1);
   }
   
   if ( histo_VV==NULL ) {
@@ -874,8 +862,13 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
      
      //if(selection == "_afterjetcut" && namechan=="ee"  )  error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.077, 2) ;
      //if(selection == "_afterjetcut" && namechan=="mumu")  error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.078, 2) ;
-     if(selection == "_afterjetcut" && namechan=="ee"  )  error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.077/1.169, 2) ;
-     if(selection == "_afterjetcut" && namechan=="mumu")  error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.078/1.257, 2) ;
+     //if(selection == "_afterjetcut" ) {
+       error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.5, 2) ;
+       //cout << "test " << endl; 
+       //cout << "test " << endl;
+       //cout << "test " << endl;
+       //}
+     //if(selection == "_afterjetcut" )  error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.5, 2) ;
      
      if(selection == "MassPair_afterjetcut" && namechan=="ee"  )  error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.077/1.169, 2) ;
      if(selection == "MassPair_afterjetcut" && namechan=="mumu")  error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.078/1.257, 2) ;
@@ -1100,6 +1093,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     }
     }*/
   qw = new TLegend(.80,.60,.95,.90);
+  if(plotname == "NJet_") qw = new TLegend(.20,.50,.35,.80);
   
   
   qw->SetShadowColor(0);
