@@ -1203,12 +1203,21 @@ bool DiLeptonSelection::passTriggerSelection (Dataset * dataset, string channelN
 
   if (!dataset->isData ()) {	//MC
     //cout << " test trigger list --------------------------------" << endl;
-    passMu = (triggers->IsFired("HLT_DoubleMu6_v1") // Summer11
-               || triggers->IsFired("HLT_DoubleMu6_v8")); // Fall11
-    passEl = (triggers->IsFired("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v2") // Summer11
-               || triggers->IsFired("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8")); // Fall11
-    passElMu = (triggers->IsFired("HLT_Mu8_Ele17_CaloIdL_v2") || triggers->IsFired("HLT_Mu10_Ele10_CaloIdL_v3") // Summer11
-               || triggers->IsFired("HLT_Mu8_Ele17_CaloIdL_v9")); // Fall11
+    
+    
+passMu = (triggers->IsFired("HLT_DoubleMu6_v1") // Summer11
+               || triggers->IsFired("HLT_DoubleMu6_v8")
+              || triggers->IsFired("HLT_DoubleMu7_v12")); // Fall11
+
+passEl = (triggers->IsFired("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v2") // Summer11
+               || triggers->IsFired("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8")
+               || triggers->IsFired("HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v10"));
+
+passElMu = (triggers->IsFired("HLT_Mu8_Ele17_CaloIdL_v2") || triggers->IsFired("HLT_Mu10_Ele10_CaloIdL_v3") // Summer11
+                || triggers->IsFired("HLT_Mu8_Ele17_CaloIdL_v9") ||
+               triggers->IsFired("HLT_Mu8_Ele17_CaloIdL_v13")); // Fall11 
+    
+    
 
   }
   else {
