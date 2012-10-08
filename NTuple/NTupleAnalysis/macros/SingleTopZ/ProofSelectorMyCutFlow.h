@@ -169,10 +169,15 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> ErrCutFlow_eee;
   
   
-  std::vector<TH1F> Mt_mumumu_afterbtagsel;
-  std::vector<TH1F> Mt_mumue_afterbtagsel;
-  std::vector<TH1F> Mt_eemu_afterbtagsel;
-  std::vector<TH1F> Mt_eee_afterbtagsel;
+  std::vector<TH1F> Mt_mumumu_afterbjetsel;
+  std::vector<TH1F> Mt_mumue_afterbjetsel;
+  std::vector<TH1F> Mt_eemu_afterbjetsel;
+  std::vector<TH1F> Mt_eee_afterbjetsel;
+   
+  std::vector<TH1F> Mt_mumumu_afterbjetveto;
+  std::vector<TH1F> Mt_mumue_afterbjetveto;
+  std::vector<TH1F> Mt_eemu_afterbjetveto;
+  std::vector<TH1F> Mt_eee_afterbjetveto;
    
   
   std::vector<TH1F> NJet_mumumu_afterZsel;
@@ -277,6 +282,11 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> LeptWPt_eemu_afterbjetsel;
   std::vector<TH1F> LeptWPt_eee_afterbjetsel;
   
+  std::vector<TH1F> LeptWPt_mumumu_afterbjetveto;
+  std::vector<TH1F> LeptWPt_mumue_afterbjetveto;
+  std::vector<TH1F> LeptWPt_eemu_afterbjetveto;
+  std::vector<TH1F> LeptWPt_eee_afterbjetveto;
+  
   
   
   
@@ -295,6 +305,11 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> JetPt_eemu_afterbjetsel;
   std::vector<TH1F> JetPt_eee_afterbjetsel;
   
+  std::vector<TH1F> JetPt_mumumu_afterbjetveto;
+  std::vector<TH1F> JetPt_mumue_afterbjetveto;
+  std::vector<TH1F> JetPt_eemu_afterbjetveto;
+  std::vector<TH1F> JetPt_eee_afterbjetveto;
+  
   std::vector<TH1F> JetEta_mumumu_afterleptsel;
   std::vector<TH1F> JetEta_mumue_afterleptsel;
   std::vector<TH1F> JetEta_eemu_afterleptsel;
@@ -309,6 +324,11 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> JetEta_mumue_afterbjetsel;
   std::vector<TH1F> JetEta_eemu_afterbjetsel;
   std::vector<TH1F> JetEta_eee_afterbjetsel;
+  
+  std::vector<TH1F> JetEta_mumumu_afterbjetveto;
+  std::vector<TH1F> JetEta_mumue_afterbjetveto;
+  std::vector<TH1F> JetEta_eemu_afterbjetveto;
+  std::vector<TH1F> JetEta_eee_afterbjetveto;
   
   std::vector<TH1F> HT_mumumu_afterleptsel;
   std::vector<TH1F> HT_mumue_afterleptsel;
@@ -325,6 +345,11 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> HT_mumue_afterbjetsel;
   std::vector<TH1F> HT_eemu_afterbjetsel;
   std::vector<TH1F> HT_eee_afterbjetsel;
+  
+  std::vector<TH1F> HT_mumumu_afterbjetveto;
+  std::vector<TH1F> HT_mumue_afterbjetveto;
+  std::vector<TH1F> HT_eemu_afterbjetveto;
+  std::vector<TH1F> HT_eee_afterbjetveto;
   
   
   
@@ -388,11 +413,21 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> RecoTopMass_eemu_afterbjetsel;
   std::vector<TH1F> RecoTopMass_eee_afterbjetsel;
   
+  std::vector<TH1F> RecoTopMass_mumumu_afterbjetveto;
+  std::vector<TH1F> RecoTopMass_mumue_afterbjetveto;
+  std::vector<TH1F> RecoTopMass_eemu_afterbjetveto;
+  std::vector<TH1F> RecoTopMass_eee_afterbjetveto;
+  
   
   std::vector<TH1F> deltaPhilb_mumumu_afterbjetsel;
   std::vector<TH1F> deltaPhilb_mumue_afterbjetsel;
   std::vector<TH1F> deltaPhilb_eemu_afterbjetsel;
   std::vector<TH1F> deltaPhilb_eee_afterbjetsel;
+  
+  std::vector<TH1F> deltaPhilj_mumumu_afterbjetveto;
+  std::vector<TH1F> deltaPhilj_mumue_afterbjetveto;
+  std::vector<TH1F> deltaPhilj_eemu_afterbjetveto;
+  std::vector<TH1F> deltaPhilj_eee_afterbjetveto;
   
   
   
@@ -421,6 +456,11 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> mWT_mumue_afterbjetsel;
   std::vector<TH1F> mWT_eemu_afterbjetsel;
   std::vector<TH1F> mWT_eee_afterbjetsel;
+  
+  std::vector<TH1F> mWT_mumumu_afterbjetveto;
+  std::vector<TH1F> mWT_mumue_afterbjetveto;
+  std::vector<TH1F> mWT_eemu_afterbjetveto;
+  std::vector<TH1F> mWT_eee_afterbjetveto;
   
   
   std::vector<TH2D> HT_vs_MET_mumumu_afterleptsel;

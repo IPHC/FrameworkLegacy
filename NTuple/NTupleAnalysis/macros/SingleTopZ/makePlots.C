@@ -23,7 +23,8 @@
 
 
     // plot met after btag
-    PlotStack("Mt_",jchan,"_afterbtagsel", i, k);
+    PlotStack("Mt_",jchan,"_afterbjetsel", i, k);
+    PlotStack("Mt_",jchan,"_afterbjetveto", i, k);
     PlotStack("NJet_",jchan,"_afterZsel", i, k);
     
     PlotStack("NBJet_",jchan,"_afterZsel", i, k);
@@ -45,6 +46,7 @@
     PlotStack("LeptWPt_",jchan,"_afterleptsel", i, k);
     PlotStack("LeptWPt_",jchan,"_afterjetsel", i, k);
     PlotStack("LeptWPt_",jchan,"_afterbjetsel", i, k);
+    PlotStack("LeptWPt_",jchan,"_afterbjetveto", i, k);
     
     PlotStack("MET_",jchan,"_afterleptsel", i, k);
     PlotStack("MET_",jchan,"_afterjetsel", i, k);
@@ -53,17 +55,22 @@
     PlotStack("HT_",jchan,"_afterleptsel", i, k);
     PlotStack("HT_",jchan,"_afterjetsel", i, k);
     PlotStack("HT_",jchan,"_afterbjetsel", i, k);
+    PlotStack("HT_",jchan,"_afterbjetveto", i, k);
     
     
     PlotStack("JetPt_",jchan,"_afterleptsel", i, k);
     PlotStack("JetPt_",jchan,"_afterjetsel", i, k);
     PlotStack("JetPt_",jchan,"_afterbjetsel", i, k);
+    PlotStack("JetPt_",jchan,"_afterbjetveto", i, k);
     
     
     PlotStack("RecoTopMass_",jchan,"_afterbjetsel", i, k);
+    PlotStack("RecoTopMass_",jchan,"_afterbjetveto", i, k);
     PlotStack("RecoPtZ_",jchan,"_afterbjetsel", i, k);
+    PlotStack("RecoPtZ_",jchan,"_afterbjetveto", i, k);
     PlotStack("Asym_",jchan,"_afterbjetsel", i, k);
     PlotStack("deltaPhilb_",jchan,"_afterbjetsel", i, k);
+    PlotStack("deltaPhilj_",jchan,"_afterbjetveto", i, k);
     
     PlotStack("RecoPtZ_",jchan,"_afterbjetveto", i, k);
     
