@@ -36,7 +36,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   
   
   TString filename;
-  filename="backup_outputProof03-10-12_18-56-43/proof.root";  
+  filename="backup_outputProof08-10-12_12-05-06/proof.root";  
   
   TString channel;
   if (namechan!="all") channel=namechan;

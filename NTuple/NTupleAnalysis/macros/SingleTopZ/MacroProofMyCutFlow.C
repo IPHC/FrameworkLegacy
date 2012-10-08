@@ -17,7 +17,7 @@ int main(int argc, char* argv[]){
   // Global variables: could be give as argument later
   //---------------------------------------//
   
-  int nwnodes = 8; //8 to 10 is the optimal
+  int nwnodes = 4; //8 to 10 is the optimal
   string macroName = "ProofSelectorMyCutFlow.C+"; //"+" should be put at the end to use ACLIC complication - This macro should inherit from TSelector 
   //In order to allow the node to access the xml, the name should be given with the full path
   string xmlFileName = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/config/MyCutFlow_2011AB_FCNCkut.xml");
