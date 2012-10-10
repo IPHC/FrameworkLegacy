@@ -1058,7 +1058,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	     if(fabs(selElectronsNonIso[iel1].p4.Pt() - ZeeCand[iel2].p4.Pt()) <  0.0001)  matchElec=true;
 	     else if(selElectrons[iel1].LeptonOrigin == 10) leptonFlavor = 1;
           }
-	  if(!matchElec && selElectronsNonIso[iel1].RelIso03PF() < 0.5){ 
+	  if(!matchElec && selElectronsNonIso[iel1].RelIso03PF() > 0.4){ 
 	    WeCand.push_back(selElectronsNonIso[iel1]); 
 	    if(selElectronsNonIso[iel1].LeptonOrigin == 10) leptonFlavor = 1;
 	    //cout << "    lepton origin of We cand " << selElectronsNonIso[iel1].LeptonOrigin << endl;
@@ -1123,7 +1123,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	     if(fabs(selMuonsNonIso[imu1].p4.Pt() - ZmumuCand[imu2].p4.Pt())  < 0.0001) matchMuon = true;
 	 
           }
-	  if(!matchMuon && selMuonsNonIso[imu1].RelIso03PF() < 0.5){
+	  if(!matchMuon && selMuonsNonIso[imu1].RelIso03PF() > 0.4){
 	    WmuCand.push_back(selMuonsNonIso[imu1]);
 	    if(selMuonsNonIso[imu1].LeptonOrigin == 10) leptonFlavor = 1;
 	  }
