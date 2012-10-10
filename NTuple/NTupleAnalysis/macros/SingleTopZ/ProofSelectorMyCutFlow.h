@@ -218,6 +218,16 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> InvM_ll_eemu_afterleptsel;
   std::vector<TH1F> InvM_ll_eee_afterleptsel;
   
+  std::vector<TH1F> InvM_ll_mumumu_afterleptsel_mWT110;
+  std::vector<TH1F> InvM_ll_mumue_afterleptsel_mWT110;
+  std::vector<TH1F> InvM_ll_eemu_afterleptsel_mWT110;
+  std::vector<TH1F> InvM_ll_eee_afterleptsel_mWT110;
+  
+  std::vector<TH1F> InvM_ll_mumumu_afterleptsel_lowbin;
+  std::vector<TH1F> InvM_ll_mumue_afterleptsel_lowbin;
+  std::vector<TH1F> InvM_ll_eemu_afterleptsel_lowbin;
+  std::vector<TH1F> InvM_ll_eee_afterleptsel_lowbin;
+  
   std::vector<TH1F> InvM_ll_mumumu_afterleptsel_highSumPt;
   std::vector<TH1F> InvM_ll_mumue_afterleptsel_highSumPt;
   std::vector<TH1F> InvM_ll_eemu_afterleptsel_highSumPt;
@@ -288,6 +298,10 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> LeptWPt_eee_afterbjetveto;
   
   
+  std::vector<TH1F> LeptWPt_mumumu_afterleptsel_mWT110;
+  std::vector<TH1F> LeptWPt_mumue_afterleptsel_mWT110;
+  std::vector<TH1F> LeptWPt_eemu_afterleptsel_mWT110;
+  std::vector<TH1F> LeptWPt_eee_afterleptsel_mWT110;
   
   
   std::vector<TH1F> JetPt_mumumu_afterleptsel;
@@ -359,6 +373,13 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> MET_mumue_afterleptsel;
   std::vector<TH1F> MET_eemu_afterleptsel;
   std::vector<TH1F> MET_eee_afterleptsel;
+  
+  
+  
+  std::vector<TH1F> MET_mumumu_afterleptsel_mWT110;
+  std::vector<TH1F> MET_mumue_afterleptsel_mWT110;
+  std::vector<TH1F> MET_eemu_afterleptsel_mWT110;
+  std::vector<TH1F> MET_eee_afterleptsel_mWT110;
   
   
   std::vector<TH1F> MET_mumumu_afterjetsel;
@@ -439,6 +460,17 @@ class ProofSelectorMyCutFlow : public TSelector {
   
   
   
+  std::vector<TH1F> deltaRLeptJet_mumumu_afterleptsel_mWT110;
+  std::vector<TH1F> deltaRLeptJet_mumue_afterleptsel_mWT110;
+  std::vector<TH1F> deltaRLeptJet_eemu_afterleptsel_mWT110;
+  std::vector<TH1F> deltaRLeptJet_eee_afterleptsel_mWT110;
+  
+  std::vector<TH1F> deltaRLeptMet_mumumu_afterleptsel_mWT110;
+  std::vector<TH1F> deltaRLeptMet_mumue_afterleptsel_mWT110;
+  std::vector<TH1F> deltaRLeptMet_eemu_afterleptsel_mWT110;
+  std::vector<TH1F> deltaRLeptMet_eee_afterleptsel_mWT110;
+  
+  
   
   std::vector<TH1F> WmissAssing_mumumu_afterleptsel;
   std::vector<TH1F> WmissAssing_mumue_afterleptsel;
@@ -462,6 +494,10 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> mWT_eemu_afterbjetveto;
   std::vector<TH1F> mWT_eee_afterbjetveto;
   
+  std::vector<TH2D> InvM_ll_vs_mWT_mumumu_afterleptsel;
+  std::vector<TH2D> InvM_ll_vs_mWT_mumue_afterleptsel;
+  std::vector<TH2D> InvM_ll_vs_mWT_eemu_afterleptsel;
+  std::vector<TH2D> InvM_ll_vs_mWT_eee_afterleptsel;
   
   std::vector<TH2D> HT_vs_MET_mumumu_afterleptsel;
   std::vector<TH2D> HT_vs_MET_mumue_afterleptsel;
