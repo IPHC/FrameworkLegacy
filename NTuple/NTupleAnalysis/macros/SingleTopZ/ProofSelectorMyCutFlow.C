@@ -675,12 +675,14 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   if (IReweight ) {
     
     string mcfile(getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PU3DMC_Fall11_JLA.root"));
+    fexists(mcfile, true);
 
     string datafile;
     if( !IReweight_puDown && !IReweight_puUp ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_68mb.root");
     if( IReweight_puDown ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_64.6mb.root");
     if( IReweight_puUp ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_71.4mb.root");
-    
+    fexists(datafile, true);
+   
     LumiWeights = new reweight::LumiReWeighting(mcfile, datafile, "histoMCPU", "pileup" );
     LumiWeights->weight3D_init( 1. );
     

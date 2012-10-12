@@ -884,6 +884,7 @@ void ProofSelectorMatrixMethod::ApplySelectionAndFillHistos(IPHCTree::NTEvent *e
 	for(unsigned int iel1 = 0; iel1 < selElectrons.size(); iel1++){
 	  for(unsigned int iel2 = 0; iel2 < selElectrons.size(); iel2++){
 	    if(iel1 == iel2) continue;
+            if(selElectrons[iel1].charge == selElectrons[iel2].charge) continue;
 	    TLorentzVector zeecand = selElectrons[iel1].p4 + selElectrons[iel2].p4;
 	    if( fabs(zeecand.M() - 91) < fabs(mInv-91) ){
 	      theel1 = iel1;
@@ -942,6 +943,7 @@ void ProofSelectorMatrixMethod::ApplySelectionAndFillHistos(IPHCTree::NTEvent *e
 	for(unsigned int imu1 = 0; imu1 < selMuons.size(); imu1++){
 	  for(unsigned int imu2 = 0; imu2 < selMuons.size(); imu2++){
 	    if(imu1 == imu2) continue;
+            if(selMuons[imu1].charge == selMuons[imu2].charge) continue;
 	    TLorentzVector zmumucand = selMuons[imu1].p4 + selMuons[imu2].p4;
 	    if( fabs(zmumucand.M() - 91) < fabs(mInv-91) ){
 	      themu1 = imu1;
