@@ -262,7 +262,8 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   //***********************
   // initiate lumi reweighting
   
-  
+ 
+  MyhistoManager.CreateHisto(Nvertex, "Nvertex", datasetName, "Nvertex", "Entries", 50, 0, 50); 
   
   MyhistoManager.CreateHisto(CutFlow_mumumu,  "CutFlow_mumumu" ,datasetName,"CutFlow","Entries",15,-0.5,14.5);
   MyhistoManager.CreateHisto(CutFlow_mumue,   "CutFlow_mumue"  ,datasetName,"CutFlow","Entries",15,-0.5,14.5);
@@ -673,29 +674,16 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   
   if (IReweight ) {
     
-    if(datasetName == "DYToLL_M10-50" || datasetName == "FCNCkut" ){
-      string datafile = "/opt/sbg/data/data1/cms/jandrea/TopIPHC_2012_01_25/CMSSW_4_2_8_patch7/src/MiniTreeAnalysis/NTupleAnalysis/macros/data/PUdata.root";
-      string mcfile   = "/opt/sbg/data/data1/cms/jandrea/TopIPHC_2012_01_25/CMSSW_4_2_8_patch7/src/MiniTreeAnalysis/NTupleAnalysis/macros/data/PU3DMC_Fall11.root";
-      
-      LumiWeights    = new reweight::LumiReWeighting(mcfile, datafile, "histoMCPU", "pileup" );
-    }
-    else{
-      string datafile = "";
-      if(!IReweight_puUp && !IReweight_puDown){
-	datafile = "/opt/sbg/data/data1/cms/jandrea/TopIPHC_2012_01_25/CMSSW_4_2_8_patch7/src/MiniTreeAnalysis/NTupleAnalysis/macros/data/default73.5mb.root";
-      }
-      
-      if( IReweight_puUp)   datafile = "/opt/sbg/data/data1/cms/jandrea/TopIPHC_2012_01_25/CMSSW_4_2_8_patch7/src/MiniTreeAnalysis/NTupleAnalysis/macros/data/default73.5mbUp.root";
-      if( IReweight_puDown) datafile = "/opt/sbg/data/data1/cms/jandrea/TopIPHC_2012_01_25/CMSSW_4_2_8_patch7/src/MiniTreeAnalysis/NTupleAnalysis/macros/data/default73.5mbDown.root";
-      
-      string mcfile   = "/opt/sbg/data/data1/cms/jandrea/TopIPHC_2012_01_25/CMSSW_4_2_8_patch7/src/MiniTreeAnalysis/NTupleAnalysis/macros/data/PU3DMC.root";
-      
-      LumiWeights    = new reweight::LumiReWeighting(mcfile, datafile, "histoMCPU", "pileup" );
-      if(!IReweight_puUp && !IReweight_puDown)  LumiWeights->weight3D_init( 1. );
-      if( IReweight_puDown                   )  LumiWeights->weight3D_init( 1. );
-      if( IReweight_puUp                     )  LumiWeights->weight3D_init( 1. );
-      
-    }
+    string mcfile(getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PU3DMC_Fall11_JLA.root"));
+
+    string datafile;
+    if( !IReweight_puDown && !IReweight_puUp ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_68mb.root");
+    if( IReweight_puDown ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_64.6mb.root");
+    if( IReweight_puUp ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_71.4mb.root");
+    
+    LumiWeights = new reweight::LumiReWeighting(mcfile, datafile, "histoMCPU", "pileup" );
+    LumiWeights->weight3D_init( 1. );
+    
   }
   
   JEC_L2L3Residuals.LoadCorrections();
@@ -969,7 +957,10 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
       
       
     }
-    
+   
+    MyhistoManager.FillHisto(Nvertex, "Nvertex", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
+ 
+
     //*****************************************************************
     // pass trigger selection
     //*****************************************************************   
@@ -1016,7 +1007,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	for(unsigned int iel1 = 0; iel1 < selElectrons.size(); iel1++){
 	  for(unsigned int iel2 = 0; iel2 < selElectrons.size(); iel2++){
 	    if(iel1 == iel2) continue;
-	    if(selElectrons[iel1].charge ==  selElectrons[iel2].charge) continue;
+	    if(selElectrons[iel1].charge == selElectrons[iel2].charge) continue;
 	    TLorentzVector zeecand = selElectrons[iel1].p4 + selElectrons[iel2].p4;
 	    if( fabs(zeecand.M() - 91) < fabs(mInv-91) ){
 	    //if( fabs(zeecand.M() - 200) < fabs(mInv-200) ){
@@ -1078,7 +1069,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	for(unsigned int imu1 = 0; imu1 < selMuons.size(); imu1++){
 	  for(unsigned int imu2 = 0; imu2 < selMuons.size(); imu2++){
 	    if(imu1 == imu2) continue;
-	    if(selMuons[imu1].charge ==  selMuons[imu2].charge) continue;
+	    if(selMuons[imu1].charge == selMuons[imu2].charge) continue;
 	    TLorentzVector zmumucand = selMuons[imu1].p4 + selMuons[imu2].p4;
 	    if( fabs(zmumucand.M() - 91) < fabs(mInv-91) ){
 	    //if( fabs(zmumucand.M() - 200) < fabs(mInv-200) ){
@@ -1555,6 +1546,8 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	  
 	  if(mTW > 110){
 	    cout << "interesting events !!! " << std::endl;
+	    cout<<"RUN "<<event->general.runNb<<" EVT "<<event->general.eventNb<<endl;
+	    cout << "mTW " << mTW << endl;
 	    cout << "dileptonIvM " << dileptonIvM
 	    << "  dilept.Pt() "    << dilept.Pt() 
 	    << "  lept1.Pt() "     << lept1.Pt() 
@@ -2133,7 +2126,7 @@ void ProofSelectorMyCutFlow::SlaveTerminate()
     
     
     
-    
+  MyhistoManager.WriteMyHisto(Nvertex, "all");  
   
   MyhistoManager.WriteMyHisto(CutFlow_mumumu, "all" );
   MyhistoManager.WriteMyHisto(CutFlow_mumue,  "all" );

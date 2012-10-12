@@ -493,7 +493,9 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> mWT_mumue_afterbjetveto;
   std::vector<TH1F> mWT_eemu_afterbjetveto;
   std::vector<TH1F> mWT_eee_afterbjetveto;
-  
+ 
+  std::vector<TH1F> Nvertex;
+ 
   std::vector<TH2D> InvM_ll_vs_mWT_mumumu_afterleptsel;
   std::vector<TH2D> InvM_ll_vs_mWT_mumue_afterleptsel;
   std::vector<TH2D> InvM_ll_vs_mWT_eemu_afterleptsel;
