@@ -168,7 +168,18 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> ErrCutFlow_eemu;
   std::vector<TH1F> ErrCutFlow_eee;
   
+
+  std::vector<TH1F> NVtx_mumumu_aftertrigsel;
+  std::vector<TH1F> NVtx_mumue_aftertrigsel;
+  std::vector<TH1F> NVtx_eemu_aftertrigsel;
+  std::vector<TH1F> NVtx_eee_aftertrigsel; 
   
+  std::vector<TH1F> NVtx_mumumu_afterleptsel;
+  std::vector<TH1F> NVtx_mumue_afterleptsel;
+  std::vector<TH1F> NVtx_eemu_afterleptsel;
+  std::vector<TH1F> NVtx_eee_afterleptsel; 
+  
+
   std::vector<TH1F> Mt_mumumu_afterbjetsel;
   std::vector<TH1F> Mt_mumue_afterbjetsel;
   std::vector<TH1F> Mt_eemu_afterbjetsel;
@@ -493,8 +504,6 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> mWT_mumue_afterbjetveto;
   std::vector<TH1F> mWT_eemu_afterbjetveto;
   std::vector<TH1F> mWT_eee_afterbjetveto;
- 
-  std::vector<TH1F> Nvertex;
  
   std::vector<TH2D> InvM_ll_vs_mWT_mumumu_afterleptsel;
   std::vector<TH2D> InvM_ll_vs_mWT_mumue_afterleptsel;

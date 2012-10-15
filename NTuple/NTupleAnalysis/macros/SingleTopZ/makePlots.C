@@ -21,6 +21,8 @@
    for (int k=0; k<2; k++) {
     // loop for ratio plot
 
+    PlotStack("NVtx_",jchan,"_aftertrigsel", i, k);
+    PlotStack("NVtx_",jchan,"_afterleptsel", i, k);
 
     // plot met after btag
     PlotStack("Mt_",jchan,"_afterbjetsel", i, k);

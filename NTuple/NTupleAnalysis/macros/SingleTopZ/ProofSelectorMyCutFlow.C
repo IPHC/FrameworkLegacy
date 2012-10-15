@@ -262,9 +262,7 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   //***********************
   // initiate lumi reweighting
   
- 
-  MyhistoManager.CreateHisto(Nvertex, "Nvertex", datasetName, "Nvertex", "Entries", 50, 0, 50); 
-  
+   
   MyhistoManager.CreateHisto(CutFlow_mumumu,  "CutFlow_mumumu" ,datasetName,"CutFlow","Entries",15,-0.5,14.5);
   MyhistoManager.CreateHisto(CutFlow_mumue,   "CutFlow_mumue"  ,datasetName,"CutFlow","Entries",15,-0.5,14.5);
   MyhistoManager.CreateHisto(CutFlow_eemu,    "CutFlow_eemu"   ,datasetName,"CutFlow","Entries",15,-0.5,14.5);
@@ -274,18 +272,23 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   MyhistoManager.SetCutFlowAxisTitleFCNCMonotop(CutFlow_mumumu,   "CutFlow_mumumu"  ,datasetName);
   MyhistoManager.SetCutFlowAxisTitleFCNCMonotop(CutFlow_mumue,    "CutFlow_mumue"   ,datasetName);
   MyhistoManager.SetCutFlowAxisTitleFCNCMonotop(CutFlow_eemu,     "CutFlow_eemu"    ,datasetName);
-  MyhistoManager.SetCutFlowAxisTitleFCNCMonotop(CutFlow_eee,      "CutFlow_eee"     ,datasetName);
-  
-  
-  
-  
-  
+  MyhistoManager.SetCutFlowAxisTitleFCNCMonotop(CutFlow_eee,      "CutFlow_eee"     ,datasetName);    
   
   MyhistoManager.CreateHisto(ErrCutFlow_mumumu,  "ErrCutFlow_mumumu"  ,datasetName,"ErrCutFlow","Entries",15,-0.5,14.5);
   MyhistoManager.CreateHisto(ErrCutFlow_mumue,   "ErrCutFlow_mumue"   ,datasetName,"ErrCutFlow","Entries",15,-0.5,14.5);
   MyhistoManager.CreateHisto(ErrCutFlow_eemu,    "ErrCutFlow_eemu"    ,datasetName,"ErrCutFlow","Entries",15,-0.5,14.5);
   MyhistoManager.CreateHisto(ErrCutFlow_eee,     "ErrCutFlow_eee"     ,datasetName,"ErrCutFlow","Entries",15,-0.5,14.5);
   
+  
+  MyhistoManager.CreateHisto(NVtx_mumumu_aftertrigsel, "NVtx_mumumu_aftertrigsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_mumue_aftertrigsel, "NVtx_mumue_aftertrigsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_eemu_aftertrigsel, "NVtx_eemu_aftertrigsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_eee_aftertrigsel, "NVtx_eee_aftertrigsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
+  
+  MyhistoManager.CreateHisto(NVtx_mumumu_afterleptsel, "NVtx_mumumu_afterleptsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_mumue_afterleptsel, "NVtx_mumue_afterleptsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_eemu_afterleptsel, "NVtx_eemu_afterleptsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_eee_afterleptsel, "NVtx_eee_afterleptsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
   
   
   MyhistoManager.CreateHisto(Mt_mumumu_afterbjetsel, "Mt_mumumu_afterbjetsel", datasetName,"Mt","Entries", 100, 0, 500); 
@@ -960,7 +963,6 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
       
     }
    
-    MyhistoManager.FillHisto(Nvertex, "Nvertex", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
  
 
     //*****************************************************************
@@ -987,6 +989,10 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
       if(IChannel == 3) MyhistoManager.FillHisto(ErrCutFlow_eee,      "ErrCutFlow_eee"    , 0, datasetName, IsSignal, EventYieldWeightError);
       
       
+      if(IChannel == 0) MyhistoManager.FillHisto(NVtx_mumumu_aftertrigsel, "NVtx_mumumu_aftertrigsel", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
+      if(IChannel == 1) MyhistoManager.FillHisto(NVtx_mumue_aftertrigsel, "NVtx_mumue_aftertrigsel", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
+      if(IChannel == 2) MyhistoManager.FillHisto(NVtx_eemu_aftertrigsel, "NVtx_eemu_aftertrigsel", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
+      if(IChannel == 3) MyhistoManager.FillHisto(NVtx_eee_aftertrigsel, "NVtx_eee_aftertrigsel", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
 
       
    
@@ -1337,6 +1343,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	
 	if(IChannel == 0 && cand3leptonChannel == "mumumu"){
 	
+	  MyhistoManager.FillHisto(NVtx_mumumu_afterleptsel, "NVtx_mumumu_afterleptsel", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
 	  MyhistoManager.FillHisto(InvM_ll_mumumu_afterleptsel, "InvM_ll_mumumu_afterleptsel", dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
 	  MyhistoManager.FillHisto(InvM_ll_mumumu_afterleptsel_lowbin, "InvM_ll_mumumu_afterleptsel_lowbin", dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
 	  MyhistoManager.FillHisto(LeptZPt_mumumu_afterleptsel, "LeptZPt_mumumu_afterleptsel", lept1.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
@@ -1362,6 +1369,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	}
         if(IChannel == 1 && cand3leptonChannel == "mumue" ){
 	
+	  MyhistoManager.FillHisto(NVtx_mumue_afterleptsel, "NVtx_mumue_afterleptsel", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
 	  MyhistoManager.FillHisto(InvM_ll_mumue_afterleptsel,  "InvM_ll_mumue_afterleptsel",  dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);	  
 	  MyhistoManager.FillHisto(InvM_ll_mumue_afterleptsel_lowbin,  "InvM_ll_mumue_afterleptsel_lowbin",  dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);	  
 	 
@@ -1393,6 +1401,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	}
         if(IChannel == 2 && cand3leptonChannel == "eemu"  ){ 
 	
+	  MyhistoManager.FillHisto(NVtx_eemu_afterleptsel, "NVtx_eemu_afterleptsel", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
 	  MyhistoManager.FillHisto(InvM_ll_eemu_afterleptsel,   "InvM_ll_eemu_afterleptsel",   dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);  
 	  MyhistoManager.FillHisto(InvM_ll_eemu_afterleptsel_lowbin,   "InvM_ll_eemu_afterleptsel_lowbin",   dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);  
 	  
@@ -1423,6 +1432,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	}
 	if(IChannel == 3 && cand3leptonChannel == "eee"   ){ 
 	
+	  MyhistoManager.FillHisto(NVtx_eee_afterleptsel, "NVtx_eee_afterleptsel", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
 	  MyhistoManager.FillHisto(InvM_ll_eee_afterleptsel,           "InvM_ll_eee_afterleptsel",    dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
 	  MyhistoManager.FillHisto(InvM_ll_eee_afterleptsel_lowbin,    "InvM_ll_eee_afterleptsel_lowbin",    dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
 	  
@@ -1548,7 +1558,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	  
 	  if(mTW > 110){
 	    cout << "interesting events !!! " << std::endl;
-	    cout<<"RUN "<<event->general.runNb<<" EVT "<<event->general.eventNb<<endl;
+	    cout<<"RUN "<<event->general.runNb<<" EVT "<<event->general.eventNb<<" BLOCK "<<event->general.lumiblock<<endl;
 	    cout << "mTW " << mTW << endl;
 	    cout << "dileptonIvM " << dileptonIvM
 	    << "  dilept.Pt() "    << dilept.Pt() 
@@ -2127,15 +2137,11 @@ void ProofSelectorMyCutFlow::SlaveTerminate()
     fFile->cd();
     
     
-    
-  MyhistoManager.WriteMyHisto(Nvertex, "all");  
-  
+      
   MyhistoManager.WriteMyHisto(CutFlow_mumumu, "all" );
   MyhistoManager.WriteMyHisto(CutFlow_mumue,  "all" );
   MyhistoManager.WriteMyHisto(CutFlow_eemu,   "all" );
   MyhistoManager.WriteMyHisto(CutFlow_eee,    "all" );
-  
-  
   
   MyhistoManager.WriteMyHisto(ErrCutFlow_mumumu,  "all");
   MyhistoManager.WriteMyHisto(ErrCutFlow_mumue,   "all");
@@ -2143,6 +2149,15 @@ void ProofSelectorMyCutFlow::SlaveTerminate()
   MyhistoManager.WriteMyHisto(ErrCutFlow_eee,     "all");
   
   
+  MyhistoManager.WriteMyHisto(NVtx_mumumu_aftertrigsel, "all");  
+  MyhistoManager.WriteMyHisto(NVtx_mumue_aftertrigsel, "all");  
+  MyhistoManager.WriteMyHisto(NVtx_eemu_aftertrigsel, "all");  
+  MyhistoManager.WriteMyHisto(NVtx_eee_aftertrigsel, "all");  
+  
+  MyhistoManager.WriteMyHisto(NVtx_mumumu_afterleptsel, "all");  
+  MyhistoManager.WriteMyHisto(NVtx_mumue_afterleptsel, "all");  
+  MyhistoManager.WriteMyHisto(NVtx_eemu_afterleptsel, "all");  
+  MyhistoManager.WriteMyHisto(NVtx_eee_afterleptsel, "all");  
   
   MyhistoManager.WriteMyHisto(Mt_mumumu_afterbjetsel, "all"); 
   MyhistoManager.WriteMyHisto(Mt_mumue_afterbjetsel , "all");
