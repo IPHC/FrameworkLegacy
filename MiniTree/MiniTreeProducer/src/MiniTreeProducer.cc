@@ -656,23 +656,33 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
     for (VParameters::iterator ijetmet = cfg.jetmetProducer.begin();
          ijetmet != cfg.jetmetProducer.end(); ijetmet++)
 		{
-      std::string jet_ = ijetmet->getUntrackedParameter<std::string>("jet");
-      std::string met_ = ijetmet->getUntrackedParameter<std::string>("met");
-      std::string algo_= ijetmet->getUntrackedParameter<std::string>("algo");
+      std::string jet_    = ijetmet->getUntrackedParameter<std::string>("jet");
+      std::string met_    = ijetmet->getUntrackedParameter<std::string>("met",   std::string());
+      std::string pfmet1_ = ijetmet->getUntrackedParameter<std::string>("pfmet1",std::string());
+      std::string pfmet2_ = ijetmet->getUntrackedParameter<std::string>("pfmet2",std::string());
+      std::string algo_   = ijetmet->getUntrackedParameter<std::string>("algo");
 
       evt->jets.SelectLabel(algo_);
       evt->met.SelectLabel(algo_);
 
       // Getting MET
-			edm::Handle<edm::View<pat::MET> > metHandle;
-			iEvent.getByLabel (met_, metHandle);
+      const pat::MET    *met = 0;
+      const reco::PFMET *pfmet1 = 0;
+      const reco::PFMET *pfmet2 = 0;
+
+      edm::Handle< std::vector<pat::MET> > metHandle;
+      edm::Handle< std::vector<reco::PFMET> > pfmetHandle1;
+      edm::Handle< std::vector<reco::PFMET> > pfmetHandle2;
+
+   if( met_.size() ){
+      iEvent.getByLabel(met_, metHandle);
 
       if (!metHandle.isValid())
       {
          ERROR("Produce") << "MET collection '"
                           << met_ << "' is missing." << std::endl;
          continue;
-      }
+      } else
 
       // Check MET is not empty
       if (metHandle->size()==0) 
@@ -680,6 +690,52 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
         ERROR("JetMET") << "edm::View<pat::MET> is empty" << std::endl;
         continue;
       }
+
+      met = &(metHandle->front());
+   }
+
+   if( pfmet1_.size() ){
+
+      iEvent.getByLabel(pfmet1_, pfmetHandle1);
+
+      if (!pfmetHandle1.isValid())
+      {
+         ERROR("Produce") << "PFMET collection '"
+                          << pfmet1_ << "' is missing." << std::endl;
+         continue;
+      } else
+
+      // Check MET is not empty
+      if (pfmetHandle1->size()==0) 
+      {
+        ERROR("JetMET") << "edm::View<reco::PFMET> ("<<pfmet1_<<") is empty" << std::endl;
+        continue;
+      }
+
+      pfmet1 = &(pfmetHandle1->front());
+   }
+
+   if( pfmet2_.size() ){
+      iEvent.getByLabel(pfmet2_, pfmetHandle2);
+
+      if (!pfmetHandle2.isValid())
+      {
+         ERROR("Produce") << "PFMET collection '"
+                          << pfmet2_ << "' is missing." << std::endl;
+         continue;
+      } else
+
+      // Check MET is not empty
+      if (pfmetHandle2->size()==0) 
+      {
+        ERROR("JetMET") << "edm::View<reco::PFMET> ("<<pfmet2_<<") is empty" << std::endl;
+        continue;
+      }
+
+      pfmet2 = &(pfmetHandle2->front());
+   }
+
+
 
       // Getting Jet
       edm::Handle<std::vector<pat::Jet> > jetHandle;
@@ -689,7 +745,7 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
       if (jetHandle.isValid())
       {
         fillJetMET(iEvent, iSetup, evt,
-                   &(metHandle->front()), jetHandle,
+                   met, pfmet1, pfmet2, jetHandle,
                    algo_,SumMuMetCorr, patTriggerEvent);
       }
 			else
@@ -1891,11 +1947,15 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
                  const edm::EventSetup& iSetup,
                  std::auto_ptr<IPHCTree::MTEvent>& evt,
                  const pat::MET* met,
+                 const reco::PFMET* pfmet1,
+                 const reco::PFMET* pfmet2,
                  const edm::Handle<std::vector<pat::Jet> >& jets,
                  const std::string& algo,
                  const std::pair<float,float>& SumMuMetCorr,
                  const pat::TriggerEvent* patTriggerEvent)
 {
+  if( met ){
+
   IPHCTree::MTMET* mymet = evt->NewMet();
 
   // ---------------------------------------------------------------
@@ -1926,6 +1986,78 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
 		mymet -> p2MuonCorr.Set(met->px() + SumMuMetCorr.first,
 							 					    met->py() + SumMuMetCorr.second);
 	}
+  }
+
+  if( pfmet1 ){
+  const reco::PFMET *met = pfmet1;
+
+  IPHCTree::MTMET* mymet = evt->NewMet();
+
+  // ---------------------------------------------------------------
+  //                           MET   
+  // ---------------------------------------------------------------
+
+	// This is global (JES+muon) corrected MET
+	mymet->p2.Set(met->px(), met->py());
+	mymet->uncmisEt = 0;
+	mymet->sumEt    = met->sumEt();
+
+	// NB: met - globaluncorrection = uncorrectedmet : 
+	// px() - met.corEx(uc0) = uncmisEt.px(), idem for py
+
+  // { uncorrALL, uncorrJES, uncorrMUON, uncorrMAXN }
+	pat::MET::UncorrectionType uc0 = pat::MET::UncorrectionType(0);
+	//pat::MET::UncorrectionType uc1 = pat::MET::UncorrectionType(1);
+	//pat::MET::UncorrectionType uc2 = pat::MET::UncorrectionType(2);
+
+	// MET global uncorrections (to be added if needed):
+	mymet->dmEx = 0; //met->corEx(uc0);
+	mymet->dmEy = 0; //met->corEy(uc0);
+
+	if (algo == "tc")
+	{
+		mymet -> doCorrection(SumMuMetCorr.first,
+                          SumMuMetCorr.second);
+		mymet -> p2MuonCorr.Set(met->px() + SumMuMetCorr.first,
+							 					    met->py() + SumMuMetCorr.second);
+	}
+  }
+
+  if( pfmet2 ){
+  const reco::PFMET *met = pfmet2;
+
+  IPHCTree::MTMET* mymet = evt->NewMet();
+
+  // ---------------------------------------------------------------
+  //                           MET   
+  // ---------------------------------------------------------------
+
+	// This is global (JES+muon) corrected MET
+	mymet->p2.Set(met->px(), met->py());
+	mymet->uncmisEt = 0;//met->uncorrectedPt();
+	mymet->sumEt    = met->sumEt();
+
+	// NB: met - globaluncorrection = uncorrectedmet : 
+	// px() - met.corEx(uc0) = uncmisEt.px(), idem for py
+
+  // { uncorrALL, uncorrJES, uncorrMUON, uncorrMAXN }
+	pat::MET::UncorrectionType uc0 = pat::MET::UncorrectionType(0);
+	//pat::MET::UncorrectionType uc1 = pat::MET::UncorrectionType(1);
+	//pat::MET::UncorrectionType uc2 = pat::MET::UncorrectionType(2);
+
+	// MET global uncorrections (to be added if needed):
+	mymet->dmEx = 0;//met->corEx(uc0);
+	mymet->dmEy = 0;//met->corEy(uc0);
+
+	if (algo == "tc")
+	{
+		mymet -> doCorrection(SumMuMetCorr.first,
+                          SumMuMetCorr.second);
+		mymet -> p2MuonCorr.Set(met->px() + SumMuMetCorr.first,
+							 					    met->py() + SumMuMetCorr.second);
+	}
+  }
+
 
   // ---------------------------------------------------------------
   //                           JET

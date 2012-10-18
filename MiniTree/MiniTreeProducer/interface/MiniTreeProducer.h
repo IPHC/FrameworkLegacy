@@ -55,7 +55,7 @@ typedef math::XYZPoint Point;
 //
 // Original Author:  Jeremy ANDREA
 //         Created:  Sun Nov  1 21:30:20 CET 2009
-// $Id: MiniTreeProducer.h,v 1.3 2011/11/04 21:40:33 econte Exp $
+// $Id: MiniTreeProducer.h,v 1.4 2012/02/16 14:47:20 econte Exp $
 //
 //
 
@@ -253,7 +253,9 @@ class MiniTreeProducer : public edm::EDProducer
   void fillJetMET(edm::Event& iEvent, 
                   const edm::EventSetup& iSetup,
                   std::auto_ptr<IPHCTree::MTEvent>& evt,
-                  const pat::MET* met,
+                  const pat::MET*    met,
+                  const reco::PFMET* pfmet1,
+                  const reco::PFMET* pfmet2,
                   const edm::Handle<std::vector<pat::Jet> >& jets,
                   const std::string& algo,
                   const std::pair<float,float>& SumMuMetCorr,
