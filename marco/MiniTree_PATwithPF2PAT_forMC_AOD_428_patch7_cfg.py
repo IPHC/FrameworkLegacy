@@ -1,6 +1,9 @@
 ## import skeleton process
 #from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
+# ---------------------------------------------------------------------------
+# BEGIN    TRACEABILITY - TRACEABILITY - TRACEABILITY - TRACEABILITY 
+# ---------------------------------------------------------------------------
 def GetTraceability():
     import inspect, os, socket, time
     Traceability=[]
@@ -21,6 +24,9 @@ def GetTraceability():
         print "TraceabilityError : impossible to get configuration"
     return Traceability
 Traceability = GetTraceability()
+# ---------------------------------------------------------------------------
+# END    TRACEABILITY - TRACEABILITY - TRACEABILITY - TRACEABILITY 
+# ---------------------------------------------------------------------------
 
 import FWCore.ParameterSet.Config as cms
 
