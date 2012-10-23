@@ -1,4 +1,5 @@
-#include  "../interface/NTEvent.h"
+#include "../interface/NTEvent.h"
+#include "../interface/NTSampleInfo.h"
 
 #ifdef __CINT__
 #pragma link off all globals;
@@ -15,6 +16,9 @@
 #pragma link C++ class IPHCTree::KeyedCollection<UInt_t>+;
 #pragma link C++ class IPHCTree::KeyedCollection<TLorentzVector>+;
 #pragma link C++ class std::pair<Char_t,Char_t>+;
+
+// SampleInfo
+#pragma link C++ class IPHCTree::NTSampleInfo+;
 
 // General
 #pragma link C++ class IPHCTree::NTEvent+;

@@ -14,7 +14,7 @@
 #include <fstream>
 #include <TH1F.h>
 
-
+//----------------- NTuple producer
 #include "NTuple/NTupleProducer/interface/SkimTopDiLepton.h"
 #include "NTuple/NTupleProducer/interface/FillNTuple.h"
 
@@ -33,7 +33,6 @@
 #include "JetMETCorrections/JetVertexAssociation/interface/JetVertexMain.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
-
 //--------------------PAT includes
 #include "DataFormats/PatCandidates/interface/Particle.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
@@ -46,13 +45,15 @@
 //--------------------ROOT includes
 #include "TTree.h"
 
-//--------------------TopTree includes
+//--------------------IPHC Tree includes
 #include "IPHCDataFormat/NTFormat/interface/NTEvent.h"
+#include "IPHCDataFormat/NTFormat/interface/NTSampleInfo.h"
 #include "IPHCDataFormat/MTFormat/interface/MTEvent.h"
 
+//--------------------STL includes
 #include <vector>
 
-#define ERROR(title)   edm::LogError(title) << "[" << __FILE__ <<", line=" << __LINE__ <<"] "
+#define ERROR(title)   edm::LogError(title)   << "[" << __FILE__ <<", line=" << __LINE__ <<"] "
 #define WARNING(title) edm::LogWarning(title) << "[" << __FILE__ <<", line=" << __LINE__ <<"] "
 
 
@@ -68,13 +69,14 @@ private:
   virtual void beginJob ();
   virtual void analyze (const edm::Event &, const edm::EventSetup &);
   virtual void endJob ();
+  bool FillSampleInfo(IPHCTree::NTSampleInfo* info);
 
   TTree *output;
-  IPHCTree::NTEvent * ntuple;
+  IPHCTree::NTEvent* ntuple;
   edm::Service<TFileService> fs;
 
   unsigned int verbose;
- 
+  std::vector<std::string> traceability; 
 
   TH1F * theNormHisto;
   TH1F * theNormHistoByTMEME;

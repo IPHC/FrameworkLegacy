@@ -10,6 +10,10 @@ NTupleProducer::NTupleProducer (const edm::ParameterSet & iConfig)
 {
   std::cout << "Constructor of NTupleProducer - BEGIN" << std::endl;
 
+  // Read configuration file 
+  verbose         = iConfig.getParameter<unsigned int>("verbose");
+  traceability    = iConfig.getParameter<std::vector<std::string> >("traceability");
+
   // topfilter
   top_filter.Initialize(iConfig.getParameter<edm::ParameterSet> ("topdilepton_skim"));
   ntuple_filler.Initialize(iConfig.getParameter<edm::ParameterSet> ("general_skim"));
@@ -20,6 +24,16 @@ NTupleProducer::NTupleProducer (const edm::ParameterSet & iConfig)
   theNormHistoByTMEME = fs->make<TH1F> ("theNormHistoByTMEME",
                                         "theNormHistoByTMEME", 
                                         22223, -0.5, 22222.5);
+  // Declaring the global info
+  TTree* preoutput = fs->make<TTree> ("SampleInfo", "");
+  IPHCTree::NTSampleInfo* sampleInfo = new IPHCTree::NTSampleInfo();
+  preoutput->Branch("NTSampleInfo", "IPHCTree::NTSampleInfo", &sampleInfo, 32000, 3);
+  std::cout << "----------------------------------------------------------------" << std::endl;
+  std::cout << " Fill Sample Info ......" << std::endl;
+  FillSampleInfo(sampleInfo);
+  preoutput->Fill();
+  std::cout << " ...... complete" << std::endl;
+  std::cout << "----------------------------------------------------------------" << std::endl;
 
   // Declaring the ntuple
   output = fs->make<TTree> ("Event", "");
@@ -27,9 +41,6 @@ NTupleProducer::NTupleProducer (const edm::ParameterSet & iConfig)
   output->Branch("NTEvent", "IPHCTree::NTEvent", &ntuple, 32000, 3);
   // compress= 3 seems to be the optimal !
 
-  // Read configuration file 
-  verbose         = iConfig.getParameter <unsigned int>("verbose");
- 
   ntotal=0;
   nfiltered=0;
   std::cout << "Constructor of NTupleProducer - END" << std::endl;
@@ -42,6 +53,41 @@ NTupleProducer::NTupleProducer (const edm::ParameterSet & iConfig)
 // ----------------------------------------------------------------------------
 NTupleProducer::~NTupleProducer ()
 {
+}
+
+
+// ----------------------------------------------------------------------------
+// FillSampleInfo
+// ----------------------------------------------------------------------------
+bool NTupleProducer::FillSampleInfo(IPHCTree::NTSampleInfo* info)
+{
+  // safety
+  if (traceability.size()<6)
+  {
+    std::cout << "TraceabilityError: missing information" << std::endl;
+    return false;
+  }
+
+  // filling global info
+  info->version   = traceability[0].c_str();
+  info->script    = traceability[1].c_str();
+  info->folder    = traceability[2].c_str();
+  info->user      = traceability[3].c_str();
+  info->machine   = traceability[4].c_str();
+  info->time_crab = traceability[5].c_str();
+
+  // configuration info missing ?
+  if (traceability.size()==6) return false;
+
+  // filling configuration
+  TClonesArray &config = *(info->config);
+  for (UInt_t i=0;i<(traceability.size()-6);i++)
+  {
+    new(config[i]) TObjString(traceability[i+6].c_str());
+  }
+
+  // Ok
+  return true;
 }
 
 

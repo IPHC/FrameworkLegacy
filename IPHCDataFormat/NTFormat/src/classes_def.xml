@@ -18,6 +18,9 @@
      <field name="names_" transient="true"/>
   </class>
 
+  // NTSampleInfo
+  <class name="IPHCTree::NTSampleInfo"/>
+
   // General
   <class name="IPHCTree::NTEvent"/>
   <class name="IPHCTree::NTEventDescriptor"/>

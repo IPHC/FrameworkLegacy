@@ -1,5 +1,6 @@
 #include "DataFormats/Common/interface/Wrapper.h"
 #include "IPHCDataFormat/NTFormat/interface/NTEvent.h"
+#include "IPHCDataFormat/NTFormat/interface/NTSampleInfo.h"
 
 namespace{
   namespace{
@@ -17,6 +18,9 @@ namespace{
     edm::Wrapper<IPHCTree::KeyedCollection<Float_t> > kCollection;
     edm::Wrapper<IPHCTree::KeyedCollection<TLorentzVector> > kCollection2;
     edm::Wrapper<IPHCTree::KeyedCollection<UInt_t> > kCollection3;
+
+    // SampleInfo
+    edm::Wrapper<IPHCTree::NTSampleInfo>   NTSampleInfo;
 
     // General
     edm::Wrapper<IPHCTree::NTEvent>        NTEvent;

@@ -1,6 +1,27 @@
 ## import skeleton process
 #from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
+def GetTraceability():
+    import inspect, os, socket, time
+    Traceability=[]
+    Traceability.append( "SkyFall" ) #VERSION NAME
+    logScript = inspect.getfile(inspect.currentframe())
+    Traceability.append( logScript )
+    logDir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    Traceability.append( logDir )
+    Traceability.append( os.getlogin() )
+    Traceability.append( socket.gethostname() )
+    Traceability.append( time.strftime('%d/%m/%y %H:%M',time.localtime()) )
+    try:
+        logInput = open(logDir+'/'+logScript)
+        for line in logInput:
+          Traceability.append(line)
+        logInput.close()
+    except:
+        print "TraceabilityError : impossible to get configuration"
+    return Traceability
+Traceability = GetTraceability()
+
 
 import FWCore.ParameterSet.Config as cms
 
@@ -560,6 +581,8 @@ process.TFileService = cms.Service("TFileService", fileName = cms.string("NTuple
 # loads your analyzer
 process.MyModule = cms.EDAnalyzer('NTupleProducer',
         verbose             = cms.uint32(0),   #0: nothing - >1 gradually more information
+        traceability        = cms.vstring(Traceability),
+                                  
 # -------------------------------------------------------------------
 #                         GENERAL SKIM 
 # -------------------------------------------------------------------

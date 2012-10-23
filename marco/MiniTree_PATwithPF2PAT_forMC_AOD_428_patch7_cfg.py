@@ -1,6 +1,26 @@
 ## import skeleton process
 #from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
+def GetTraceability():
+    import inspect, os, socket, time
+    Traceability=[]
+    Traceability.append( "SkyFall" ) #VERSION NAME
+    logScript = inspect.getfile(inspect.currentframe())
+    Traceability.append( logScript )
+    logDir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    Traceability.append( logDir )
+    Traceability.append( os.getlogin() )
+    Traceability.append( socket.gethostname() )
+    Traceability.append( time.strftime('%d/%m/%y %H:%M',time.localtime()) )
+    try:
+        logInput = open(logDir+'/'+logScript)
+        for line in logInput:
+          Traceability.append(line)
+        logInput.close()
+    except:
+        print "TraceabilityError : impossible to get configuration"
+    return Traceability
+Traceability = GetTraceability()
 
 import FWCore.ParameterSet.Config as cms
 
@@ -557,6 +577,8 @@ process.TFileService = cms.Service("TFileService", fileName = cms.string("NTuple
 # loads your analyzer
 process.MyModule = cms.EDAnalyzer('NTupleProducer',
         verbose             = cms.uint32(0),   #0: nothing - >1 gradually more information
+        traceability        = cms.vstring(Traceability),
+                                  
 # -------------------------------------------------------------------
 #                         GENERAL SKIM 
 # -------------------------------------------------------------------
@@ -746,7 +768,7 @@ process.source = cms.Source(
     noEventSort = cms.untracked.bool(True),
     duplicateCheckMode = cms.untracked.string("noDuplicateCheck"),
     fileNames = cms.untracked.vstring(
-      '/store/mc/Summer11/TTJets_TuneZ2_7TeV-madgraph-tauola/AODSIM/PU_S4_START42_V11-v1/0000/FEEE3638-F297-E011-AAF8-00304867BEC0.root'
+      '/store/mc/Summer11/TTjets_TuneZ2_matchingdown_7TeV-madgraph-tauola/AODSIM/PU_S4_START42_V11-v1/0000/FEFC7AEB-DBD5-E011-9CE1-002590200B7C.root'
       #  '/store/mc/Summer11/TTJets_TuneZ2_7TeV-madgraph-tauola/AODSIM/PU_S4_START42_V11-v1/0000/FCFD87D7-9E98-E011-BDA2-0018F3D09642.root',
       #  '/store/mc/Summer11/TTJets_TuneZ2_7TeV-madgraph-tauola/AODSIM/PU_S4_START42_V11-v1/0000/FCFB9DE1-8598-E011-BE64-003048679076.root',
       #  '/store/mc/Summer11/TTJets_TuneZ2_7TeV-madgraph-tauola/AODSIM/PU_S4_START42_V11-v1/0000/FAD1CEE7-7A98-E011-89A0-001A92971B7E.root',
