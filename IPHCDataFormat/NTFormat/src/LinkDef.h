@@ -48,6 +48,7 @@
 
 // Reconstructed objects
 #pragma link C++ class IPHCTree::NTTrack+;
+#pragma link C++ class IPHCTree::NTPFCandidate+;
 #pragma link C++ class IPHCTree::NTVertex+;
 
 // Multicollection
@@ -59,6 +60,7 @@
 #pragma link C++ class IPHCTree::MultiCollection<IPHCTree::NTPhoton>+;
 #pragma link C++ class IPHCTree::MultiCollection<IPHCTree::NTVertex>+;
 #pragma link C++ class IPHCTree::MultiCollection<IPHCTree::NTTrack>+;
+#pragma link C++ class IPHCTree::MultiCollection<IPHCTree::NTPFCandidate>+;
 
 // Vector
 #pragma link C++ class std::vector<IPHCTree::NTGenParticle>+;
@@ -70,6 +72,7 @@
 #pragma link C++ class std::vector<IPHCTree::NTPhoton>+;
 #pragma link C++ class std::vector<IPHCTree::NTVertex>+;
 #pragma link C++ class std::vector<IPHCTree::NTTrack>+;
+#pragma link C++ class std::vector<IPHCTree::NTPFCandidate>+;
 #pragma link C++ class std::vector<IPHCTree::WDecaysMC>+;
 #pragma link C++ class std::vector<IPHCTree::ZDecaysMC>+;
 #pragma link C++ class std::vector<IPHCTree::TopDecaysMC>+;
@@ -83,5 +86,6 @@
 #pragma link C++ class std::vector<std::vector< IPHCTree::NTPhoton> >+;
 #pragma link C++ class std::vector<std::vector< IPHCTree::NTVertex> >+;
 #pragma link C++ class std::vector<std::vector< IPHCTree::NTTrack> >+;
+#pragma link C++ class std::vector<std::vector< IPHCTree::NTPFCandidate> >+;
 
 #endif

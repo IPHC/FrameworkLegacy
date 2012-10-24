@@ -36,6 +36,32 @@ namespace IPHCTree
     UShort_t  NOfMatches;  /// Nb of matches 
     Float_t   D0Inner;		 /// Transverse IP from tracks
 
+    // ----------- Infos used is SUSYstop selection ----------------
+	
+	// Is the muon coming from particle flow ?
+	Bool_t isPFMuon;
+
+	// Infos from muon->pfIsolationR03()
+	Float_t pfIsoCharged;
+	Float_t pfIsoNeutral;
+	Float_t pfIsoPhoton;
+	Float_t pfIsoPU;
+
+	// 
+	UShort_t numMatchedStations;
+	UShort_t numTrackerLayersWithMeasurement;
+	UShort_t nValMuonHits;
+	UShort_t pixelHits;
+
+	// dxy, dz with respect to the primary vertex (not the beamspot)
+	Float_t dxy_vertex;
+	Float_t dz_vertex;
+
+	// Info for matching with reco objects
+	Float_t bestRecoMatch_eta;
+	Float_t bestRecoMatch_phi;
+	Float_t bestRecoMatch_dR;
+	Float_t bestRecoMatch_pT;
 
     // -------------------------------------------------------------
     //                       method members

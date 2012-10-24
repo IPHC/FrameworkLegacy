@@ -45,6 +45,39 @@ namespace IPHCTree
     /// to do
     Float_t deltaDistance;
 
+    // ----------- Infos used is SUSYstop selection ----------------
+
+	/// Is coming from Ecal Endcap ?
+    Bool_t isEE;
+
+	// Eta for the superCluster
+    Float_t etaSuperCluster;
+
+	Float_t hadOverEM;
+	Float_t abs_deltaPhi;
+	Float_t abs_deltaEta;
+	Float_t sigmaIetaIeta;
+	UShort_t missingHits;
+
+	// Conversion rejection info
+    Bool_t conversionRejection;
+			
+	// Isolation-related infos
+ 	Float_t Aeff;
+	Float_t chargedIso;
+	Float_t photonIso;
+	Float_t neutralIso;
+	Float_t rho;
+
+	// dxy, dz with respect to the primary vertex (not the beamspot)
+	Float_t dxy_vertex;
+	Float_t dz_vertex;
+
+	// Matching between reco and PF infos
+	Float_t bestRecoMatch_eta;
+	Float_t bestRecoMatch_phi;
+	Float_t bestRecoMatch_dR;
+	Float_t bestRecoMatch_pT;
 
   public:
     // -------------------------------------------------------------

@@ -50,6 +50,7 @@ namespace{
     // Reconstructed objects
     edm::Wrapper<IPHCTree::NTVertex>       NTVertex;
     edm::Wrapper<IPHCTree::NTTrack>        NTTrack;
+    edm::Wrapper<IPHCTree::NTPFCandidate>        NTPFCandidate;
 
     // Multiparticles
     edm::Wrapper<IPHCTree::MultiCollection<IPHCTree::NTJetMet> >   MultiNTJetMet; 
@@ -60,6 +61,7 @@ namespace{
     edm::Wrapper<IPHCTree::MultiCollection<IPHCTree::NTTau> >      MultiNTTau;
     edm::Wrapper<IPHCTree::MultiCollection<IPHCTree::NTPhoton> >   MultiNTPhoton;
     edm::Wrapper<IPHCTree::MultiCollection<IPHCTree::NTTrack> >    MultiNTTrack;
+    edm::Wrapper<IPHCTree::MultiCollection<IPHCTree::NTPFCandidate> >    MultiNTPFCandidate;
     edm::Wrapper<IPHCTree::MultiCollection<IPHCTree::NTVertex> >   MultiNTVertex;
 
     // Vector
@@ -71,6 +73,7 @@ namespace{
     edm::Wrapper<std::vector<IPHCTree::NTTau> >      VNTTau;
     edm::Wrapper<std::vector<IPHCTree::NTPhoton> >   VNTPhoton;
     edm::Wrapper<std::vector<IPHCTree::NTTrack> >    VNTTrack;
+    edm::Wrapper<std::vector<IPHCTree::NTPFCandidate> >    VNTPFCandidate;
     edm::Wrapper<std::vector<IPHCTree::NTVertex> >   VNTVertex;
 
     edm::Wrapper<std::vector<IPHCTree::NTGenParticle> >VecNTGenParticle;
@@ -88,6 +91,7 @@ namespace{
     edm::Wrapper<std::vector<std::vector<IPHCTree::NTTau> > >      VVNTTau;
     edm::Wrapper<std::vector<std::vector<IPHCTree::NTPhoton> > >   VVNTPhoton;
     edm::Wrapper<std::vector<std::vector<IPHCTree::NTTrack> > >    VVNTTrack;
+    edm::Wrapper<std::vector<std::vector<IPHCTree::NTPFCandidate> > >    VVNTPFCandidate;
     edm::Wrapper<std::vector<std::vector<IPHCTree::NTVertex> > >   VVNTVertex;
 
   }

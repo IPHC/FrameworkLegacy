@@ -14,6 +14,7 @@ void NTEvent::Reset()
   taus.Reset();           photons.Reset();
   jets.Reset();           met.Reset(); 
   tracks.Reset();         descriptor.Reset();
+  pfcandidates.Reset();
 }
 
 
@@ -39,6 +40,21 @@ void NTEvent::Dump(std::ostream & os) const
     os << "'" << *it << "'(";
     tracks.SelectLabel(*it); 
     os << tracks.size();
+    os << " items) ; ";
+  }
+  os << std::endl;
+
+  // PFCandidate summary display
+  os << " # pfcandidate collections = ";
+  pfcandidates.GetCollectionList(names);
+  if (names.empty()) os << "empty";
+  else
+  for (std::set<std::string>::const_iterator it = names.begin();
+       it != names.end(); it++)
+  {
+    os << "'" << *it << "'(";
+    pfcandidates.SelectLabel(*it); 
+    os << pfcandidates.size();
     os << " items) ; ";
   }
   os << std::endl;

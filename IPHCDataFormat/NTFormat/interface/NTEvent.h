@@ -14,6 +14,7 @@
 #include "NTJetMet.h"
 #include "NTVertex.h"
 #include "NTTrack.h"
+#include "NTPFCandidate.h"
 #include "NTTrigger.h"
 #include "NTGeneral.h"
 #include "NTMonteCarlo.h"
@@ -56,6 +57,7 @@ namespace IPHCTree
     MultiCollection<NTJet>      jets;      /// Jet collection
 
     MultiCollection<NTTrack>    tracks;    /// Track collection
+    MultiCollection<NTPFCandidate>    pfcandidates;    /// PFCandidate collection
     MultiCollection<NTVertex>   vertices;  /// Primary vertex collection
 
     KeyedCollection<Float_t>    others;    /// Additionnal variables
@@ -113,6 +115,8 @@ namespace IPHCTree
     NTTrack* NewTrack()
     { return tracks.New(); }
 
+    NTPFCandidate* NewPFCandidate()
+    { return pfcandidates.New(); }
 
     // methods to instanciate a new object
     void NewElectron (const NTElectron& electron)
@@ -132,6 +136,9 @@ namespace IPHCTree
 
     void NewTrack    (const NTTrack& track   )
     { tracks.push_back(track); }
+
+    void NewPFCandidate		(const NTPFCandidate& pfcandidate   )
+    { pfcandidates.push_back(pfcandidate); }
 
     void NewJet      (const NTJet& myjet  )
     { jets.push_back(myjet); }

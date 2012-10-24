@@ -66,7 +66,9 @@
   <class name="IPHCTree::NTTrack">
      <field name="charge" transient="true"/>
   </class>
-
+  <class name="IPHCTree::NTPFCandidate">
+     <field name="charge" transient="true"/>
+  </class>
 
   // Vectors
   <class name="std::vector<IPHCTree::NTJet>"/>
@@ -76,6 +78,7 @@
   <class name="std::vector<IPHCTree::NTTau>"/>
   <class name="std::vector<IPHCTree::NTPhoton>"/>
   <class name="std::vector<IPHCTree::NTTrack>"/>
+  <class name="std::vector<IPHCTree::NTPFCandidate>"/>
   <class name="std::vector<IPHCTree::NTVertex>"/>
   <class name="std::vector<IPHCTree::NTGenParticle>"/>
   <class name="std::vector<IPHCTree::NTGenParticle*>"/>
@@ -91,6 +94,7 @@
   <class name="std::vector<std::vector<IPHCTree::NTTau> >"/>
   <class name="std::vector<std::vector<IPHCTree::NTPhoton> >"/>
   <class name="std::vector<std::vector<IPHCTree::NTTrack> >"/>
+  <class name="std::vector<std::vector<IPHCTree::NTPFCandidate> >"/>
   <class name="std::vector<std::vector<IPHCTree::NTVertex> >"/>
 
   // MultiCollection
@@ -113,6 +117,9 @@
      <field name="current_index_" transient="true"/>
   </class>
   <class name="IPHCTree::MultiCollection<IPHCTree::NTTrack>">
+     <field name="current_index_" transient="true"/>
+  </class>
+  <class name="IPHCTree::MultiCollection<IPHCTree::NTPFCandidate>">
      <field name="current_index_" transient="true"/>
   </class>
   <class name="IPHCTree::MultiCollection<IPHCTree::NTVertex>">
