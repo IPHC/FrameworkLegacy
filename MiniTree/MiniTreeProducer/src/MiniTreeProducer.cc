@@ -34,6 +34,9 @@ MiniTreeProducer::MiniTreeProducer (const edm::ParameterSet & iConfig)
   cfg.electronHLTmatching = iConfig.getParameter<std::vector<std::string> > ("electronHLTmatching");
   cfg.electronProducer  = iConfig.getParameter<std::vector<edm::InputTag> >
                       ("electronProducer");
+  cfg.doElectronRecoMatch  = iConfig.getParameter<bool>     ("doElectronRecoMatch"); 
+  cfg.electronRecoProducer = iConfig.getParameter<std::vector<edm::InputTag> >
+                      ("electronRecoProducer");
 
   // Extract info for Photons
   cfg.doPhotons         = iConfig.getParameter<bool>     ("doPhotons");
@@ -57,6 +60,9 @@ MiniTreeProducer::MiniTreeProducer (const edm::ParameterSet & iConfig)
   cfg.muonHLTmatching   = iConfig.getParameter<std::vector<std::string> > ("muonHLTmatching");
   cfg.muonProducer      = iConfig.getParameter<std::vector<edm::InputTag> >
                       ("muonProducer");
+  cfg.doMuonRecoMatch   = iConfig.getParameter<bool>     ("doMuonRecoMatch"); 
+  cfg.muonRecoProducer  = iConfig.getParameter<std::vector<edm::InputTag> >
+                      ("muonRecoProducer");
 
   // Extract info for Taus
   cfg.doTaus            = iConfig.getParameter<bool>     ("doTaus");
@@ -75,6 +81,16 @@ MiniTreeProducer::MiniTreeProducer (const edm::ParameterSet & iConfig)
   cfg.track_cut_eta     = iConfig.getParameter<double>   ("track_cut_eta");
   cfg.trackProducer     = iConfig.getParameter<std::vector<edm::InputTag> >
                       ("trackProducer");
+
+  // Extract info for PFCandidates
+  cfg.doPFCandidates    	= iConfig.getParameter<bool>     ("doPFCandidates");
+  cfg.pfcandidate_cut_dR	= iConfig.getParameter<double>   ("pfcandidate_cut_dR");
+  cfg.pfcandidate_cut_dz  	= iConfig.getParameter<double>   ("pfcandidate_cut_dz");
+  cfg.pfcandidate_cut_minPt = iConfig.getParameter<double>   ("pfcandidate_cut_minPt");
+  cfg.pfcandidate_VertexTag	= iConfig.getParameter<std::vector<edm::InputTag> >
+                      		("pfcandidate_VertexTag");
+  cfg.pfcandidate_InputTag	= iConfig.getParameter<std::vector<edm::InputTag> >
+                      		("pfcandidate_InputTag");
 
   // Extract info for Vertices
   cfg.doVertices       = iConfig.getParameter<bool>     ("doVertices");  
@@ -293,7 +309,8 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
 		if (cfg.verbose>1) std::cout << "Filling trigger ..." << std::endl;
 
     // Getting Trigger products
-    edm::Handle< pat::TriggerEvent > triggerHandle;
+	     
+	edm::Handle< pat::TriggerEvent > triggerHandle;
     iEvent.getByLabel("patTriggerEvent", triggerHandle);
 
     // Filling Minitree if TriggerResults is available
@@ -336,7 +353,6 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
     }
   }
 
-
   // ------------------------
   //  Fill Tracks
   // ------------------------
@@ -375,6 +391,51 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
 	}
 
   // ------------------------
+  //  Fill PFCandidates
+  // ------------------------
+  
+  if (cfg.doPFCandidates)
+  {
+    if (cfg.verbose>1) std::cout << "Filling PFCandidates ..." << std::endl;
+
+    std::set<std::string> labels;
+    for (unsigned int i=0;i<cfg.pfcandidate_InputTag.size();i++)
+    {
+      labels.insert(cfg.pfcandidate_InputTag[i].label());//+":"+
+      //                    cfg.pfcandidateProducer[i].instance()+":"+
+      //                    cfg.pfcandidateProducer[i].process());
+    }
+    evt->pfcandidates.Reserve(labels);
+
+	// Loop over the different taus collection
+	for (unsigned int m=0 ; m<  cfg.pfcandidate_InputTag.size() ; m++) 
+	{
+	      	
+		evt->pfcandidates.SelectLabel(cfg.pfcandidate_InputTag[m].label()); //+":"+
+    	//                              cfg.pfcandidate_InputTag[m].instance()+":"+
+      	//                              cfg.pfcandidate_InputTag[m].process());
+
+		// Getting pfcandidates
+  		edm::Handle<reco::PFCandidateCollection> pfcandidateHandle;
+		iEvent.getByLabel(cfg.pfcandidate_InputTag[m], pfcandidateHandle);
+  
+		const reco::PFCandidateCollection* pfCandidatesProduct;
+		pfCandidatesProduct = pfcandidateHandle.product();
+
+		// Filling MiniTree if pfcandidates are available
+		if (pfcandidateHandle.isValid()) 
+        	fillPFCandidates(iEvent,iSetup,evt,pfCandidatesProduct,bs);
+		else
+		{ 
+        	ERROR("Produce") << "PFCandidate collection '" 
+                         << cfg.pfcandidate_InputTag[m] << "' is missing." << std::endl;
+		}
+	 }
+  }
+
+
+
+  // ------------------------
   //  Fill Vertices
   // ------------------------
   if (cfg.doVertices)
@@ -411,7 +472,6 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
 			}
 		}
   }
-
 
   // ------------------------
   //  Fill Photons
@@ -506,6 +566,10 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
 			edm::Handle< std::vector<pat::Electron> > elHa;
 			iEvent.getByLabel(cfg.electronProducer[m], elHa);
 
+			// Getting conversion info
+			edm::Handle< reco::ConversionCollection > hConversions;
+			iEvent.getByLabel("allConversions", hConversions);
+
       // Getting tracks if not initialized
       if (!cfg.doTracks)
       {
@@ -518,7 +582,7 @@ void MiniTreeProducer::produce(edm::Event& iEvent,
       }
 
 			// Filling MiniTree if electrons are available
-			if (elHa.isValid()) fillElectrons(iEvent,iSetup,evt,elHa,trackBuilder,genParticles,bs,vp,bField,trackHandle,patTriggerEvent);
+			if (elHa.isValid()) fillElectrons(iEvent,iSetup,evt,elHa,hConversions,trackBuilder,genParticles,bs,vp,bField,trackHandle,patTriggerEvent);
 			else
 			{ 
         ERROR("Produce") << "Electron collection '" 
@@ -913,9 +977,12 @@ void MiniTreeProducer::fillVertices(edm::Event& iEvent,
 void MiniTreeProducer::fillTracks(edm::Event& iEvent, 
                                   const edm::EventSetup& iSetup,
                                   std::auto_ptr<IPHCTree::MTEvent>& evt,
-  																const std::vector<reco::Track>* tracks,
+  								  const std::vector<reco::Track>* tracks,
                                   const reco::BeamSpot* & bs)
 {
+	
+	if (tracks == 0) return;
+
   //Loop over tracks
 	for (std::vector<reco::Track>::const_iterator
 				 it=tracks->begin(); it!=tracks->end(); it++)
@@ -943,12 +1010,143 @@ void MiniTreeProducer::fillTracks(edm::Event& iEvent,
 
 		// Charge
 		myTrack->charge = track->charge();
-
+	
 		// dxy wrt BeamSpot (if BeamSpot is available)
-    if (cfg.doBeamSpot && bs!=0)	myTrack->dxy_BS = track->dxy(bs->position());
+	    if (cfg.doBeamSpot && bs!=0)	myTrack->dxy_BS = track->dxy(bs->position());
 	}
 }
 
+
+// ----------------------------------------------------------------------------
+//
+//                    PFCandidates
+//                                     
+// ----------------------------------------------------------------------------
+
+
+void MiniTreeProducer::fillPFCandidates(edm::Event& iEvent, 
+                  const edm::EventSetup& iSetup,
+                  std::auto_ptr<IPHCTree::MTEvent>& evt,
+				  const reco::PFCandidateCollection* pfCandidates,
+                  const reco::BeamSpot* & bs)
+{
+
+
+	// From 
+	// http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/UserCode/benhoob/TrackIsolationMaker/TrackIsolationMaker.cc?view=markup
+
+	//---------------------------------
+	// get Vertex Collection
+	//---------------------------------
+	 
+	edm::Handle<reco::VertexCollection> vertex_h;
+	iEvent.getByLabel(cfg.pfcandidate_VertexTag[0], vertex_h);
+	const reco::VertexCollection *vertices = vertex_h.product();
+	
+	//-----------------------------------
+	// Find 1st good vertex
+	//-----------------------------------
+	  
+	reco::VertexCollection::const_iterator firstGoodVertex = vertices->end();
+	  
+	int firstGoodVertexIdx = 0;
+	  
+	for (reco::VertexCollection::const_iterator vtx = vertices->begin(); vtx != vertices->end(); ++vtx, ++firstGoodVertexIdx) 
+	{
+		if (!vtx->isFake() && vtx->ndof()>=4. && vtx->position().Rho()<=2.0 && fabs(vtx->position().Z())<=24.0) 
+		{
+	  		firstGoodVertex = vtx;
+	        break;
+	    }
+	}
+	
+	//-------------------------------------------------------------------------------------------------
+	// loop over PFCandidates and calculate the trackIsolation and dz w.r.t. 1st good PV for each one
+	//-------------------------------------------------------------------------------------------------
+	
+	for( reco::PFCandidateCollection::const_iterator pf_it = pfCandidates->begin(); pf_it != pfCandidates->end(); pf_it++ ) 
+	{
+
+		//-------------------------------------------------------------------------------------
+		// only store PFCandidate values if pt > minPt
+		// also skip if we can't get the track
+		//-------------------------------------------------------------------------------------
+		
+		if ( pf_it->pt() < cfg.pfcandidate_cut_minPt ) 	continue;
+		IPHCTree::NTPFCandidate* myPFCandidate = evt->NewPFCandidate();
+
+		if ( !pf_it->trackRef().isNonnull() ) 	continue; 
+		const reco::Track* track = (pf_it->trackRef()).get();
+
+		//-------------------------------------------------------------------------------------
+		// Fill track of PFCandidate info
+		//-------------------------------------------------------------------------------------
+
+	    // Set 4-vector momentum
+		myPFCandidate->p4.SetPxPyPzE( track->px(),
+                            		  track->py(),
+                          			  track->pz(),
+                          			  track->p()  	);
+		// Components 
+		myPFCandidate->chi2        = track->chi2()/track->ndof();
+		myPFCandidate->nHitTracker = track->hitPattern().numberOfValidHits();
+		myPFCandidate->dz          = track->dz();
+		myPFCandidate->dzError     = track->dzError();
+		myPFCandidate->dxy         = track->dxy();
+		myPFCandidate->dxyError    = track->dxyError();
+
+		// Charge
+		myPFCandidate->charge = track->charge();
+	
+		// dxy wrt BeamSpot (if BeamSpot is available)
+	    if (cfg.doBeamSpot && bs!=0)	myPFCandidate->dxy_BS = track->dxy(bs->position());
+	
+		//-------------------------------------------------------------------------------------
+		// if there's no good vertex in the event, we can't calculate anything so store 999999
+		//-------------------------------------------------------------------------------------
+																	
+		if ( firstGoodVertex==vertices->end() ) continue;
+		if( pf_it->charge() == 0 ) continue;
+		
+		//----------------------------------------------------------------------------
+		// now loop over other PFCandidates in the event to calculate trackIsolation
+		//----------------------------------------------------------------------------
+		
+		float trkiso = 0.0;
+		
+		for( reco::PFCandidateCollection::const_iterator pf_other = pfCandidates->begin(); pf_other != pfCandidates->end(); pf_other++ )
+		{
+		
+			// don't count the PFCandidate in its own isolation sum
+			if( pf_it == pf_other       ) continue;	
+			// require the PFCandidate to be charged
+			if( pf_other->charge() == 0 ) continue;
+			// cut on dR between the PFCandidates
+			float dR = deltaR(pf_it->eta(), pf_it->phi(), pf_other->eta(), pf_other->phi());
+			if( dR > cfg.pfcandidate_cut_dR ) continue;
+			// cut on the PFCandidate dz
+			float dz_other = 100;
+			if ( pf_other->trackRef().isNonnull()) 
+			{
+				dz_other = pf_other->trackRef()->dz( firstGoodVertex->position() );
+			}
+			if( fabs(dz_other) > cfg.pfcandidate_cut_dz ) continue;
+				trkiso += pf_other->pt();
+		}
+		 
+		// calculate the dz of this candidate
+		float dz_it = 100; 
+		if ( pf_it->trackRef().isNonnull())
+		{
+			dz_it = pf_it->trackRef()->dz( firstGoodVertex->position() );
+		}
+	
+		// Store dz and isolation
+		myPFCandidate->dz_firstGoodVertex = dz_it;
+		myPFCandidate->trackIso = trkiso;
+		
+	}
+}
 
 // ----------------------------------------------------------------------------
 //                          _              ___                _          
@@ -1308,6 +1506,7 @@ void MiniTreeProducer::fillElectrons(edm::Event& iEvent,
                  const edm::EventSetup& iSetup,
                  std::auto_ptr<IPHCTree::MTEvent>& evt,
                  const edm::Handle< std::vector<pat::Electron> >& electrons,
+                 const edm::Handle< reco::ConversionCollection >& hConversions,
                  const TransientTrackBuilder* trackBuilder,
                  const reco::GenParticleCollection* genParticles,
                  const reco::BeamSpot* & bs,
@@ -1353,7 +1552,89 @@ void MiniTreeProducer::fillElectrons(edm::Event& iEvent,
     // is GSF electron ?
     myelec->isGsfElectron = patelec->gsfTrack().isNonnull();
 
-    // ------------------- Track info -----------------------
+
+
+	// --------- [Begin] Infos for SUSYstop analysis ---------
+	
+	// Is electron from endcap ?
+    myelec->isEE = patelec->isEE();
+
+	// Eta for the superCluster
+    myelec->etaSuperCluster = patelec->superCluster()->eta();
+
+	myelec->hadOverEM = patelec->hadronicOverEm();
+	myelec->abs_deltaPhi = fabs(patelec->deltaPhiSuperClusterTrackAtVtx());
+	myelec->abs_deltaEta = abs(patelec->deltaEtaSuperClusterTrackAtVtx());
+	myelec->sigmaIetaIeta = patelec->scSigmaIEtaIEta();
+
+	// Conversion rejection infos
+    myelec->conversionRejection = ConversionTools::hasMatchedConversion(dynamic_cast<const reco::GsfElectron&>(*(patelec->originalObjectRef().get())),hConversions,(*bs).position());
+
+	// Calculate Aeff corrected isolation values, and charged/photon/neutral isolation
+			
+ 	myelec->Aeff = ElectronEffectiveArea::GetElectronEffectiveArea(ElectronEffectiveArea::kEleGammaAndNeutralHadronIso03, fabs(patelec->superCluster()->eta()),ElectronEffectiveArea::kEleEAFall11MC);
+
+	IsoDepositVals electronIsoValPFId(3);
+	iEvent.getByLabel("elPFIsoValueCharged03PFIdPFIso", electronIsoValPFId[0]);
+	iEvent.getByLabel("elPFIsoValueGamma03PFIdPFIso", electronIsoValPFId[1]);
+	iEvent.getByLabel("elPFIsoValueNeutral03PFIdPFIso", electronIsoValPFId[2]);
+
+	edm::Ptr< reco::GsfElectron > gsfel = (edm::Ptr< reco::GsfElectron >) patelec->originalObjectRef();
+	myelec->chargedIso = (*(electronIsoValPFId[0]))[gsfel];
+	myelec->photonIso  = (*(electronIsoValPFId[1]))[gsfel];
+	myelec->neutralIso = (*(electronIsoValPFId[2]))[gsfel];
+	myelec->rho = patelec->momentum().Rho();
+
+	// Check gsfTrack isn't null before filling variables
+    if (patelec->gsfTrack().isNonnull())
+	{
+		myelec->missingHits = patelec->gsfTrack()->trackerExpectedHitsInner().numberOfHits();
+		if (cfg.doVertices && vp!=0)
+		{
+			myelec->dxy_vertex = fabs(patelec->gsfTrack()->dxy((*vp).position() ));
+			myelec->dz_vertex = fabs(patelec->gsfTrack()->dz((*vp).position() ));
+		}
+
+	}
+
+	// Matching between reco and PF infos
+	
+	if (cfg.doElectronRecoMatch)
+	{
+		// Getting reco electrons
+		edm::Handle< std::vector<pat::Electron> > recoElectrons;
+		iEvent.getByLabel(cfg.electronRecoProducer[0], recoElectrons);
+
+		const pat::Electron* bestRecoMatch;
+		float dR_bestRecoMatch = 999.0;
+
+		// Find best recoElectron match for current electron
+		for (vector < pat::Electron >::const_iterator
+					 it_reco = recoElectrons->begin(); it_reco != recoElectrons->end(); it_reco++) 
+		{
+			const pat::Electron * recoElec = &*it_reco;
+
+			float dR_test = deltaR(patelec->eta(), patelec->phi(), recoElec->eta(), recoElec->phi());
+
+			if (dR_test < dR_bestRecoMatch)
+			{
+				dR_bestRecoMatch = dR_test;
+				bestRecoMatch = recoElec;
+			}
+		}
+
+		// Save infos about it
+		myelec->bestRecoMatch_eta = bestRecoMatch->eta();
+		myelec->bestRecoMatch_phi = bestRecoMatch->phi();
+		myelec->bestRecoMatch_dR = dR_bestRecoMatch;
+		myelec->bestRecoMatch_pT = bestRecoMatch->pt();
+	}
+
+	// --------- [End] Infos for SUSYstop analysis ----------
+
+
+
+	// ------------------- Track info -----------------------
 
     if (patelec->gsfTrack().isNonnull())
 		{
@@ -1548,6 +1829,7 @@ void MiniTreeProducer::fillMuons(edm::Event& iEvent,
 	{
 		const pat::Muon * patmuon = &*it;
 
+
     // --------------------- Preselection -----------------------
 
 		// Applying a preselectin on muons based on lep pT, eta, iso
@@ -1614,6 +1896,72 @@ void MiniTreeProducer::fillMuons(edm::Event& iEvent,
     // Saving ids
     mymuon->ID.Fill(ids);
 
+	// --------- [Begin] Infos for SUSYstop analysis ---------
+
+    mymuon->isPFMuon = patmuon->isPFMuon();
+
+	mymuon->pfIsoCharged = patmuon->pfIsolationR03().sumChargedHadronPt; 				
+	mymuon->pfIsoNeutral = patmuon->pfIsolationR03().sumNeutralHadronEt;
+	mymuon->pfIsoPhoton = patmuon->pfIsolationR03().sumPhotonEt;
+	mymuon->pfIsoPU = patmuon->pfIsolationR03().sumPUPt;	
+
+	mymuon->numMatchedStations = patmuon->numberOfMatchedStations();
+	
+	mymuon->numTrackerLayersWithMeasurement = 0.0;
+    if (patmuon->track().isNonnull())
+	{
+		mymuon->numTrackerLayersWithMeasurement = patmuon->track()->hitPattern().trackerLayersWithMeasurement();
+	}
+
+	// Check globalTrack isn't null before filling variables
+    if (patmuon->globalTrack().isNonnull())
+	{
+		mymuon->nValMuonHits = patmuon->globalTrack()->hitPattern().numberOfValidMuonHits();
+	}
+
+	// Check innerTrack isn't null before filling variables
+	if (patmuon->innerTrack().isNonnull())
+	{
+		mymuon->pixelHits = patmuon->innerTrack()->hitPattern().numberOfValidPixelHits();
+
+		// If primary vertex is available
+      	if (cfg.doVertices && vp!=0)
+		{
+			mymuon->dxy_vertex = fabs(patmuon->innerTrack()->dxy((*vp).position()));
+			mymuon->dz_vertex = fabs(patmuon->innerTrack()->dz((*vp).position()));
+		}
+	}
+
+	// Getting reco muons
+	edm::Handle< std::vector<pat::Muon> > recoMuons;
+	iEvent.getByLabel(cfg.muonRecoProducer[0], recoMuons);
+
+	const pat::Muon* bestRecoMatch;
+	float dR_bestRecoMatch = 999.0;
+
+	// Find best recoMuon match for current muon
+	for (vector < pat::Muon >::const_iterator
+				 it_reco = recoMuons->begin(); it_reco != recoMuons->end(); it_reco++) 
+	{
+		const pat::Muon* recoMuon = &*it_reco;
+
+		float dR_test = deltaR(patmuon->eta(), patmuon->phi(), recoMuon->eta(), recoMuon->phi());
+
+		if (dR_test < dR_bestRecoMatch)
+		{
+			dR_bestRecoMatch = dR_test;
+			bestRecoMatch = recoMuon;
+		}
+	}
+
+	// Save infos about it
+	mymuon->bestRecoMatch_eta = bestRecoMatch->eta();
+	mymuon->bestRecoMatch_phi = bestRecoMatch->phi();
+	mymuon->bestRecoMatch_dR = dR_bestRecoMatch;
+	mymuon->bestRecoMatch_pT = bestRecoMatch->pt();
+
+	// ---------- [End] Infos for SUSYstop analysis ----------
+
     // --------------------- TrackInfo -----------------------
 
 		// Global Track
@@ -1631,7 +1979,9 @@ void MiniTreeProducer::fillMuons(edm::Event& iEvent,
 		}
 
     // Get all information from track
-		mymuon->TrackMu = *(patmuon->track());
+
+    	if (patmuon->track().isNonnull())
+			mymuon->TrackMu = *(patmuon->track());
 		if (patmuon->isStandAloneMuon())
          mymuon->StaMu = *(patmuon->standAloneMuon());
 
@@ -1684,6 +2034,7 @@ void MiniTreeProducer::fillMuons(edm::Event& iEvent,
       mymuon->p4HLT.Fill(matched);
     }
 
+		
     // --------------------- Monte Carlo Info -----------------------
     if (!cfg.isData)
     {
@@ -1711,6 +2062,7 @@ void MiniTreeProducer::fillMuons(edm::Event& iEvent,
         mymuon->GenGrandMother  = gengrandmother;
         mymuon->GenGGrandMother = genggrandmother;
       }
+		
     }
   }
 }
@@ -1954,6 +2306,7 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
                  const std::pair<float,float>& SumMuMetCorr,
                  const pat::TriggerEvent* patTriggerEvent)
 {
+
   if( met ){
 
   IPHCTree::MTMET* mymet = evt->NewMet();
@@ -2059,6 +2412,45 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
   }
 
 
+	/*
+  			// ------------------------------------------------
+			//           MET filters (added by Alex)
+		  	// ------------------------------------------------
+
+			// ###########################
+			// HBHENoiseFilter / Anomalous HCAL noise
+			// From TWiki / HcalNoiseInfoLibrary #How_do_I_reject_events_with_anom :
+			// ###########################
+
+			//In your analyzer: 
+			
+			edm::InputTag hcalFilterTag_;
+			
+			hcalFilterTag_    = iConfig.getParameter < edm::InputTag > ("hcalFilterTag");
+			Handle< bool > hcalNoiseFilterHandle;
+			iEvent.getByLabel(hcalFilterTag_, hcalNoiseFilterHandle);
+
+			// Fixme : add storage for the bool inside NTMET
+			Bool_t hcalNoiseFilter = (Bool_t)(*hcalNoiseFilterHandle);
+
+			// ###########################
+			// CSCHaloFilter / BeamHaloId
+			// From TWiki / BeamHaloId
+			// ###########################
+
+			edm::Handle<BeamHaloSummary> TheBeamHaloSummary;
+			iEvent.getByLabel("BeamHaloSummary",TheBeamHaloSummary);
+
+			// Fixme : add storage for the bool inside NTMET
+			const BeamHaloSummary TheSummary = (*TheBeamHaloSummary.product() );
+			if( TheSummary.CSCTightHaloId())
+				  cout << "This event has been identified as a halo event with tight CSC-based Halo Id" << endl;
+			if( TheSummary.CSCLooseHaloId())
+				  cout << "This event has been identified as a halo event with loose CSC-based Halo Id" << endl;
+	*/
+
+
+
   // ---------------------------------------------------------------
   //                           JET
   // ---------------------------------------------------------------
@@ -2136,6 +2528,7 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
 		myjet->sumPtTracks = 0.;
 		for(unsigned int tr=0;tr<patJet->associatedTracks().size();tr++)
        myjet->sumPtTracks+=patJet->associatedTracks()[tr]->pt();
+
 
     // ##################### ONLY FOR RECO FORMAT - BEGIN ##########################
 
@@ -2221,7 +2614,6 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
     // ##################### ONLY FOR RECO FORMAT - END ############################
 
     // --------------------- Monte Carlo Info -----------------------
-
     // Fill MC 4-vector momentum
 		if (!cfg.isData)
 		{
@@ -2239,7 +2631,6 @@ void MiniTreeProducer::fillJetMET(edm::Event& iEvent,
 		}
 
     // --------------------- B tagging -----------------------
-
     std::map<std::string,Float_t> ids;
     for (unsigned int i=0;i<cfg.jetBTagList.size();i++)
     {

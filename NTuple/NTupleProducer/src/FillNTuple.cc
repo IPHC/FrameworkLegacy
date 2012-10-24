@@ -7,7 +7,7 @@
 bool FillNTuple::Initialize(const edm::ParameterSet & iConfig)
 {
   // Read configuration file 
-  verbose         = iConfig.getParameter <unsigned int>("verbose");
+//  verbose         = iConfig.getParameter <unsigned int>("verbose");
 
   // Trigger
   skimTrigger = iConfig.getParameter<bool>("skimTrigger");
@@ -62,6 +62,15 @@ bool FillNTuple::Initialize(const edm::ParameterSet & iConfig)
                                       ("track_collectionList");
   track_pt = iConfig.getParameter<double>("track_pt");
   track_eta = iConfig.getParameter<double>("track_eta");
+
+  // Track
+  skimPFCandidates = iConfig.getParameter<bool>("skimPFCandidates");
+  pfcandidate_keepAllCollections = iConfig.getParameter<bool>
+                                      ("pfcandidate_keepAllCollections");
+  pfcandidate_collectionList = iConfig.getParameter<std::vector<std::string> >
+                                      ("pfcandidate_collectionList");
+  pfcandidate_pt = iConfig.getParameter<double>("pfcandidate_pt");
+  pfcandidate_eta = iConfig.getParameter<double>("pfcandidate_eta");
 
   // Vertices
   skimVertices = iConfig.getParameter<bool>("skimVertices");
@@ -429,7 +438,47 @@ void FillNTuple::Fill(const IPHCTree::MTEvent* minitree, IPHCTree::NTEvent* ntup
     }
   }
 
-  
+  // -------------------------------------
+  // PFCandidates
+  // -------------------------------------
+  if (!skimPFCandidates) {if (verbose > 0) std::cout << "Filling PFCandidates (no skim) ..." << std::endl;}
+  else {if (verbose > 0) std::cout << "Filling PFCandidates (skim) ..." << std::endl;}
+
+  // Get list of PFCandidate collection names
+  labels.clear();
+  if (!skimPFCandidates || pfcandidate_keepAllCollections)
+  {
+    minitree->pfcandidates.GetCollectionList(labels);
+  }
+  else
+  {
+    for (unsigned int i=0;i<pfcandidate_collectionList.size();i++)
+    {
+      if (pfcandidate_collectionList[i]=="") continue;
+      if (minitree->pfcandidates.DoYouKnowCollection
+             (pfcandidate_collectionList[i]))
+                   labels.insert(pfcandidate_collectionList[i]);
+    }
+  }
+
+  // Reseve collection names for ntuple
+  ntuple->pfcandidates.Reserve(labels);
+
+  // Fill pfcandidates
+  for (std::set<std::string>::const_iterator theLabel = labels.begin();
+       theLabel != labels.end(); theLabel++)
+  {
+    ntuple->pfcandidates.SelectLabel(*theLabel);
+    minitree->pfcandidates.SelectLabel(*theLabel);
+    for (unsigned int i=0; i<minitree->pfcandidates.size(); i++) 
+    {
+      if (!skimPFCandidates || 
+          (minitree->pfcandidates[i].p4.Pt() > pfcandidate_pt && 
+           fabs(minitree->pfcandidates[i].p4.Eta()) < pfcandidate_eta) )
+        ntuple -> NewPFCandidate(dynamic_cast<const IPHCTree::NTPFCandidate&>(minitree->pfcandidates[i]));
+    }
+  }
+
   // -------------------------------------
   // Vertices
   // -------------------------------------

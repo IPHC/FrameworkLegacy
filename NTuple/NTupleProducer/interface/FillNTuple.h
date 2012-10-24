@@ -134,6 +134,13 @@ public:
   double                    track_pt;
   double                    track_eta;
 
+  // PFCandidates
+  bool						skimPFCandidates;
+  bool						pfcandidate_keepAllCollections;
+  std::vector<std::string>  pfcandidate_collectionList;
+  double					pfcandidate_pt;
+  double					pfcandidate_eta;
+
   // Vertices
   bool                     skimVertices;
   bool                     vertex_keepAllCollections;

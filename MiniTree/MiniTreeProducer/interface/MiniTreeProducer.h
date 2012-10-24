@@ -14,7 +14,7 @@
 #include <SimDataFormats/GeneratorProducts/interface/PdfInfo.h>
 #include <SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h>
 #include <RecoEgamma/EgammaTools/interface/ConversionFinder.h>
- 
+
 #include "PhysicsTools/PatUtils/interface/TriggerHelper.h"
 
 //For electron-conversion
@@ -28,6 +28,11 @@
 #include "DataFormats/TrackReco/interface/TrackFwd.h"
 #include "DataFormats/Scalers/interface/DcsStatus.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
+
+#include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
+#include "EGamma/EGammaAnalysisTools/interface/ElectronEffectiveArea.h"
+
+typedef std::vector< edm::Handle< edm::ValueMap<double> > > IsoDepositVals;
 
 // Add System header
 #include <ctime>
@@ -55,7 +60,7 @@ typedef math::XYZPoint Point;
 //
 // Original Author:  Jeremy ANDREA
 //         Created:  Sun Nov  1 21:30:20 CET 2009
-// $Id: MiniTreeProducer.h,v 1.4 2012/02/16 14:47:20 econte Exp $
+// $Id: MiniTreeProducer.h,v 1.5 2012/10/18 17:16:00 jandrea Exp $
 //
 //
 
@@ -212,7 +217,12 @@ class MiniTreeProducer : public edm::EDProducer
   void fillTracks(edm::Event& iEvent, 
                   const edm::EventSetup& iSetup,
                   std::auto_ptr<IPHCTree::MTEvent>& evt,
-  	           		const std::vector<reco::Track>* tracks,
+  	              const std::vector<reco::Track>* tracks,
+                  const reco::BeamSpot* & bs);
+  void fillPFCandidates(edm::Event& iEvent, 
+                  const edm::EventSetup& iSetup,
+                  std::auto_ptr<IPHCTree::MTEvent>& evt,
+				  const reco::PFCandidateCollection* pfCandidates,
                   const reco::BeamSpot* & bs);
   void fillPhotons(edm::Event& iEvent, 
                    const edm::EventSetup& iSetup,
@@ -232,6 +242,7 @@ class MiniTreeProducer : public edm::EDProducer
                  const edm::EventSetup& iSetup,
                  std::auto_ptr<IPHCTree::MTEvent>& evt,
                  const edm::Handle< std::vector<pat::Electron> >& electrons,
+                 const edm::Handle< reco::ConversionCollection >& hConversions,
                  const TransientTrackBuilder* trackBuilder,
                  const reco::GenParticleCollection* genParticles,
                  const reco::BeamSpot* & bs,

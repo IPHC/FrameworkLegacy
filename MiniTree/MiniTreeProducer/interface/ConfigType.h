@@ -20,24 +20,26 @@ struct ConfigType
 
   // Extract info for Electrons
   bool          doElectrons;
-  double	      electron_cut_pt;
-  double	      electron_cut_eta;
+  double	    electron_cut_pt;
+  double	    electron_cut_eta;
   bool          electron_saveAllID;
   std::vector<std::string> electronHLTmatching;
   std::vector<std::string> electron_IDlist;
   std::vector<edm::InputTag> electronProducer;
+  bool 		      doElectronRecoMatch;
+  std::vector<edm::InputTag> electronRecoProducer;
 
   // Extract info for Photons
   bool 	       	doPhotons;
-  double	      photon_cut_pt;
-  double	      photon_cut_eta;
+  double	    photon_cut_pt;
+  double	    photon_cut_eta;
   std::vector<std::string> photonHLTmatching;
   std::vector<edm::InputTag> photonProducer;
 
   // Extract info for Muons
-  bool 		      doMuons;
+  bool 		    doMuons;
   double        muon_cut_pt;
-  double 	      muon_cut_eta;
+  double 	    muon_cut_eta;
   bool          muon_cut_sta;
   bool          muon_cut_trk;
   bool          muon_cut_glb;
@@ -45,11 +47,13 @@ struct ConfigType
   std::vector<std::string> muonHLTmatching;
   std::vector<std::string> muon_IDlist;
   std::vector<edm::InputTag>  muonProducer;
+  bool 		      doMuonRecoMatch;
+  std::vector<edm::InputTag>  muonRecoProducer;
 
   // Extract info for Taus
-  bool     		  doTaus;
+  bool     	    doTaus;
   double        tau_cut_pt;
-  double 	      tau_cut_eta;
+  double        tau_cut_eta;
   bool          tau_saveAllID;
   std::vector<std::string> tauHLTmatching;
   std::vector<std::string> tau_IDlist;
@@ -60,6 +64,14 @@ struct ConfigType
   double	      track_cut_pt;
   double	      track_cut_eta;
   std::vector<edm::InputTag>      trackProducer; 
+
+  // Extract info for PFCandidates
+  bool 							doPFCandidates;
+  double 						pfcandidate_cut_dR;
+  double 						pfcandidate_cut_dz;
+  double 						pfcandidate_cut_minPt;
+  std::vector<edm::InputTag> 	pfcandidate_VertexTag;
+  std::vector<edm::InputTag> 	pfcandidate_InputTag;
 
   // Extract info for Vertices
   bool          doVertices;
