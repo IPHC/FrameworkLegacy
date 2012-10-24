@@ -34,6 +34,8 @@ MiniTreeProducer::MiniTreeProducer (const edm::ParameterSet & iConfig)
   cfg.electronHLTmatching = iConfig.getParameter<std::vector<std::string> > ("electronHLTmatching");
   cfg.electronProducer  = iConfig.getParameter<std::vector<edm::InputTag> >
                       ("electronProducer");
+  
+  cfg.doElectronRhoCorrIso = iConfig.getParameter<bool>     ("doElectronRhoCorrIso"); 
   cfg.doElectronRecoMatch  = iConfig.getParameter<bool>     ("doElectronRecoMatch"); 
   cfg.electronRecoProducer = iConfig.getParameter<std::vector<edm::InputTag> >
                       ("electronRecoProducer");
@@ -1570,20 +1572,23 @@ void MiniTreeProducer::fillElectrons(edm::Event& iEvent,
 	// Conversion rejection infos
     myelec->conversionRejection = ConversionTools::hasMatchedConversion(dynamic_cast<const reco::GsfElectron&>(*(patelec->originalObjectRef().get())),hConversions,(*bs).position());
 
-	// Calculate Aeff corrected isolation values, and charged/photon/neutral isolation
-			
- 	myelec->Aeff = ElectronEffectiveArea::GetElectronEffectiveArea(ElectronEffectiveArea::kEleGammaAndNeutralHadronIso03, fabs(patelec->superCluster()->eta()),ElectronEffectiveArea::kEleEAFall11MC);
+    if (cfg.doElectronRhoCorrIso)
+	{
+		// Calculate Aeff corrected isolation values, and charged/photon/neutral isolation
+				
+		myelec->Aeff = ElectronEffectiveArea::GetElectronEffectiveArea(ElectronEffectiveArea::kEleGammaAndNeutralHadronIso03, fabs(patelec->superCluster()->eta()),ElectronEffectiveArea::kEleEAFall11MC);
 
-	IsoDepositVals electronIsoValPFId(3);
-	iEvent.getByLabel("elPFIsoValueCharged03PFIdPFIso", electronIsoValPFId[0]);
-	iEvent.getByLabel("elPFIsoValueGamma03PFIdPFIso", electronIsoValPFId[1]);
-	iEvent.getByLabel("elPFIsoValueNeutral03PFIdPFIso", electronIsoValPFId[2]);
+		IsoDepositVals electronIsoValPFId(3);
+		iEvent.getByLabel("elPFIsoValueCharged03PFIdPFIso", electronIsoValPFId[0]);
+		iEvent.getByLabel("elPFIsoValueGamma03PFIdPFIso", electronIsoValPFId[1]);
+		iEvent.getByLabel("elPFIsoValueNeutral03PFIdPFIso", electronIsoValPFId[2]);
 
-	edm::Ptr< reco::GsfElectron > gsfel = (edm::Ptr< reco::GsfElectron >) patelec->originalObjectRef();
-	myelec->chargedIso = (*(electronIsoValPFId[0]))[gsfel];
-	myelec->photonIso  = (*(electronIsoValPFId[1]))[gsfel];
-	myelec->neutralIso = (*(electronIsoValPFId[2]))[gsfel];
-	myelec->rho = patelec->momentum().Rho();
+		edm::Ptr< reco::GsfElectron > gsfel = (edm::Ptr< reco::GsfElectron >) patelec->originalObjectRef();
+		myelec->chargedIso = (*(electronIsoValPFId[0]))[gsfel];
+		myelec->photonIso  = (*(electronIsoValPFId[1]))[gsfel];
+		myelec->neutralIso = (*(electronIsoValPFId[2]))[gsfel];
+		myelec->rho = patelec->momentum().Rho();
+	}
 
 	// Check gsfTrack isn't null before filling variables
     if (patelec->gsfTrack().isNonnull())
@@ -1932,33 +1937,37 @@ void MiniTreeProducer::fillMuons(edm::Event& iEvent,
 		}
 	}
 
-	// Getting reco muons
-	edm::Handle< std::vector<pat::Muon> > recoMuons;
-	iEvent.getByLabel(cfg.muonRecoProducer[0], recoMuons);
-
-	const pat::Muon* bestRecoMatch;
-	float dR_bestRecoMatch = 999.0;
-
-	// Find best recoMuon match for current muon
-	for (vector < pat::Muon >::const_iterator
-				 it_reco = recoMuons->begin(); it_reco != recoMuons->end(); it_reco++) 
+	// Matching between reco and PF infos
+	if (cfg.doMuonRecoMatch)
 	{
-		const pat::Muon* recoMuon = &*it_reco;
+		// Getting reco muons
+		edm::Handle< std::vector<pat::Muon> > recoMuons;
+		iEvent.getByLabel(cfg.muonRecoProducer[0], recoMuons);
 
-		float dR_test = deltaR(patmuon->eta(), patmuon->phi(), recoMuon->eta(), recoMuon->phi());
+		const pat::Muon* bestRecoMatch;
+		float dR_bestRecoMatch = 999.0;
 
-		if (dR_test < dR_bestRecoMatch)
+		// Find best recoMuon match for current muon
+		for (vector < pat::Muon >::const_iterator
+					 it_reco = recoMuons->begin(); it_reco != recoMuons->end(); it_reco++) 
 		{
-			dR_bestRecoMatch = dR_test;
-			bestRecoMatch = recoMuon;
-		}
-	}
+			const pat::Muon* recoMuon = &*it_reco;
 
-	// Save infos about it
-	mymuon->bestRecoMatch_eta = bestRecoMatch->eta();
-	mymuon->bestRecoMatch_phi = bestRecoMatch->phi();
-	mymuon->bestRecoMatch_dR = dR_bestRecoMatch;
-	mymuon->bestRecoMatch_pT = bestRecoMatch->pt();
+			float dR_test = deltaR(patmuon->eta(), patmuon->phi(), recoMuon->eta(), recoMuon->phi());
+
+			if (dR_test < dR_bestRecoMatch)
+			{
+				dR_bestRecoMatch = dR_test;
+				bestRecoMatch = recoMuon;
+			}
+		}
+
+		// Save infos about it
+		mymuon->bestRecoMatch_eta = bestRecoMatch->eta();
+		mymuon->bestRecoMatch_phi = bestRecoMatch->phi();
+		mymuon->bestRecoMatch_dR = dR_bestRecoMatch;
+		mymuon->bestRecoMatch_pT = bestRecoMatch->pt();
+	}
 
 	// ---------- [End] Infos for SUSYstop analysis ----------
 

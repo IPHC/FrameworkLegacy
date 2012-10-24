@@ -26,7 +26,8 @@ struct ConfigType
   std::vector<std::string> electronHLTmatching;
   std::vector<std::string> electron_IDlist;
   std::vector<edm::InputTag> electronProducer;
-  bool 		      doElectronRecoMatch;
+  bool          doElectronRhoCorrIso;
+  bool 		    doElectronRecoMatch;
   std::vector<edm::InputTag> electronRecoProducer;
 
   // Extract info for Photons
