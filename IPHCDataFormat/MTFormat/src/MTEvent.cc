@@ -16,7 +16,7 @@ void MTEvent::Reset()
   jets.Reset();           tracks.Reset();
   vertices.Reset();       beamSpot.Reset();
   others.Reset();         met.Reset();
-  descriptor.Reset();
+  pfcandidates.Reset();    descriptor.Reset();
 }
 
 
@@ -33,6 +33,7 @@ void MTEvent::Dump(std::ostream & os) const
   jets.Dump(os);         tracks.Dump(os);
   vertices.Dump(os);       beamSpot.Dump(os);
   others.Dump(os);         met.Dump(os);
+  pfcandidates.Dump(os);
 }
 
 

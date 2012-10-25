@@ -25,6 +25,7 @@
 #include "MTTrigger.h"
 #include "MTGeneral.h"
 #include "MTEventDescriptor.h"
+#include "MTPFCandidate.h"
 
 
 namespace IPHCTree
@@ -49,18 +50,19 @@ namespace IPHCTree
     MTMonteCarlo mc;      /// Monte Carlo information
     MTPileUp     pileup;  /// Pile-Up information
 
-    MultiCollection<MTElectron> electrons; /// Electron collection
-    MultiCollection<MTMuon>     muons;     /// Muon collection
-    MultiCollection<MTTau>      taus;      /// Tau collection
-    MultiCollection<MTPhoton>   photons;	 /// Photon collection
-    MultiCollection<MTMET>      met;       /// Met collection (only one)
-    MultiCollection<MTJet>      jets;      /// Jet collection
+    MultiCollection<MTElectron> 	electrons; 		/// Electron collection
+    MultiCollection<MTMuon>     	muons;     		/// Muon collection
+    MultiCollection<MTTau>      	taus;      		/// Tau collection
+    MultiCollection<MTPhoton>   	photons;	 	/// Photon collection
+    MultiCollection<MTMET>      	met;       		/// Met collection (only one)
+    MultiCollection<MTJet>     		jets;      		/// Jet collection
 
-    MultiCollection<NTTrack>    tracks;    /// Track collection
-    MultiCollection<MTVertex>   vertices;  /// Primary vertex collection
-    MTBeamSpot                  beamSpot;  /// Beam Spot
+    MultiCollection<NTTrack>    	tracks;    		/// Track collection
+    MultiCollection<NTPFCandidate>	pfcandidates;	/// PFCandidate collection
+    MultiCollection<MTVertex>   	vertices;  		/// Primary vertex collection
+    MTBeamSpot                  	beamSpot;  		/// Beam Spot
 
-    KeyedCollection<Float_t>    others;    /// Additionnal variables
+    KeyedCollection<Float_t>    others;    			/// Additionnal variables
 
   protected :
 
@@ -115,6 +117,9 @@ namespace IPHCTree
     NTTrack* NewTrack()
     { return tracks.New(); }
 
+    NTPFCandidate* NewPFCandidate()
+    { return pfcandidates.New(); }
+
     /// methods to instanciate a new object
     void NewElectron (const MTElectron& electron)
     { electrons.push_back(electron); }
@@ -133,6 +138,9 @@ namespace IPHCTree
 
     void NewTrack    (const MTTrack& track   )
     { tracks.push_back(track); }
+
+    void NewPFCandidate (const MTPFCandidate& pfcandidate   )
+    { pfcandidates.push_back(pfcandidate); }
 
     void NewJet      (const MTJet& myjet  )
     { jets.push_back(myjet); }
