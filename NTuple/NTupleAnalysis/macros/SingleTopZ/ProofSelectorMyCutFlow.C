@@ -677,13 +677,24 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   
   if (IReweight ) {
     
-    string mcfile(getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PU3DMC_Fall11_JLA.root"));
+    string mcfile;
+    if( datasetName == "FCNCkut" ) // FastSim, in-time PU only
+      mcfile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUMC_InTime_Fall11.root");
+    else
+      mcfile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PU3DMC_Fall11_JLA.root");
     fexists(mcfile, true);
 
     string datafile;
-    if( !IReweight_puDown && !IReweight_puUp ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_68mb.root");
-    if( IReweight_puDown ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_64.6mb.root");
-    if( IReweight_puUp ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_71.4mb.root");
+    if( datasetName == "FCNCkut" ) {
+      if( !IReweight_puDown && !IReweight_puUp ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_observed_68mb.root");
+      if( IReweight_puDown ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_observed_64.6mb.root");
+      if( IReweight_puUp ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_observed_71.4mb.root");
+    }
+    else {
+      if( !IReweight_puDown && !IReweight_puUp ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_68mb.root");
+      if( IReweight_puDown ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_64.6mb.root");
+      if( IReweight_puUp ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_71.4mb.root");
+    }
     fexists(datafile, true);
    
     LumiWeights = new reweight::LumiReWeighting(mcfile, datafile, "histoMCPU", "pileup" );
@@ -826,15 +837,10 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
       
       if(IReweight ){
 	
-	
-	if(datasetName != "DYToLL_M10-50" && datasetName != "FCNCkut" ){
+        if( datasetName == "FCNCkut" ) // FastSim, in-time PU only
+          weightITypeMC = weightITypeMC_save*LumiWeights->ITweight(event->pileup.intime_npu);
+	else
 	  weightITypeMC = weightITypeMC_save*LumiWeights->weight3D(event->pileup.before_npu, event->pileup.intime_npu, event->pileup.after_npu);
-	}               
-	if( datasetName == "DYToLL_M10-50" || datasetName == "FCNCkut")  {
-	  double ave_npu = (event->pileup.before_npu+event->pileup.intime_npu+event->pileup.after_npu)/3.;
-	  weightITypeMC = weightITypeMC_save*LumiWeights->ITweight3BX(ave_npu);
-	}
-	
 	
       }
       else weightITypeMC = weightITypeMC_save;
