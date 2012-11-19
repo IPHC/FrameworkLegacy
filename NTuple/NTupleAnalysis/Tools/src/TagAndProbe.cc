@@ -263,7 +263,7 @@ void TagAndProbe::FillHistos(std::vector<NTJet> thejets, string TypeSel, string 
        
        //*******************
        //for tight selection 
-       TLorentzVector dilepton_Tight, lepton_tight2;
+       TLorentzVector dilepton_Tight, lepton_tight1, lepton_tight2;
        if(tightMuons.size() > 1 && (itmuon == 0 || itmuon == 1) ){
        
          lepton_tight1.SetPtEtaPhiM(tightMuons[0].p4.Pt(), tightMuons[0].p4.Eta(), tightMuons[0].p4.Phi(), 0.105658367);
@@ -365,7 +365,7 @@ void TagAndProbe::FillHistos(std::vector<NTJet> thejets, string TypeSel, string 
        
        //*******************
        //for tight selection 
-       TLorentzVector dilepton_Tight, lepton_tight2;
+       TLorentzVector dilepton_Tight, lepton_tight1, lepton_tight2;
        if(tightElectrons.size() > 1 && (itElectron == 0 || itElectron == 1 ) ){
        
          lepton_tight1.SetPtEtaPhiM(tightElectrons[0].p4.Pt(), tightElectrons[0].p4.Eta(), tightElectrons[0].p4.Phi(), 0);
