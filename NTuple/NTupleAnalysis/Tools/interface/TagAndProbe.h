@@ -34,10 +34,10 @@ class TagAndProbe {
       ~TagAndProbe();
 
      
-     void SetLooseIDMuonCollection(      std::vector<NTMuon>      inmuons)    {looseIsoMuons     = inmuons    ;};
-     void SetLooseIDElectronCollection(  std::vector<NTElectron>  inelectrons){looseIsoElectrons = inelectrons;};
-     void SetLooseIsoMuonCollection(     std::vector<NTMuon>      inmuons)    {looseIDMuons      = inmuons    ;};
-     void SetLooseIsoElectronCollection( std::vector<NTElectron>  inelectrons){looseIDElectrons  = inelectrons;};
+     void SetLooseIsoMuonCollection(      std::vector<NTMuon>      inmuons)    {looseIsoMuons     = inmuons    ;};
+     void SetLooseIsoElectronCollection(  std::vector<NTElectron>  inelectrons){looseIsoElectrons = inelectrons;};
+     void SetLooseIDMuonCollection(     std::vector<NTMuon>      inmuons)    {looseIDMuons      = inmuons    ;};
+     void SetLooseIDElectronCollection( std::vector<NTElectron>  inelectrons){looseIDElectrons  = inelectrons;};
      
      void SetTightMuonCollection(     std::vector<NTMuon>      inmuons)    {tightMuons     = inmuons    ;};
      void SetTightElectronCollection( std::vector<NTElectron>  inelectrons){tightElectrons = inelectrons;};
