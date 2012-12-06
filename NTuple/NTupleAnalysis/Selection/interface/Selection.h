@@ -7,6 +7,10 @@
 #include "Selection/interface/Requirement.h"
 #include "EffEstimation/interface/SFBweight.h"
 
+#include "../../../../JR_Standalone/JetMETObjects/interface/JetCorrectorParameters.h"
+#include "../../../../JR_Standalone/JetMETObjects/interface/JetCorrectionUncertainty.h"
+
+
 // ROOT headers
 #include "TH2F.h"
 
@@ -385,6 +389,17 @@ class Selection : public Event
   //Treatment of the JES Uncertainty
   void InitJESUnc ();
   
+  //Treatment of the JES Uncertainty
+  //void InitJESUnc (char* jecContrib = "Total");
+  void InitJESUnc (char* jecContrib );
+  void changeJESUncSource (char* jecContrib) {jecSource = jecContrib;}
+  
+  
+  TVector2 GetUnclusMET() const;
+  bool looseJetId(const NTJet & theJet) const;
+  bool cleanJet(const NTJet & theJet,const std::vector<NTMuon> & muon_cand,
+	       const std::vector<NTElectron> & elec_cand) const;
+  
   // -------------------------------------------------------------
   //                        data members
   // -------------------------------------------------------------
@@ -411,6 +426,18 @@ class Selection : public Event
 
   //! JES
   TH2F* histo_jesunc_;
+  
+      struct ltstr
+      {
+	bool operator()(const char* s1, const char* s2) const
+	{
+	  return strcmp(s1, s2) < 0;
+	}
+      };
+      
+      
+  mutable map<const char*, JetCorrectionUncertainty*, ltstr> vsrc;
+  char * jecSource;
 
 };
 

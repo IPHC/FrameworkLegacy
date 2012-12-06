@@ -130,8 +130,10 @@ bool Event::LoadEvent(const IPHCTree::NTEvent* evt)
   // get only one Met collection 
   if (JetMetEnabled_)
   {
+   //std::cout << "get met " << JetMetType_ << std::endl;
     const std::vector<IPHCTree::NTMET>* mets = 
       evt->met.GetCollection(JetMetType_);
+      //std::cout << "show collection " <<  std::endl; evt->met.PrintInfo() ;
     if(mets==0)
     {
       success=false;
@@ -151,7 +153,7 @@ bool Event::LoadEvent(const IPHCTree::NTEvent* evt)
       met_ = &((*mets)[0]);
     }
   }
-
+  //if(met_ == 0)  std::cout << "error, met pointer empty " << std::endl;
   // get only one electron collection 
   if (ElectronEnabled_)
   {

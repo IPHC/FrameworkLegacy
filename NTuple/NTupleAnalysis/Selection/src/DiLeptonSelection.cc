@@ -1303,6 +1303,31 @@ passElMu = (triggers->IsFired("HLT_Mu8_Ele17_CaloIdL_v2") || triggers->IsFired("
                   || triggers->IsFired("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v4")
                   || triggers->IsFired("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v7")
                   || triggers->IsFired("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v8")   );
+		  
+    if ( runNumber  >=  190000 )
+      passElMu = (   triggers->IsFired("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v1") 
+                  || triggers->IsFired("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v2")
+                  || triggers->IsFired("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v3")
+                  || triggers->IsFired("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v4")
+                  || triggers->IsFired("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v5")
+                  || triggers->IsFired("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6")
+                  || triggers->IsFired("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7")
+                  || triggers->IsFired("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8")
+                  || triggers->IsFired("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9")
+                  || triggers->IsFired("HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v10")
+		   );	  
+    if ( runNumber  >=  190000 )
+      passElMu = (   triggers->IsFired("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v1") 
+                  || triggers->IsFired("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v2")
+                  || triggers->IsFired("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v3")
+                  || triggers->IsFired("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v4")
+                  || triggers->IsFired("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v5")
+                  || triggers->IsFired("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v6")
+                  || triggers->IsFired("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v7")
+                  || triggers->IsFired("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v8")
+                  || triggers->IsFired("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v9")
+                  || triggers->IsFired("HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v10")
+		   );
        
   } // end DATA
   

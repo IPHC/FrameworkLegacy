@@ -145,12 +145,19 @@ std::vector<IPHCTree::NTJet> Selection::GetCleanJets(
 std::vector<IPHCTree::NTJet> Selection::GetScaledJets(float scale) const
 {
   std::vector<IPHCTree::NTJet> newJets = GetJets();
+  
   for (unsigned int i=0; i<newJets.size(); i++)
   {
     float newscale = 0;
     float eta  = newJets[i].p4.Eta();
     float pt   = newJets[i].p4.Pt();
     if (pt>=300.) pt = 300;
+    
+    
+      JetCorrectionUncertainty *unc = vsrc[jecSource];
+      unc->setJetPt(pt);
+      unc->setJetEta(newJets[i].p4.Eta());
+    
     if (scale<1.0)
     {
       newscale = (1.- histo_jesunc_->GetBinContent(
@@ -239,22 +246,81 @@ IPHCTree::NTMET Selection::GetSmearedMET(
 
   double missetX = 0.;
   double missetY = 0.;
+  
+   const std::vector<IPHCTree::NTMuon>*     muons     = GetPointer2Muons();
+   const std::vector<IPHCTree::NTElectron>* electrons = GetPointer2Electrons();
+  
   for (unsigned int i=0; i<injets.size(); i++)
   {
-    double gen_pt = injets[i].p4Gen.Pt(); //to be changed:
+    if ((fabs(injets[i].p4.Eta())< 5.0) && (injets[i].p4.Pt()>15.0) && 
+		looseJetId(injets[i]) && cleanJet(injets[i], *muons, *electrons)){
+      double gen_pt = injets[i].p4Gen.Pt(); //to be changed:
                                           //should be the pt of genjet !
-    double jet_pt = injets[i].p4.Pt();
-    double deltapt = (jet_pt - gen_pt) * jetResFactor;
-    double ptscale = ((jet_pt + deltapt) / jet_pt);
-    if(ptscale <0 ) ptscale = 0;
-    missetX = (ptscale-1)*injets[i].p4.Px();
-    missetY = (ptscale-1)*injets[i].p4.Py();
+      double jet_pt = injets[i].p4.Pt();
+      double deltapt = (jet_pt - gen_pt) * jetResFactor;
+      double ptscale = ((jet_pt + deltapt) / jet_pt);
+      if(ptscale <0 ) ptscale = 0;
+      missetX = (ptscale-1)*injets[i].p4.Px();
+      missetY = (ptscale-1)*injets[i].p4.Py();
+    }
   }
   newMET = *met;
   newMET.p2.Set(met->p2.Px() + missetX,
                 met->p2.Py() + missetY);
+		
+		
+		
   return newMET;
 }
+
+
+
+
+
+bool Selection::looseJetId(const NTJet & theJet) const
+{
+  bool passingLoose=false;
+  bool ThisIsClean=true;
+  //apply following only if |eta|<2.4: CHF>0, CEMF<0.99, chargedMultiplicity>0   
+  //if(( theJet.CHEF)<= 0.0  
+  //   && fabs(theJet.p4.Eta())<2.4) ThisIsClean=false; 
+  //if( (theJet.CEEF)>= 0.99 
+  //    && fabs(theJet.p4.Eta())<2.4 ) ThisIsClean=false;
+
+  if (theJet.ID["TIGHT"]) passingLoose = true;
+  //if(ThisIsClean && 
+  //   (theJet.NHEF)< 0.99  && (theJet.NEEF)<0.99) 
+  //	passingLoose=true;
+  return passingLoose;
+}
+
+bool Selection::cleanJet(const NTJet & theJet, const std::vector<NTMuon> & muon_cand,
+	const std::vector<NTElectron> & elec_cand) const
+{
+    double deltaRmu = 10000;
+    double deltaRel = 10000;
+    
+    for(unsigned int imu=0; imu< muon_cand.size(); imu++){
+      double deltaR = theJet.p4.DeltaR(muon_cand[imu].p4);
+      if(deltaR < deltaRmu) deltaRmu = deltaR;
+    }
+    
+    for(unsigned int iel=0; iel< elec_cand.size(); iel++){
+      double deltaR = theJet.p4.DeltaR(elec_cand[iel].p4);
+      if(deltaR < deltaRel) deltaRel = deltaR;
+    }
+    
+    if( deltaRmu > 0.4  && deltaRel > 0.4) return true;
+    return false;
+}
+
+
+
+
+
+
+
+
 
 
 // ----------------------------------------------------------------------------
@@ -263,52 +329,79 @@ IPHCTree::NTMET Selection::GetSmearedMET(
 IPHCTree::NTMET Selection::GetUnclusScaledMET(bool applyUnclusScale,
                                               float scale) const
 {
-  // Create container for output
-  IPHCTree::NTMET newMET;
+  
+    TVector2 unclusMET = GetUnclusMET();
+    cout << unclusMET.Mod()<<  " "<< unclusMET.Px()<<  " "<< unclusMET.Py()<<  " "<<endl;
 
-  double missetX = 0.;
-  double missetY = 0.;
+    // cout << "Change in MET: "<<sqrt(pow((scale-1)*missetX,2.) + pow((scale-1)*missetY,2.))<<  " "<< (scale-1)*missetX<<  " "<< (scale-1)*missetY<<  " "<<endl;
+    // cout << "new NET      : "<<sqrt(pow(met.p4.Px()+(scale-1)*missetX,2.) + pow(met.p4.Py()+(scale-1)*missetY,2.) + met.p4.M())<<  " "<< met.p4.Px()+(scale-1)*missetX<<  " "<< met.p4.Py()+(scale-1)*missetY<<  " "<<endl;
 
-  const IPHCTree::NTMET* met  = GetPointer2MET();
-  if (met!=0)
-  {
-    missetX = met->p2.Px();
-    missetY = met->p2.Py();
-  }
 
-  const std::vector<IPHCTree::NTJet>* jets  = GetPointer2Jets();
-  if (jets!=0) for (unsigned int i=0; i<jets->size(); i++)
-  {
-    missetX -= (*jets)[i].p4.Px();
-    missetY -= (*jets)[i].p4.Py();
-  }
+    const NTMET * met = GetPointer2MET();    
+    NTMET newMET ;
+    //met->p2.Px()+(scale-1)*unclusMET.Px(), met->p2.Py()+(scale-1)*unclusMET.Py(), 0 , sqrt(pow(met->p2.Px()+(scale-1)*unclusMET.Px(),2.) + pow(met->p2.Py()+(scale-1)*unclusMET.Py(),2.) + met->p2.M()));
+    
+    newMET.p2.Set(met->p2.Px()+(scale-1)*unclusMET.Px(),  met->p2.Py()+(scale-1)*unclusMET.Py());
+    return newMET;
 
-  const std::vector<IPHCTree::NTElectron>* electrons  = GetPointer2Electrons();
-  for (unsigned int i=0; i<electrons->size(); i++)
-  {
-    missetX -= (*electrons)[i].p4.Px();
-    missetY -= (*electrons)[i].p4.Py();
-  }
-
-  const std::vector<IPHCTree::NTMuon>* muons  = GetPointer2Muons();
-  for (unsigned int i=0; i<muons->size(); i++)
-  {
-    missetX -= (*muons)[i].p4.Px();
-    missetY -= (*muons)[i].p4.Py();
-  }
-
-  const std::vector<IPHCTree::NTTau>* taus = GetPointer2Taus();
-  for (unsigned int i=0; i<taus->size(); i++)
-  {
-    missetX -= (*taus)[i].p4.Px();
-    missetY -= (*taus)[i].p4.Py();
-  }
-
-  newMET = *met;
-  newMET.p2.Set(met->p2.Px()+(scale-1)*missetX,
-                met->p2.Py()+(scale-1)*missetY);
-  return newMET;
+  
+  
+  
 }
+
+
+
+TVector2 Selection::GetUnclusMET() const{
+
+
+    const NTMET                   * met       = GetPointer2MET();
+    const std::vector<NTJet>      * jets      = GetPointer2Jets();
+    const std::vector<NTElectron> * electrons = GetPointer2Electrons();
+    const std::vector<NTMuon>     * muons     = GetPointer2Muons();
+    const std::vector<NTTau>      * taus      = GetPointer2Taus();
+       
+    double missetX = met->p2.Px();
+    double missetY = met->p2.Py();
+    
+    // cout <<"Now GetUnclusScaledMET\n";
+    // cout << "MET original   : "<< met.p4.Pt()<<  " "<< met.p4.Px()<<  " "<< met.p4.Py()<<  " "<<endl;
+    // cout << "Jets used to calculate unclustered MET\n"<<endl;
+    
+    
+    for (unsigned int i=0; i<jets->size(); i++){
+      if ((fabs((*jets)[i].p4.Eta())< 5.0) && ((*jets)[i].p4.Pt()>15.0) && looseJetId( (*jets)[i]) 
+      	&& cleanJet((*jets)[i], *muons, *electrons)) {
+      // cout<<" jet eta,pt "<<jets[i].p4.Eta()<<" "<<jets[i].p4.Pt()<<endl;
+      missetX += (*jets)[i].p4.Px();
+      missetY += (*jets)[i].p4.Py();
+      }
+    }
+    // cout << "MET after jet  : "<<sqrt(pow(missetX,2.) + pow(missetY,2.))<<  " "<< missetX<<  " "<< missetY<<  " "<<endl;
+    for (unsigned int i=0; i<electrons->size(); i++){
+      // cout<<" e eta,pt "<<electrons[i].p4.Eta()<<" "<<electrons[i].p4.Pt()<<endl;
+      missetX += (*electrons)[i].p4.Px();
+      missetY += (*electrons)[i].p4.Py();
+    }
+    for (unsigned int i=0; i<muons->size(); i++){
+      // cout<<" mu eta,pt "<<muons[i].p4.Eta()<<" "<<muons[i].p4.Pt()<<endl;
+      missetX += (*muons)[i].p4.Px();
+      missetY += (*muons)[i].p4.Py();
+    }
+    for (unsigned int i=0; i<taus->size(); i++){
+      // cout<<" tau eta,pt "<<taus[i].p4.Eta()<<" "<<taus[i].p4.Pt()<<endl;
+      missetX += (*taus)[i].p4.Px();
+      missetY += (*taus)[i].p4.Py();
+    }
+    return TVector2(missetX,missetY);
+
+}
+
+
+
+
+
+
+
 
 
 // ----------------------------------------------------------------------------
@@ -483,6 +576,7 @@ std::vector<IPHCTree::NTJet> Selection::GetSelectedJets(
 
   // Apply JER
   if(applyJER) scaledJets = GetSmearedJets(scaledJets, ResFactor);
+  
   for(unsigned int i=0;i<scaledJets.size();i++)
   {
     if (fabs(scaledJets[i].p4.Eta())> cfg.JetEtaThreshold_ ||
@@ -872,14 +966,21 @@ std::vector<IPHCTree::NTElectron> Selection::GetSelectedElectronsNoIso(
   // Loop over electrons
   for(unsigned int i=0;i<localElectrons.size();i++)
   {
-    //bool hadId = localElectrons[i].hadId(
-    //    static_cast<unsigned int>(localElectrons[i].ID["simpleEleId90relIso"]) & 0x1
-    //                            );
+    /*bool hadId = localElectrons[i].hadId(
+        static_cast<unsigned int>(localElectrons[i].ID["simpleEleId90relIso"]) & 0x1
+                                );*/
 				
     bool hadId = localElectrons[i].hadId(
         static_cast<unsigned int>(localElectrons[i].ID["simpleEleId90cIso"]) & 0x1
                                 );
+				
+    /*double elecID = localElectrons[i].ID["mvaTrigV0"];
+    //std::cout << "hadId " << hadId << endl;
+    //std::cout << "localElectrons[i].ID[mvaTrigV0] " <<  localElectrons[i].ID["mvaTrigV0"]<< endl;
     
+    bool hadId = false;
+    if(elecID > 0 && elecID < 1) hadId = true;
+    */
     //useless 
     if (!localElectrons[i].isGsfElectron) continue; 
     if (!hadId)                           continue;
@@ -1923,4 +2024,27 @@ void Selection::InitJESUnc()
   delete f1;
 }
 
+
+void Selection::InitJESUnc (char* jecContrib)
+{
+  // Instantiate uncertainty sources
+  const int nsrc = 21;
+  const char* srcnames[nsrc] =
+  {"Absolute", "HighPtExtra", "SinglePion", "Flavor", "Time",
+   "RelativeJEREC1", "RelativeJEREC2", "RelativeJERHF",
+   "RelativeStatEC2", "RelativeStatHF", "RelativeFSR",
+   "PileUpDataMC", "PileUpOOT", "PileUpPt", "PileUpBias", "PileUpJetRate",
+   "SubTotalPileUp", "SubTotalRelative", "SubTotalDataMC", "SubTotalPt", "Total"};
+
+  string fileName = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/JEC11_V12_AK5PF_UncertaintySources.txt");
+  std::cout<<"Reading the JES Uncertainty text file "<<fileName<<endl;
+  fexists(fileName, true);
+
+  for (int isrc = 0; isrc < nsrc; ++isrc) {
+     JetCorrectorParameters *p = new JetCorrectorParameters(fileName, srcnames[isrc]);
+     JetCorrectionUncertainty *unc = new JetCorrectionUncertainty(*p);
+     vsrc[srcnames[isrc]] = unc;
+  }
+  jecSource = jecContrib;
+}
 
