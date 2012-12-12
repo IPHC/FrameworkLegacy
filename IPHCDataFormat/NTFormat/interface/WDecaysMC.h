@@ -15,9 +15,12 @@ namespace IPHCTree
   public:
 
     //methods
-    WDecaysMC (){};
+    WDecaysMC (){Q_Lep_gen=-99.;Tmeme=-99;mcLepId=-99;};
     ~WDecaysMC (){};
-
+    
+    /// Clear all information related to the photon
+    //virtual void Reset(bool constructor_call=false);
+    
     //data members
     double Q_Lep_gen;
     TLorentzVector p4_W_gen;

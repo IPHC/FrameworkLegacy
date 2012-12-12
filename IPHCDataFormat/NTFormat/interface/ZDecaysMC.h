@@ -15,7 +15,7 @@ namespace IPHCTree
   public:
 
     //methods
-    ZDecaysMC (){};
+    ZDecaysMC (){Q_Lep1_gen = -99.;Q_Lep2_gen = -99.;Lep1_pdgID = -99; Lep2_pdgID = -99; Tmeme = -99; Zgtobb = -99;};
     ~ZDecaysMC (){};
 
     //data memebers  
