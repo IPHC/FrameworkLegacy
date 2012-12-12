@@ -96,7 +96,8 @@ void FillNTuple::Fill(const IPHCTree::MTEvent* minitree, IPHCTree::NTEvent* ntup
           dynamic_cast<const IPHCTree::NTPileUp&>(minitree->pileup);
   ntuple->mc      = 
           dynamic_cast<const IPHCTree::NTMonteCarlo&>(minitree->mc);
-
+  ntuple->others  = minitree->others;
+      
   // -------------------------------------
   // GenParticle 
   // -------------------------------------
