@@ -107,26 +107,36 @@ void SFBweight::SFBinit(int btag_algo, float btag_discri, int n_bjets){
          btag_algo_=btag_algo;
          btag_discri_=btag_discri;
          n_bjets_=n_bjets;
+         // for 2011 data : the name of histo for SF_b has changed!
+	 // --> use of h_MUJETSWPBTAGCSVL_BTAGBEFFCORR for example
+	 // --> need to modify method_origin1_ by additional yearbtag prefix :)
+         //     MUJETSWP for mu+jet SF 
+         //     TTBARWP for ttbar SF 
+	 // see https://hypernews.cern.ch/HyperNews/CMS/get/btag/879.html
+	 // and https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagPOG#2011_Data_and_MC
+         std::string yearbtag = "MUJETSWP";
   	//is it usefull if methodb=2 ??
          //std ::cout << " ALGO " <<  btag_algo << " & DISCRI CUT " << btag_discri << std::endl;
          if (btag_algo==0) {
              // TrackCounting
              algoname="TCHE";
              if (btag_discri>1.69 &&  btag_discri<1.71) {
-                    method_origin1_="BTAG"+algoname+"L";
+                    method_origin1_=yearbtag+"BTAG"+algoname+"L";
                     method_origin2_="MISTAG"+algoname+"L";
 		    wp = "L";
              }
              else if (btag_discri>3.29 && btag_discri<3.31) {
-                    method_origin1_="BTAG"+algoname+"M";
+                    method_origin1_=yearbtag+"BTAG"+algoname+"M";
                     method_origin2_="MISTAG"+algoname+"M";
 		    wp = "M";
              }
+/*
              else if (btag_discri>10.19 && btag_discri<10.21) {
                     //cout << " version hackee par Caro car TCHET pas dans DB " << endl;
-                    method_origin1_="BTAG"+algoname+"M";
+                    method_origin1_=yearbtag+"BTAG"+algoname+"M";
                     method_origin2_="MISTAG"+algoname+"M";
              }
+*/
              else {
                     method_origin1_="default";
                     method_origin2_="default";
@@ -136,15 +146,17 @@ void SFBweight::SFBinit(int btag_algo, float btag_discri, int n_bjets){
               // SecondaryVertex
               algoname="SSVHE";
               if (btag_discri>1.73 && btag_discri<1.75) {
-                    method_origin1_="BTAG"+algoname+"M";
+                    method_origin1_=yearbtag+"BTAG"+algoname+"M";
                     method_origin2_="MISTAG"+algoname+"M";
               }
+/*
               else if (btag_discri>3.04 && btag_discri<3.06) {
                     //cout << " version hackee par Caro car SSVHET pas dans DB " << endl;
-                    method_origin1_="BTAG"+algoname+"M";
+                    method_origin1_=yearbtag+"BTAG"+algoname+"M";
                     method_origin2_="MISTAG"+algoname+"M";
 		    wp = "M";
               }
+*/
               else {
                     method_origin1_="default";
                     method_origin2_="default";
@@ -154,20 +166,22 @@ void SFBweight::SFBinit(int btag_algo, float btag_discri, int n_bjets){
              // TrackCounting
              algoname="TCHP";
              if (btag_discri>1.92 &&  btag_discri<1.94) {
-                    method_origin1_="BTAG"+algoname+"M";
+                    method_origin1_=yearbtag+"BTAG"+algoname+"M";
                     method_origin2_="MISTAG"+algoname+"M";
 		    wp = "M";
              }
              else if (btag_discri>3.40 && btag_discri<3.42) {
-                    method_origin1_="BTAG"+algoname+"T";
+                    method_origin1_=yearbtag+"BTAG"+algoname+"T";
                     method_origin2_="MISTAG"+algoname+"T";
 		    wp = "T";
               }
+/*
              else if (btag_discri>1.18 && btag_discri<1.20) {
                     //cout << " version hackee par Caro car TCHPL pas dans DB " << endl;
-                    method_origin1_="BTAG"+algoname+"M";
+                    method_origin1_=yearbtag+"BTAG"+algoname+"M";
                     method_origin2_="MISTAG"+algoname+"M";
               }
+*/
               else {
                     method_origin1_="default";
                     method_origin2_="default";
@@ -177,7 +191,7 @@ void SFBweight::SFBinit(int btag_algo, float btag_discri, int n_bjets){
              // SecondaryVertex
               algoname="SSVHP";
              if (btag_discri>1.99 && btag_discri<2.01) {
-                    method_origin1_="BTAG"+algoname+"T";
+                    method_origin1_=yearbtag+"BTAG"+algoname+"T";
                     method_origin2_="MISTAG"+algoname+"T";
 		    wp = "T";
               }
@@ -190,17 +204,17 @@ void SFBweight::SFBinit(int btag_algo, float btag_discri, int n_bjets){
              // JP
               algoname="JP";
              if (btag_discri>0.274 && btag_discri<0.276) {
-                    method_origin1_="BTAG"+algoname+"L";
+                    method_origin1_=yearbtag+"BTAG"+algoname+"L";
                     method_origin2_="MISTAG"+algoname+"L";
 		    wp = "L";
              }
              else if (btag_discri>0.544 && btag_discri<0.546) {
-                    method_origin1_="BTAG"+algoname+"M";
+                    method_origin1_=yearbtag+"BTAG"+algoname+"M";
                     method_origin2_="MISTAG"+algoname+"M";
 		    wp = "M";
              }      
              else if (btag_discri>0.78 && btag_discri<0.8) {
-                    method_origin1_="BTAG"+algoname+"T";
+                    method_origin1_=yearbtag+"BTAG"+algoname+"T";
                     method_origin2_="MISTAG"+algoname+"T";
 		    wp = "T";
               }     
@@ -213,17 +227,17 @@ void SFBweight::SFBinit(int btag_algo, float btag_discri, int n_bjets){
              // JBP 
               algoname="JBP";
              if (btag_discri>1.32 && btag_discri<1.34) {
-                    method_origin1_="BTAG"+algoname+"L";
+                    method_origin1_=yearbtag+"BTAG"+algoname+"L";
                     method_origin2_="MISTAG"+algoname+"L";
 		    wp = "L";
              }      
              else if (btag_discri>2.54 && btag_discri<2.56) {
-                    method_origin1_="BTAG"+algoname+"M";
+                    method_origin1_=yearbtag+"BTAG"+algoname+"M";
                     method_origin2_="MISTAG"+algoname+"M";
 		    wp = "M";
              }      
              else if (btag_discri>3.73 && btag_discri<3.75) {
-                    method_origin1_="BTAG"+algoname+"T";
+                    method_origin1_=yearbtag+"BTAG"+algoname+"T";
                     method_origin2_="MISTAG"+algoname+"T";
 		    wp = "T";
               }
@@ -236,17 +250,17 @@ void SFBweight::SFBinit(int btag_algo, float btag_discri, int n_bjets){
              // CSV 
               algoname="CSV";
              if (btag_discri>0.243 && btag_discri<0.245) {
-                    method_origin1_="BTAG"+algoname+"L";
+                    method_origin1_=yearbtag+"BTAG"+algoname+"L";
                     method_origin2_="MISTAG"+algoname+"L";
 		    wp = "L";
              }
              else if (btag_discri>0.678 && btag_discri<0.68) {
-                    method_origin1_="BTAG"+algoname+"M";
+                    method_origin1_=yearbtag+"BTAG"+algoname+"M";
                     method_origin2_="MISTAG"+algoname+"M";
 		    wp = "M";
              }
              else if (btag_discri>0.897 && btag_discri<0.899) {
-                    method_origin1_="BTAG"+algoname+"T";
+                    method_origin1_=yearbtag+"BTAG"+algoname+"T";
                     method_origin2_="MISTAG"+algoname+"T";
 		    wp = "T";
               }
@@ -535,9 +549,21 @@ float SFBweight::GetWeight(int info,  int quarkorigin, float pt, float eta) cons
 
         float aa = -1.;
 
-        if (quarkorigin==5 && pt>=240) pt=239;  // because limit in DB
-	if (quarkorigin==0 && pt>=520) pt=519;  // because limit in DB
+        // CARO
+        // comment : limit in histo
+        if (pt>=999.9) pt=999.1;  // because limit in histo
+        if (eta>=2.5) pt=2.499;  // because limit in histo
         aa= histo_local->GetBinContent( histo_local->FindBin(pt,eta) );
+/*
+        cout <<  " pt " << pt << " eta " << eta ;
+        if (info==0) cout << " SF_" ;
+        else if (info==1) cout << " ErrSF_" ;
+        else cout << " another info " << info  << " " ;
+        if (quarkorigin==4) cout << "c = " ; 
+        else if (quarkorigin==5) cout << "b = " ;
+        else if (quarkorigin==0) cout << "l = " ;
+        cout << aa << endl;
+*/
 
 //         histo_local= new TH2D("aa","",10,0,1,10,0,1);
 //         histo_local->Delete();
@@ -549,6 +575,9 @@ vector<float> SFBweight::GetWeigth4BSel(int method_b,  int syst_b, const std::ve
 }
 
 vector<float> SFBweight::GetWeigth4BSel(int method_b,  int syst_b, const std::vector<NTJet> &  selJets, float sf_val_for_b, float sf_val_for_l) const{
+
+
+
        std::vector<float> proba_jetb;
        vector<float> weight;
        weight.push_back(1); // weightb of the event
@@ -556,6 +585,10 @@ vector<float> SFBweight::GetWeigth4BSel(int method_b,  int syst_b, const std::ve
        weight.push_back(0); // probability to get 1 jet
        weight.push_back(0); // probability to get 2 jet
        weight.push_back(0); // probability to get at least 3 jet
+       if (selJets.size()<1) {
+         weight[0]=0.;
+         return weight;
+       }
        for(unsigned int j=0;j<selJets.size();j++){
              // only quark from a defined quarkorigin_
              int sectectedflavour=0;
@@ -565,7 +598,9 @@ vector<float> SFBweight::GetWeigth4BSel(int method_b,  int syst_b, const std::ve
              float discri_val=getBtagDiscr(selJets[j], btag_algo_);
  
               float pt_val_jet = selJets[j].p4.Pt();
-              if (pt_val_jet>1000.) pt_val_jet=997.;
+              if (pt_val_jet>670) pt_val_jet=670.;  // PROTECTION SF_ MUJETS + MISTAG
+              if ((quarkorigin==4 || quarkorigin==5) && pt_val_jet<30) pt_val_jet=30.1;  // PROTECTION SF_b,c MUJETS
+
               float eta_val_jet = selJets[j].p4.Eta();
               if (eta_val_jet<0) eta_val_jet*=-1.;
               if (eta_val_jet>=2.4) eta_val_jet=2.399;
@@ -573,14 +608,16 @@ vector<float> SFBweight::GetWeigth4BSel(int method_b,  int syst_b, const std::ve
               float pt_val_jet_orig = selJets[j].p4.Pt();
               float eta_val_jet_orig = selJets[j].p4.Eta();
 
+
               int info_b=method_b;
               if (method_b>=2) info_b=0;
 
               // Compute the weight, depending of method_b 
               // method_b = 0 : SF
               // method_b = 1 : Eff_Data
-              // method_b = 2 : SF*Eff_MC
+              // method_b = 2 : SF*Eff_MC with error depending on SF only
               // method_b = 3 : SF*Eff_MC with error depending on SF and Eff
+              // method_b = 4 : SF*Eff_MC with error depending on Eff only
 
               float weight_jet=0;
               //impose value for SF from outside
@@ -591,144 +628,58 @@ vector<float> SFBweight::GetWeigth4BSel(int method_b,  int syst_b, const std::ve
               else weight_jet=GetWeight(info_b*2,quarkorigin,pt_val_jet,eta_val_jet);
 
               float ptvaleff=pt_val_jet;
-              if (pt_val_jet>200.) ptvaleff=199.;
+              if (pt_val_jet>200.) ptvaleff=199.; // limit in MC eff_ histo
               float eff_mc=GetWeight(4,quarkorigin,ptvaleff,eta_val_jet);
-              float sf1=weight_jet;
-              float ersf1=0;
-              float eref1=0;
-              float errw=0;
-              if (method_b==3 && syst_b>0) {
-                          ersf1=GetWeight(1,quarkorigin,pt_val_jet,eta_val_jet);
-                          eref1=GetWeight(5,quarkorigin,ptvaleff,eta_val_jet);
-                          errw=sqrt(ersf1*ersf1*eff_mc*eff_mc + sf1*sf1*eref1*eref1)/eff_mc;  // from SF and Eff
-              }
-              if (method_b==4 && syst_b>0) {
-                          eref1=GetWeight(5,quarkorigin,ptvaleff,eta_val_jet);  // from Eff only
-              }
 
+              // compute systematics
+              if (syst_b>0) {
+                  float error_for_systb=GetWeight(info_b*2+1,quarkorigin,pt_val_jet,eta_val_jet);   
+                 
+                  if (method_b!=1) {
 
-              if (syst_b==1) { //+ all
-                    if (method_b==3) {
-                          weight_jet+=errw;
-                    }
-                    else if (method_b==4) {
-                          eff_mc+=eref1;
-                    }
-                    else {
-                       weight_jet+=GetWeight(info_b*2+1,quarkorigin,pt_val_jet,eta_val_jet);
-                    }
-              }
-              else if (syst_b==2) { //- all
-                    if (method_b==3) {
-                          weight_jet-=errw;
-                    }
-                    else if (method_b==4) {
-                          eff_mc-=eref1;
-                    }
-                    else {
-                       weight_jet-=GetWeight(info_b*2+1,quarkorigin,pt_val_jet,eta_val_jet);
-                    }
-              }
-              else if (syst_b==3) { //+ only b!
-                  if (quarkorigin==4|| quarkorigin==5) {
-                    if (method_b==3) {
-                          weight_jet+=errw;
-                    }
-                    else if (method_b==4) {
-                          eff_mc+=eref1;
-                    }
-                    else {
-                         weight_jet+=GetWeight(info_b*2+1,quarkorigin,pt_val_jet,eta_val_jet);
-                    }
+                     // method 0 and 2 : error on SF only
+                     if      (pt_val_jet_orig<30. && (quarkorigin==5 || quarkorigin==4) )  error_for_systb=0.12;   // Err SF_b(<30) = 0.12;
+                     else if (pt_val_jet_orig>670 )  error_for_systb*=2;                                           // Err SF_(>670) = 2* Err SF_(670);
+                     if (quarkorigin==4) error_for_systb*=2.;                                                      // Err SF_c = 2* Err SF_b
+                     
+                     // method 3 : from SF and Eff
+                     // method 4 : from Eff only
+                     if (method_b>=3)  {
+                      float sf1=weight_jet;
+                      float err_sf1=error_for_systb;
+                      float err_eff_mc=GetWeight(5,quarkorigin,ptvaleff,eta_val_jet);
+                      if (method_b==3) error_for_systb=sqrt(err_sf1*err_sf1*eff_mc*eff_mc + sf1*sf1*err_eff_mc*err_eff_mc)/eff_mc;  // from SF and Eff
+                      else if (method_b==4) error_for_systb=err_eff_mc; // from Eff only
+                     }
                   }
-              }
-              else if (syst_b==4) { //- only b!
-                  if (quarkorigin==4|| quarkorigin==5) {
-                    if (method_b==3) {
-                          weight_jet-=errw;
-                    }
-                    else if (method_b==4) {
-                          eff_mc-=eref1;
-                    }
-                    else {
-                      weight_jet-=GetWeight(info_b*2+1,quarkorigin,pt_val_jet,eta_val_jet);
-                    }
+              
+                  if (syst_b==1) { //+ all
+                    weight_jet+=error_for_systb;
                   }
-              }
-              else if (syst_b==5) { //+ only light!
-                  if (quarkorigin==0) {
-                    if (method_b==3) {
-                          weight_jet+=errw;
-                    }
-                    else if (method_b==4) {
-                          eff_mc+=eref1;
-                    }
-                    else {
-                      weight_jet+=GetWeight(info_b*2+1,quarkorigin,pt_val_jet,eta_val_jet);
-                    }
+                  else if (syst_b==2) { //- all
+                    weight_jet-=error_for_systb;
                   }
-              }
-              else if (syst_b==6) { //- only light!
-                  if (quarkorigin==0) {
-                    if (method_b==3) {
-                          weight_jet-=errw;
-                    }
-                    else if (method_b==4) {
-                          eff_mc-=eref1;
-                    }
-                    else {
-                       weight_jet-=GetWeight(info_b*2+1,quarkorigin,pt_val_jet,eta_val_jet);
-                    }
+                  else if (syst_b==3) { //+ only b!
+                    if (quarkorigin==4|| quarkorigin==5)  { weight_jet+=error_for_systb; }
                   }
-              }
-              else if (syst_b==7) { //+ b and - light!
-                  if (quarkorigin==4|| quarkorigin==5) {
-                    if (method_b==3) {
-                          weight_jet+=errw;
-                    }
-                    else if (method_b==4) {
-                          eff_mc+=eref1;
-                    }
-                    else {
-                          weight_jet+=GetWeight(info_b*2+1,quarkorigin,pt_val_jet,eta_val_jet);
-                    }
+                  else if (syst_b==4) { //- only b!
+                    if (quarkorigin==4|| quarkorigin==5)  { weight_jet-=error_for_systb; }
                   }
-                  else if (quarkorigin==0) {
-                    if (method_b==3) {
-                          weight_jet-=errw;
-                    }
-                    else if (method_b==4) {
-                          eff_mc-=eref1;
-                    }
-                    else {
-                         weight_jet-=GetWeight(info_b*2+1,quarkorigin,pt_val_jet,eta_val_jet);
-                    }
+                  else if (syst_b==5) { //+ only light!
+                    if (quarkorigin==0)                   { weight_jet+=error_for_systb; }
                   }
-              }
-              else if (syst_b==8) { //- b and + light!
-                  if (quarkorigin==4|| quarkorigin==5) {
-                    if (method_b==3) {
-                          weight_jet-=errw;
-                    }
-                    else if (method_b==4) {
-                          eff_mc-=eref1;
-                    }
-                    else {
-                         weight_jet-=GetWeight(info_b*2+1,quarkorigin,pt_val_jet,eta_val_jet);
-                    }
+                  else if (syst_b==6) { //- only light!
+                    if (quarkorigin==0)                   { weight_jet-=error_for_systb; }
                   }
-                  else if (quarkorigin==0) {
-                    if (method_b==3) {
-                          weight_jet+=errw;
-                    }    
-                    else if (method_b==4) {
-                          eff_mc+=eref1;
-                    }
-                    else {
-                          weight_jet+=GetWeight(info_b*2+1,quarkorigin,pt_val_jet,eta_val_jet);
-                    }
+                  else if (syst_b==7) { //+ b and - light!
+                    if (quarkorigin==4|| quarkorigin==5)  { weight_jet+=error_for_systb; }
+                    else if (quarkorigin==0)              { weight_jet-=error_for_systb; }
                   }
-              }
+                  else if (syst_b==8) { //- b and + light!
+                    if (quarkorigin==4|| quarkorigin==5)  { weight_jet-=error_for_systb; }
+                    else if (quarkorigin==0)              { weight_jet+=error_for_systb; }
+                  }
+              } // end of syst
 
 
 
@@ -758,6 +709,7 @@ vector<float> SFBweight::GetWeigth4BSel(int method_b,  int syst_b, const std::ve
                  if (weight_jet>1) std::cout << " weight_jet " << weight_jet << " eta " << eta_val_jet << " pt " << pt_val_jet << std::endl;
 
               }
+
 
 
 
