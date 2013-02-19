@@ -43,9 +43,9 @@ EventShapes::EventShapes(const vector<NTJet>& inputJets, const vector<NTLepton>&
   }
   for(unsigned int i=0;i<inputLeptons.size();i++){
     inputVectors_.push_back(XYZVector(inputLeptons[i].p4.Px(),inputLeptons[i].p4.Py(),inputLeptons[i].p4.Pz()));  
-    H_  += inputJets[i].p4.E();
-    HT_ += inputJets[i].p4.Et();
-    p4_sqrt_s += inputJets[i].p4;
+    H_  += inputLeptons[i].p4.E();
+    HT_ += inputLeptons[i].p4.Et();
+    p4_sqrt_s += inputLeptons[i].p4;
   }
   sqrt_s_ = p4_sqrt_s.M();
 }
