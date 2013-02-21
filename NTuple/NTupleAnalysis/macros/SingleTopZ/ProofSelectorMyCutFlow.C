@@ -55,21 +55,49 @@ ProofSelectorMyCutFlow::ProofSelectorMyCutFlow()
    
   
   
-  applyFakescale = true;
+  
+  applyJES  = false;
+  scale     = 0; // +1 or -1
+  applyJER  = false;
+  ResFactor = 0.1;
+  
+  
+  
+  applyFakescale   = true;
+  
+  SF_Fake.push_back(3.76); //mumumu
+  SF_Fake.push_back(1.52); //mumue
+  SF_Fake.push_back(3.66); //eemu
+  SF_Fake.push_back(2.24); //eee
+  
+
+  applyWZ          = true;
+   
+  SF_WZ.push_back(0.66); //mumumu
+  SF_WZ.push_back(0.68); //mumue
+  SF_WZ.push_back(0.60); //eemu
+  SF_WZ.push_back(0.71); //eee
+  
+  
+  applyWZ_finalSel = true;
+  SF_WZ_finalSel = 0.91; // 4 channels combined
+  
+  
   applyLeptonSF  = true;
-  applyWZ        = true;
   applyTrigger   = true;
   
   
   IReweight		= true;
   IDYestimateWithMetCut = true;
+  
+  
   IReweight_puUp	= false;
   IReweight_puDown	= false;
   
   
   useNonIsoWcand = false;
-  
-  rand.SetSeed(102994949221);
+  looseIso = 0.4;
+  rand.SetSeed(102994949);
 
 }
 
@@ -136,9 +164,15 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   cout << "dataset name " << datasetName << endl;
   cout << "dataset name " << datasetName << endl;
   cout << "dataset name " << datasetName << endl;
+  
+  
+  
   TNamed *xfname = (TNamed *) fInput->FindObject("PROOF_XMLFILENAME");
   string xmlFileName = xfname->GetTitle();
   anaEL = new AnalysisEnvironmentLoader(xmlFileName.c_str());
+  
+  
+  
   anaEL->LoadSamples (datasets, datasetName); // now the list of datasets written in the xml file is known
   
   
@@ -154,17 +188,20 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   cout << "datasets loaded "  << endl;
   //anaEL->LoadGeneralInfo(DataType, Luminosity, verbosity );
   anaEL->LoadGeneralInfo(DataType, Luminosity, LumiError, PUWeightFileName, verbosity );
-  anaEL->LoadWeight (sel); // now the parameters for SFBweight are initialized (for b-tag!)
   
   //Load for PU:
   sel.GeneratePUWeight(PUWeightFileName);
   
   //******************************************
   //Load Scale Factors for lepton efficiencies
-  //********d**********************************
+  //******************************************
   sel.LoadElScaleFactors();
   sel.LoadMuScaleFactors();
+  sel.InitJESUnc("Total"); 
   
+  
+  anaEL->LoadWeight (sel); // now the parameters for SFBweight are initialized (for b-tag!)
+
    //--------------------------------------//
    //   Fill cuts and channels  	
    //--------------------------------------//
@@ -173,10 +210,6 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   //--------------------------------------//
   //   Initializing variables 	
   //--------------------------------------//
-  
-  
-  
-  
   
   
   
@@ -251,9 +284,9 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   //--------------------------------------//
   MyhistoManager.LoadDatasets(datasets);   
   MyhistoManager.LoadSelectionSteps(CutName);
-  MyhistoManager.LoadChannels(ChannelName);
+  MyhistoManager.LoadChannels(TheChannelName);
   //example
-  
+    
   nbins = 200;
   minx = 0.;
   maxx = 350;
@@ -261,8 +294,15 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   
   //***********************
   // initiate lumi reweighting
+  MyhistoManager.CreateHisto(SelABjet, "SelABjet", datasetName, "Nevents","Entries", 2, -0.5, 1.5);
+  MyhistoManager.CreateHisto(SelABjet_afterjetsel, "SelABjet_afterjetsel", datasetName, "Nevents","Entries", 2, -0.5, 1.5);
+ 
+  MyhistoManager.CreateHisto(Ntrilept_mumumu, "Ntrilept_mumumu", datasetName, "Nevents","Entries", 11, -0.5, 10.5); 
+  MyhistoManager.CreateHisto(Ntrileptnoniso_mumumu, "Ntrileptnoniso_mumumu", datasetName, "Nevents","Entries", 11, -0.5, 10.5); 
   
-   
+  
+  MyhistoManager.CreateHisto(Nvertex, "Nvertex", datasetName, "Nvertex", "Entries", 50, 0, 50); 
+  
   MyhistoManager.CreateHisto(CutFlow_mumumu,  "CutFlow_mumumu" ,datasetName,"CutFlow","Entries",15,-0.5,14.5);
   MyhistoManager.CreateHisto(CutFlow_mumue,   "CutFlow_mumue"  ,datasetName,"CutFlow","Entries",15,-0.5,14.5);
   MyhistoManager.CreateHisto(CutFlow_eemu,    "CutFlow_eemu"   ,datasetName,"CutFlow","Entries",15,-0.5,14.5);
@@ -272,13 +312,13 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   MyhistoManager.SetCutFlowAxisTitleFCNCMonotop(CutFlow_mumumu,   "CutFlow_mumumu"  ,datasetName);
   MyhistoManager.SetCutFlowAxisTitleFCNCMonotop(CutFlow_mumue,    "CutFlow_mumue"   ,datasetName);
   MyhistoManager.SetCutFlowAxisTitleFCNCMonotop(CutFlow_eemu,     "CutFlow_eemu"    ,datasetName);
-  MyhistoManager.SetCutFlowAxisTitleFCNCMonotop(CutFlow_eee,      "CutFlow_eee"     ,datasetName);    
+  MyhistoManager.SetCutFlowAxisTitleFCNCMonotop(CutFlow_eee,      "CutFlow_eee"     ,datasetName);
   
-  MyhistoManager.CreateHisto(ErrCutFlow_mumumu,  "ErrCutFlow_mumumu"  ,datasetName,"ErrCutFlow","Entries",15,-0.5,14.5);
-  MyhistoManager.CreateHisto(ErrCutFlow_mumue,   "ErrCutFlow_mumue"   ,datasetName,"ErrCutFlow","Entries",15,-0.5,14.5);
-  MyhistoManager.CreateHisto(ErrCutFlow_eemu,    "ErrCutFlow_eemu"    ,datasetName,"ErrCutFlow","Entries",15,-0.5,14.5);
-  MyhistoManager.CreateHisto(ErrCutFlow_eee,     "ErrCutFlow_eee"     ,datasetName,"ErrCutFlow","Entries",15,-0.5,14.5);
   
+  MyhistoManager.CreateHisto(Nvtx_mumumu_afterleptsel, "Nvtx_mumumu_afterleptsel", datasetName , "NVtx", "Entries", 50, 0, 49) ;
+  MyhistoManager.CreateHisto(Nvtx_mumue_afterleptsel,  "Nvtx_mumue_afterleptsel",  datasetName , "NVtx", "Entries", 50, 0, 49);
+  MyhistoManager.CreateHisto(Nvtx_eemu_afterleptsel,   "Nvtx_eemu_afterleptsel",   datasetName , "NVtx", "Entries", 50, 0, 49);
+  MyhistoManager.CreateHisto(Nvtx_eee_afterleptsel,    "Nvtx_eee_afterleptsel",    datasetName , "NVtx", "Entries", 50, 0, 49);
   
   MyhistoManager.CreateHisto(NVtx_mumumu_aftertrigsel, "NVtx_mumumu_aftertrigsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
   MyhistoManager.CreateHisto(NVtx_mumue_aftertrigsel, "NVtx_mumue_aftertrigsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
@@ -289,6 +329,16 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   MyhistoManager.CreateHisto(NVtx_mumue_afterleptsel, "NVtx_mumue_afterleptsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
   MyhistoManager.CreateHisto(NVtx_eemu_afterleptsel, "NVtx_eemu_afterleptsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
   MyhistoManager.CreateHisto(NVtx_eee_afterleptsel, "NVtx_eee_afterleptsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
+
+  
+  
+  
+  
+  MyhistoManager.CreateHisto(ErrCutFlow_mumumu,  "ErrCutFlow_mumumu"  ,datasetName,"ErrCutFlow","Entries",15,-0.5,14.5);
+  MyhistoManager.CreateHisto(ErrCutFlow_mumue,   "ErrCutFlow_mumue"   ,datasetName,"ErrCutFlow","Entries",15,-0.5,14.5);
+  MyhistoManager.CreateHisto(ErrCutFlow_eemu,    "ErrCutFlow_eemu"    ,datasetName,"ErrCutFlow","Entries",15,-0.5,14.5);
+  MyhistoManager.CreateHisto(ErrCutFlow_eee,     "ErrCutFlow_eee"     ,datasetName,"ErrCutFlow","Entries",15,-0.5,14.5);
+  
   
   
   MyhistoManager.CreateHisto(Mt_mumumu_afterbjetsel, "Mt_mumumu_afterbjetsel", datasetName,"Mt","Entries", 100, 0, 500); 
@@ -312,6 +362,10 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   MyhistoManager.CreateHisto(NJet_eemu_afterbsel  , "NJet_eemu_afterbsel"  , datasetName,"Njets", "Entries",5,-0.5,4.5);
   MyhistoManager.CreateHisto(NJet_eee_afterbsel   , "NJet_eee_afterbsel"   , datasetName,"Njets", "Entries",5,-0.5,4.5);
   
+  MyhistoManager.CreateHisto(NJet_mumumu_afterleptsel_mWT110, "NJet_mumumu_afterleptsel_mWT110", datasetName,"NBjets", "Entries",5,-0.5,4.5);
+  MyhistoManager.CreateHisto(NJet_mumue_afterleptsel_mWT110,  "NJet_mumue_afterleptsel_mWT110",  datasetName,"NBjets", "Entries",5,-0.5,4.5);
+  MyhistoManager.CreateHisto(NJet_eemu_afterleptsel_mWT110,   "NJet_eemu_afterleptsel_mWT110",   datasetName,"NBjets", "Entries",5,-0.5,4.5);
+  MyhistoManager.CreateHisto(NJet_eee_afterleptsel_mWT110,    "NJet_eee_afterleptsel_mWT110",	 datasetName,"NBjets", "Entries",5,-0.5,4.5);
   
   MyhistoManager.CreateHisto(NLept_mumumu_afterbsel, "NLept_mumumu_afterbsel", datasetName,"NLepts", "Entries",5,-0.5,4.5);
   MyhistoManager.CreateHisto(NLept_mumue_afterbsel , "NLept_mumue_afterbsel" , datasetName,"NLepts", "Entries",5,-0.5,4.5);
@@ -329,6 +383,18 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   MyhistoManager.CreateHisto(NBJet_mumue_afterjetsel , "NBJet_mumue_afterjetsel" , datasetName,"NBjets", "Entries",2,-0.5,1.5);
   MyhistoManager.CreateHisto(NBJet_eemu_afterjetsel  , "NBJet_eemu_afterjetsel"  , datasetName,"NBjets", "Entries",2,-0.5,1.5);
   MyhistoManager.CreateHisto(NBJet_eee_afterjetsel   , "NBJet_eee_afterjetsel"   , datasetName,"NBjets", "Entries",2,-0.5,1.5);	
+  
+  
+  
+  
+  
+  MyhistoManager.CreateHisto(NBJet_mumumu_afterleptsel_mWT110, "NBJet_mumumu_afterleptsel_mWT110", datasetName,"NBjets", "Entries",5,-0.5,4.5);
+  MyhistoManager.CreateHisto(NBJet_mumue_afterleptsel_mWT110,  "NBJet_mumue_afterleptsel_mWT110",  datasetName,"NBjets", "Entries",5,-0.5,4.5);
+  MyhistoManager.CreateHisto(NBJet_eemu_afterleptsel_mWT110,   "NBJet_eemu_afterleptsel_mWT110",   datasetName,"NBjets", "Entries",5,-0.5,4.5);
+  MyhistoManager.CreateHisto(NBJet_eee_afterleptsel_mWT110,    "NBJet_eee_afterleptsel_mWT110",    datasetName,"NBjets", "Entries",5,-0.5,4.5);
+  
+  
+  
   
   
   /*MyhistoManager.CreateHisto(NBJet_mumumu_afterjetsel, "NBJet_mumumu_afterjetsel", datasetName,"NBjets", "Entries",5,-0.5,4.5);
@@ -618,6 +684,26 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   
   
   
+  MyhistoManager.CreateHisto(Charge_mumumu_afterleptsel, "Charge_mumumu_afterleptsel", datasetName, "Charge", "Entries", 11, -5, 5);
+  MyhistoManager.CreateHisto(Charge_mumue_afterleptsel,  "Charge_mumue_afterleptsel",  datasetName, "Charge", "Entries", 11, -5, 5);
+  MyhistoManager.CreateHisto(Charge_eemu_afterleptsel,   "Charge_eemu_afterleptsel",   datasetName, "Charge", "Entries", 11, -5, 5);
+  MyhistoManager.CreateHisto(Charge_eee_afterleptsel,    "Charge_eee_afterleptsel",    datasetName, "Charge", "Entries", 11, -5, 5);
+  
+  MyhistoManager.CreateHisto(Charge_mumumu_afterleptsel_mWT110, "Charge_mumumu_afterleptsel_mWT110", datasetName, "Charge", "Entries", 11, -5, 5);
+  MyhistoManager.CreateHisto(Charge_mumue_afterleptsel_mWT110,  "Charge_mumue_afterleptsel_mWT110",  datasetName, "Charge", "Entries", 11, -5, 5);
+  MyhistoManager.CreateHisto(Charge_eemu_afterleptsel_mWT110,   "Charge_eemu_afterleptsel_mWT110",   datasetName, "Charge", "Entries", 11, -5, 5);
+  MyhistoManager.CreateHisto(Charge_eee_afterleptsel_mWT110,    "Charge_eee_afterleptsel_mWT110",    datasetName, "Charge", "Entries", 11, -5, 5);
+  
+  
+  
+  
+  MyhistoManager.CreateHisto(DijetInvM_mumumu_afterleptsel_inZpeak, "DijetInvM_mumumu_afterleptsel_inZpeak", datasetName, "DiJet", "Entries", 100, 0, 200);
+  MyhistoManager.CreateHisto(DijetInvM_mumue_afterleptsel_inZpeak,  "DijetInvM_mumue_afterleptsel_inZpeak" , datasetName, "DiJet", "Entries", 100, 0, 200);
+  MyhistoManager.CreateHisto(DijetInvM_eemu_afterleptsel_inZpeak,   "DijetInvM_eemu_afterleptsel_inZpeak"  , datasetName, "DiJet", "Entries", 100, 0, 200);
+  MyhistoManager.CreateHisto(DijetInvM_eee_afterleptsel_inZpeak,    "DijetInvM_eee_afterleptsel_inZpeak"   , datasetName, "DiJet", "Entries", 100, 0, 200);
+  
+  
+  
   
   //**********************
   //initiate 2D histograms
@@ -665,9 +751,34 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   
   TheTree = new TTree(treename.Data(),treename.Data());
   TheTree->Branch("tree_topMass",     &tree_topMass,     "tree_topMass/F"   );
+  TheTree->Branch("tree_totMass",     &tree_totMass,     "tree_totMass/F"   );
   TheTree->Branch("tree_deltaPhilb",  &tree_deltaPhilb,  "tree_deltaPhilb/F");
+  TheTree->Branch("tree_deltaRlb",    &tree_deltaRlb,    "tree_deltaRlb/F"  );
+  TheTree->Branch("tree_deltaRTopZ",  &tree_deltaRTopZ,  "tree_deltaRTopZ/F");
   TheTree->Branch("tree_asym",        &tree_asym,        "tree_asym/F"      );
   TheTree->Branch("tree_Zpt",         &tree_Zpt,         "tree_Zpt/F"       );
+  TheTree->Branch("tree_ZEta",        &tree_ZEta,        "tree_ZEta/F"      );
+  TheTree->Branch("tree_topPt",       &tree_topPt,       "tree_topPt/F"     );
+  TheTree->Branch("tree_topEta",      &tree_topEta,      "tree_topEta/F"    );
+  TheTree->Branch("tree_NJets",       &tree_NJets,       "tree_NJets/F"     );
+  TheTree->Branch("tree_NBJets",      &tree_NBJets,      "tree_NBJets/F"    );
+  TheTree->Branch("tree_deltaRZl",    &tree_deltaRZl,    "tree_deltaRZl/F"     );
+  TheTree->Branch("tree_deltaPhiZmet",&tree_deltaPhiZmet,"tree_deltaPhiZmet/F" );
+  TheTree->Branch("tree_btagDiscri",  &tree_btagDiscri,  "tree_btagDiscri/F"   );
+  
+  TheTree->Branch("tree_totPt",      &tree_totPt,      "tree_totPt/F"   );
+  TheTree->Branch("tree_totEta",     &tree_totEta,     "tree_totEta/F"   );
+  
+  
+  TheTree->Branch("tree_leptWPt",        &tree_leptWPt        , "tree_leptWPt/F"        );
+  TheTree->Branch("tree_leptWEta",       &tree_leptWEta       , "tree_leptWEta/F"       );
+  TheTree->Branch("tree_leadJetPt",      &tree_leadJetPt      , "tree_leadJetPt/F"      ); 
+  TheTree->Branch("tree_leadJetEta",     &tree_leadJetEta     , "tree_leadJetEta/F"     );
+  TheTree->Branch("tree_deltaRZleptW",   &tree_deltaRZleptW   , "tree_deltaRZleptW/F"   );
+  TheTree->Branch("tree_deltaPhiZleptW", &tree_deltaPhiZleptW , "tree_deltaPhiZleptW/F" );
+  
+  
+  
   TheTree->Branch("tree_EvtWeight",   &tree_EvtWeight,   "tree_EvtWeight/F" );
   TheTree->Branch("tree_SampleType",  &tree_SampleType,  "tree_SampleType/I");
   TheTree->Branch("tree_Channel",     &tree_Channel,     "tree_Channel/I"   );
@@ -679,11 +790,11 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
     
     string mcfile;
     if( datasetName == "FCNCkut" ) // FastSim, in-time PU only
-      mcfile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUMC_InTime_Fall11.root");
-    else
-      mcfile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PU3DMC_Fall11_JLA.root");
+       mcfile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUMC_InTime_Fall11.root");
+     else
+       mcfile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PU3DMC_Fall11_JLA.root");
     fexists(mcfile, true);
-
+    
     string datafile;
     if( datasetName == "FCNCkut" ) {
       if( !IReweight_puDown && !IReweight_puUp ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_observed_68mb.root");
@@ -696,7 +807,9 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
       if( IReweight_puUp ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_71.4mb.root");
     }
     fexists(datafile, true);
-   
+ 
+ 
+    
     LumiWeights = new reweight::LumiReWeighting(mcfile, datafile, "histoMCPU", "pileup" );
     LumiWeights->weight3D_init( 1. );
     
@@ -762,15 +875,24 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
   vector<NTVertex>   selVertices  = sel.GetSelectedVertex();
   // cout << "Vertices loaded " << endl;
   // cout<<sel.GetPointer2Electrons()<<endl;
-  vector<NTElectron> selElectrons = sel.GetSelectedElectrons();
+  vector<NTElectron> selElectrons; 
   // cout << "Electrons loaded " << endl;
-  vector<NTMuon>     selMuons     = sel.GetSelectedMuons();
+  vector<NTMuon>     selMuons    ;
   // cout << "Muons loaded " << endl;
+  
+  MyhistoManager.FillHisto(Ntrilept_mumumu, "Ntrilept_mumumu", selMuons.size(), datasetName, 1, 1);
   
   vector<NTElectron> selElectronsNonIso = sel.GetSelectedElectronsNoIso();
   // cout << "No iso electrons loaded " << endl;
   vector<NTMuon>     selMuonsNonIso     = sel.GetSelectedMuonsNoIso();
   // cout << "No iso muons loaded " << endl;
+  
+ 
+  
+  selElectrons = sel.GetSelectedElectrons();
+  selMuons     = sel.GetSelectedMuons();
+  
+  MyhistoManager.FillHisto(Ntrileptnoniso_mumumu, "Ntrileptnoniso_mumumu", selMuonsNonIso.size(), datasetName, 1, 1);
   
   vector<NTElectron> ZeeCand; 
   vector<NTMuon>     ZmumuCand; 
@@ -778,22 +900,26 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
   vector<NTElectron> WeCand; 
   vector<NTMuon>     WmuCand; 
  
-  NTMET met			   = sel.GetMET(); 
+  //NTMET met			   = sel.GetMET(); 
+  NTMET met			   = sel.GetSelectedMET(applyJES, scale, applyJER, ResFactor);  
   // cout << "MET loaded " << endl;
 
   tree_topMass	  = -100000;
+  tree_totMass	  = -100000;
   tree_deltaPhilb = -100000;
+  tree_deltaRlb   = -100000;
+  tree_deltaRTopZ = -100000;
   tree_asym	  = -100000;
   tree_Zpt	  = -100000;
+  tree_ZEta	  = -100000;
+  tree_topPt	  = -100000;
+  tree_topEta	  = -100000;
   tree_SampleType = -100000;
   tree_Channel    = -100000;
   tree_EvtWeight  = -100000;
 
   
-      //cout << "***************************" << endl;
-      //cout << "***************************" << endl;
-      //cout << "***************************" << endl;
-      
+  
  
   double Dweight[101];
   for(int k1=0; k1<101; k1++) {
@@ -837,10 +963,24 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
       
       if(IReweight ){
 	
-        if( datasetName == "FCNCkut" ) // FastSim, in-time PU only
-          weightITypeMC = weightITypeMC_save*LumiWeights->ITweight(event->pileup.intime_npu);
-	else
+	
+	if(datasetName != "DYToLL_M10-50" 
+	   && datasetName != "FCNCkut" && datasetName != "FCNCkct" 
+	   && datasetName != "FCNCxut" && datasetName != "FCNCxct" 
+	   && datasetName != "FCNCzut" && datasetName != "FCNCzct" 
+	  ){
 	  weightITypeMC = weightITypeMC_save*LumiWeights->weight3D(event->pileup.before_npu, event->pileup.intime_npu, event->pileup.after_npu);
+	}               
+	if( datasetName == "DYToLL_M10-50" || 
+	      datasetName == "FCNCkut"  ||  datasetName == "FCNCkct" 
+	   || datasetName == "FCNCxut"  ||  datasetName == "FCNCxct" 
+	   || datasetName == "FCNCzut"  ||  datasetName == "FCNCzct" 
+	   
+	   )  {
+	  double ave_npu = (event->pileup.before_npu+event->pileup.intime_npu+event->pileup.after_npu)/3.;
+	  weightITypeMC = weightITypeMC_save*LumiWeights->ITweight3BX(ave_npu);
+	}
+	
 	
       }
       else weightITypeMC = weightITypeMC_save;
@@ -950,7 +1090,12 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
       //TabFlow1[IChannel][ITypeMC][0]+=Dweight[ITypeMC];
       //TabFlow2[IChannel][ITypeMC][0]+=Dweight[ITypeMC]*Dweight[ITypeMC];
      
-    }  else if ( datasetName=="FCNCkut") { 
+    }  else if ( 
+         datasetName=="FCNCkut" || datasetName=="FCNCkct" 
+       ||datasetName=="FCNCxut" || datasetName=="FCNCxct" 
+       ||datasetName=="FCNCzut" || datasetName=="FCNCzct" 
+       
+       ) { 
       ITypeMC = 6; IsSignal = false;  Dweight[ITypeMC]= weightITypeMC; 
       EventYieldWeightError = Dweight[ITypeMC]*Dweight[ITypeMC];
 
@@ -969,6 +1114,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
       
     }
    
+    MyhistoManager.FillHisto(Nvertex, "Nvertex", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
  
 
     //*****************************************************************
@@ -981,7 +1127,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
     if(ChannelName == "mumue"  ) passtrigger = sel.passTriggerSelection ( dataset, "emu" );
     if(ChannelName == "eemu"   ) passtrigger = sel.passTriggerSelection ( dataset, "emu" );
     if(ChannelName == "eee"    ) passtrigger = sel.passTriggerSelection ( dataset, "ee"  );
-    
+    passtrigger = true;
     
     if (   passtrigger   ) {
       //cout << "line 859, pass trigger selection " << endl;
@@ -994,20 +1140,23 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
       if(IChannel == 2) MyhistoManager.FillHisto(ErrCutFlow_eemu,     "ErrCutFlow_eemu"   , 0, datasetName, IsSignal, EventYieldWeightError);
       if(IChannel == 3) MyhistoManager.FillHisto(ErrCutFlow_eee,      "ErrCutFlow_eee"    , 0, datasetName, IsSignal, EventYieldWeightError);
       
-      
       if(IChannel == 0) MyhistoManager.FillHisto(NVtx_mumumu_aftertrigsel, "NVtx_mumumu_aftertrigsel", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
       if(IChannel == 1) MyhistoManager.FillHisto(NVtx_mumue_aftertrigsel, "NVtx_mumue_aftertrigsel", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
       if(IChannel == 2) MyhistoManager.FillHisto(NVtx_eemu_aftertrigsel, "NVtx_eemu_aftertrigsel", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
       if(IChannel == 3) MyhistoManager.FillHisto(NVtx_eee_aftertrigsel, "NVtx_eee_aftertrigsel", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
 
+
       
-   
+      
+      //cout << "lepton size " << selMuons.size() << endl;
+      
+      
        //*****************************************************************
       // select Z->ee candidate
       //*****************************************************************    
      
       int leptonFlavor = 0;
-      
+      int wcharge      = 0;
       ZeeCand.clear(); 
       ZmumuCand.clear(); 
   
@@ -1043,7 +1192,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
       //*****************************************************************
       // select W->enu candidate
       //*****************************************************************    
-      
+      //cout << "get lepton cand W->enu " << endl;
       if(!useNonIsoWcand){
         for(unsigned int iel1 = 0; iel1 < selElectrons.size(); iel1++){
 	  bool matchElec=false;
@@ -1053,6 +1202,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	   }
 	  if(!matchElec){
 	    WeCand.push_back(selElectrons[iel1]);
+	    wcharge = selElectrons[iel1].charge;
 	    if(selElectrons[iel1].LeptonOrigin == 10) leptonFlavor = 1;
 	  }
         }
@@ -1063,8 +1213,9 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	     if(fabs(selElectronsNonIso[iel1].p4.Pt() - ZeeCand[iel2].p4.Pt()) <  0.0001)  matchElec=true;
 	     else if(selElectrons[iel1].LeptonOrigin == 10) leptonFlavor = 1;
           }
-	  if(!matchElec && selElectronsNonIso[iel1].RelIso03PF() > 0.4){ 
-	    WeCand.push_back(selElectronsNonIso[iel1]); 
+	  if(!matchElec && selElectronsNonIso[iel1].RelIso03PF() > looseIso){ 
+	    WeCand.push_back(selElectronsNonIso[iel1]);
+	    wcharge = selElectronsNonIso[iel1].charge; 
 	    if(selElectronsNonIso[iel1].LeptonOrigin == 10) leptonFlavor = 1;
 	    //cout << "    lepton origin of We cand " << selElectronsNonIso[iel1].LeptonOrigin << endl;
 	    //if(selElectronsNonIso[iel1].LeptonOrigin == 10) cout << " nofake wenu" << endl;
@@ -1106,6 +1257,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
       // select W->munu candidate
       //*****************************************************************    
       
+      //cout << "get lepton cand W->munu " << endl;
       if(!useNonIsoWcand){
         //cout << "in sel W " << endl;
         for(unsigned int imu1 = 0; imu1 < selMuons.size(); imu1++){
@@ -1117,6 +1269,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
           } 
 	  if(!matchMuon){
 	    WmuCand.push_back(selMuons[imu1]);
+	    wcharge = selMuons[imu1].charge;
 	    if(selMuons[imu1].LeptonOrigin == 10) leptonFlavor = 1;
 	  }
         }
@@ -1128,14 +1281,35 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	     if(fabs(selMuonsNonIso[imu1].p4.Pt() - ZmumuCand[imu2].p4.Pt())  < 0.0001) matchMuon = true;
 	 
           }
-	  if(!matchMuon && selMuonsNonIso[imu1].RelIso03PF() > 0.4){
+	  if(!matchMuon && selMuonsNonIso[imu1].RelIso03PF() > looseIso){
 	    WmuCand.push_back(selMuonsNonIso[imu1]);
+	    wcharge = selMuonsNonIso[imu1].charge;
 	    if(selMuonsNonIso[imu1].LeptonOrigin == 10) leptonFlavor = 1;
 	  }
         }
       }
       
+      //redefine the lepton coll for jet cleaning
+      if(useNonIsoWcand){
+         
+        vector<NTElectron>  tmpElectrons = sel.GetSelectedElectronsNoIso();
+        vector<NTMuon>      tmpMuons     = sel.GetSelectedMuonsNoIso();
+        
+        for(unsigned int iel=0; iel<tmpElectrons.size(); iel++){
+          if(tmpElectrons[iel].RelIso03PF() > 0.4) selElectrons.push_back(tmpElectrons[iel]);
+        }
       
+        for(unsigned int imu=0; imu<tmpMuons.size(); imu++){
+          if(tmpMuons[imu].RelIso03PF() > 0.4) selMuons.push_back(tmpMuons[imu]);
+        }
+      
+      }else{
+     
+        selElectrons = sel.GetSelectedElectrons();
+       selMuons     = sel.GetSelectedMuons();
+      }
+     
+      //cout << "1192" << endl;
       //*****************************************************************
       // apply lepton selection
       //*****************************************************************    
@@ -1159,8 +1333,57 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	
 	
       }
+      
+      
+      int nbtag = 0;
+      vector<NTJet>	 selJetstmp = sel.GetSelectedJets(selMuons, selElectrons, applyJES, scale, applyJER, ResFactor);
+      int AlgoBtagtmp = sel.GetbtagAlgo();
+      float btagDiscriCuttmp = sel.GetbtagDiscriCut ();
+      
+      
+      for(unsigned int ijet = 0; ijet < selJetstmp.size(); ijet++){
+	  
+	  if ( AlgoBtagtmp==6 &&  selJetstmp[ijet].bTag["combinedSecondaryVertexBJetTags"]>= btagDiscriCuttmp) nbtag++;
+      } 
+	
+      
+      
+      
+      if(ZeeCand.size() ==2 && WmuCand.size() == 0 && WeCand.size() == 0 && met.p2.Mod() < 20 
+        && fabs( (ZeeCand[0].p4+ZeeCand[1].p4).M()-15 ) < 91 ){
+        
+	vector<NTJet>      selJetsZ = sel.GetSelectedJets(selMuons, selElectrons, applyJES, scale, applyJER, ResFactor);
+	if(selJetsZ.size() ==2){
+	  TLorentzVector jet1 = selJetsZ[0].p4;
+	  TLorentzVector jet2 = selJetsZ[1].p4;
+	  double invMDijet = (jet1+jet2).M();
+	  double deltaRDiJetsZ =  (jet1+jet2).DeltaR(ZeeCand[0].p4+ZeeCand[1].p4);
+	  double detlaRDijets = jet1.DeltaR(jet2);
+          if(deltaRDiJetsZ > 3.0 && detlaRDijets < 1.5) MyhistoManager.FillHisto(DijetInvM_eee_afterleptsel_inZpeak, "DijetInvM_eee_afterleptsel_inZpeak", invMDijet, datasetName, IsSignal, Dweight[ITypeMC]);
+	}
+      }
+      
+      
+      if(ZmumuCand.size() ==2 && WmuCand.size() == 0 && WeCand.size() == 0 && met.p2.Mod() < 20 
+        && fabs( (ZmumuCand[0].p4+ZmumuCand[1].p4).M()-15 ) < 91  ){
+        
+	vector<NTJet>      selJetsZ = sel.GetSelectedJets(selMuons, selElectrons, applyJES, scale, applyJER, ResFactor);
+	if(selJetsZ.size() ==2){
+	  TLorentzVector jet1 = selJetsZ[0].p4;
+	  TLorentzVector jet2 = selJetsZ[1].p4;
+	  double invMDijet = (jet1+jet2).M();
+	  double deltaRDiJetsZ =  (jet1+jet2).DeltaR(ZmumuCand[0].p4+ZmumuCand[1].p4);
+	  double detlaRDijets = jet1.DeltaR(jet2);
+          if(deltaRDiJetsZ > 3.0 && detlaRDijets < 1.5) MyhistoManager.FillHisto(DijetInvM_mumumu_afterleptsel_inZpeak, "DijetInvM_mumumu_afterleptsel_inZpeak", invMDijet, datasetName, IsSignal, Dweight[ITypeMC]);
+	}
+      }
+      
+      //cout << "ZmumuCand.size() " << ZmumuCand.size() << "  WmuCand.size() " << WmuCand.size() << endl;
       //if( (WmuCand.size()+ZmumuCand.size()+WeCand.size()+ZeeCand.size()) == 3 && met.p2.Mod() > 25 ) {
-      if( (WmuCand.size()+ZmumuCand.size()+WeCand.size()+ZeeCand.size()) == 3 ) {
+      //if( (WmuCand.size()+ZmumuCand.size()+WeCand.size()+ZeeCand.size()) == 3 && nbtag == 0) {
+      
+      
+      if( (WmuCand.size()+ZmumuCand.size()+WeCand.size()+ZeeCand.size()) == 3) {
        
 	string cand3leptonChannel = "";
 	if( ZmumuCand.size() == 2 ) {
@@ -1294,10 +1517,10 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 
 	if(datasetName=="Zjets" && applyFakescale ){	
 	
-	  if(IChannel == 0 && cand3leptonChannel == "mumumu") Dweight[ITypeMC] = 4.49*Dweight[ITypeMC];
-          if(IChannel == 1 && cand3leptonChannel == "mumue" ) Dweight[ITypeMC] = 1.11*Dweight[ITypeMC];
-	  if(IChannel == 2 && cand3leptonChannel == "eemu"  ) Dweight[ITypeMC] = 3.09*Dweight[ITypeMC];
-	  if(IChannel == 3 && cand3leptonChannel == "eee"   ) Dweight[ITypeMC] = 1.63*Dweight[ITypeMC];
+	  if(IChannel == 0 && cand3leptonChannel == "mumumu") Dweight[ITypeMC] = SF_Fake[0]*Dweight[ITypeMC];
+          if(IChannel == 1 && cand3leptonChannel == "mumue" ) Dweight[ITypeMC] = SF_Fake[1]*Dweight[ITypeMC];
+	  if(IChannel == 2 && cand3leptonChannel == "eemu"  ) Dweight[ITypeMC] = SF_Fake[2]*Dweight[ITypeMC];
+	  if(IChannel == 3 && cand3leptonChannel == "eee"   ) Dweight[ITypeMC] = SF_Fake[3]*Dweight[ITypeMC];
 	
 	}
 	
@@ -1308,48 +1531,94 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	
 	if(datasetName=="WZ"  && applyWZ ){	
 	
-	  if(IChannel == 0 && cand3leptonChannel == "mumumu") Dweight[ITypeMC] = 0.70*Dweight[ITypeMC];
-          if(IChannel == 1 && cand3leptonChannel == "mumue" ) Dweight[ITypeMC] = 0.82*Dweight[ITypeMC];
-	  if(IChannel == 2 && cand3leptonChannel == "eemu"  ) Dweight[ITypeMC] = 0.68*Dweight[ITypeMC];
-	  if(IChannel == 3 && cand3leptonChannel == "eee"   ) Dweight[ITypeMC] = 0.81*Dweight[ITypeMC];
+	  if(IChannel == 0 && cand3leptonChannel == "mumumu") Dweight[ITypeMC] = SF_WZ[0]*Dweight[ITypeMC];
+          if(IChannel == 1 && cand3leptonChannel == "mumue" ) Dweight[ITypeMC] = SF_WZ[1]*Dweight[ITypeMC];
+	  if(IChannel == 2 && cand3leptonChannel == "eemu"  ) Dweight[ITypeMC] = SF_WZ[2]*Dweight[ITypeMC];
+	  if(IChannel == 3 && cand3leptonChannel == "eee"   ) Dweight[ITypeMC] = SF_WZ[3]*Dweight[ITypeMC];
 	
 	}
 	
 	
         //cout << "line 1025" << endl;
-	vector<NTJet>      selJets = sel.GetSelectedJets(selMuons, selElectrons);
+	vector<NTJet>        selJets = sel.GetSelectedJets(selMuons, selElectrons, applyJES, scale, applyJER, ResFactor);
+   	//vector<NTJet>      selJets = sel.GetSelectedJets();
 	double dileptonIvM = dilept.M();
 	
 	double sumPtLeptJet = lept1.Pt() + lept2.Pt() + lept3.Pt();
 	for(unsigned int i=0 ; i< selJets.size(); i++) sumPtLeptJet += selJets[i].p4.Pt();
 	double theMET = met.p2.Mod();
-		
-	int NBtaggedJets = 0;
-	int idxBtag      = 0;
-	int AlgoBtag = sel.GetbtagAlgo();
-	float btagDiscriCut = sel.GetbtagDiscriCut ();
-	//cout << "***********************" << endl;
-	for(unsigned int ijet = 0; ijet < selJets.size(); ijet++){
+   		
+	
+	 //cout << "-------------------------------------------------------" << endl;    
+	
+  
+  
+   	int NBtaggedJets = 0;
+   	int idxBtag      = 0;
+   	int AlgoBtag = sel.GetbtagAlgo();
+   	float btagDiscriCut = sel.GetbtagDiscriCut ();
+	
+	bool foundASelBjet = 0;
+   	//cout << "***********************" << endl;
+   	for(unsigned int ijet = 0; ijet < selJets.size(); ijet++){
+    	 //cout << "jet flavor " << int(selJets[ijet].partonFlavour) << endl;
+    	 if(abs(selJets[ijet].partonFlavour)==5 ){
+	  // cout << "found b jet " << int(selJets[ijet].partonFlavour) << endl;
+	    foundASelBjet = true;
+	 }
+    	 if ( AlgoBtag==0 &&  selJets[ijet].bTag["trackCountingHighEffBJetTags"]	 >= btagDiscriCut) NBtaggedJets++;
+    	 if ( AlgoBtag==1 &&  selJets[ijet].bTag["simpleSecondaryVertexHighEffBJetTags"] >= btagDiscriCut) NBtaggedJets++;
+    	 if ( AlgoBtag==2 &&  selJets[ijet].bTag["trackCountingHighPurBJetTags"]	 >= btagDiscriCut) NBtaggedJets++;
+    	 if ( AlgoBtag==3 &&  selJets[ijet].bTag["simpleSecondaryVertexHighPurBJetTags"] >= btagDiscriCut) NBtaggedJets++;
+    	 if ( AlgoBtag==4 &&  selJets[ijet].bTag["jetProbabilityBJetTags"]  	         >= btagDiscriCut) NBtaggedJets++;
+    	 if ( AlgoBtag==5 &&  selJets[ijet].bTag["jetBProbabilityBJetTags"] 	         >= btagDiscriCut) NBtaggedJets++;
+    	 if ( AlgoBtag==6 &&  selJets[ijet].bTag["combinedSecondaryVertexBJetTags"]      >= btagDiscriCut){
+   		NBtaggedJets++;
+   		idxBtag = ijet;
+    	 }
+   	}  
+    	//cout << "eventNumber " << event->general.eventNb << endl;
+   	
+	if(foundASelBjet) MyhistoManager.FillHisto(SelABjet, "SelABjet", 1.  , datasetName, IsSignal, 1.);
+	else              MyhistoManager.FillHisto(SelABjet, "SelABjet", 0.  , datasetName, IsSignal, 1. );
+        
+   	//int selLastStep = sel.doFullSelection (dataset, string("all"), false);
+   
+   
+   	 // initialisation of weightb
+   	vector < float >weightb;
+   	weightb.push_back (1.);
+  	weightb.push_back (0.);
+   	weightb.push_back (0.);
+   	weightb.push_back (0.);
+   	weightb.push_back (0.);
+   	if (sel.GetFlagb() == 1) {	// check if the weightb computation is needed or not (depending on "flag" in xml)
+    	 if (!isData) {	 // to be applied only for MC 
+      	 vector < float >weight_temp = sel.GetSFBweight().GetWeigth4BSel (sel.GetMethodb(), sel.GetSystb(),selJets);
+      	 weightb[0] = weight_temp[0];  //weight of the event (depending on "NofBtagJets" in xml)
+      		 weightb[1] = weight_temp[1];  //proba 0 jet
+      	 weightb[2] = weight_temp[2];  //proba 1 jet
+      	 weightb[3] = weight_temp[3];  //proba 2 jets
+      	 weightb[4] = weight_temp[4];  //proba at least 3 jets	
+      	 //cout << " weight btag " << weightb[0] << " " << " p0jet " << weightb[1] << " p1jet " << weightb[2] << " p2jet " << weightb[3]
+   	//	   << " prest " << weightb[4] << " check1=" << weightb[1]+weightb[2]+weightb[3]+weightb[4] << endl;
+ 	
+     	}
+   	}
+   	/*cout << "nseljets " << selJets.size() << endl;
+   	cout << "weightb[0] " << weightb[0] << endl;
+   	cout << "weightb[1] " << weightb[1] << endl;
+   	cout << "weightb[2] " << weightb[2] << endl;
+   	cout << "weightb[3] " << weightb[3] << endl;
+   	cout << "weightb[4] " << weightb[4] << endl;
+*/
+
+	
+	int nvertex = selVertices.size();
 	  
-	  if ( AlgoBtag==0 &&  selJets[ijet].bTag["trackCountingHighEffBJetTags"]	  >= btagDiscriCut) NBtaggedJets++;
-	  if ( AlgoBtag==1 &&  selJets[ijet].bTag["simpleSecondaryVertexHighEffBJetTags"]    >= btagDiscriCut) NBtaggedJets++;
-	  if ( AlgoBtag==2 &&  selJets[ijet].bTag["trackCountingHighPurBJetTags"]	  >= btagDiscriCut) NBtaggedJets++;
-	  if ( AlgoBtag==3 &&  selJets[ijet].bTag["simpleSecondaryVertexHighPurBJetTags"]    >= btagDiscriCut) NBtaggedJets++;
-	  if ( AlgoBtag==4 &&  selJets[ijet].bTag["jetProbabilityBJetTags"]		  >= btagDiscriCut) NBtaggedJets++;
-	  if ( AlgoBtag==5 &&  selJets[ijet].bTag["jetBProbabilityBJetTags"]		  >= btagDiscriCut) NBtaggedJets++;
-	  if ( AlgoBtag==6 &&  selJets[ijet].bTag["combinedSecondaryVertexBJetTags"]	  >= btagDiscriCut){
-	     NBtaggedJets++;
-	     idxBtag = ijet;
-	  }
-	
-	  //cout << "jet " << ijet << " has a flavor " << selJets[ijet].partonFlavour << endl;
-	  //cout << "NBtaggedJets " << NBtaggedJets << endl;
-	}  
-	
-	
 	if(IChannel == 0 && cand3leptonChannel == "mumumu"){
 	
-	  MyhistoManager.FillHisto(NVtx_mumumu_afterleptsel, "NVtx_mumumu_afterleptsel", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
+	MyhistoManager.FillHisto(Nvtx_mumumu_afterleptsel, "Nvtx_mumumu_afterleptsel", nvertex, datasetName, IsSignal, Dweight[ITypeMC]);
 	  MyhistoManager.FillHisto(InvM_ll_mumumu_afterleptsel, "InvM_ll_mumumu_afterleptsel", dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
 	  MyhistoManager.FillHisto(InvM_ll_mumumu_afterleptsel_lowbin, "InvM_ll_mumumu_afterleptsel_lowbin", dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
 	  MyhistoManager.FillHisto(LeptZPt_mumumu_afterleptsel, "LeptZPt_mumumu_afterleptsel", lept1.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
@@ -1371,11 +1640,12 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	  MyhistoManager.FillHisto2D(HT_vs_LeptPt_mumumu_afterleptsel ,"HT_vs_LeptPt_mumumu_afterleptsel" , sumPtLeptJet, lept2.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 	  MyhistoManager.FillHisto2D(HT_vs_LeptPt_mumumu_afterleptsel ,"HT_vs_LeptPt_mumumu_afterleptsel" , sumPtLeptJet, lept3.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 	  if(selJets.size() == 1 && dilept.M() > 20) MyhistoManager.FillHisto2D(HT_vs_Mll_mumumu_afterleptsel	,"HT_vs_Mll_mumumu_afterleptsel"   , sumPtLeptJet, dilept.M(), datasetName, IsSignal, Dweight[ITypeMC]);
-	  
+	  MyhistoManager.FillHisto(Charge_mumumu_afterleptsel,    "Charge_mumumu_afterleptsel"   , wcharge, datasetName, IsSignal, Dweight[ITypeMC]);
+	 
 	}
         if(IChannel == 1 && cand3leptonChannel == "mumue" ){
 	
-	  MyhistoManager.FillHisto(NVtx_mumue_afterleptsel, "NVtx_mumue_afterleptsel", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
+	MyhistoManager.FillHisto(Nvtx_mumue_afterleptsel,  "Nvtx_mumue_afterleptsel", nvertex, datasetName, IsSignal, Dweight[ITypeMC]); 
 	  MyhistoManager.FillHisto(InvM_ll_mumue_afterleptsel,  "InvM_ll_mumue_afterleptsel",  dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);	  
 	  MyhistoManager.FillHisto(InvM_ll_mumue_afterleptsel_lowbin,  "InvM_ll_mumue_afterleptsel_lowbin",  dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);	  
 	 
@@ -1402,12 +1672,13 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	  MyhistoManager.FillHisto2D(HT_vs_LeptPt_mumue_afterleptsel ,"HT_vs_LeptPt_mumue_afterleptsel" , sumPtLeptJet, lept3.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 	  
 	  if(selJets.size() == 1 && dilept.M() > 20) MyhistoManager.FillHisto2D(HT_vs_Mll_mumue_afterleptsel   ,"HT_vs_Mll_mumue_afterleptsel"   , sumPtLeptJet, dilept.M(), datasetName, IsSignal, Dweight[ITypeMC]);
+	  MyhistoManager.FillHisto(Charge_mumue_afterleptsel,    "Charge_mumue_afterleptsel"   , wcharge, datasetName, IsSignal, Dweight[ITypeMC]);
 	
 	  
 	}
         if(IChannel == 2 && cand3leptonChannel == "eemu"  ){ 
+	MyhistoManager.FillHisto(Nvtx_eemu_afterleptsel,   "Nvtx_eemu_afterleptsel", nvertex, datasetName, IsSignal, Dweight[ITypeMC]);
 	
-	  MyhistoManager.FillHisto(NVtx_eemu_afterleptsel, "NVtx_eemu_afterleptsel", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
 	  MyhistoManager.FillHisto(InvM_ll_eemu_afterleptsel,   "InvM_ll_eemu_afterleptsel",   dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);  
 	  MyhistoManager.FillHisto(InvM_ll_eemu_afterleptsel_lowbin,   "InvM_ll_eemu_afterleptsel_lowbin",   dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);  
 	  
@@ -1434,11 +1705,12 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	  MyhistoManager.FillHisto2D(HT_vs_LeptPt_eemu_afterleptsel ,"HT_vs_LeptPt_eemu_afterleptsel" , sumPtLeptJet, lept3.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 	  
 	  if(selJets.size() == 1 && dilept.M() > 20) MyhistoManager.FillHisto2D(HT_vs_Mll_eemu_afterleptsel   ,"HT_vs_Mll_eemu_afterleptsel"   , sumPtLeptJet, dilept.M(), datasetName, IsSignal, Dweight[ITypeMC]);
-	  
+	  MyhistoManager.FillHisto(Charge_eemu_afterleptsel,    "Charge_eemu_afterleptsel"   , wcharge, datasetName, IsSignal, Dweight[ITypeMC]);
+	
 	}
 	if(IChannel == 3 && cand3leptonChannel == "eee"   ){ 
 	
-	  MyhistoManager.FillHisto(NVtx_eee_afterleptsel, "NVtx_eee_afterleptsel", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
+	MyhistoManager.FillHisto(Nvtx_eee_afterleptsel,    "Nvtx_eee_afterleptsel", nvertex, datasetName, IsSignal, Dweight[ITypeMC]);	
 	  MyhistoManager.FillHisto(InvM_ll_eee_afterleptsel,           "InvM_ll_eee_afterleptsel",    dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
 	  MyhistoManager.FillHisto(InvM_ll_eee_afterleptsel_lowbin,    "InvM_ll_eee_afterleptsel_lowbin",    dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
 	  
@@ -1466,7 +1738,8 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	  MyhistoManager.FillHisto2D(HT_vs_LeptPt_eee_afterleptsel ,"HT_vs_LeptPt_eee_afterleptsel" , sumPtLeptJet, lept3.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 	  
 	  if(selJets.size() == 1 && dilept.M() > 20) MyhistoManager.FillHisto2D(HT_vs_Mll_eee_afterleptsel   ,"HT_vs_Mll_eee_afterleptsel"   , sumPtLeptJet, dilept.M(), datasetName, IsSignal, Dweight[ITypeMC]);
-	  
+	    MyhistoManager.FillHisto(Charge_eee_afterleptsel,    "Charge_eee_afterleptsel"   , wcharge, datasetName, IsSignal, Dweight[ITypeMC]);
+	
 	}
 	
 	
@@ -1504,26 +1777,30 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	// pass 3 lept selection
 	//*****************************************************************  
 	
+	//fixme
 	if( fabs(dilept.M()-91) < 15){
-	  
+	//if( fabs(dilept.M()-91) < 10000000000){
+	   //cout << " weight btag pass Z " << weightb[0] << " " << " p0jet " << weightb[1] << " p1jet " << weightb[2] << " p2jet " << weightb[3]
+   //		   << " prest " << weightb[4] << " check1=" << weightb[1]+weightb[2]+weightb[3]+weightb[4] << endl;;
+ 	
 	  if(dilept.M() > 300){
-	    cout << "dileptonIvM " << dileptonIvM
+	    /*cout << "dileptonIvM " << dileptonIvM
 	    << "  dilept.Pt() "    << dilept.Pt() 
 	    << "  lept1.Pt() "     << lept1.Pt() 
 	    << "  lept2.Pt() "     << lept2.Pt()
 	    << "  lept3.Pt() "     << lept3.Pt()
-	    << "  Njet " << selJets.size();
+	    << "  Njet " << selJets.size();*/
 	    for(unsigned int ijet=0; ijet<selJets.size(); ijet++) cout <<  "  jet " << ijet << " pt " << selJets[ijet].p4.Pt() << endl;
-	    cout << "  met       " << met.p2.Mod() << endl;
+	    //cout << "  met       " << met.p2.Mod() << endl;
 	    
-	    if(selJets.size()>0) cout << "  deltaphi lept-jet 1 " << lept1.DeltaR(selJets[0].p4) << 
+	    /*if(selJets.size()>0) cout << "  deltaphi lept-jet 1 " << lept1.DeltaR(selJets[0].p4) << 
 	                                 "  deltaphi lept-jet 2 " << lept2.DeltaR(selJets[0].p4) <<
 	                                 "  deltaphi lept-jet 3 " << lept3.DeltaR(selJets[0].p4) << endl;
 					 
 	    cout << "  deltaphi lept-met 1 " << lept1.Phi() - met.p2.Phi()  << 
 	            "  deltaphi lept-met 2 " << lept2.Phi() - met.p2.Phi()  <<
 	            "  deltaphi lept-met 3 " << lept3.Phi() - met.p2.Phi()  << endl;  
-  
+  */
 	  }
 	  
 	  
@@ -1563,32 +1840,38 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	
 	  
 	  if(mTW > 110){
-	    cout << "interesting events !!! " << std::endl;
-	    cout<<"RUN "<<event->general.runNb<<" EVT "<<event->general.eventNb<<" BLOCK "<<event->general.lumiblock<<endl;
+	    /*cout << "interesting events !!! " << std::endl;
+	    cout<<"RUN "<<event->general.runNb<<" EVT "<<event->general.eventNb<<endl;
 	    cout << "mTW " << mTW << endl;
 	    cout << "dileptonIvM " << dileptonIvM
 	    << "  dilept.Pt() "    << dilept.Pt() 
 	    << "  lept1.Pt() "     << lept1.Pt() 
 	    << "  lept2.Pt() "     << lept2.Pt()
 	    << "  lept3.Pt() "     << lept3.Pt()
-	    << "  Njet " << selJets.size();
+	    << "  Njet " << selJets.size();*/
 	    for(unsigned int ijet=0; ijet<selJets.size(); ijet++) cout <<  "  jet " << ijet << " pt " << selJets[ijet].p4.Pt() << endl;
-	    cout << "  met       " << met.p2.Mod() << endl;
+	    //cout << "  met       " << met.p2.Mod() << endl;
 	    
-	    if(selJets.size()>0) cout << "  deltaphi lept-jet 1 " << lept1.DeltaR(selJets[0].p4) << 
+	    /*if(selJets.size()>0) cout << "  deltaphi lept-jet 1 " << lept1.DeltaR(selJets[0].p4) << 
 	                                 "  deltaphi lept-jet 2 " << lept2.DeltaR(selJets[0].p4) <<
 	                                 "  deltaphi lept-jet 3 " << lept3.DeltaR(selJets[0].p4) << endl;
 					 
 	    cout << "  deltaphi lept-met 1 " << lept1.Phi() - met.p2.Phi()  << 
 	            "  deltaphi lept-met 2 " << lept2.Phi() - met.p2.Phi()  <<
 	            "  deltaphi lept-met 3 " << lept3.Phi() - met.p2.Phi()  << endl;
-	   
+	   */
 	   TLorentzVector tmpmet;
 	   tmpmet.SetPxPyPzE(met.p2.Px(),met.p2.Py(), 0, 0 );
+	   
+	   int njetselec = selJets.size();
+	   if(njetselec>=4) njetselec = 4;
 	   
 	   double deltaPhi1 = lept1.DeltaR(tmpmet);
 	   double deltaPhi2 = lept2.DeltaR(tmpmet);
 	   double deltaPhi3 = lept3.DeltaR(tmpmet);
+	   
+	   
+	   
 	   
 	   if(IChannel == 0 && cand3leptonChannel == "mumumu"){
 	     MyhistoManager.FillHisto(LeptWPt_mumumu_afterleptsel_mWT110, "LeptWPt_mumumu_afterleptsel_mWT110", lept3.Pt(),  datasetName, IsSignal, Dweight[ITypeMC]);
@@ -1601,12 +1884,13 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	       MyhistoManager.FillHisto(deltaRLeptJet_mumumu_afterleptsel_mWT110, "deltaRLeptJet_mumumu_afterleptsel_mWT110", lept3.DeltaR(selJets[ijet].p4), datasetName, IsSignal, Dweight[ITypeMC]);
 	     }
 	     
-	     
+	      MyhistoManager.FillHisto(Charge_mumumu_afterleptsel_mWT110, "Charge_mumumu_afterleptsel_mWT110", wcharge, datasetName, IsSignal, Dweight[ITypeMC]);
+	  
 	     MyhistoManager.FillHisto(deltaRLeptMet_mumumu_afterleptsel_mWT110, "deltaRLeptMet_mumumu_afterleptsel_mWT110",deltaPhi1 , datasetName, IsSignal, Dweight[ITypeMC]);
 	     MyhistoManager.FillHisto(deltaRLeptMet_mumumu_afterleptsel_mWT110, "deltaRLeptMet_mumumu_afterleptsel_mWT110",deltaPhi2 , datasetName, IsSignal, Dweight[ITypeMC]);
 	     MyhistoManager.FillHisto(deltaRLeptMet_mumumu_afterleptsel_mWT110, "deltaRLeptMet_mumumu_afterleptsel_mWT110",deltaPhi3 , datasetName, IsSignal, Dweight[ITypeMC]);
-	
-	     
+	     MyhistoManager.FillHisto(NJet_mumumu_afterleptsel_mWT110  , "NJet_mumumu_afterleptsel_mWT110" , njetselec,    datasetName, IsSignal, Dweight[ITypeMC]);    
+             MyhistoManager.FillHisto(NBJet_mumumu_afterleptsel_mWT110 , "NBJet_mumumu_afterleptsel_mWT110", NBtaggedJets, datasetName, IsSignal, Dweight[ITypeMC]); 
 	     
 	     
 	   }
@@ -1621,12 +1905,15 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	       MyhistoManager.FillHisto(deltaRLeptJet_mumue_afterleptsel_mWT110, "deltaRLeptJet_mumue_afterleptsel_mWT110", lept2.DeltaR(selJets[ijet].p4), datasetName, IsSignal, Dweight[ITypeMC]);
 	       MyhistoManager.FillHisto(deltaRLeptJet_mumue_afterleptsel_mWT110, "deltaRLeptJet_mumue_afterleptsel_mWT110", lept3.DeltaR(selJets[ijet].p4), datasetName, IsSignal, Dweight[ITypeMC]);
 	     }
-	     
+	        MyhistoManager.FillHisto(Charge_mumue_afterleptsel_mWT110,  "Charge_mumue_afterleptsel_mWT110" , wcharge, datasetName, IsSignal, Dweight[ITypeMC]);
+	
 	     
 	     MyhistoManager.FillHisto(deltaRLeptMet_mumue_afterleptsel_mWT110, "deltaRLeptMet_mumue_afterleptsel_mWT110",deltaPhi1 , datasetName, IsSignal, Dweight[ITypeMC]);
 	     MyhistoManager.FillHisto(deltaRLeptMet_mumue_afterleptsel_mWT110, "deltaRLeptMet_mumue_afterleptsel_mWT110",deltaPhi2 , datasetName, IsSignal, Dweight[ITypeMC]);
 	     MyhistoManager.FillHisto(deltaRLeptMet_mumue_afterleptsel_mWT110, "deltaRLeptMet_mumue_afterleptsel_mWT110",deltaPhi3 , datasetName, IsSignal, Dweight[ITypeMC]);
 	
+	     MyhistoManager.FillHisto(NJet_mumue_afterleptsel_mWT110  , "NJet_mumue_afterleptsel_mWT110" , njetselec,    datasetName, IsSignal, Dweight[ITypeMC]);    
+             MyhistoManager.FillHisto(NBJet_mumue_afterleptsel_mWT110 , "NBJet_mumue_afterleptsel_mWT110", NBtaggedJets, datasetName, IsSignal, Dweight[ITypeMC]); 
 	     
 	   }
            if(IChannel == 2 && cand3leptonChannel == "eemu"   ){ 
@@ -1639,12 +1926,18 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	       MyhistoManager.FillHisto(deltaRLeptJet_eemu_afterleptsel_mWT110, "deltaRLeptJet_eemu_afterleptsel_mWT110", lept2.DeltaR(selJets[ijet].p4), datasetName, IsSignal, Dweight[ITypeMC]);
 	       MyhistoManager.FillHisto(deltaRLeptJet_eemu_afterleptsel_mWT110, "deltaRLeptJet_eemu_afterleptsel_mWT110", lept3.DeltaR(selJets[ijet].p4), datasetName, IsSignal, Dweight[ITypeMC]);
 	     }
+	     
+	     
+	     MyhistoManager.FillHisto(Charge_eemu_afterleptsel_mWT110,   "Charge_eemu_afterleptsel_mWT110"  , wcharge, datasetName, IsSignal, Dweight[ITypeMC]);
 	 
 	      
 	     MyhistoManager.FillHisto(deltaRLeptMet_eemu_afterleptsel_mWT110, "deltaRLeptMet_eemu_afterleptsel_mWT110",deltaPhi1 , datasetName, IsSignal, Dweight[ITypeMC]);
 	     MyhistoManager.FillHisto(deltaRLeptMet_eemu_afterleptsel_mWT110, "deltaRLeptMet_eemu_afterleptsel_mWT110",deltaPhi2 , datasetName, IsSignal, Dweight[ITypeMC]);
 	     MyhistoManager.FillHisto(deltaRLeptMet_eemu_afterleptsel_mWT110, "deltaRLeptMet_eemu_afterleptsel_mWT110",deltaPhi3 , datasetName, IsSignal, Dweight[ITypeMC]);
 	
+	     MyhistoManager.FillHisto(NJet_eemu_afterleptsel_mWT110  , "NJet_eemu_afterleptsel_mWT110" , njetselec,    datasetName, IsSignal, Dweight[ITypeMC]);    
+             MyhistoManager.FillHisto(NBJet_eemu_afterleptsel_mWT110 , "NBJet_eemu_afterleptsel_mWT110", NBtaggedJets, datasetName, IsSignal, Dweight[ITypeMC]); 
+	     
 	   }
            if(IChannel == 3 && cand3leptonChannel == "eee"   ) {
 	     MyhistoManager.FillHisto(LeptWPt_eee_afterleptsel_mWT110,  "LeptWPt_eee_afterleptsel_mWT110",    lept3.Pt(),  datasetName, IsSignal, Dweight[ITypeMC]);
@@ -1656,12 +1949,17 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	       MyhistoManager.FillHisto(deltaRLeptJet_eee_afterleptsel_mWT110, "deltaRLeptJet_eee_afterleptsel_mWT110", lept2.DeltaR(selJets[ijet].p4), datasetName, IsSignal, Dweight[ITypeMC]);
 	       MyhistoManager.FillHisto(deltaRLeptJet_eee_afterleptsel_mWT110, "deltaRLeptJet_eee_afterleptsel_mWT110", lept3.DeltaR(selJets[ijet].p4), datasetName, IsSignal, Dweight[ITypeMC]);
 	     }
+	     
+	     
+	     MyhistoManager.FillHisto(Charge_eee_afterleptsel_mWT110,    "Charge_eee_afterleptsel_mWT110"   , wcharge, datasetName, IsSignal, Dweight[ITypeMC]);
 	 
 	      
 	     MyhistoManager.FillHisto(deltaRLeptMet_eee_afterleptsel_mWT110, "deltaRLeptMet_eee_afterleptsel_mWT110",deltaPhi1 , datasetName, IsSignal, Dweight[ITypeMC]);
 	     MyhistoManager.FillHisto(deltaRLeptMet_eee_afterleptsel_mWT110, "deltaRLeptMet_eee_afterleptsel_mWT110",deltaPhi2 , datasetName, IsSignal, Dweight[ITypeMC]);
 	     MyhistoManager.FillHisto(deltaRLeptMet_eee_afterleptsel_mWT110, "deltaRLeptMet_eee_afterleptsel_mWT110",deltaPhi3 , datasetName, IsSignal, Dweight[ITypeMC]);
 	
+	     MyhistoManager.FillHisto(NJet_eee_afterleptsel_mWT110  , "NJet_eee_afterleptsel_mWT110" , njetselec,    datasetName, IsSignal, Dweight[ITypeMC]);    
+             MyhistoManager.FillHisto(NBJet_eee_afterleptsel_mWT110 , "NBJet_eee_afterleptsel_mWT110", NBtaggedJets, datasetName, IsSignal, Dweight[ITypeMC]); 
 	     
 	   }
 
@@ -1733,7 +2031,14 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	  
 	  
 	  if(selJets.size() >= 1 ){
-
+         //cout << " weight btag jet sel " << weightb[0] << " " << " p0jet " << weightb[1] << " p1jet " << weightb[2] << " p2jet " << weightb[3]
+   	//	   << " prest " << weightb[4] << " check1=" << weightb[1]+weightb[2]+weightb[3]+weightb[4] << endl;;
+ 	   
+	   
+	   if(foundASelBjet) MyhistoManager.FillHisto(SelABjet_afterjetsel, "SelABjet_afterjetsel", 1.  , datasetName, IsSignal, 1.);
+	   else              MyhistoManager.FillHisto(SelABjet_afterjetsel, "SelABjet_afterjetsel", 0.  , datasetName, IsSignal, 1. );
+        
+   
         //if( IChannel == 0 && cand3leptonChannel == "mumumu")
         // cout<<"RUN "<<event->general.runNb<<" EVT "<<event->general.eventNb<<endl;
 	    	  	
@@ -1759,8 +2064,15 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	    if( IChannel == 0 && cand3leptonChannel == "mumumu"){
 	    
 	      MyhistoManager.FillHisto(InvM_ll_mumumu_afterjetsel, "InvM_ll_mumumu_afterjetsel", dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
-	      MyhistoManager.FillHisto(NBJet_mumumu_afterjetsel ,  "NBJet_mumumu_afterjetsel",NBtaggedJets, datasetName, IsSignal, Dweight[ITypeMC]);
+	      //MyhistoManager.FillHisto(NBJet_mumumu_afterjetsel ,  "NBJet_mumumu_afterjetsel",NBtaggedJets, datasetName, IsSignal, Dweight[ITypeMC]);
               
+	      
+	      if(isData) MyhistoManager.FillHisto(NBJet_mumumu_afterjetsel ,  "NBJet_mumumu_afterjetsel",NBtaggedJets, datasetName, IsSignal, Dweight[ITypeMC]);
+              else{
+	        MyhistoManager.FillHisto(NBJet_mumumu_afterjetsel ,  "NBJet_mumumu_afterjetsel",0, datasetName, IsSignal, weightb[1]*Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(NBJet_mumumu_afterjetsel ,  "NBJet_mumumu_afterjetsel",1, datasetName, IsSignal, weightb[2]*Dweight[ITypeMC]);	        
+	      }
+	      
 	      MyhistoManager.FillHisto(LeptZPt_mumumu_afterjetsel,  "LeptZPt_mumumu_afterjetsel", lept1.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 	      MyhistoManager.FillHisto(LeptZPt_mumumu_afterjetsel,  "LeptZPt_mumumu_afterjetsel", lept2.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 	      MyhistoManager.FillHisto(LeptWPt_mumumu_afterjetsel,  "LeptWPt_mumumu_afterjetsel", lept3.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
@@ -1778,9 +2090,17 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	    if( IChannel == 1 && cand3leptonChannel == "mumue" ){
 	      
 	      MyhistoManager.FillHisto(InvM_ll_mumue_afterjetsel, "InvM_ll_mumue_afterjetsel", dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
-	    
-	      MyhistoManager.FillHisto(NBJet_mumue_afterjetsel  , "NBJet_mumue_afterjetsel" ,NBtaggedJets, datasetName, IsSignal, Dweight[ITypeMC]);
-              MyhistoManager.FillHisto(LeptPt_mumue_afterjetsel, "LeptPt_mumue_afterjetsel", lept1.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
+	      
+	      //MyhistoManager.FillHisto(NBJet_mumue_afterjetsel ,  "NBJet_mumue_afterjetsel",NBtaggedJets, datasetName, IsSignal, Dweight[ITypeMC]);
+              
+	      if(isData) MyhistoManager.FillHisto(NBJet_mumue_afterjetsel ,  "NBJet_mumue_afterjetsel",NBtaggedJets, datasetName, IsSignal, Dweight[ITypeMC]);
+              else{
+	        MyhistoManager.FillHisto(NBJet_mumue_afterjetsel ,  "NBJet_mumue_afterjetsel",0, datasetName, IsSignal, weightb[1]*Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(NBJet_mumue_afterjetsel ,  "NBJet_mumue_afterjetsel",1, datasetName, IsSignal, weightb[2]*Dweight[ITypeMC]);	        
+	      }
+	      
+	      
+	      MyhistoManager.FillHisto(LeptPt_mumue_afterjetsel, "LeptPt_mumue_afterjetsel", lept1.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 	      MyhistoManager.FillHisto(LeptPt_mumue_afterjetsel, "LeptPt_mumue_afterjetsel", lept2.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 	      MyhistoManager.FillHisto(LeptPt_mumue_afterjetsel, "LeptPt_mumue_afterjetsel", lept3.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 	      MyhistoManager.FillHisto(HT_mumue_afterjetsel, "HT_mumue_afterjetsel", sumPtLeptJet, datasetName, IsSignal, Dweight[ITypeMC]);
@@ -1796,8 +2116,14 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	    if( IChannel == 2 && cand3leptonChannel == "eemu"  ){
 	    
 	      MyhistoManager.FillHisto(InvM_ll_eemu_afterjetsel, "InvM_ll_eemu_afterjetsel", dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
-              MyhistoManager.FillHisto(NBJet_eemu_afterjetsel   , "NBJet_eemu_afterjetsel"  ,NBtaggedJets, datasetName, IsSignal, Dweight[ITypeMC]);
-              
+              //MyhistoManager.FillHisto(NBJet_eemu_afterjetsel ,  "NBJet_eemu_afterjetsel",NBtaggedJets, datasetName, IsSignal, Dweight[ITypeMC]);
+             
+	      if(isData) MyhistoManager.FillHisto(NBJet_eemu_afterjetsel ,  "NBJet_eemu_afterjetsel",NBtaggedJets, datasetName, IsSignal, Dweight[ITypeMC]);
+              else{
+	        MyhistoManager.FillHisto(NBJet_eemu_afterjetsel ,  "NBJet_eemu_afterjetsel",0, datasetName, IsSignal, weightb[1]*Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(NBJet_eemu_afterjetsel ,  "NBJet_eemu_afterjetsel",1, datasetName, IsSignal, weightb[2]*Dweight[ITypeMC]);	        
+	      }
+	      
 	      MyhistoManager.FillHisto(LeptZPt_eemu_afterjetsel, "LeptZPt_eemu_afterjetsel", lept1.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 	      MyhistoManager.FillHisto(LeptZPt_eemu_afterjetsel, "LeptZPt_eemu_afterjetsel", lept2.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 	      MyhistoManager.FillHisto(LeptWPt_eemu_afterjetsel, "LeptWPt_eemu_afterjetsel", lept3.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
@@ -1816,7 +2142,15 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	    if( IChannel == 3 && cand3leptonChannel == "eee"   ){
 	    
 	      MyhistoManager.FillHisto(InvM_ll_eee_afterjetsel, "InvM_ll_eee_afterjetsel", dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
-	      MyhistoManager.FillHisto(NBJet_eee_afterjetsel    , "NBJet_eee_afterjetsel"   ,NBtaggedJets, datasetName, IsSignal, Dweight[ITypeMC]);
+	      
+	      //MyhistoManager.FillHisto(NBJet_eee_afterjetsel ,  "NBJet_eee_afterjetsel",NBtaggedJets, datasetName, IsSignal, Dweight[ITypeMC]);
+              
+	      if(isData) MyhistoManager.FillHisto(NBJet_eee_afterjetsel ,  "NBJet_eee_afterjetsel",NBtaggedJets, datasetName, IsSignal, Dweight[ITypeMC]);
+              else{
+	        MyhistoManager.FillHisto(NBJet_eee_afterjetsel ,  "NBJet_eee_afterjetsel",0, datasetName, IsSignal, weightb[1]*Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(NBJet_eee_afterjetsel ,  "NBJet_eee_afterjetsel",1, datasetName, IsSignal, weightb[2]*Dweight[ITypeMC]);	        
+	      }
+	      
 	      MyhistoManager.FillHisto(LeptZPt_eee_afterjetsel, "LeptZPt_eee_afterjetsel", lept1.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 	      MyhistoManager.FillHisto(LeptZPt_eee_afterjetsel, "LeptZPt_eee_afterjetsel", lept2.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 	      MyhistoManager.FillHisto(LeptWPt_eee_afterjetsel, "LeptWPt_eee_afterjetsel", lept3.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
@@ -1903,7 +2237,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	          selJets[i].p4.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
 		  MyhistoManager.FillHisto(JetEta_eemu_afterbjetveto, "JetEta_eemu_afterbjetveto",
 	          selJets[i].p4.Eta(), datasetName, IsSignal, Dweight[ITypeMC]);
-		}
+		} 
 	      }
 	      if( IChannel == 3 && cand3leptonChannel == "eee"   ) {
 		MyhistoManager.FillHisto(HT_eee_afterbjetveto, "HT_eee_afterbjetveto", sumPtLeptJet, datasetName, IsSignal, Dweight[ITypeMC]);
@@ -1921,8 +2255,22 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 		}
 	      }
 	    }
-    
-	    if(NBtaggedJets == 1 ){
+            
+	    
+	    
+	    //------------------------------------------
+	    //------------------------------------------
+	    //--------- starts b-tag Data --------------
+	    //------------------------------------------
+	    //------------------------------------------
+	    if(NBtaggedJets >=0  &&  NBtaggedJets <=1 && isData//&&
+              //fabs(lept3.DeltaPhi(selJets[idxBtag].p4))  > 0.5 &&
+              //lept3.DeltaR(  selJets[idxBtag].p4) > 0.5
+	      ){
+	    
+	   // if(!isData)  Dweight[ITypeMC]*= (1-weightb[3]-weightb[4]);
+	    
+	    
 	    
 	    	 
 	    if(IChannel == 0 && cand3leptonChannel == "mumumu") MyhistoManager.FillHisto( mWT_mumumu_afterbjetsel, "mWT_mumumu_afterbjetsel", mTW, datasetName, IsSignal, Dweight[ITypeMC]);
@@ -2036,20 +2384,54 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	      topCand = neutrino + lept3 + selJets[idxBtag].p4 ;
 	      
 	      if(dilept.M() > 300){
-	        cout << " topcand mass " << topCand.M()  << endl;
+	        /*cout << " topcand mass " << topCand.M()  << endl;
 	        cout << " topcand pT   " << topCand.Pt() << endl;
 		cout << " total mass   " << (topCand+dilept).M() << endl;
-		cout << " channel   " <<  cand3leptonChannel  << "  IChannel " << IChannel << endl;
+		cout << " channel   " <<  cand3leptonChannel  << "  IChannel " << IChannel << endl;*/
 	      }
 	      
 	      tree_EvtWeight  = Dweight[ITypeMC];
+	      
+	      
               tree_topMass    = topCand.M();
+              tree_totMass    = (topCand + (lept1+lept2)).M();
               tree_deltaPhilb = fabs(lept3.DeltaPhi(selJets[idxBtag].p4));
+              tree_deltaRlb   = lept3.DeltaR(  selJets[idxBtag].p4);
+              tree_deltaRTopZ = (lept1+lept2).DeltaR(topCand);
               tree_asym       = lept3_Charge*fabs(lept3.Eta());
               tree_Zpt        = (lept1+lept2).Pt();
+              tree_ZEta       = (lept1+lept2).Eta();
+              tree_topPt      = topCand.Pt();
+              tree_topEta     = topCand.Eta();
+	      
+	      tree_totPt        = (topCand + (lept1+lept2)).Pt();
+	      tree_totEta       = (topCand + (lept1+lept2)).Eta();
+
+  	      tree_deltaRZl     = (lept1+lept2).DeltaR(lept3);
+  	      tree_deltaPhiZmet = (lept1+lept2).DeltaPhi(metP4);
+  	      tree_btagDiscri   = selJets[0].bTag["combinedSecondaryVertexBJetTags"];
+  	      tree_NJets        = float(selJets.size());
 	      
 	      
-	      if(datasetName=="DataMu" || datasetName=="DataMu" || datasetName=="DataMuEG")  tree_SampleType   = 0;
+	      /*if(!isData){
+	        double thrand = rand.Uniform();
+		NBtaggedJets = 0;
+	        if( thrand > weightb[1] ) NBtaggedJets = 1;
+		
+	      }*/
+	      
+	      tree_NBJets       = float(NBtaggedJets);
+	     
+  	      tree_leptWPt        = lept3.Pt(); 
+	      tree_leptWEta       = lept3.Eta();
+  	      tree_leadJetPt      = selJets[0].p4.Pt(); 
+	      tree_leadJetEta     = selJets[0].p4.Eta();
+              tree_deltaRZleptW   = (lept1+lept2).DeltaR(lept3); 
+	      tree_deltaPhiZleptW = (lept1+lept2).DeltaPhi(lept3);
+	      
+	      
+	      
+	      if(datasetName=="DataMu" || datasetName=="DataEG" || datasetName=="DataMuEG")  tree_SampleType   = 0;
 	      if(datasetName=="FCNCkut" )        tree_SampleType   = 1;
 	      if(datasetName=="TTbar" )          tree_SampleType   = 2;
 	      if(datasetName=="DYToLL_M10-50" )  tree_SampleType   = 3;
@@ -2060,6 +2442,12 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	      if(datasetName=="WZ" )             tree_SampleType   = 8;
 	      if(datasetName=="ZZ" )             tree_SampleType   = 9;
 	      if(datasetName=="WW" )             tree_SampleType   = 10;
+	      if(datasetName=="FCNCkut" )        tree_SampleType   = 11;
+	      if(datasetName=="FCNCkct" )        tree_SampleType   = 12;
+	      if(datasetName=="FCNCxut" )        tree_SampleType   = 13;
+	      if(datasetName=="FCNCxct" )        tree_SampleType   = 14;
+	      if(datasetName=="FCNCzut" )        tree_SampleType   = 15;
+	      if(datasetName=="FCNCzct" )        tree_SampleType   = 16;
 	      
 	      if( IChannel == 0 && cand3leptonChannel == "mumumu") {
 	        tree_Channel = 0; TheTree->Fill();
@@ -2118,7 +2506,284 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
  	        if( IChannel == 2 && cand3leptonChannel == "eemu"  ) MyhistoManager.FillHisto(ErrCutFlow_eemu,     "ErrCutFlow_eemu"    , 5, datasetName, IsSignal, EventYieldWeightError);
  	        if( IChannel == 3 && cand3leptonChannel == "eee"   ) MyhistoManager.FillHisto(ErrCutFlow_eee,      "ErrCutFlow_eee"     , 5, datasetName, IsSignal, EventYieldWeightError);
 	      }
-	    } // end selection btag 
+	    } // end selection btag Data
+	    
+	    
+	    
+	     
+	    
+	    //----------------------------------------
+	    //----------------------------------------
+	    //--------- starts b-tag MC --------------
+	    //----------------------------------------
+	    //----------------------------------------
+	    
+	    
+	      //cout << " weight btag btag sel " << weightb[0] << " " << " p0jet " << weightb[1] << " p1jet " << weightb[2] << " p2jet " << weightb[3]
+   //		   << " prest " << weightb[4] << " check1=" << weightb[1]+weightb[2]+weightb[3]+weightb[4]  << endl;
+ 	
+	    
+	    if(!isData){
+	    
+	      double sumweight = weightb[1];
+	      double therand = rand.Uniform();
+	      
+	      //fixme
+	      
+	      if( weightb[1] > 0 && therand  <  weightb[1]                                     ) {NBtaggedJets = 0;}
+	      sumweight+=weightb[2];
+	      if( weightb[2] > 0 && therand  >= (sumweight-weightb[2]) && therand < sumweight  ) {NBtaggedJets = 1;}
+	      sumweight+=weightb[3];
+	      if( weightb[3] > 0 && therand  >= (sumweight-weightb[3]) && therand < sumweight  ) {NBtaggedJets = 2;}
+	      sumweight+=weightb[4];
+	      if( weightb[4] > 0 && therand  >= (sumweight-weightb[4])                         )  NBtaggedJets = 3;
+	      
+	      
+	      
+	   
+	    //fixme
+	      if(NBtaggedJets >=0  &&  NBtaggedJets <=1){
+	      //if(NBtaggedJets >=0  &&  NBtaggedJets <=100000){
+	    
+	    
+	    //if(!isData)  Dweight[ITypeMC]*= (1-weightb[3]-weightb[4]);
+	    
+	    
+	    if(datasetName=="WZ" && applyWZ_finalSel) Dweight[ITypeMC]*=SF_WZ_finalSel;
+	    	 
+	    if(IChannel == 0 && cand3leptonChannel == "mumumu") MyhistoManager.FillHisto( mWT_mumumu_afterbjetsel, "mWT_mumumu_afterbjetsel", mTW, datasetName, IsSignal, Dweight[ITypeMC]);
+	    if(IChannel == 1 && cand3leptonChannel == "mumue" ) MyhistoManager.FillHisto( mWT_mumue_afterbjetsel,  "mWT_mumue_afterbjetsel" , mTW, datasetName, IsSignal, Dweight[ITypeMC]);
+	    if(IChannel == 2 && cand3leptonChannel == "eemu"  ) MyhistoManager.FillHisto( mWT_eemu_afterbjetsel,   "mWT_eemu_afterbjetsel"  , mTW, datasetName, IsSignal, Dweight[ITypeMC]);
+	    if(IChannel == 3 && cand3leptonChannel == "eee"   ) MyhistoManager.FillHisto( mWT_eee_afterbjetsel,    "mWT_eee_afterbjetsel"   , mTW, datasetName, IsSignal, Dweight[ITypeMC]);
+
+	
+	    double nlept = selMuons.size()+selElectrons.size();
+	    if(nlept>=4) nlept = 4;   
+	      	  	   
+	      if( IChannel == 0 && cand3leptonChannel == "mumumu"){
+  		MyhistoManager.FillHisto(NJet_mumumu_afterbsel , "NJet_mumumu_afterbsel",NSeljets, datasetName, IsSignal, Dweight[ITypeMC]);
+  		MyhistoManager.FillHisto(NLept_mumumu_afterbsel , "NLept_mumumu_afterbsel",nlept, datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(InvM_ll_mumumu_afterbjetsel, "InvM_ll_mumumu_afterbjetsel", dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
+                MyhistoManager.FillHisto(LeptZPt_mumumu_afterbjetsel, "LeptZPt_mumumu_afterbjetsel", lept1.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(LeptZPt_mumumu_afterbjetsel, "LeptZPt_mumumu_afterbjetsel", lept2.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(LeptWPt_mumumu_afterbjetsel, "LeptWPt_mumumu_afterbjetsel", lept3.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(HT_mumumu_afterbjetsel, "HT_mumumu_afterbjetsel", sumPtLeptJet, datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(MET_mumumu_afterbjetsel, "MET_mumumu_afterbjetsel",theMET , datasetName, IsSignal, Dweight[ITypeMC]);
+                for(unsigned int i=0 ; i< selJets.size(); i++){
+		  MyhistoManager.FillHisto(JetPt_mumumu_afterbjetsel, "JetPt_mumumu_afterbjetsel",
+	          selJets[i].p4.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
+		  MyhistoManager.FillHisto(JetEta_mumumu_afterbjetsel, "JetEta_mumumu_afterbjetsel",
+	          selJets[i].p4.Eta(), datasetName, IsSignal, Dweight[ITypeMC]);
+		}
+
+	  
+	      }
+	      if( IChannel == 1 && cand3leptonChannel == "mumue" ){
+	        MyhistoManager.FillHisto(NJet_mumue_afterbsel  , "NJet_mumue_afterbsel" ,NSeljets, datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(NLept_mumue_afterbsel  , "NLept_mumue_afterbsel" ,nlept, datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(InvM_ll_mumue_afterbjetsel, "InvM_ll_mumue_afterbjetsel", dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
+                MyhistoManager.FillHisto(LeptZPt_mumue_afterbjetsel, "LeptZPt_mumue_afterbjetsel", lept1.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(LeptZPt_mumue_afterbjetsel, "LeptZPt_mumue_afterbjetsel", lept2.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(LeptWPt_mumue_afterbjetsel, "LeptWPt_mumue_afterbjetsel", lept3.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(HT_mumue_afterbjetsel, "HT_mumue_afterbjetsel", sumPtLeptJet, datasetName, IsSignal, Dweight[ITypeMC]);
+                MyhistoManager.FillHisto(MET_mumue_afterbjetsel, "MET_mumue_afterbjetsel", theMET, datasetName, IsSignal, Dweight[ITypeMC]);
+                for(unsigned int i=0 ; i< selJets.size(); i++){
+		  MyhistoManager.FillHisto(JetPt_mumue_afterbjetsel, "JetPt_mumue_afterbjetsel",
+	          selJets[i].p4.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
+		  MyhistoManager.FillHisto(JetEta_mumue_afterbjetsel, "JetEta_mumue_afterbjetsel",
+	          selJets[i].p4.Eta(), datasetName, IsSignal, Dweight[ITypeMC]);
+		}
+
+
+	      }
+	      if( IChannel == 2 && cand3leptonChannel == "eemu"  ){
+	        MyhistoManager.FillHisto(NJet_eemu_afterbsel   , "NJet_eemu_afterbsel"  ,NSeljets, datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(NLept_eemu_afterbsel   , "NLept_eemu_afterbsel"  ,nlept, datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(InvM_ll_eemu_afterbjetsel, "InvM_ll_eemu_afterbjetsel", dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);
+                MyhistoManager.FillHisto(LeptZPt_eemu_afterbjetsel, "LeptZPt_eemu_afterbjetsel", lept1.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(LeptZPt_eemu_afterbjetsel, "LeptZPt_eemu_afterbjetsel", lept2.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(LeptWPt_eemu_afterbjetsel, "LeptWPt_eemu_afterbjetsel", lept3.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(HT_eemu_afterbjetsel, "HT_eemu_afterbjetsel", sumPtLeptJet, datasetName, IsSignal, Dweight[ITypeMC]);
+                MyhistoManager.FillHisto(MET_eemu_afterbjetsel, "MET_eemu_afterbjetsel", theMET, datasetName, IsSignal, Dweight[ITypeMC]);
+                for(unsigned int i=0 ; i< selJets.size(); i++){
+		  MyhistoManager.FillHisto(JetPt_eemu_afterbjetsel, "JetPt_eemu_afterbjetsel",
+	          selJets[i].p4.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
+		  MyhistoManager.FillHisto(JetEta_eemu_afterbjetsel, "JetEta_eemu_afterbjetsel",
+	          selJets[i].p4.Eta(), datasetName, IsSignal, Dweight[ITypeMC]);
+		}
+
+
+	      }
+	    
+	      if( IChannel == 3 && cand3leptonChannel == "eee"   ){
+		MyhistoManager.FillHisto(NJet_eee_afterbsel    , "NJet_eee_afterbsel"   ,NSeljets, datasetName, IsSignal, Dweight[ITypeMC]);
+		MyhistoManager.FillHisto(NLept_eee_afterbsel    , "NLept_eee_afterbsel"   ,nlept, datasetName, IsSignal, Dweight[ITypeMC]);
+  	        MyhistoManager.FillHisto(InvM_ll_eee_afterbjetsel, "InvM_ll_eee_afterbjetsel", dileptonIvM, datasetName, IsSignal, Dweight[ITypeMC]);	    
+	        MyhistoManager.FillHisto(LeptZPt_eee_afterbjetsel, "LeptZPt_eee_afterbjetsel", lept1.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(LeptZPt_eee_afterbjetsel, "LeptZPt_eee_afterbjetsel", lept2.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(LeptWPt_eee_afterbjetsel, "LeptWPt_eee_afterbjetsel", lept3.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(HT_eee_afterbjetsel, "HT_eee_afterbjetsel", sumPtLeptJet, datasetName, IsSignal, Dweight[ITypeMC]);
+                MyhistoManager.FillHisto(MET_eee_afterbjetsel, "MET_eee_afterbjetsel", theMET, datasetName, IsSignal, Dweight[ITypeMC]);
+                for(unsigned int i=0 ; i< selJets.size(); i++){
+		  MyhistoManager.FillHisto(JetPt_eee_afterbjetsel, "JetPt_eee_afterbjetsel",
+	          selJets[i].p4.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
+		  MyhistoManager.FillHisto(JetEta_eee_afterbjetsel, "JetEta_eee_afterbjetsel",
+	          selJets[i].p4.Eta(), datasetName, IsSignal, Dweight[ITypeMC]);
+		}
+
+
+	      }  	  	
+
+              //if( IChannel == 0 && cand3leptonChannel == "mumumu")      
+                //   cout<<"RUN "<<event->general.runNb<<" EVT "<<event->general.eventNb<<endl;
+	      
+ 	      if( IChannel == 0 && cand3leptonChannel == "mumumu") MyhistoManager.FillHisto(CutFlow_mumumu, "CutFlow_mumumu", 4, datasetName, IsSignal, Dweight[ITypeMC]);
+ 	      if( IChannel == 1 && cand3leptonChannel == "mumue" ) MyhistoManager.FillHisto(CutFlow_mumue,  "CutFlow_mumue" , 4, datasetName, IsSignal, Dweight[ITypeMC]);
+ 	      if( IChannel == 2 && cand3leptonChannel == "eemu"  ) MyhistoManager.FillHisto(CutFlow_eemu,   "CutFlow_eemu"  , 4, datasetName, IsSignal, Dweight[ITypeMC]);
+ 	      if( IChannel == 3 && cand3leptonChannel == "eee"   ) MyhistoManager.FillHisto(CutFlow_eee,    "CutFlow_eee"   , 4, datasetName, IsSignal, Dweight[ITypeMC]);
+ 	      if( IChannel == 0 && cand3leptonChannel == "mumumu") MyhistoManager.FillHisto(ErrCutFlow_mumumu,   "ErrCutFlow_mumumu"  , 4, datasetName, IsSignal, EventYieldWeightError);
+ 	      if( IChannel == 1 && cand3leptonChannel == "mumue" ) MyhistoManager.FillHisto(ErrCutFlow_mumue,    "ErrCutFlow_mumue"   , 4, datasetName, IsSignal, EventYieldWeightError);
+ 	      if( IChannel == 2 && cand3leptonChannel == "eemu"  ) MyhistoManager.FillHisto(ErrCutFlow_eemu,     "ErrCutFlow_eemu"    , 4, datasetName, IsSignal, EventYieldWeightError);
+ 	      if( IChannel == 3 && cand3leptonChannel == "eee"   ) MyhistoManager.FillHisto(ErrCutFlow_eee,      "ErrCutFlow_eee"     , 4, datasetName, IsSignal, EventYieldWeightError);
+	
+
+	      TLorentzVector metP4(met.p2.Px(), met.p2.Py(), 0, sqrt(met.p2.Px()*met.p2.Px() + met.p2.Py()*met.p2.Py()));
+	      TLorentzVector transTop = lept3 + selJets[0].p4 + metP4;
+	      
+	      if( IChannel == 0 && cand3leptonChannel == "mumumu") MyhistoManager.FillHisto(Mt_mumumu_afterbjetsel, "Mt_mumumu_afterbjetsel" , transTop.Mt() ,datasetName, IsSignal, Dweight[ITypeMC]);
+              if( IChannel == 1 && cand3leptonChannel == "mumue" ) MyhistoManager.FillHisto(Mt_mumue_afterbjetsel , "Mt_mumue_afterbjetsel"  , transTop.Mt() ,datasetName, IsSignal, Dweight[ITypeMC]);
+              if( IChannel == 2 && cand3leptonChannel == "eemu"  ) MyhistoManager.FillHisto(Mt_eemu_afterbjetsel  , "Mt_eemu_afterbjetsel"   , transTop.Mt() ,datasetName, IsSignal, Dweight[ITypeMC]);
+              if( IChannel == 3 && cand3leptonChannel == "eee"   ) MyhistoManager.FillHisto(Mt_eee_afterbjetsel   , "Mt_eee_afterbjetsel"    , transTop.Mt() ,datasetName, IsSignal, Dweight[ITypeMC]);
+	       //cout << "line 1103" << endl;
+	      
+	      
+
+	      // Use b jet for top mass computation
+	      topCand = neutrino + lept3 + selJets[idxBtag].p4 ;
+	      
+	      
+	      tree_EvtWeight  = Dweight[ITypeMC];
+	      
+	      
+              tree_topMass    = topCand.M();
+              tree_totMass    = (topCand + (lept1+lept2)).M();
+              tree_deltaPhilb = fabs(lept3.DeltaPhi(selJets[idxBtag].p4));
+              tree_deltaRlb   = lept3.DeltaR(  selJets[idxBtag].p4);
+              tree_deltaRTopZ = (lept1+lept2).DeltaR(topCand);
+              tree_asym       = lept3_Charge*fabs(lept3.Eta());
+              tree_Zpt        = (lept1+lept2).Pt();
+              tree_ZEta       = (lept1+lept2).Eta();
+              tree_topPt      = topCand.Pt();
+              tree_topEta     = topCand.Eta();
+	      
+	      tree_totPt        = (topCand + (lept1+lept2)).Pt();
+	      tree_totEta       = (topCand + (lept1+lept2)).Eta();
+
+  	      tree_deltaRZl     = (lept1+lept2).DeltaR(lept3);
+  	      tree_deltaPhiZmet = (lept1+lept2).DeltaPhi(metP4);
+  	      tree_btagDiscri   = selJets[0].bTag["combinedSecondaryVertexBJetTags"];
+  	      tree_NJets        = float(selJets.size());
+	      
+	      
+	      if(!isData){
+	        double thrand = rand.Uniform();
+		NBtaggedJets = 0;
+	        if( thrand > weightb[1] ) NBtaggedJets = 1;
+		
+	      }
+	      
+	      tree_NBJets       = float(NBtaggedJets);
+	     
+  	      tree_leptWPt        = lept3.Pt(); 
+	      tree_leptWEta       = lept3.Eta();
+  	      tree_leadJetPt      = selJets[0].p4.Pt(); 
+	      tree_leadJetEta     = selJets[0].p4.Eta();
+              tree_deltaRZleptW   = (lept1+lept2).DeltaR(lept3); 
+	      tree_deltaPhiZleptW = (lept1+lept2).DeltaPhi(lept3);
+	      
+	      
+	      
+	      if(datasetName=="DataMu" || datasetName=="DataEG" || datasetName=="DataMuEG")  tree_SampleType   = 0;
+	      if(datasetName=="TTbar" )          tree_SampleType   = 2;
+	      if(datasetName=="DYToLL_M10-50" )  tree_SampleType   = 3;
+	      if(datasetName=="Zjets" )          tree_SampleType   = 4;
+	      if(datasetName=="Wjets" )          tree_SampleType   = 5;
+	      if(datasetName=="TtW" )            tree_SampleType   = 6;
+	      if(datasetName=="TbartW" )         tree_SampleType   = 7;
+	      if(datasetName=="WZ" )             tree_SampleType   = 8;
+	      if(datasetName=="ZZ" )             tree_SampleType   = 9;
+	      if(datasetName=="WW" )             tree_SampleType   = 10;
+	      if(datasetName=="FCNCkut" )        tree_SampleType   = 11;
+	      if(datasetName=="FCNCkct" )        tree_SampleType   = 12;
+	      if(datasetName=="FCNCxut" )        tree_SampleType   = 13;
+	      if(datasetName=="FCNCxct" )        tree_SampleType   = 14;
+	      if(datasetName=="FCNCzut" )        tree_SampleType   = 15;
+	      if(datasetName=="FCNCzct" )        tree_SampleType   = 16;
+	      
+	      if( IChannel == 0 && cand3leptonChannel == "mumumu") {
+	        tree_Channel = 0; TheTree->Fill();
+		MyhistoManager.FillHisto(Asym_mumumu_afterbjetsel,       "Asym_mumumu_afterbjetsel",         tree_asym,    datasetName, IsSignal, Dweight[ITypeMC]);
+		MyhistoManager.FillHisto(RecoPtZ_mumumu_afterbjetsel,     "RecoPtZ_mumumu_afterbjetsel",     tree_Zpt,     datasetName, IsSignal, Dweight[ITypeMC]);
+		MyhistoManager.FillHisto(RecoTopMass_mumumu_afterbjetsel, "RecoTopMass_mumumu_afterbjetsel", tree_topMass ,datasetName, IsSignal, Dweight[ITypeMC]);
+                MyhistoManager.FillHisto(deltaPhilb_mumumu_afterbjetsel , "deltaPhilb_mumumu_afterbjetsel",  tree_deltaPhilb ,    datasetName, IsSignal, Dweight[ITypeMC]);
+
+		
+	      }
+	      if( IChannel == 1 && cand3leptonChannel == "mumue" ) {
+	        tree_Channel = 1; TheTree->Fill();
+		MyhistoManager.FillHisto(Asym_mumue_afterbjetsel,         "Asym_mumue_afterbjetsel",          tree_asym,    datasetName, IsSignal, Dweight[ITypeMC]);
+		MyhistoManager.FillHisto(RecoPtZ_mumue_afterbjetsel,      "RecoPtZ_mumue_afterbjetsel",       tree_Zpt,     datasetName, IsSignal, Dweight[ITypeMC]);
+		MyhistoManager.FillHisto(RecoTopMass_mumue_afterbjetsel,  "RecoTopMass_mumue_afterbjetsel" ,  tree_topMass ,datasetName, IsSignal, Dweight[ITypeMC]);
+                MyhistoManager.FillHisto(deltaPhilb_mumue_afterbjetsel ,  "deltaPhilb_mumue_afterbjetsel",    tree_deltaPhilb ,    datasetName, IsSignal, Dweight[ITypeMC]);
+ 
+		
+	      }
+	      if( IChannel == 2 && cand3leptonChannel == "eemu"  ) {
+	        tree_Channel = 2; TheTree->Fill();
+		MyhistoManager.FillHisto(Asym_eemu_afterbjetsel,          "Asym_eemu_afterbjetsel",           tree_asym,    datasetName, IsSignal, Dweight[ITypeMC]);
+		MyhistoManager.FillHisto(RecoPtZ_eemu_afterbjetsel,       "RecoPtZ_eemu_afterbjetsel",        tree_Zpt,     datasetName, IsSignal, Dweight[ITypeMC]);
+		MyhistoManager.FillHisto(RecoTopMass_eemu_afterbjetsel,   "RecoTopMass_eemu_afterbjetsel" ,   tree_topMass ,datasetName, IsSignal, Dweight[ITypeMC]);
+                MyhistoManager.FillHisto(deltaPhilb_eemu_afterbjetsel ,   "deltaPhilb_eemu_afterbjetsel",     tree_deltaPhilb ,    datasetName, IsSignal, Dweight[ITypeMC]);
+
+	      }
+	      if( IChannel == 3 && cand3leptonChannel == "eee"   ) {
+	        tree_Channel = 3; TheTree->Fill();
+		MyhistoManager.FillHisto(Asym_eee_afterbjetsel,           "Asym_eee_afterbjetsel",            tree_asym,    datasetName, IsSignal, Dweight[ITypeMC]);
+		MyhistoManager.FillHisto(RecoPtZ_eee_afterbjetsel,        "RecoPtZ_eee_afterbjetsel",         tree_Zpt,     datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(RecoTopMass_eee_afterbjetsel,    "RecoTopMass_eee_afterbjetsel" ,    tree_topMass ,datasetName, IsSignal, Dweight[ITypeMC]);
+	        MyhistoManager.FillHisto(deltaPhilb_eee_afterbjetsel ,    "deltaPhilb_eee_afterbjetsel",      tree_deltaPhilb ,    datasetName, IsSignal, Dweight[ITypeMC]);
+	   
+		
+	      }
+	      
+  
+	      
+	      
+	      
+	      
+	      
+	      
+	      if(transTop.Mt() > 150){
+
+                if( IChannel == 0 && cand3leptonChannel == "mumumu")
+                   //cout<<"RUN "<<event->general.runNb<<" EVT "<<event->general.eventNb<<endl;
+
+		if( IChannel == 0 && cand3leptonChannel == "mumumu") MyhistoManager.FillHisto(CutFlow_mumumu, "CutFlow_mumumu", 5, datasetName, IsSignal, Dweight[ITypeMC]);
+ 	        if( IChannel == 1 && cand3leptonChannel == "mumue" ) MyhistoManager.FillHisto(CutFlow_mumue,  "CutFlow_mumue" , 5, datasetName, IsSignal, Dweight[ITypeMC]);
+ 	        if( IChannel == 2 && cand3leptonChannel == "eemu"  ) MyhistoManager.FillHisto(CutFlow_eemu,   "CutFlow_eemu"  , 5, datasetName, IsSignal, Dweight[ITypeMC]);
+ 	        if( IChannel == 3 && cand3leptonChannel == "eee"   ) MyhistoManager.FillHisto(CutFlow_eee,    "CutFlow_eee"   , 5, datasetName, IsSignal, Dweight[ITypeMC]);
+ 	        if( IChannel == 0 && cand3leptonChannel == "mumumu") MyhistoManager.FillHisto(ErrCutFlow_mumumu,   "ErrCutFlow_mumumu"  , 5, datasetName, IsSignal, EventYieldWeightError);
+ 	        if( IChannel == 1 && cand3leptonChannel == "mumue" ) MyhistoManager.FillHisto(ErrCutFlow_mumue,    "ErrCutFlow_mumue"   , 5, datasetName, IsSignal, EventYieldWeightError);
+ 	        if( IChannel == 2 && cand3leptonChannel == "eemu"  ) MyhistoManager.FillHisto(ErrCutFlow_eemu,     "ErrCutFlow_eemu"    , 5, datasetName, IsSignal, EventYieldWeightError);
+ 	        if( IChannel == 3 && cand3leptonChannel == "eee"   ) MyhistoManager.FillHisto(ErrCutFlow_eee,      "ErrCutFlow_eee"     , 5, datasetName, IsSignal, EventYieldWeightError);
+	      }
+	      }
+	    } // end selection btag Data
+	    
+	    
+	    
+	    
+	    
 	  } // end selection njet
 	} //end selection Z cand    
       } // end selection 3 leptons
@@ -2142,12 +2807,26 @@ void ProofSelectorMyCutFlow::SlaveTerminate()
     TDirectory *savedir = gDirectory;
     fFile->cd();
     
-    
-      
+  MyhistoManager.WriteMyHisto(SelABjet, "all");
+  MyhistoManager.WriteMyHisto(SelABjet_afterjetsel, "all");
+  MyhistoManager.WriteMyHisto(Ntrilept_mumumu, "all");
+  MyhistoManager.WriteMyHisto(Ntrileptnoniso_mumumu, "all");
+  
+   
+  MyhistoManager.WriteMyHisto(Nvertex, "all");  
+  
   MyhistoManager.WriteMyHisto(CutFlow_mumumu, "all" );
   MyhistoManager.WriteMyHisto(CutFlow_mumue,  "all" );
   MyhistoManager.WriteMyHisto(CutFlow_eemu,   "all" );
   MyhistoManager.WriteMyHisto(CutFlow_eee,    "all" );
+  
+  
+  
+  MyhistoManager.WriteMyHisto(Nvtx_mumumu_afterleptsel, "all" );
+  MyhistoManager.WriteMyHisto(Nvtx_mumue_afterleptsel , "all" );
+  MyhistoManager.WriteMyHisto(Nvtx_eemu_afterleptsel  , "all" );
+  MyhistoManager.WriteMyHisto(Nvtx_eee_afterleptsel   , "all" );
+  
   
   MyhistoManager.WriteMyHisto(ErrCutFlow_mumumu,  "all");
   MyhistoManager.WriteMyHisto(ErrCutFlow_mumue,   "all");
@@ -2155,15 +2834,6 @@ void ProofSelectorMyCutFlow::SlaveTerminate()
   MyhistoManager.WriteMyHisto(ErrCutFlow_eee,     "all");
   
   
-  MyhistoManager.WriteMyHisto(NVtx_mumumu_aftertrigsel, "all");  
-  MyhistoManager.WriteMyHisto(NVtx_mumue_aftertrigsel, "all");  
-  MyhistoManager.WriteMyHisto(NVtx_eemu_aftertrigsel, "all");  
-  MyhistoManager.WriteMyHisto(NVtx_eee_aftertrigsel, "all");  
-  
-  MyhistoManager.WriteMyHisto(NVtx_mumumu_afterleptsel, "all");  
-  MyhistoManager.WriteMyHisto(NVtx_mumue_afterleptsel, "all");  
-  MyhistoManager.WriteMyHisto(NVtx_eemu_afterleptsel, "all");  
-  MyhistoManager.WriteMyHisto(NVtx_eee_afterleptsel, "all");  
   
   MyhistoManager.WriteMyHisto(Mt_mumumu_afterbjetsel, "all"); 
   MyhistoManager.WriteMyHisto(Mt_mumue_afterbjetsel , "all");
@@ -2457,7 +3127,10 @@ void ProofSelectorMyCutFlow::SlaveTerminate()
   MyhistoManager.WriteMyHisto(WmissAssing_eee_afterleptsel,    "all");
   
   
-  
+  MyhistoManager.WriteMyHisto(DijetInvM_mumumu_afterleptsel_inZpeak,    "all");
+  MyhistoManager.WriteMyHisto(DijetInvM_mumue_afterleptsel_inZpeak,     "all");
+  MyhistoManager.WriteMyHisto(DijetInvM_eemu_afterleptsel_inZpeak,      "all");
+  MyhistoManager.WriteMyHisto(DijetInvM_eee_afterleptsel_inZpeak,       "all");
   
   
   
@@ -2484,7 +3157,15 @@ void ProofSelectorMyCutFlow::SlaveTerminate()
   MyhistoManager.WriteMyHisto(mWT_eemu_afterleptsel,   "all");
   MyhistoManager.WriteMyHisto(mWT_eee_afterleptsel,    "all");
 
+  MyhistoManager.WriteMyHisto(Charge_mumumu_afterleptsel, "all");
+  MyhistoManager.WriteMyHisto(Charge_mumue_afterleptsel,  "all");
+  MyhistoManager.WriteMyHisto(Charge_eemu_afterleptsel,   "all");
+  MyhistoManager.WriteMyHisto(Charge_eee_afterleptsel,    "all");
   
+  MyhistoManager.WriteMyHisto(Charge_mumumu_afterleptsel_mWT110, "all");
+  MyhistoManager.WriteMyHisto(Charge_mumue_afterleptsel_mWT110,  "all");
+  MyhistoManager.WriteMyHisto(Charge_eemu_afterleptsel_mWT110,   "all");
+  MyhistoManager.WriteMyHisto(Charge_eee_afterleptsel_mWT110,    "all");
   
   
   
@@ -2501,10 +3182,18 @@ void ProofSelectorMyCutFlow::SlaveTerminate()
   MyhistoManager.WriteMyHisto(deltaRLeptMet_eee_afterleptsel_mWT110,    "all");
   
   
+  MyhistoManager.WriteMyHisto(NJet_mumumu_afterleptsel_mWT110, "all");
+  MyhistoManager.WriteMyHisto(NJet_mumue_afterleptsel_mWT110,  "all");
+  MyhistoManager.WriteMyHisto(NJet_eemu_afterleptsel_mWT110,   "all");
+  MyhistoManager.WriteMyHisto(NJet_eee_afterleptsel_mWT110,    "all");
   
   
   
   
+  MyhistoManager.WriteMyHisto(NBJet_mumumu_afterleptsel_mWT110, "all");
+  MyhistoManager.WriteMyHisto(NBJet_mumue_afterleptsel_mWT110,  "all");
+  MyhistoManager.WriteMyHisto(NBJet_eemu_afterleptsel_mWT110,   "all");
+  MyhistoManager.WriteMyHisto(NBJet_eee_afterleptsel_mWT110,    "all");
   
   
   
@@ -2555,7 +3244,6 @@ void ProofSelectorMyCutFlow::SlaveTerminate()
   
   
   
-  
    //The following line is mandatory to copy everythin in a common RootFile
     fOutput->Add(fProofFile);
     
@@ -2569,16 +3257,52 @@ void ProofSelectorMyCutFlow::SlaveTerminate()
   ErrCutFlow_eee.clear();
   
   
+  
+  Ntrilept_mumumu.clear();
+  Ntrileptnoniso_mumumu.clear();
+ 
+  
+  
+  DijetInvM_mumumu_afterleptsel_inZpeak.clear();
+  DijetInvM_mumue_afterleptsel_inZpeak.clear();
+  DijetInvM_eemu_afterleptsel_inZpeak.clear();
+  DijetInvM_eee_afterleptsel_inZpeak.clear();
+  
+  
+  
   Mt_mumumu_afterbjetsel.clear();
   Mt_mumue_afterbjetsel.clear();
   Mt_eemu_afterbjetsel.clear();
   Mt_eee_afterbjetsel.clear();
-  
+   
+  Mt_mumumu_afterbjetveto.clear();
+  Mt_mumue_afterbjetveto.clear();
+  Mt_eemu_afterbjetveto.clear();
+  Mt_eee_afterbjetveto.clear();
+   
   
   NJet_mumumu_afterZsel.clear();
   NJet_mumue_afterZsel.clear();
   NJet_eemu_afterZsel.clear();
   NJet_eee_afterZsel.clear();
+  
+  
+  NJet_mumumu_afterbsel.clear();
+  NJet_mumue_afterbsel.clear();
+  NJet_eemu_afterbsel.clear();
+  NJet_eee_afterbsel.clear();
+  
+  NJet_mumumu_afterleptsel_mWT110.clear();
+  NJet_mumue_afterleptsel_mWT110.clear();
+  NJet_eemu_afterleptsel_mWT110.clear();
+  NJet_eee_afterleptsel_mWT110.clear();
+  
+  
+  NLept_mumumu_afterbsel.clear();
+  NLept_mumue_afterbsel.clear();
+  NLept_eemu_afterbsel.clear();
+  NLept_eee_afterbsel.clear();
+  
   
   NBJet_mumumu_afterZsel.clear();
   NBJet_mumue_afterZsel.clear();
@@ -2591,11 +3315,39 @@ void ProofSelectorMyCutFlow::SlaveTerminate()
   NBJet_eemu_afterjetsel.clear();
   NBJet_eee_afterjetsel.clear();
   
+  
+  
+  NBJet_mumumu_afterleptsel_mWT110.clear();
+  NBJet_mumue_afterleptsel_mWT110.clear();
+  NBJet_eemu_afterleptsel_mWT110.clear();
+  NBJet_eee_afterleptsel_mWT110.clear();
+  
+  //to be filled
+  
+  Nvtx_mumumu_afterleptsel.clear();
+  Nvtx_mumue_afterleptsel.clear();
+  Nvtx_eemu_afterleptsel.clear();
+  Nvtx_eee_afterleptsel.clear();
+  
   InvM_ll_mumumu_afterleptsel.clear();
   InvM_ll_mumue_afterleptsel.clear();
   InvM_ll_eemu_afterleptsel.clear();
   InvM_ll_eee_afterleptsel.clear();
   
+  InvM_ll_mumumu_afterleptsel_mWT110.clear();
+  InvM_ll_mumue_afterleptsel_mWT110.clear();
+  InvM_ll_eemu_afterleptsel_mWT110.clear();
+  InvM_ll_eee_afterleptsel_mWT110.clear();
+  
+  InvM_ll_mumumu_afterleptsel_lowbin.clear();
+  InvM_ll_mumue_afterleptsel_lowbin.clear();
+  InvM_ll_eemu_afterleptsel_lowbin.clear();
+  InvM_ll_eee_afterleptsel_lowbin.clear();
+  
+  InvM_ll_mumumu_afterleptsel_highSumPt.clear();
+  InvM_ll_mumue_afterleptsel_highSumPt.clear();
+  InvM_ll_eemu_afterleptsel_highSumPt.clear();
+  InvM_ll_eee_afterleptsel_highSumPt.clear();
   
   InvM_ll_mumumu_afterjetsel.clear();
   InvM_ll_mumue_afterjetsel.clear();
@@ -2623,6 +3375,91 @@ void ProofSelectorMyCutFlow::SlaveTerminate()
   LeptPt_eee_afterbjetsel.clear();
   
   
+  
+  LeptZPt_mumumu_afterleptsel.clear();
+  LeptZPt_mumue_afterleptsel.clear();
+  LeptZPt_eemu_afterleptsel.clear();
+  LeptZPt_eee_afterleptsel.clear();
+  
+  LeptZPt_mumumu_afterjetsel.clear();
+  LeptZPt_mumue_afterjetsel.clear();
+  LeptZPt_eemu_afterjetsel.clear();
+  LeptZPt_eee_afterjetsel.clear();
+  
+  LeptZPt_mumumu_afterbjetsel.clear();
+  LeptZPt_mumue_afterbjetsel.clear();
+  LeptZPt_eemu_afterbjetsel.clear();
+  LeptZPt_eee_afterbjetsel.clear();
+  
+  
+  
+  LeptWPt_mumumu_afterleptsel.clear();
+  LeptWPt_mumue_afterleptsel.clear();
+  LeptWPt_eemu_afterleptsel.clear();
+  LeptWPt_eee_afterleptsel.clear();
+  
+  LeptWPt_mumumu_afterjetsel.clear();
+  LeptWPt_mumue_afterjetsel.clear();
+  LeptWPt_eemu_afterjetsel.clear();
+  LeptWPt_eee_afterjetsel.clear();
+  
+  LeptWPt_mumumu_afterbjetsel.clear();
+  LeptWPt_mumue_afterbjetsel.clear();
+  LeptWPt_eemu_afterbjetsel.clear();
+  LeptWPt_eee_afterbjetsel.clear();
+  
+  LeptWPt_mumumu_afterbjetveto.clear();
+  LeptWPt_mumue_afterbjetveto.clear();
+  LeptWPt_eemu_afterbjetveto.clear();
+  LeptWPt_eee_afterbjetveto.clear();
+  
+  
+  LeptWPt_mumumu_afterleptsel_mWT110.clear();
+  LeptWPt_mumue_afterleptsel_mWT110.clear();
+  LeptWPt_eemu_afterleptsel_mWT110.clear();
+  LeptWPt_eee_afterleptsel_mWT110.clear();
+  
+  
+  JetPt_mumumu_afterleptsel.clear();
+  JetPt_mumue_afterleptsel.clear();
+  JetPt_eemu_afterleptsel.clear();
+  JetPt_eee_afterleptsel.clear();
+  
+  JetPt_mumumu_afterjetsel.clear();
+  JetPt_mumue_afterjetsel.clear();
+  JetPt_eemu_afterjetsel.clear();
+  JetPt_eee_afterjetsel.clear();
+  
+  JetPt_mumumu_afterbjetsel.clear();
+  JetPt_mumue_afterbjetsel.clear();
+  JetPt_eemu_afterbjetsel.clear();
+  JetPt_eee_afterbjetsel.clear();
+  
+  JetPt_mumumu_afterbjetveto.clear();
+  JetPt_mumue_afterbjetveto.clear();
+  JetPt_eemu_afterbjetveto.clear();
+  JetPt_eee_afterbjetveto.clear();
+  
+  JetEta_mumumu_afterleptsel.clear();
+  JetEta_mumue_afterleptsel.clear();
+  JetEta_eemu_afterleptsel.clear();
+  JetEta_eee_afterleptsel.clear();
+  
+  JetEta_mumumu_afterjetsel.clear();
+  JetEta_mumue_afterjetsel.clear();
+  JetEta_eemu_afterjetsel.clear();
+  JetEta_eee_afterjetsel.clear();
+  
+  JetEta_mumumu_afterbjetsel.clear();
+  JetEta_mumue_afterbjetsel.clear();
+  JetEta_eemu_afterbjetsel.clear();
+  JetEta_eee_afterbjetsel.clear();
+  
+  JetEta_mumumu_afterbjetveto.clear();
+  JetEta_mumue_afterbjetveto.clear();
+  JetEta_eemu_afterbjetveto.clear();
+  JetEta_eee_afterbjetveto.clear();
+  
   HT_mumumu_afterleptsel.clear();
   HT_mumue_afterleptsel.clear();
   HT_eemu_afterleptsel.clear();
@@ -2639,12 +3476,26 @@ void ProofSelectorMyCutFlow::SlaveTerminate()
   HT_eemu_afterbjetsel.clear();
   HT_eee_afterbjetsel.clear();
   
+  HT_mumumu_afterbjetveto.clear();
+  HT_mumue_afterbjetveto.clear();
+  HT_eemu_afterbjetveto.clear();
+  HT_eee_afterbjetveto.clear();
+  
+  
+  
   
   
   MET_mumumu_afterleptsel.clear();
   MET_mumue_afterleptsel.clear();
   MET_eemu_afterleptsel.clear();
   MET_eee_afterleptsel.clear();
+  
+  
+  
+  MET_mumumu_afterleptsel_mWT110.clear();
+  MET_mumue_afterleptsel_mWT110.clear();
+  MET_eemu_afterleptsel_mWT110.clear();
+  MET_eee_afterleptsel_mWT110.clear();
   
   
   MET_mumumu_afterjetsel.clear();
@@ -2657,13 +3508,174 @@ void ProofSelectorMyCutFlow::SlaveTerminate()
   MET_eemu_afterbjetsel.clear();
   MET_eee_afterbjetsel.clear();
   
+  Asym_mumumu_afterbjetsel.clear();
+  Asym_mumue_afterbjetsel.clear();
+  Asym_eemu_afterbjetsel.clear();
+  Asym_eee_afterbjetsel.clear();
+  
+  
+  
+  mWT_mumumu_afterjetsel.clear();
+  mWT_mumue_afterjetsel.clear();
+  mWT_eemu_afterjetsel.clear();
+  mWT_eee_afterjetsel.clear();
+  
+  
+  
+  RecoPtZ_mumumu_afterbjetsel.clear();
+  RecoPtZ_mumue_afterbjetsel.clear();
+  RecoPtZ_eemu_afterbjetsel.clear();
+  RecoPtZ_eee_afterbjetsel.clear();
+  
+  RecoPtZ_mumumu_afterbjetveto.clear();
+  RecoPtZ_mumue_afterbjetveto.clear();
+  RecoPtZ_eemu_afterbjetveto.clear();
+  RecoPtZ_eee_afterbjetveto.clear();
+  
+  
+  RecoPtZ_mumumu_afterleptsel.clear();
+  RecoPtZ_mumue_afterleptsel.clear();
+  RecoPtZ_eemu_afterleptsel.clear();
+  RecoPtZ_eee_afterleptsel.clear();
+  
+  
+  RecoPtZ_mumumu_afterleptsel_nojet.clear();
+  RecoPtZ_mumue_afterleptsel_nojet.clear();
+  RecoPtZ_eemu_afterleptsel_nojet.clear();
+  RecoPtZ_eee_afterleptsel_nojet.clear();
+  
+  
+  RecoTopMass_mumumu_afterbjetsel.clear();
+  RecoTopMass_mumue_afterbjetsel.clear();
+  RecoTopMass_eemu_afterbjetsel.clear();
+  RecoTopMass_eee_afterbjetsel.clear();
+  
+  RecoTopMass_mumumu_afterbjetveto.clear();
+  RecoTopMass_mumue_afterbjetveto.clear();
+  RecoTopMass_eemu_afterbjetveto.clear();
+  RecoTopMass_eee_afterbjetveto.clear();
+  
+  
+  deltaPhilb_mumumu_afterbjetsel.clear();
+  deltaPhilb_mumue_afterbjetsel.clear();
+  deltaPhilb_eemu_afterbjetsel.clear();
+  deltaPhilb_eee_afterbjetsel.clear();
+  
+  deltaPhilj_mumumu_afterbjetveto.clear();
+  deltaPhilj_mumue_afterbjetveto.clear();
+  deltaPhilj_eemu_afterbjetveto.clear();
+  deltaPhilj_eee_afterbjetveto.clear();
+  
+  
+  
+  
   deltaR_mumumu_afterleptsel.clear();
   deltaR_mumue_afterleptsel.clear();
-  deltaR_eemu_afterleptsel.clear(); 
+  deltaR_eemu_afterleptsel.clear();
   deltaR_eee_afterleptsel.clear();
+  
+  
+  
+  deltaRLeptJet_mumumu_afterleptsel_mWT110.clear();
+  deltaRLeptJet_mumue_afterleptsel_mWT110.clear();
+  deltaRLeptJet_eemu_afterleptsel_mWT110.clear();
+  deltaRLeptJet_eee_afterleptsel_mWT110.clear();
+  
+  deltaRLeptMet_mumumu_afterleptsel_mWT110.clear();
+  deltaRLeptMet_mumue_afterleptsel_mWT110.clear();
+  deltaRLeptMet_eemu_afterleptsel_mWT110.clear();
+  deltaRLeptMet_eee_afterleptsel_mWT110.clear();
+  
+  
+  
+  WmissAssing_mumumu_afterleptsel.clear();
+  WmissAssing_mumue_afterleptsel.clear();
+  WmissAssing_eemu_afterleptsel.clear();
+  WmissAssing_eee_afterleptsel.clear();
+  
+  
+  mWT_mumumu_afterleptsel.clear();
+  mWT_mumue_afterleptsel.clear();
+  mWT_eemu_afterleptsel.clear();
+  mWT_eee_afterleptsel.clear();
+  
+  
+  mWT_mumumu_afterbjetsel.clear();
+  mWT_mumue_afterbjetsel.clear();
+  mWT_eemu_afterbjetsel.clear();
+  mWT_eee_afterbjetsel.clear();
+  
+  mWT_mumumu_afterbjetveto.clear();
+  mWT_mumue_afterbjetveto.clear();
+  mWT_eemu_afterbjetveto.clear();
+  mWT_eee_afterbjetveto.clear();
+  
+  
+  Charge_mumumu_afterleptsel.clear();
+  Charge_mumue_afterleptsel.clear();
+  Charge_eemu_afterleptsel.clear();
+  Charge_eee_afterleptsel.clear();
+  
+  Charge_mumumu_afterleptsel_mWT110.clear();
+  Charge_mumue_afterleptsel_mWT110.clear();
+  Charge_eemu_afterleptsel_mWT110.clear();
+  Charge_eee_afterleptsel_mWT110.clear();
+  
+ 
+  Nvertex.clear();
+ 
+  InvM_ll_vs_mWT_mumumu_afterleptsel.clear();
+  InvM_ll_vs_mWT_mumue_afterleptsel.clear();
+  InvM_ll_vs_mWT_eemu_afterleptsel.clear();
+  InvM_ll_vs_mWT_eee_afterleptsel.clear();
+  
+  HT_vs_MET_mumumu_afterleptsel.clear();
+  HT_vs_MET_mumue_afterleptsel.clear();
+  HT_vs_MET_eemu_afterleptsel.clear();
+  HT_vs_MET_eee_afterleptsel.clear();
+  
+  HT_vs_NJet_mumumu_afterleptsel.clear();
+  HT_vs_NJet_mumue_afterleptsel.clear();
+  HT_vs_NJet_eemu_afterleptsel.clear();
+  HT_vs_NJet_eee_afterleptsel.clear();
+  
+  HT_vs_NBJet_mumumu_afterleptsel.clear();
+  HT_vs_NBJet_mumue_afterleptsel.clear();
+  HT_vs_NBJet_eemu_afterleptsel.clear();
+  HT_vs_NBJet_eee_afterleptsel.clear();
+  
+  HT_vs_LeptPt_mumumu_afterleptsel.clear();
+  HT_vs_LeptPt_mumue_afterleptsel.clear();
+  HT_vs_LeptPt_eemu_afterleptsel.clear();
+  HT_vs_LeptPt_eee_afterleptsel.clear();
+  
+  HT_vs_JetPt_mumumu_afterleptsel.clear();
+  HT_vs_JetPt_mumue_afterleptsel.clear();
+  HT_vs_JetPt_eemu_afterleptsel.clear();
+  HT_vs_JetPt_eee_afterleptsel.clear();
+  
+  
+  
+  HT_vs_Mll_mumumu_afterleptsel.clear();
+  HT_vs_Mll_mumue_afterleptsel.clear();
+  HT_vs_Mll_eemu_afterleptsel.clear();
+  HT_vs_Mll_eee_afterleptsel.clear();
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
     //delete file1  ;
     //delete hPUMC ;  
     //delete file2 ; 
+    delete TheTree;
     delete anaEL;
     delete LumiWeights;
   }

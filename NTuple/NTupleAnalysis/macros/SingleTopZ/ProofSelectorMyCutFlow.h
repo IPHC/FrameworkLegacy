@@ -29,7 +29,7 @@
 #include "Tools/interface/PUWeighting.h"
 #include "Tools/interface/LumiReweightingStandAlone.h"
 #include "Tools/interface/JetCorrector.h"
-
+#include "Tools/interface/BtagHardcodedConditions.h"
 
 #include <TFile.h>
 #include <TTree.h>
@@ -66,7 +66,7 @@ class ProofSelectorMyCutFlow : public TSelector {
   vector<Dataset> datasets;
   Dataset* dataset;
   vector<string> CutName;
-  vector<string> ChannelName;
+  vector<string> TheChannelName;
   vector<string> VecChannelName;
   DiLeptonSelection sel; 
   float Luminosity;
@@ -99,8 +99,19 @@ class ProofSelectorMyCutFlow : public TSelector {
   bool applyTrigger ;
   
   bool applyWZ ;
+  bool applyWZ_finalSel ;
   bool applyFakescale ;
   bool applyLeptonSF;
+  
+  
+  double SF_WZ_finalSel;
+  double looseIso;
+  
+  std::vector <double > SF_WZ;
+  std::vector <double > SF_Fake;
+  
+  
+  
   
   //Here define Scale Factors
   //SF_trigger applied for mumu
@@ -117,6 +128,10 @@ class ProofSelectorMyCutFlow : public TSelector {
   double SF_BranchingRatio_had ; 
     
    
+  bool  applyJES;
+  float scale;
+  bool  applyJER;
+  float ResFactor;
    
   
   bool PUup;
@@ -159,6 +174,13 @@ class ProofSelectorMyCutFlow : public TSelector {
   
   TH1F* fHist;
   
+  std::vector<TH1F> SelABjet;
+  std::vector<TH1F> SelABjet_afterjetsel;
+  
+  std::vector<TH1F> Ntrilept_mumumu;
+  std::vector<TH1F> Ntrileptnoniso_mumumu;
+  
+  
   std::vector<TH1F> CutFlow_mumumu;
   std::vector<TH1F> CutFlow_mumue;
   std::vector<TH1F> CutFlow_eemu;
@@ -179,7 +201,13 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> NVtx_eemu_afterleptsel;
   std::vector<TH1F> NVtx_eee_afterleptsel; 
   
-
+  std::vector<TH1F> DijetInvM_mumumu_afterleptsel_inZpeak;
+  std::vector<TH1F> DijetInvM_mumue_afterleptsel_inZpeak;
+  std::vector<TH1F> DijetInvM_eemu_afterleptsel_inZpeak;
+  std::vector<TH1F> DijetInvM_eee_afterleptsel_inZpeak;
+  
+  
+  
   std::vector<TH1F> Mt_mumumu_afterbjetsel;
   std::vector<TH1F> Mt_mumue_afterbjetsel;
   std::vector<TH1F> Mt_eemu_afterbjetsel;
@@ -202,6 +230,11 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> NJet_eemu_afterbsel;
   std::vector<TH1F> NJet_eee_afterbsel;
   
+  std::vector<TH1F> NJet_mumumu_afterleptsel_mWT110;
+  std::vector<TH1F> NJet_mumue_afterleptsel_mWT110;
+  std::vector<TH1F> NJet_eemu_afterleptsel_mWT110;
+  std::vector<TH1F> NJet_eee_afterleptsel_mWT110;
+  
   
   std::vector<TH1F> NLept_mumumu_afterbsel;
   std::vector<TH1F> NLept_mumue_afterbsel;
@@ -222,7 +255,17 @@ class ProofSelectorMyCutFlow : public TSelector {
   
   
   
+  std::vector<TH1F> NBJet_mumumu_afterleptsel_mWT110;
+  std::vector<TH1F> NBJet_mumue_afterleptsel_mWT110;
+  std::vector<TH1F> NBJet_eemu_afterleptsel_mWT110;
+  std::vector<TH1F> NBJet_eee_afterleptsel_mWT110;
+  
   //to be filled
+  
+  std::vector<TH1F> Nvtx_mumumu_afterleptsel;
+  std::vector<TH1F> Nvtx_mumue_afterleptsel;
+  std::vector<TH1F> Nvtx_eemu_afterleptsel;
+  std::vector<TH1F> Nvtx_eee_afterleptsel;
   
   std::vector<TH1F> InvM_ll_mumumu_afterleptsel;
   std::vector<TH1F> InvM_ll_mumue_afterleptsel;
@@ -504,6 +547,20 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> mWT_mumue_afterbjetveto;
   std::vector<TH1F> mWT_eemu_afterbjetveto;
   std::vector<TH1F> mWT_eee_afterbjetveto;
+  
+  
+  std::vector<TH1F> Charge_mumumu_afterleptsel;
+  std::vector<TH1F> Charge_mumue_afterleptsel;
+  std::vector<TH1F> Charge_eemu_afterleptsel;
+  std::vector<TH1F> Charge_eee_afterleptsel;
+  
+  std::vector<TH1F> Charge_mumumu_afterleptsel_mWT110;
+  std::vector<TH1F> Charge_mumue_afterleptsel_mWT110;
+  std::vector<TH1F> Charge_eemu_afterleptsel_mWT110;
+  std::vector<TH1F> Charge_eee_afterleptsel_mWT110;
+  
+   
+  std::vector<TH1F> Nvertex;
  
   std::vector<TH2D> InvM_ll_vs_mWT_mumumu_afterleptsel;
   std::vector<TH2D> InvM_ll_vs_mWT_mumue_afterleptsel;
@@ -548,11 +605,33 @@ class ProofSelectorMyCutFlow : public TSelector {
   
   
   float tree_topMass;
+  float tree_totMass;
   float tree_deltaPhilb;
+  float tree_deltaRlb;
+  float tree_deltaRTopZ;
   float tree_asym;
   float tree_Zpt;
+  float tree_ZEta;
+  float tree_topPt;
+  float tree_topEta;
+  
+  float tree_deltaRZl;
+  float tree_deltaPhiZmet;
+  float tree_btagDiscri;
+  float tree_NJets;
+  float tree_NBJets;
+  float tree_totPt;
+  float tree_totEta;
+  
+  float tree_leptWPt, tree_leptWEta;
+  float tree_leadJetPt, tree_leadJetEta;
+  float tree_deltaRZleptW, tree_deltaPhiZleptW;
+   
   int   tree_SampleType;
   int   tree_Channel;
+  
+  
+  
   float tree_EvtWeight;
   
   ofstream ofile;
@@ -568,7 +647,15 @@ class ProofSelectorMyCutFlow : public TSelector {
   
   std::map<TString, int> initMCevents;
   std::map<TString, int> skimMCevents;
- 
+   
+   
+   
+  //------------------------------------
+  //BTag scale factors
+  //------------------------------------
+  
+  BtagHardcodedConditions BTagSFManager;
+  
   //------------------------------------
   // for PileUP reweighting
   //------------------------------------
