@@ -23,12 +23,12 @@ struct ConfigType
   double	    electron_cut_pt;
   double	    electron_cut_eta;
   bool          electron_saveAllID;
-  std::vector<std::string> electronHLTmatching;
-  std::vector<std::string> electron_IDlist;
+  std::vector<std::string>   electronHLTmatching;
+  std::vector<std::string>   electron_IDlist;
   std::vector<edm::InputTag> electronProducer;
-  bool          doElectronRhoCorrIso;
-  bool 		    doElectronRecoMatch;
-  std::vector<edm::InputTag> electronRecoProducer;
+  std::vector<std::string>   electron_Isolist;
+  std::vector<std::string>   electron_rhoCorrSrc;
+  edm::InputTag              doElectronMatch;
 
   // Extract info for Photons
   bool 	       	doPhotons;
@@ -45,11 +45,11 @@ struct ConfigType
   bool          muon_cut_trk;
   bool          muon_cut_glb;
   bool          muon_cut_cal;
-  std::vector<std::string> muonHLTmatching;
-  std::vector<std::string> muon_IDlist;
-  std::vector<edm::InputTag>  muonProducer;
-  bool 		      doMuonRecoMatch;
-  std::vector<edm::InputTag>  muonRecoProducer;
+  std::vector<std::string>   muonHLTmatching;
+  std::vector<std::string>   muon_IDlist;
+  std::vector<edm::InputTag> muonProducer;
+  std::vector<std::string>   muon_Isolist;
+  edm::InputTag              doMuonMatch;
 
   // Extract info for Taus
   bool     	    doTaus;
@@ -99,9 +99,11 @@ struct ConfigType
   edm::InputTag	 neutralRho_PUUE_dens;
 
   // Extract info for Monte Carlo
-  bool 	      	doGenParticleCollection;
-  unsigned int  mcDescentMax;
-  unsigned int  mcNGenPartMax;
+  bool 	       doGenParticleCollection;
+  unsigned int mcDescentMax;
+  unsigned int mcNGenPartMax;
+  unsigned int mcTauDecayMode;
+  unsigned int mcHeavyQuarkDecayMode;
 };
 
 #endif

@@ -10,6 +10,9 @@
 // ROOT headers
 #include "TLorentzVector.h"
 
+// IPHC headers
+#include "KeyedCollection.h"
+
 namespace IPHCTree
 {
 
@@ -33,6 +36,9 @@ namespace IPHCTree
 
     /// track (of the PFCandidate) isolation w.r.t. other tracks
     float trackIso;
+
+    /// Container for adding easly variables without changing dataformat code
+    KeyedCollection<Float_t> others;
 
 	// -------------------------------------------------------------
     //                       method members

@@ -13,11 +13,7 @@ void MTElectron::Reset(bool constructor_call)
     MTLepton::Reset();
     NTElectron::Reset();
   }
-  eSuperClusterOverP = -999;
-  deltaEtaSuperClusterTrackAtVtx = -999;
-  deltaPhiSuperClusterTrackAtVtx = -999;
   hcalOverEcal    = -999;
-  sigmaIetaIeta   = -999;
   e2x5Max         = -999;
   e5x5            = -999;
   fbrem           = -999;
@@ -25,9 +21,7 @@ void MTElectron::Reset(bool constructor_call)
   deltaEtaSeedClusterTrackAtCalo = -999;
   deltaPhiSeedClusterTrackAtCalo = -999;
   rawSCEnergy     = -999;
-  hadronicOverEm  = -999;
   classification  = -999;
-  EmEnergy_       = -999;
   TrkIso04        = -999;
   ECaloIso04      = -999;
   HCaloIso04      = -999;
@@ -46,13 +40,7 @@ void MTElectron::Dump(std::ostream & os) const
   NTElectron::Dump(os);
   MTLepton::Dump(os);
   os << " TrackEl pT = " << TrackEl.pt() << std::endl;
-  os << " eSuperClusterOverP = " << eSuperClusterOverP << std::endl;
-  os << " deltaEtaSuperClusterTrackAtVtx = " << 
-    deltaEtaSuperClusterTrackAtVtx;
-  os << " deltaPhiSuperClusterTrackAtVtx = " <<
-    deltaPhiSuperClusterTrackAtVtx << std::endl;
   os << " hcalOverEcal = " << hcalOverEcal;
-  os << " sigmaIetaIeta = " << sigmaIetaIeta;
   os << " e2x5Max = " << e2x5Max;
   os << " e5x5 = " << e5x5 << std::endl; 
   os << " fbrem = " << fbrem << std::endl;

@@ -33,6 +33,7 @@ namespace IPHCTree
     std::set<std::string> muon_others;
     std::set<std::string> tau_others;
     std::set<std::string> photon_others;
+    std::set<std::string> pfcandidate_others;
     std::set<std::string> event_others;
 
     std::set<std::string> electron_ID;
@@ -40,7 +41,11 @@ namespace IPHCTree
     std::set<std::string> tau_ID;
     std::set<std::string> jet_ID;
     std::set<std::string> jet_bTag;
+    std::set<std::string> jet_HeavyTag;
 
+    std::set<std::string> electron_isolation;
+    std::set<std::string> muon_isolation;
+    std::set<std::string> tau_isolation;
     // -------------------------------------------------------------
     //                       method members
     // -------------------------------------------------------------

@@ -37,6 +37,9 @@ namespace IPHCTree
     /// number of interactions of the next bunch
     UChar_t after_npu;
 
+	/// 'true' number of interactions - used in 2012 in replacement of intime/before/after_npu
+    UChar_t Tnpv;
+
     // -------------------------------------------------------------
     //                       method members
     // -------------------------------------------------------------

@@ -19,32 +19,27 @@ void NTElectron::Reset(bool constructor_call)
   deltaDistance   = -999;
   nLost           = 0;
 
+  deltaEtaSuperClusterTrackAtVtx = 999.0;
+  deltaPhiSuperClusterTrackAtVtx = 999.0;
+
+  hadronicOverEm = 999.0;
+  sigmaIetaIeta = 999.0;
+
+  EmEnergy_ = 999.0;
+  eSuperClusterOverP = 999.0;
+
   isEE = false;
 
   etaSuperCluster = 999.0;
-  hadOverEM = 999.0;
-  abs_deltaPhi = 999.0;
-  abs_deltaEta = 999.0;
-  sigmaIetaIeta = 999.0;
 
-  conversionRejection = false;
-			
-  // Isolation-related infos
-  Aeff = 999.0;
-  chargedIso = 999.0;
-  photonIso = 999.0;
-  neutralIso = 999.0;
-  rho = 999.0;
-
+  passConversionVeto = false;
   missingHits = 999.0; 
-  dxy_vertex = 999.0;
-  dz_vertex = 999.0;
-
+			
   // Matching between reco and PF infos
-  bestRecoMatch_eta = 999.0;
-  bestRecoMatch_phi = 0.0;
-  bestRecoMatch_dR = 999.0;
-  bestRecoMatch_pT = -999.0;
+  bestMatch_eta = 999.0;
+  bestMatch_phi = 0.0;
+  bestMatch_dR = 999.0;
+  bestMatch_pT = -999.0;
 
 }
 
@@ -70,30 +65,25 @@ void NTElectron::Dump(std::ostream & os) const
   os << " isGsfElectron = " << isGsfElectron << " ;";
   os << " nLost = " << nLost << std::endl;
 
-  os << " etaSuperCluster = " << etaSuperCluster << " ;";
-  os << " hadOverEM = " << hadOverEM << " ;";
-  os << " missingHits = " << missingHits << " ;"; 
-  os << " abs_deltaPhi = " << abs_deltaPhi << " ;";
-  os << " abs_deltaEta = " << abs_deltaEta << " ;";
+  os << " deltaEtaSuperClusterTrackAtVtx = " << deltaEtaSuperClusterTrackAtVtx << " ;";
+  os << " deltaPhiSuperClusterTrackAtVtx = " << deltaPhiSuperClusterTrackAtVtx << std::endl;
+
+  os << " hadronicOverEm = " << hadronicOverEm << " ;";
   os << " sigmaIetaIeta = " << sigmaIetaIeta << std::endl;
 
-  os << " conversionRejection = " << static_cast<unsigned int>(conversionRejection) << std::endl;
+  os << " EmEnergy_ = " << EmEnergy_ << " ;";
+  os << " eSuperClusterOverP = " << eSuperClusterOverP << std::endl;
 
-  // Isolation-related infos
-  os << " Aeff = " << Aeff << " ; ";
-  os << " chargedIso = " << chargedIso << " ;";
-  os << " photonIso = " << photonIso << " ;";
-  os << " neutralIso = " << neutralIso << " ;";
-  os << " rho = " << rho << std::endl;
+  os << " etaSuperCluster = " << etaSuperCluster << " ;";
+  os << " missingHits = " << missingHits << " ;"; 
 
-  os << " dxy_vertex = " << dxy_vertex << " ;";
-  os << " dz_vertex = " << dz_vertex << std::endl;
+  os << " passConversionVeto = " << static_cast<unsigned int>(passConversionVeto) << std::endl;
 
   // Matching between reco and PF infos
-  os << " bestRecoMatch_eta = " << bestRecoMatch_eta << " ;";
-  os << " bestRecoMatch_phi = " << bestRecoMatch_phi << " ;";
-  os << " bestRecoMatch_dR = " << bestRecoMatch_dR << " ;";
-  os << " bestRecoMatch_pT = " << bestRecoMatch_pT << std::endl;
+  os << " bestRecoMatch_eta = " << bestMatch_eta << " ;";
+  os << " bestRecoMatch_phi = " << bestMatch_phi << " ;";
+  os << " bestRecoMatch_dR = " << bestMatch_dR << " ;";
+  os << " bestRecoMatch_pT = " << bestMatch_pT << std::endl;
 
   for (unsigned int i=0;i<80;i++) os << "-"; os << std::endl;
 }

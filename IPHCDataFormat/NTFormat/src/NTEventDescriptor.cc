@@ -19,6 +19,7 @@ void NTEventDescriptor::Reset()
   muon_others.clear();
   tau_others.clear();
   photon_others.clear();
+  pfcandidate_others.clear();
   event_others.clear();
 
   electron_ID.clear();
@@ -42,12 +43,13 @@ void NTEventDescriptor::Dump(std::ostream & os) const
   os << "tau_p4HLT names      = " << tau_p4HLT.size()      << std::endl;
   os << "photon_p4HLT names   = " << photon_p4HLT.size()   << std::endl;
 
-  os << "jet_others names      = " << jet_others.size()      << std::endl;
-  os << "electron_others names = " << electron_others.size() << std::endl;
-  os << "muon_others names     = " << muon_others.size()     << std::endl;
-  os << "tau_others names      = " << tau_others.size()      << std::endl;
-  os << "photon_others names   = " << photon_others.size()   << std::endl;
-  os << "event_others names    = " << event_others.size()    << std::endl;
+  os << "jet_others names         = " << jet_others.size()         << std::endl;
+  os << "electron_others names    = " << electron_others.size()    << std::endl;
+  os << "muon_others names        = " << muon_others.size()        << std::endl;
+  os << "tau_others names         = " << tau_others.size()         << std::endl;
+  os << "photon_others names      = " << photon_others.size()      << std::endl;
+  os << "pfcandidate_others names = " << pfcandidate_others.size() << std::endl;
+  os << "event_others names       = " << event_others.size()       << std::endl;
 
   os << "electron_ID names = " << electron_ID.size() << std::endl;
   os << "muon_ID names     = " << muon_ID.size()     << std::endl;

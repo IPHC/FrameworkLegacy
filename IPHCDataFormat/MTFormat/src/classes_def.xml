@@ -19,7 +19,6 @@
   // Physics Object
   <class name="IPHCTree::MTJet"/>   
   <class name="IPHCTree::MTMET"/>   
-  <class name="IPHCTree::MTJetMet"/>
   <class name="IPHCTree::MTPhoton"/>
   <class name="IPHCTree::MTLepton"/>
   <class name="IPHCTree::MTElectron"/>
@@ -52,7 +51,6 @@
   </class>
 
   // Vector
-  <class name="std::vector<IPHCTree::MTJetMet>"/> 
   <class name="std::vector<IPHCTree::MTJet>"/>    
   <class name="std::vector<IPHCTree::MTMET>"/>    
   <class name="std::vector<IPHCTree::MTElectron>"/>
@@ -63,7 +61,6 @@
   <class name="std::vector<IPHCTree::MTTrack>"/>   
  
   // Vector of vector
-  <class name="std::vector<std::vector<IPHCTree::MTJetMet> >"/>   
   <class name="std::vector<std::vector<IPHCTree::MTJet> >"/>      
   <class name="std::vector<std::vector<IPHCTree::MTMET> >"/>      
   <class name="std::vector<std::vector<IPHCTree::MTElectron> >"/> 

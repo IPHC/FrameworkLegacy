@@ -54,9 +54,9 @@
   </class>
   <class name="IPHCTree::NTJet">
   </class>
-  <class name="IPHCTree::NTMET">
+  <class name="IPHCTree::NTSubJet">
   </class>
-  <class name="IPHCTree::NTJetMet">
+  <class name="IPHCTree::NTMET">
   </class>
   <class name="IPHCTree::NTPhoton">
   </class>
@@ -72,6 +72,7 @@
 
   // Vectors
   <class name="std::vector<IPHCTree::NTJet>"/>
+  <class name="std::vector<IPHCTree::NTSubJet>"/>
   <class name="std::vector<IPHCTree::NTMET>"/>
   <class name="std::vector<IPHCTree::NTElectron>"/>
   <class name="std::vector<IPHCTree::NTMuon>"/>
@@ -88,6 +89,7 @@
 
   // Vector of Vector
   <class name="std::vector<std::vector<IPHCTree::NTJet> >"/>
+  <class name="std::vector<std::vector<IPHCTree::NTSubJet> >"/>
   <class name="std::vector<std::vector<IPHCTree::NTMET> >"/>
   <class name="std::vector<std::vector<IPHCTree::NTElectron> >"/>
   <class name="std::vector<std::vector<IPHCTree::NTMuon> >"/>
@@ -99,6 +101,9 @@
 
   // MultiCollection
   <class name="IPHCTree::MultiCollection<IPHCTree::NTJet>">
+     <field name="current_index_" transient="true"/>
+  </class>  
+  <class name="IPHCTree::MultiCollection<IPHCTree::NTSubJet>">
      <field name="current_index_" transient="true"/>
   </class>
   <class name="IPHCTree::MultiCollection<IPHCTree::NTMET>">

@@ -15,7 +15,17 @@ namespace IPHCTree
   public:
 
     //methods
-    ZDecaysMC (){Q_Lep1_gen = -99.;Q_Lep2_gen = -99.;Lep1_pdgID = -99; Lep2_pdgID = -99; Tmeme = -99; Zgtobb = -99;};
+    ZDecaysMC ()
+	{
+		Q_Lep1_gen = -99.0;
+		Q_Lep2_gen = -99.0;
+		Lep1_pdgID = -99;
+		Lep2_pdgID = -99;
+		Tmeme      = -99;
+		Zgtobb     = -99;
+		mcMotherId = -99;
+	};
+
     ~ZDecaysMC (){};
 
     //data memebers  
@@ -24,16 +34,16 @@ namespace IPHCTree
     TLorentzVector p4_Lep2_gen;
     TLorentzVector p4_SumTauNeu_gen;
     TLorentzVector p4_SumTauANeu_gen;
-    double Q_Lep1_gen;
+    
+	double Q_Lep1_gen;
     double Q_Lep2_gen;
-    int Lep1_pdgID;
+    
+	int Lep1_pdgID;
     int Lep2_pdgID;
     int Tmeme;
     int Zgtobb;
+	int mcMotherId;
   
-  
-  
-
   };
 }
 

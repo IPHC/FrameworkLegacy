@@ -29,8 +29,7 @@
 #include "DataFormats/Scalers/interface/DcsStatus.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 
-#include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
-#include "EGamma/EGammaAnalysisTools/interface/ElectronEffectiveArea.h"
+#include "EgammaAnalysis/ElectronTools/interface/ElectronEffectiveArea.h"
 
 typedef std::vector< edm::Handle< edm::ValueMap<double> > > IsoDepositVals;
 
@@ -60,7 +59,7 @@ typedef math::XYZPoint Point;
 //
 // Original Author:  Jeremy ANDREA
 //         Created:  Sun Nov  1 21:30:20 CET 2009
-// $Id: MiniTreeProducer.h,v 1.5 2012/10/18 17:16:00 jandrea Exp $
+// $Id: MiniTreeProducer.h,v 1.5 2013/02/22 22:03:09 aaubin Exp $
 //
 //
 
@@ -242,7 +241,6 @@ class MiniTreeProducer : public edm::EDProducer
                  const edm::EventSetup& iSetup,
                  std::auto_ptr<IPHCTree::MTEvent>& evt,
                  const edm::Handle< std::vector<pat::Electron> >& electrons,
-                 const edm::Handle< reco::ConversionCollection >& hConversions,
                  const TransientTrackBuilder* trackBuilder,
                  const reco::GenParticleCollection* genParticles,
                  const reco::BeamSpot* & bs,
@@ -269,26 +267,30 @@ class MiniTreeProducer : public edm::EDProducer
                   const reco::PFMET* pfmet2,
                   const edm::Handle<std::vector<pat::Jet> >& jets,
                   const std::string& algo,
+                  bool fillJetConstituents_, 
+                  bool fillSubJetConstituents_, 
                   const std::pair<float,float>& SumMuMetCorr,
                   const pat::TriggerEvent* patTriggerEvent);
-void fillGenEventInfo(edm::Event& iEvent, 
+  void fillGenEventInfo(edm::Event& iEvent, 
                       const edm::EventSetup& iSetup,
                       std::auto_ptr<IPHCTree::MTEvent>& evt,
                       const edm::Handle<GenEventInfoProduct>& genEventInfo);
 
- void fillPileUp(edm::Event& iEvent, 
+  void fillPileUp(edm::Event& iEvent, 
                  const edm::EventSetup& iSetup,
                  std::auto_ptr<IPHCTree::MTEvent>& evt,
-                 edm::Handle<double>& h_rho,
-                 edm::Handle<double>& h_neutralRho,
                  edm::Handle<std::vector<PileupSummaryInfo> >& PupInfo);
 
-void fillGenParticles(edm::Event& iEvent, 
-                      const edm::EventSetup& iSetup,
-                      std::auto_ptr<IPHCTree::MTEvent>& evt,
-                      const edm::Handle<std::vector<reco::GenParticle> >& GenParticles);
-
-
+  void fillGenParticles(edm::Event& iEvent, 
+                        const edm::EventSetup& iSetup,
+                        std::auto_ptr<IPHCTree::MTEvent>& evt,
+                        const edm::Handle<std::vector<reco::GenParticle> >& GenParticles);
+  
+  void fillOneGenParticle(const reco::GenParticle* src,
+							TLorentzVector p4Mother,
+							int idMother,
+							IPHCTree::NTGenParticle* dest, 
+							std::vector<IPHCTree::NTGenParticle> collection);
 
   bool getBfieldFromDCS(edm::Event& iEvent, const edm::EventSetup& iSetup, float& evt_bField);
   bool getBfieldFromIDEAL(edm::Event& iEvent, const edm::EventSetup& iSetup, float& evt_bField);

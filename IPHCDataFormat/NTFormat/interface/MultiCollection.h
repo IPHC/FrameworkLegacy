@@ -194,7 +194,8 @@ namespace IPHCTree
     /// \param[in,out] os   a log stream
     void Dump(std::ostream & os = std::cout) const
     {
-      if (names_.size()!=collections_.size())
+	
+	  if (names_.size()!=collections_.size())
       {
         os << "-- internal problems with KeyedCollection --" << std::endl;
       }

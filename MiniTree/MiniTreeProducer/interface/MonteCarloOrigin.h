@@ -45,9 +45,23 @@ struct MonteCarloOrigin
                      const reco::GenParticleCollection* genParticles, 
                      const pat::Tau* thePatTau);
 
+  static int getTauDecayFromGenParticle(
+                     reco::GenParticleCollection::const_iterator genTau);
+
+  static int getHeavyQuarkDecayFromGenParticle(
+                     reco::GenParticleCollection::const_iterator genQuark);
+ 
+  static void getTauDecayProducts(
+                     const reco::Candidate* inputParticle, 
+					 std::vector<const reco::Candidate*>* output);
+
+  static void getHeavyQuarkDecayProducts(
+		             const reco::Candidate* inputParticle, 
+					 std::vector<const reco::Candidate*>* output);
+
   static void fillGenInfo(std::auto_ptr<IPHCTree::MTEvent>& evt,
                           const edm::Handle<reco::GenParticleCollection>& genParticles);
 
-    };
+};
 
 #endif

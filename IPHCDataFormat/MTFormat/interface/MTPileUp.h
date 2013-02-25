@@ -31,7 +31,6 @@ namespace IPHCTree
     /// information related to each interaction
     std::map<Char_t, std::vector<MTInteraction> > interactions;
 
-
     // -------------------------------------------------------------
     //                       method members
     // -------------------------------------------------------------

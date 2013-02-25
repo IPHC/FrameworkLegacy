@@ -13,7 +13,7 @@
 //
 // Original Author:  Andrea Jeremy,B25/117,6262,
 //         Created:  Mon May  2 10:05:12 CEST 2011
-// $Id: NeutralPFCandidates.h,v 1.2 2011/05/03 11:58:24 alebihan Exp $
+// $Id: NeutralPFCandidates.h,v 1.1 2012/12/21 17:27:06 aaubin Exp $
 //
 //
 

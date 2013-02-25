@@ -12,6 +12,7 @@ void NTMonteCarlo::Reset(bool constructor_call)
   {
     partonFlavor = std::make_pair(0,0);
     x            = std::make_pair(0.,0.);
+    xpdf         = std::make_pair(0.,0.);
 
     // Clearing containers
     Generatedtaus.clear();
@@ -27,6 +28,7 @@ void NTMonteCarlo::Reset(bool constructor_call)
   ptHat                = -999.;
   Q_scale              = -999.;
   TMEME                = -999;
+ 
 }
 
 

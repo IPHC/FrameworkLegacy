@@ -5,6 +5,7 @@
 #include <iostream>
 
 // IPHC headers
+#include "NTSubJet.h"
 #include "NTParticle.h"
 #include "KeyedCollection.h"
 
@@ -33,6 +34,10 @@ namespace IPHCTree
     /// parton flavour (MC info)  
     Char_t partonFlavour;
 
+	// Charge calculated using the sum of the charge of the track 
+	// (with a ponderation according to pT ?)
+    Float_t  jetCharge;
+
     // --------------- variables related to tracks -------------------
 
     UShort_t nTracks;     /// number of tracks associated to the jet
@@ -43,6 +48,14 @@ namespace IPHCTree
     /// b-tagging discriminators for different algorithms
     KeyedCollection<Float_t> bTag; 
 
+	// Discriminators for heavy hadronic objects : W / Z / Top / Higgs
+    KeyedCollection<Float_t> HeavyTag;
+
+	// -------------------------------------------------------------
+    //                        Subjets
+    // -------------------------------------------------------------
+
+	std::vector<NTSubJet> subjets;
    
     // -------------------------------------------------------------
     //                         method members

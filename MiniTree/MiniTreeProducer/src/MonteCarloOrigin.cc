@@ -159,6 +159,7 @@ int MonteCarloOrigin::getElectronOrigin(
 // ----------------------------------------------------------------------------
 // getTauDecay
 // ----------------------------------------------------------------------------
+#define DEBUG_MSG cout << "DEBUG (" << __FILE__ << ", l." << __LINE__ << ") "
 int MonteCarloOrigin::getTauDecay(
              const reco::GenParticleCollection* genParticles, 
              const pat::Tau* thePatTau)
@@ -166,101 +167,173 @@ int MonteCarloOrigin::getTauDecay(
   int tauDecay = -999;
   bool matchedGenLepton = false;
   reco::GenParticleCollection::const_iterator pMatched; 
-    
-  for (reco::GenParticleCollection::const_iterator p = genParticles->begin(); p != genParticles->end(); ++p){
-    reco::Candidate * aGenTau = (dynamic_cast<reco::Candidate *>(const_cast<reco::GenParticle *>(&*p)));
-   
-  
-    if (abs(p->pdgId()) == 15 && p->status() == 2){
-#if DEBUG
-      cout << "getTauOrigin: thePatElectron->genLepton() " << thePatTau->genLepton() <<endl;
-#endif
-      if ((thePatTau->genLepton() != NULL) && abs(thePatTau->genLepton()->pt()-aGenTau->pt()) < 0.00001){
+
+  for (reco::GenParticleCollection::const_iterator p = genParticles->begin(); p != genParticles->end(); ++p)
+  {
+    reco::Candidate* aGenTau = (dynamic_cast<reco::Candidate *>(const_cast<reco::GenParticle *>(&*p)));
+    if (abs(p->pdgId()) == 15 && p->status() == 2)
+	{
+      #if DEBUG
+         cout << "getTauOrigin: thePatElectron->genLepton() " << thePatTau->genLepton() <<endl;
+      #endif
+      if ((thePatTau->genLepton() != NULL) && abs(thePatTau->genLepton()->pt()-aGenTau->pt()) < 0.00001)
+      {
         matchedGenLepton = true;
-	pMatched = p;
+	    pMatched = p;
       }
     }
   } 
   
-#if DEBUG
-  cout << "getTauDecay: matchedGenLepton " << matchedGenLepton<<endl;
-#endif
-  if (matchedGenLepton){
-    tauDecay = -99;
-   
-    int tau_children_n = pMatched->numberOfDaughters(); 
-    int sumPdgId = 0;
-      
-       for (int k=0; k<tau_children_n; k++)
-       { 
-  	 int dpdgId = abs(pMatched->daughter(k)->pdgId());
-	 sumPdgId += dpdgId;
-  	 
-  	 if (dpdgId == 223 || dpdgId == 221 || dpdgId == 213 || dpdgId == 113 || dpdgId == 323)
-  	 {				       
-  	   if(pMatched->daughter(k)->status() != 1)
-  	   {			       
-  	   sumPdgId -= dpdgId;
-   
-  	   for (unsigned int ww=0; ww<pMatched->daughter(k)->numberOfDaughters(); ww++) 
- 	   {
- 	    sumPdgId += abs(pMatched->daughter(k)->daughter(ww)->pdgId());
-	  
-	    if (abs(pMatched->daughter(k)->daughter(ww)->pdgId())==311 && pMatched->daughter(k)->daughter(ww)->status()!=1)
-	    { 
-	      sumPdgId -= 311;
-	      for (unsigned int v=0; v<pMatched->daughter(k)->daughter(ww)->numberOfDaughters(); v++) 
- 	      {
-	       sumPdgId += pMatched->daughter(k)->daughter(ww)->daughter(v)->pdgId();
-	      }
-	     }
-	    }
- 	   }
-          }
-         }     
-       
-    
-      if (sumPdgId ==227)				     	 	                        { tauDecay = 0;  }//pi+nu
-      if (sumPdgId ==229)		   	 	                                        { tauDecay = 1;  }//pi+pi0nu
-      if (sumPdgId ==449 || sumPdgId ==338 || sumPdgId ==340)				        { tauDecay = 2;  }//pi+2pi0nu
-      if (sumPdgId ==560)				     	 	                        { tauDecay = 3;  }//pi+3pi0nu
-      if (sumPdgId ==671)				     	 	                        { tauDecay = 4;  }//pi+4pi0nu
-      if (sumPdgId ==315)				                                        { tauDecay = 5;  }//pi+gammanu
-      if (sumPdgId ==360 || sumPdgId ==382)			 	                        { tauDecay = 6;  }//pi+pi0nugamma(s)
-      if (sumPdgId ==537 || sumPdgId ==357 || sumPdgId ==538)                                   { tauDecay = 7;  }//pi+k0nu
-      if (sumPdgId ==468 || sumPdgId ==648 || sumPdgId ==487 || sumPdgId==667 || sumPdgId ==847){ tauDecay = 8;  }//pi+2n(w K0)nu  
-      if (sumPdgId ==760 || sumPdgId ==769 || sumPdgId ==759)	    	                        { tauDecay = 9;  }//pi+3n(w pi0)nu
-      if (sumPdgId ==471)				    	    	                        { tauDecay = 10; }//pi+2pi0nugamma
-   							    	    	                        
-      if (sumPdgId ==649)			                	                        { tauDecay = 30; }//3pi+nu
-      if (sumPdgId ==760)				    	    	                        { tauDecay = 31; }//3pi+pi0nu
-      if (sumPdgId ==782)				    	    	                        { tauDecay = 34; }//3pi+pi0nugamma
-      if (sumPdgId ==871)				    	    	                        { tauDecay = 32; }//3pi+2pi0nu
-      if (sumPdgId ==982)				    	    	                        { tauDecay = 33; }//3pi+3pi0nu
-      						    	    	      
-      if (sumPdgId ==337)				    	    	                        { tauDecay = 20; }//k+nu
-      if (sumPdgId ==448)				    	    	                        { tauDecay = 21; }//k+pi0nu
-      if (sumPdgId ==467 || sumPdgId ==647)		    	    	                        { tauDecay = 22; }//k+k0nu
-      if (sumPdgId ==559)				    	    	                        { tauDecay = 23; }//k+2pi0nu   
-      if (sumPdgId ==578 || sumPdgId ==758)		    	    	                        { tauDecay = 24; }//k+pi0k0nu	 
-      if (sumPdgId ==670)			            	    	                        { tauDecay = 25; }//k+3pi0nu  
-           						    	    	                        
-      if (sumPdgId ==869)				    	    	                        { tauDecay = 40; }//k+k+pi+nu
-     							    	    	                        
-      if (sumPdgId ==1071)				    	    	                        { tauDecay = 50; }//5pinu
-      if (sumPdgId ==1182)				    	    	                        { tauDecay = 51; }//5pipi0nu
- 							    	    	                        
-      if (sumPdgId ==39)				    	    	                        { tauDecay = 100;}//enunu
-      if (sumPdgId ==43)				                                        { tauDecay = 200;}//mununu
-  
-   }		 
+  #if DEBUG
+    cout << "getTauDecay: matchedGenLepton " << matchedGenLepton<<endl;
+  #endif
+  if (matchedGenLepton) tauDecay = getTauDecayFromGenParticle(pMatched);
  
   return tauDecay;
 }
 
+void MonteCarloOrigin::getTauDecayProducts(const reco::Candidate* inputParticle, std::vector<const reco::Candidate*>* output)
+{
 
+	int pdgId = abs(inputParticle->pdgId());
 
+	// If the particle is of a certain kind, we just add it to the outputVector, 
+	// which will be used to compute an ID for the tau decay
 
+	if (   (pdgId == 111) // Pi0
+		|| (pdgId == 211) // Pi +/-
+		|| (pdgId == 11 ) || (pdgId == 13)  // e, mu
+		|| (pdgId == 12 ) || (pdgId == 14) || (pdgId == 16) // nu
+		|| (pdgId == 321) // K +/-
+		|| (pdgId == 130) || (pdgId == 310) || (pdgId == 311) // K_0
+		|| (pdgId == 22 )) // gamma
+	{
+		output->push_back(inputParticle);
+	}
+	// Otherwise, we run this function on the decay product, recursively
+	else 
+	{
+		int numberOfDaughters = inputParticle->numberOfDaughters();
+		if (numberOfDaughters == 0)
+			cout << "WARNING (" << __FILE__ << ", l." << __LINE__ << ") Ignored tau decay product with no daughters !" << endl;
+		for (int i = 0 ; i < numberOfDaughters ; i++)
+			getTauDecayProducts(inputParticle->daughter(i),output);
+	}
+
+}
+
+int MonteCarloOrigin::getTauDecayFromGenParticle(reco::GenParticleCollection::const_iterator genTau_)
+{
+	int tauDecay = 0;
+
+	// Certain generator add a "second tau" as the daughter, 
+	// then the daughters of it are the actual decay products. 
+	const reco::Candidate* genTau;
+	if ((genTau_->numberOfDaughters() == 1) && (abs(genTau_->daughter(0)->pdgId()) == 15))
+		genTau = genTau_->daughter(0);
+	else
+		genTau = &(*genTau_);
+	
+	// Get the vector containing the decay products
+	std::vector<const reco::Candidate*> decayProducts;
+	getTauDecayProducts(genTau,&decayProducts);
+
+	// Recover the number of leptons, Pi, K and gammas
+	
+	//int numberOfNeutrino = 0;
+	int leptonFlavor = 0;
+	int numberOfPiZero = 0;
+	int numberOfPiCharged = 0;
+	int numberOfKZero = 0;
+	int numberOfKCharged = 0;
+	int numberOfGamma = 0;
+	
+	int nDecayProducts = decayProducts.size();
+	for (int i = 0 ; i < nDecayProducts ; i++)
+	{
+		int pdgId = abs(decayProducts[i]->pdgId());
+
+		//if ((pdgId == 12 ) || (pdgId == 14) || (pdgId == 16)) numberOfNeutrino++;
+		     if (pdgId == 111) numberOfPiZero++;
+		else if (pdgId == 211) numberOfPiCharged++;
+		else if ((pdgId == 130) || (pdgId == 310) || (pdgId == 311)) numberOfKZero++;
+		else if (pdgId == 321) numberOfKCharged++;
+		else if (pdgId == 22 ) numberOfGamma++;
+		else if ((pdgId == 11 ) || (pdgId == 13))
+		{
+			if (pdgId == 11) leptonFlavor = 1;
+			else leptonFlavor = 2;
+		}
+	}
+
+	// Compute the final tau decay number
+	tauDecay = leptonFlavor      * 1
+			 + numberOfPiZero    * 10
+			 + numberOfPiCharged * 100 
+			 + numberOfKZero     * 1000
+			 + numberOfKCharged  * 10000
+			 + numberOfGamma     * 100000;
+
+  return tauDecay;
+}
+
+// ----------------------------------------------------------------------------
+// getHeavyQuarkDecay
+// ----------------------------------------------------------------------------
+void MonteCarloOrigin::getHeavyQuarkDecayProducts(const reco::Candidate* inputParticle, std::vector<const reco::Candidate*>* output)
+{
+
+	int pdgId = abs(inputParticle->pdgId());
+
+	// If the particle is of a certain kind, we just add it to the outputVector, 
+	// which will be used to compute an ID for the quark decay
+
+	if (   (pdgId == 11 ) || (pdgId == 13)                   // e, mu
+		|| (pdgId == 12 ) || (pdgId == 14) || (pdgId == 16)) // nu
+	{
+		output->push_back(inputParticle);
+	}
+	// Otherwise, we run this function on the decay product, recursively
+	else 
+	{
+		int numberOfDaughters = inputParticle->numberOfDaughters();
+		for (int i = 0 ; i < numberOfDaughters ; i++)
+			getHeavyQuarkDecayProducts(inputParticle->daughter(i),output);
+	}
+
+}
+
+int MonteCarloOrigin::getHeavyQuarkDecayFromGenParticle(reco::GenParticleCollection::const_iterator genQuark)
+{
+	int quarkDecay = -99;
+	int quarkFlavor = genQuark->pdgId();
+   
+	// Get the vector containing the decay products
+	std::vector<const reco::Candidate*> decayProducts;
+	getHeavyQuarkDecayProducts(&(*genQuark),&decayProducts);
+
+	// Recover the number of leptons
+	
+	//int numberOfNeutrino = 0;
+	int numberOfElectron = 0;
+	int numberOfMuon = 0;
+
+	int nDecayProducts = decayProducts.size();
+
+	for (int i = 0 ; i < nDecayProducts ; i++)
+	{
+		int pdgId = abs(decayProducts[i]->pdgId());
+
+		     if (pdgId == 11) numberOfElectron++;
+		else if (pdgId == 13) numberOfMuon++;
+	}
+
+	// Compute the final tau decay number
+	quarkDecay = numberOfElectron * 1
+			   + numberOfMuon     * 10;
+
+	return quarkDecay;
+}
 
 // ----------------------------------------------------------------------------
 // fillGenInfo
@@ -313,7 +386,7 @@ void MonteCarloOrigin::fillGenInfo(std::auto_ptr<IPHCTree::MTEvent>& evt,
       topQuark.Q_gen = p->charge();
       const GenParticle & paIt = *p;
       for (unsigned int j = 0; j < paIt.numberOfDaughters (); j++) {
-        if ( abs(paIt.daughter (j)->pdgId ()) == 5) topQuark.p4_b_gen.SetPxPyPzE (paIt.p4 ().Px (), paIt.p4 ().Py (), paIt.p4 ().Pz (), paIt.p4 ().E ());
+        if ( abs(paIt.daughter (j)->pdgId ()) == 5) topQuark.p4_b_gen.SetPxPyPzE (paIt.daughter(j)->p4().Px(),paIt.daughter(j)->p4().Py(),paIt.daughter(j)->p4().Pz(), paIt.daughter(j)->p4().E());
       }
       evt->mc.topAndDecays.push_back(topQuark);
     }
@@ -337,8 +410,10 @@ void MonteCarloOrigin::fillGenInfo(std::auto_ptr<IPHCTree::MTEvent>& evt,
      
       bool Ztobb = false;
       ZDecaysMC zBoson;
-      zBoson.p4_Z_gen.SetPxPyPzE (p->p4 ().Px (), p->p4 ().Py (), p->p4 ().Pz (), p->p4 ().E ());
-    
+      zBoson.p4_Z_gen.SetPxPyPzE (p->p4().Px(), p->p4().Py(), p->p4().Pz(), p->p4().E());
+ 
+	  if (p->mother() != 0) zBoson.mcMotherId = p->mother()->pdgId(); 
+
       for (unsigned int d = 0; d < p->numberOfDaughters (); d++)
       {
         //ZDaughter = const_cast<reco::Candidate*> (p->daughter(d));
@@ -440,7 +515,9 @@ void MonteCarloOrigin::fillGenInfo(std::auto_ptr<IPHCTree::MTEvent>& evt,
       wBosons.p4_W_gen.SetPxPyPzE (p->p4 ().Px (), p->p4 ().Py (), p->p4 ().Pz (), p->p4 ().E ());
       if(p->pdgId () == 24) wBosons.Q_Lep_gen = -1;
       else                  wBosons.Q_Lep_gen = 1;
-     
+    	  
+	  if (p->mother() != 0) wBosons.mcMotherId = p->mother()->pdgId();
+
       for (unsigned int d = 0; d < p->numberOfDaughters (); d++) {
         WDaughter = p->daughter (d);
       

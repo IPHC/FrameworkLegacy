@@ -34,6 +34,9 @@ namespace IPHCTree
 
     /// vertex origin
     TVector3 vertex;
+	
+	Float_t dxy_vertex;
+	Float_t dz_vertex;
 
     /// electric charge (transient)
     mutable Float_t charge; //! TRANSIENT
@@ -41,32 +44,35 @@ namespace IPHCTree
     /// MC information : origin of the lepton 
     Short_t LeptonOrigin;
 
-    // ---------- isolation variables (cone of deltaR<0.3) -----------
+    // Isolation informations
+    KeyedCollection<Float_t> isolation;
 
-    /// Summed track PT (in a cone of deltaR<0.3)
-    Float_t TrkIso03;
+    // ---------- isolation variables (cone of deltaR<0.3) -----------
+/* 
+	/// Summed track PT (in a cone of deltaR<0.3)
+    Float_t isolation["Trk03"];
 
     /// ECAL isolation depositfrom RecHits
     /// with electron footprint removed (in a cone of deltaR<0.3)
-    Float_t ECaloIso03;
+    Float_t isolation["ECalo03"];
 
     /// HCAL isolation deposit from Calo Towers (in a cone of deltaR<0.3)
-    Float_t HCaloIso03;
+    Float_t isolation["HCalo03"];
 
     // ------------ ParticleFlow isolation variables -----------------
 
     /// to do
-    Float_t PATNeutralHadronIso;
+    Float_t isolation["PATNeutH"];
 
     /// to do
-    Float_t PATChargedHadronIso;
+    Float_t isolation["PATCharH"];
 
     /// to do
-    Float_t PATPhotonIso;
+    Float_t isolation["PATPhoto"];
 
     /// to do 
-    Float_t PATTrackIso;
-    
+    Float_t isolation["PATTrack"];
+*/
     // ------------- Information related to the track ----------------
 
     /// Transverse impact parameter
@@ -105,25 +111,25 @@ namespace IPHCTree
     virtual void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 
-    /// Get the Sum of ECaloIso03 and HCaloIso03
+    /// Get the Sum of isolation["ECalo03"] and isolation["HCalo03"]
     float CaloIso03() const
-    { return ECaloIso03 + HCaloIso03; }
-
-    /// to do
+    { return isolation["ECalo03"] + isolation["HCalo03"]; }
+    
+	/// to do
     double RelIso03() const
     {
       if (p4.Pt()>0)
-        return (TrkIso03 + ECaloIso03 + HCaloIso03) / p4.Pt();
+        return (isolation["Trk03"] + isolation["ECalo03"] + isolation["HCalo03"]) / p4.Pt();
       else return -999.;
     }
 
     double RelIso03PF() const
     {
       if (p4.Pt()>0) 
-        // return( ((PATNeutralHadronIso+PATChargedHadronIso+PATTrackIso)/p4.Pt()));
+        // return( ((isolation["PATNeutH"]+isolation["PATCharH"]+isolation["PATTrack"])/p4.Pt()));
         // modification (from Denis): avoid to duplicate TrackIso
         // (included in ChargedHadron) and take into account photons
-        return (PATNeutralHadronIso + PATChargedHadronIso + PATPhotonIso) 
+        return (isolation["PATNeutH"] + isolation["PATCharH"] + isolation["PATPhoto"]) 
                / p4.Pt();
       else return -999.;
     }
@@ -131,7 +137,7 @@ namespace IPHCTree
     double RelIso03RhoCorrected(double rho) const
     {
       if (p4.Pt()>0) 
-        return (TrkIso03 + ECaloIso03 + HCaloIso03 - rho*M_PI*0.3*0.3)
+        return (isolation["Trk03"] + isolation["ECalo03"] + isolation["HCalo03"] - rho*M_PI*0.3*0.3)
                 / p4.Pt();
       else return -999.;
     }
@@ -139,7 +145,7 @@ namespace IPHCTree
     double RelIso03PFRhoCorrected(double rho) const
     {
       if (p4.Pt()>0) 
-        return (PATNeutralHadronIso + PATChargedHadronIso + PATTrackIso 
+        return (isolation["PATNeutH"] + isolation["PATCharH"] + isolation["PATTrack"] 
                 - rho*M_PI*0.3*0.3) / p4.Pt();
       else return -999.;
     }
@@ -147,7 +153,7 @@ namespace IPHCTree
     double RelIso03NeutralRhoCorrected(double neutralRho) const
     {
       if (p4.Pt()>0) 
-        return (TrkIso03 + ECaloIso03 + HCaloIso03 
+        return (isolation["Trk03"] + isolation["ECalo03"] + isolation["HCalo03"] 
                 - neutralRho*M_PI*0.3*0.3) / p4.Pt();
       else return -999.;
     }
@@ -155,7 +161,7 @@ namespace IPHCTree
     double RelIso03PFNeutralRhoCorrected(double neutralRho) const
     {
       if(p4.Pt()>0)
-        return (PATNeutralHadronIso + PATChargedHadronIso + PATTrackIso
+        return (isolation["PATNeutH"] + isolation["PATCharH"] + isolation["PATTrack"]
                 - neutralRho*M_PI*0.3*0.3) / p4.Pt();
       else return -999.;
     }

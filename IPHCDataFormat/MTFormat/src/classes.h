@@ -26,7 +26,6 @@ namespace{
     edm::Wrapper<IPHCTree::MTLepton>           MTLep;
     edm::Wrapper<IPHCTree::MTJet>              MTJet;
     edm::Wrapper<IPHCTree::MTMET>              MTMET;
-    edm::Wrapper<IPHCTree::MTJetMet>           MTJetMet;
     edm::Wrapper<IPHCTree::MTPhoton>           MTPhoton;
     edm::Wrapper<IPHCTree::MTElectron>         MTElec;
     edm::Wrapper<IPHCTree::MTMuon>             MTMuon;
@@ -38,7 +37,6 @@ namespace{
     edm::Wrapper<IPHCTree::MTTrack>            MTTrack;
 
     // MultiCollection
-    edm::Wrapper<IPHCTree::MultiCollection<IPHCTree::MTJetMet> >  MultiMTJetMet;
     edm::Wrapper<IPHCTree::MultiCollection<IPHCTree::MTJet> >     MultiMTJet; 
     edm::Wrapper<IPHCTree::MultiCollection<IPHCTree::MTMET> >     MultiMTMET; 
     edm::Wrapper<IPHCTree::MultiCollection<IPHCTree::MTElectron> >MultiMTElectron;
@@ -49,7 +47,6 @@ namespace{
     edm::Wrapper<IPHCTree::MultiCollection<IPHCTree::MTPhoton> >  MultiMTPhoton;
 
     // Vector
-    edm::Wrapper<std::vector<IPHCTree::MTJetMet> >   VMTJetMet;
     edm::Wrapper<std::vector<IPHCTree::MTJet> >      VMTJet; 
     edm::Wrapper<std::vector<IPHCTree::MTMET> >      VMTMET;
     edm::Wrapper<std::vector<IPHCTree::MTElectron> > VMTElectron;
@@ -61,7 +58,6 @@ namespace{
 
 
     // Vector of vector
-    edm::Wrapper<std::vector<std::vector<IPHCTree::MTJetMet> > >   VVMTJetMet;
     edm::Wrapper<std::vector<std::vector<IPHCTree::MTJet> > >      VVMTJet; 
     edm::Wrapper<std::vector<std::vector<IPHCTree::MTMET> > >      VVMTMET; 
     edm::Wrapper<std::vector<std::vector<IPHCTree::MTElectron> > > VVMTElectron;

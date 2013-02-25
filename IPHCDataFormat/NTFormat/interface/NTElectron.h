@@ -20,8 +20,14 @@ namespace IPHCTree
 
     // ---------------------- general info -------------------------
 
+	// Eta for the superCluster
+    Float_t etaSuperCluster;
+
     /// Is coming from Ecal Barrel ?
     Bool_t isEB;
+
+	/// Is coming from Ecal Endcap ?
+    Bool_t isEE;
 
     /// Correspond to elec->ecalDrivenSeed() in PAT
     Bool_t isEcalDriven;
@@ -29,7 +35,23 @@ namespace IPHCTree
     /// ET of the SuperCluster
     Float_t ET_SC;
 
-    // ---------------------- track info ---------------------------
+	// deltaEta and deltaPhi
+    Float_t deltaEtaSuperClusterTrackAtVtx;
+    Float_t deltaPhiSuperClusterTrackAtVtx;
+
+	// H/E
+	Float_t hadronicOverEm;
+
+	// Info related to shower shape
+	Float_t sigmaIetaIeta;
+
+    /// energy fraction which is electomagnetic
+    Float_t EmEnergy_;
+
+    /// to do (also called E/Pin)
+    Float_t eSuperClusterOverP;
+
+	// ---------------------- track info ---------------------------
 
     /// Is there a GSF track linked to the electron ?
     Bool_t isGsfElectron;
@@ -39,45 +61,20 @@ namespace IPHCTree
  
     // ------------------- conversion info -------------------------
 
-    /// to do
+	/// to do
     Float_t deltaCotTheta;
-
     /// to do
     Float_t deltaDistance;
-
-    // ----------- Infos used is SUSYstop selection ----------------
-
-	/// Is coming from Ecal Endcap ?
-    Bool_t isEE;
-
-	// Eta for the superCluster
-    Float_t etaSuperCluster;
-
-	Float_t hadOverEM;
-	Float_t abs_deltaPhi;
-	Float_t abs_deltaEta;
-	Float_t sigmaIetaIeta;
+	
+	Bool_t passConversionVeto;
 	UShort_t missingHits;
-
-	// Conversion rejection info
-    Bool_t conversionRejection;
 			
-	// Isolation-related infos
- 	Float_t Aeff;
-	Float_t chargedIso;
-	Float_t photonIso;
-	Float_t neutralIso;
-	Float_t rho;
-
-	// dxy, dz with respect to the primary vertex (not the beamspot)
-	Float_t dxy_vertex;
-	Float_t dz_vertex;
-
-	// Matching between reco and PF infos
-	Float_t bestRecoMatch_eta;
-	Float_t bestRecoMatch_phi;
-	Float_t bestRecoMatch_dR;
-	Float_t bestRecoMatch_pT;
+    // -------- Matching with another electron collection ----------
+	
+	Float_t bestMatch_eta;
+	Float_t bestMatch_phi;
+	Float_t bestMatch_dR;
+	Float_t bestMatch_pT;
 
   public:
     // -------------------------------------------------------------
@@ -114,12 +111,12 @@ namespace IPHCTree
     {
       if (isEB)
       {
-        return (TrkIso03 + TMath::Max(0.,ECaloIso03-1.) + HCaloIso03)
+        return (isolation["Trk03"] + TMath::Max(0.,isolation["ECalo03"]-1.) + isolation["HCalo03"])
           / TMath::Max(20.,p4.Et());
       }
       else
       {
-        return (TrkIso03 + ECaloIso03 +  HCaloIso03)
+        return (isolation["Trk03"] + isolation["ECalo03"] + isolation["HCalo03"])
           / TMath::Max(20.,p4.Et());
       }
     }

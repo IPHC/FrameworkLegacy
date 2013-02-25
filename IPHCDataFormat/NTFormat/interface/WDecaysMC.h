@@ -15,20 +15,27 @@ namespace IPHCTree
   public:
 
     //methods
-    WDecaysMC (){Q_Lep_gen=-99.;Tmeme=-99;mcLepId=-99;};
+    WDecaysMC ()
+	{
+    	Q_Lep_gen  = -99.0;
+		Tmeme      = -99;
+    	mcLepId    = -99;
+		mcMotherId = -99;
+	};
+
     ~WDecaysMC (){};
-    
-    /// Clear all information related to the photon
-    //virtual void Reset(bool constructor_call=false);
-    
+
     //data members
     double Q_Lep_gen;
-    TLorentzVector p4_W_gen;
+    
+	TLorentzVector p4_W_gen;
     TLorentzVector p4_Lep_gen;
     TLorentzVector p4_Neu_gen;
     TLorentzVector p4_SumTauNeu_gen;
-    int Tmeme;
+    
+	int Tmeme;
     int mcLepId;
+	int mcMotherId;
 
   };
 }

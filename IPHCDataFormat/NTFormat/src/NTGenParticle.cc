@@ -19,6 +19,7 @@ void NTGenParticle::Reset(bool constructor_call)
   isStatus3 = false;
   mother    = 0;
   motherIndex_ = -1;
+  decayMode = -1;
 }
 
 
@@ -35,6 +36,8 @@ void NTGenParticle::Dump(std::ostream & os) const
   os << " mother @ ";
   if (mother==0) os << "NULL";
   else os << mother;
+  os << std::endl;
+  os << " decayMode = " << decayMode;
   os << std::endl;
   os << " nb daughters = " << daughters.size() << std::endl;
 }

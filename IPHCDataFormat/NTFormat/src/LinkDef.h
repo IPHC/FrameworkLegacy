@@ -42,8 +42,8 @@
 #pragma link C++ class IPHCTree::NTPhoton+;
 #pragma link C++ class IPHCTree::NTTau+;
 #pragma link C++ class IPHCTree::NTJet+;
+#pragma link C++ class IPHCTree::NTSubJet+;
 #pragma link C++ class IPHCTree::NTMET+;
-#pragma link C++ class IPHCTree::NTJetMet+;
 #pragma link C++ class IPHCTree::NTPhoton+;
 
 // Reconstructed objects

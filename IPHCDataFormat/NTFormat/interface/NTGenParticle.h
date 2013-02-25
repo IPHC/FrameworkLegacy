@@ -40,6 +40,16 @@ namespace IPHCTree
     /// Transient !!!
     mutable std::vector<NTGenParticle*> daughters;  //! TRANSIENT
 
+    /// Type of decay (for taus and heavy quarks (c,b))
+	// For taus :
+	// decayMode = leptonFlavor   * 1      (0 = none ; 1 = elec ; 2 = muon) (hypothesis made of n(lepton) <= 1)
+	//           + n(Pi_0)        * 10
+	//           + n(Pi_charged)  * 100
+	//           + n(K _0)        * 1000
+	//           + n(K _charged)  * 10000
+	//           + n(Gamma)       * 100000
+	UInt_t decayMode;
+
   public :
  
     // -------------------------------------------------------------

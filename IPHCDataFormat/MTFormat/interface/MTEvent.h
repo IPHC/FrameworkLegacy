@@ -17,7 +17,6 @@
 #include "MTMuon.h"
 #include "MTTau.h"
 #include "MTMET.h"
-#include "MTJetMet.h"
 #include "MTVertex.h"
 #include "MTMonteCarlo.h"
 #include "MTPileUp.h"

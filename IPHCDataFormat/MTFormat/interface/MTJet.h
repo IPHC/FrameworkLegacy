@@ -62,6 +62,9 @@ namespace IPHCTree
     /// Tracks associated to the jet from the IP taggerr
     std::vector<MTTrack> trackassociatedVec;
 
+    /// Constituents of the jets (might come from PfCandidates
+    std::vector<TLorentzVector> constituents;
+
     // ---------------------- jet identification ---------------------
 
     /// jet electromagnetic energy fraction  // ( not defined for pfjet)

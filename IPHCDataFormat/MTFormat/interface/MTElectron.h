@@ -30,19 +30,7 @@ namespace IPHCTree
   public:
 
     /// to do
-    Float_t eSuperClusterOverP;
-
-    /// to do
-    Float_t deltaEtaSuperClusterTrackAtVtx;
-
-    /// to do
-    Float_t deltaPhiSuperClusterTrackAtVtx;
-
-    /// to do
     Float_t hcalOverEcal;
-
-    /// to do
-    Float_t sigmaIetaIeta;
 
     /// to do
     Float_t e2x5Max;
@@ -66,14 +54,7 @@ namespace IPHCTree
     Float_t rawSCEnergy;
 
     /// to do
-    Float_t hadronicOverEm;
-
-    /// to do
     Int_t classification;
-
-    /// energy fraction which is electomagnetic
-    Float_t EmEnergy_;
-
 
     // ---------- isolation variables (cone of deltaR<0.3) -----------
 
