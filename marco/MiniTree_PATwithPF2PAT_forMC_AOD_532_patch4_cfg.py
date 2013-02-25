@@ -5,7 +5,7 @@
 def GetTraceability():
     import inspect, os, socket, time
     Traceability=[]
-    Traceability.append( "SkyFall" ) #VERSION NAME
+    Traceability.append( "RiverSong-v1" ) #VERSION NAME
     logScript = inspect.getfile(inspect.currentframe())
     Traceability.append( logScript )
     logDir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -28,10 +28,8 @@ Traceability = GetTraceability()
 
 
 # =========================================
-#		  General config
+#              General config
 # =========================================
-
-
 
 
 import FWCore.ParameterSet.Config as cms
@@ -46,9 +44,9 @@ from PhysicsTools.PatAlgos.tools.coreTools import *
 #process.load("PhysicsTools.PatAlgos.patSequences_cff")
 
 ## Geometry and Detector Conditions (needed for a few patTuple production steps)
-process.load("Configuration.Geometry.GeometryIdeal_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.MagneticField_cff")
+process.load("Configuration.Geometry.GeometryIdeal_cff")
 
 
 
@@ -61,7 +59,7 @@ from PhysicsTools.PatAlgos.tools.trigTools import *
 switchOnTrigger( process )
 
 # =========================================
-#				PF2PAT
+#                  PF2PAT
 # =========================================
 
 
@@ -91,7 +89,7 @@ getattr(process,"pfIsolatedMuons"+postfix).doDeltaBetaCorrection = True
 
 
 # =========================================
-#				kt6PFJets
+#                 kt6PFJets
 # =========================================
 
 process.load('RecoJets.Configuration.RecoJets_cff')
@@ -120,10 +118,9 @@ process.kt6NeutralPFJets.src           = "neutralPFCandidatesProducer"
 
 
 # =========================================
-#				Test area ...
+#              Test area ...
 # =========================================
-
-
+'''
 process.jetMatchHLTJets = cms.EDProducer(
   # matching in DeltaR, sorting by best DeltaR
   "PATTriggerMatcherDRLessByR"
@@ -142,7 +139,7 @@ process.jetMatchHLTJets = cms.EDProducer(
 , resolveByMatchQuality = cms.bool( True )
 )
 switchOnTriggerMatching( process, triggerMatchers = [ 'jetMatchHLTJets' ] )
-
+'''
 
 import HLTrigger.HLTfilters.triggerResultsFilter_cfi as hlt
 process.JetHLTFilter = hlt.triggerResultsFilter.clone(
@@ -159,106 +156,124 @@ process.JetHLTFilter = hlt.triggerResultsFilter.clone(
 #removeCleaning(process)
 
 # ========================================= #
-#				MiniTree					#
+#                  MiniTree                 #
 # ========================================= #
 
 process.MiniTreeProduction = cms.EDProducer('MiniTreeProducer',
-# ---------------------- General info -------------------------------
-        verbose             = cms.uint32(0),   #0: nothing - >1 gradually more information
-        isAOD               = cms.bool(True),  # true if processing AOD data
-        isData              = cms.bool(False), # true if processing AOD data
-# ----------------------   Trigger    -------------------------------
-		doTrigger           = cms.bool(False),
-        saveAllTriggers     = cms.bool(True), #should be True by default !!
-        triggerList         = cms.vstring("HLT_Mu15_L1Mu7","HLT_DoubleMu3","HLT_IsoEle10_Mu10_L1R","HLT_IsoEle18_L1R","HLT_DoubleIsoEle12_L1R","HLT_Mu5","HLT_Mu9","HLT_Mu11","HLT_Mu15","HLT_IsoMu9","HLT_Ele10_SW_L1R","HLT_Ele15_SW_L1R","HLT_Ele15_LW_L1R","HLT_Ele10_LW_L1R","HLT_DoubleEle5_SW_L1R","HLT_LooseIsoEle15_LW_L1R","HLT_L2Mu3","HLT_L2Mu5","HLT_L2Mu9","HLT_Jet15U","HLT_Photon10_L1R","HLT_Photon15_L1R","HLT_Photon10_Cleaned_L1R","HLT_Photon15_Cleaned_L1R","HLT_Ele15_SW_CaloEleId_L1R","HLT_Ele20_SW_L1R","HLT_DoubleEle10_SW_L1R"),
-# ----------------------  Electrons   -------------------------------
+        
+# ========================= General info ============================
+        verbose             = cms.uint32(0),
+        isAOD               = cms.bool(True),
+        isData              = cms.bool(False),
+
+# =========================== Trigger ===============================
+        doTrigger           = cms.bool(True),
+        saveAllTriggers     = cms.bool(True),
+        triggerList         = cms.vstring(""),
+
+# ========================== Electrons ==============================
         doElectrons         = cms.bool(True),
+        electronProducer    = cms.VInputTag(cms.InputTag("selectedPatElectronsPF2PAT")),
+  # ---------------------------------------------------------------
         electron_cut_pt     = cms.double(10),
         electron_cut_eta    = cms.double(2.5),
         electron_saveAllID  = cms.bool(True),
-        electron_IDlist     = cms.vstring("eidLoose","eidTight","eidRobustLoose","eidRobustTight","simpleEleId90relIso","simpleEleId90cIso","cicVeryLoose","cicLoose","cicMedium","cicTight","cicSuperTight","cicHyperTight1","cicHyperTight2","cicHyperTight3","cicVeryLooseMC","cicLooseMC","cicMediumMC","cicTightMC","cicHyperTight1MC","cicHyperTight2MC","cicHyperTight3MC"),
+        electron_IDlist     = cms.vstring(""),
         electronHLTmatching = cms.vstring(""),
-        electronProducer    = cms.VInputTag(cms.InputTag("selectedPatElectronsPF2PAT")),
-        doElectronRhoCorrIso= cms.bool(False),
-        doElectronRecoMatch = cms.bool(False),
-        electronRecoProducer= cms.VInputTag(cms.InputTag("selectedPatElectrons")),
-# ----------------------   Photons    -------------------------------
+        electron_Isolist    = cms.vstring("PAT","rho","Aeff"),
+        electron_rhoCorrSrc = cms.vstring("kt6PFJets","GammaAndNeutralHadronIso03","Data2012"),
+        doElectronMatch     = cms.InputTag(""),
+
+# ==========================  Photons ===============================
         doPhotons           = cms.bool(False),
-		photon_cut_pt       = cms.double(10),
-        photon_cut_eta      = cms.double(2.5), 
-        photonHLTmatching      = cms.vstring(""),
         photonProducer      = cms.VInputTag(cms.InputTag("selectedPatPhotonsPF2PAT")),
-# -----------------------   Muons     -------------------------------
+  # --------------------------------------------------------------
+        photon_cut_pt       = cms.double(10),
+        photon_cut_eta      = cms.double(2.5),
+        photonHLTmatching   = cms.vstring(""),
+
+# ============================ Muons ================================
         doMuons             = cms.bool(True),
-        muon_cut_pt         = cms.double(10),
-        muon_cut_eta        = cms.double(2.5), 
-        muon_cut_keepStandaloneMu  = cms.bool(True),
-        muon_cut_keepTrackerMu     = cms.bool(True),
-        muon_cut_keepCaloMu        = cms.bool(True),
-        muon_cut_keepGlobalMu      = cms.bool(True),
-        muon_IDlist                = cms.vstring("GlobalMuonPromptTight"),
-        muonHLTmatching     = cms.vstring(""),
         muonProducer        = cms.VInputTag(cms.InputTag("selectedPatMuonsPF2PAT")),
-        doMuonRecoMatch     = cms.bool(False),
-        muonRecoProducer    = cms.VInputTag(cms.InputTag("selectedPatMuonsBl")),
-# -----------------------   Taus   ---------------------------------- 
-        doTaus              = cms.bool(False),
+  # ---------------------------------------------------------------
+        muon_cut_pt         = cms.double(10),
+        muon_cut_eta        = cms.double(2.5),
+        muon_cut_keepStandaloneMu = cms.bool(True),
+        muon_cut_keepTrackerMu    = cms.bool(True),
+        muon_cut_keepCaloMu       = cms.bool(True),
+        muon_cut_keepGlobalMu     = cms.bool(True),
+        muon_IDlist               = cms.vstring("GlobalMuonPromptTight"),
+        muonHLTmatching     = cms.vstring(""),
+        muon_Isolist        = cms.vstring("PF03"),
+        doMuonMatch         = cms.InputTag(""),
+
+# ============================= Taus ================================
+        doTaus              = cms.bool(True),
+        tauProducer         = cms.VInputTag(cms.InputTag("selectedPatTausPF2PAT")),
+  # ---------------------------------------------------------------
         tau_cut_pt          = cms.double(10),
         tau_cut_eta         = cms.double(2.4),
-        tau_saveAllID       = cms.bool(True),#
+        tau_saveAllID       = cms.bool(True),
         tau_IDlist          = cms.vstring(""),
         tauHLTmatching      = cms.vstring(""),
-        tauProducer         = cms.VInputTag(cms.InputTag("selectedPatTausPF2PAT")),
-# -----------------------   Tracks  --------------------------------- 
+
+# ============================ Tracks ===============================
         doTracks            = cms.bool(False),
+        trackProducer       = cms.VInputTag(cms.InputTag("generalTracks")),
+  # ---------------------------------------------------------------
         track_cut_pt        = cms.double(-0.1),
         track_cut_eta       = cms.double(2.6),
-        trackProducer       = cms.VInputTag(cms.InputTag("generalTracks")),
-# -----------------------   PFCandidates  --------------------------------- 
-        doPFCandidates      = cms.bool(False),
-        pfcandidate_cut_dR  = cms.double(0.3),
-        pfcandidate_cut_dz  = cms.double(0.05),
-        pfcandidate_cut_minPt	= cms.double(5.0),
-        pfcandidate_VertexTag 	= cms.VInputTag(cms.InputTag("offlinePrimaryVertices")),
-        pfcandidate_InputTag  	= cms.VInputTag(cms.InputTag("particleFlow")),
-# -----------------------  Vertices --------------------------------- 
-        doVertices          = cms.bool(True), 
-	  	saveAllVertex       = cms.bool(True),
+
+# ========================== PFCandidates ============================
+        doPFCandidates       = cms.bool(False),
+        pfcandidate_InputTag = cms.VInputTag(cms.InputTag("particleFlow")),
+  # ----------------------------------------------------------------
+        pfcandidate_cut_minPt = cms.double(5.0),
+        pfcandidate_cut_dR    = cms.double(0.3),
+        pfcandidate_cut_dz    = cms.double(0.05),
+        pfcandidate_VertexTag = cms.VInputTag(cms.InputTag("offlinePrimaryVertices")),
+
+# ========================== Vertices ===============================
+        doVertices          = cms.bool(True),
         vertexProducer      = cms.VInputTag(cms.InputTag("offlinePrimaryVertices")),
-# -----------------------  BeamSpot --------------------------------- 
+  # ----------------------------------------------------------------
+        saveAllVertex       = cms.bool(True),
+
+# =========================== Beamspot ==============================
         doBeamSpot          = cms.bool(True),
         beamSpotProducer    = cms.InputTag("offlineBeamSpot"),
-# -----------------------   JetMet ---------------------------------- 
-		doJetMet            = cms.bool(True),
+
+# ========================== Jet & MET ==============================
+        doJetMet            = cms.bool(True),
+        jetmetProducer      = cms.VPSet(
+                    cms.PSet( jet = cms.untracked.string("selectedPatJetsPF2PAT"),
+                              met = cms.untracked.string("patMETsPF2PAT"),
+                              algo =cms.untracked.string("pf"),
+                              fillJetConstituents = cms.untracked.bool(False),
+                              fillSubJetConstituents = cms.untracked.bool(False))),
+  # ----------------------------------------------------------------
         doMuonCorrection    = cms.bool(True),
-		jet_cut_pt          = cms.double(10),
+        jet_cut_pt          = cms.double(10),
         jet_cut_eta         = cms.double(2.5), 
         jetIDList           = cms.vstring("LOOSE","TIGHT"),
         jetBTagList         = cms.vstring("trackCountingHighEffBJetTags","trackCountingHighPurBJetTags","simpleSecondaryVertexBJetTags","simpleSecondaryVertexHighEffBJetTags","simpleSecondaryVertexHighPurBJetTags","softMuonBJetTags","jetProbabilityBJetTags","jetBProbabilityBJetTags","combinedSecondaryVertexBJetTags"),
-		#jetHLTmatching      = cms.vstring("jetMatchHLTJets"),
-		jetHLTmatching      = cms.vstring(""),
-		jetmetProducer      = cms.VPSet(
-                    cms.PSet(jet = cms.untracked.string("selectedPatJetsPF"),
-                             met = cms.untracked.string("patMETPF2PAT"),
-                             algo =cms.untracked.string("pf")),
-                    #cms.PSet(jet = cms.untracked.string("selectedPatJets"),
-                    #         #met = cms.untracked.string("patMETs"),
-                    #         met = cms.untracked.string("patMETsAK5Calo"),
-                    #         algo =cms.untracked.string("ak5"))
-                    ),
-# -----------------------  Pile-Up ----------------------------------
-        doPileUp            = cms.bool(True),  
-        rho_PUUE_dens       = cms.InputTag("kt6PFJets", "rho"),
-        #neutralRho_PUUE_dens= cms.InputTag("kt6NeutralPFJets", "rho"),
-        neutralRho_PUUE_dens= cms.InputTag("kt6PFJetsCentralNeutral", "rho"),
-# -----------------------  MonteCarlo ------------------------------- 
-		doGenParticleCollection = cms.bool(True),
-        mcDescentMax = cms.uint32(10),
-        mcNGenPartMax = cms.uint32(10000)
+        jetHLTmatching      = cms.vstring(""),
+
+# =========================== Pile-up ===============================
+        doPileUp             = cms.bool(True),  
+        rho_PUUE_dens        = cms.InputTag("kt6PFJets", "rho"),
+        neutralRho_PUUE_dens = cms.InputTag("kt6PFJetsCentralNeutral", "rho"),
+
+# ========================== Montecarlo ===============================
+        doGenParticleCollection = cms.bool(True),
+        mcDescentMax            = cms.uint32(10),
+        mcNGenPartMax           = cms.uint32(10000),
+        mcTauDecayMode          = cms.uint32(2),
+        mcHeavyQuarkDecayMode   = cms.uint32(0)
     )
 
 # ========================================= #
-#				  NTuple              		#
+#                 NTuple                    #
 # ========================================= #
 
 process.TFileService = cms.Service("TFileService", fileName = cms.string("NTuple.root") )
@@ -314,56 +329,56 @@ process.MyModule = cms.EDAnalyzer('NTupleProducer',
         track_pt                 = cms.double(7),
         track_eta                = cms.double(2.5),
 # ----------------------- PFCandidates  --------------------------
-        skimPFCandidates 			  	= cms.bool(False),
-        pfcandidate_keepAllCollections 	= cms.bool(True),
-        pfcandidate_collectionList     	= cms.vstring(""),
-		pfcandidate_pt					= cms.double(5.0),
-		pfcandidate_eta					= cms.double(2.5),
+        skimPFCandidates               = cms.bool(False),
+        pfcandidate_keepAllCollections = cms.bool(True),
+        pfcandidate_collectionList     = cms.vstring(""),
+        pfcandidate_pt                 = cms.double(5.0),
+        pfcandidate_eta                = cms.double(2.5),
 # ----------------------  Vertices   -------------------------------
         skimVertices = cms.bool(False),
         vertex_keepAllCollections = cms.bool(True),
         vertex_collectionList     = cms.vstring("")
-	),
+    ),
 # -------------------------------------------------------------------
 #                         TOPDILEPTON SKIM
 # -------------------------------------------------------------------
    topdilepton_skim = cms.PSet(
 # ----------------------   Trigger    -------------------------------
-	doTriggerSkimming     = cms.bool(False), # skim on trigger decisions
-	triggerSkimList       = cms.vstring("HLT_QuadJet15U"),
+    doTriggerSkimming     = cms.bool(False), # skim on trigger decisions
+    triggerSkimList       = cms.vstring("HLT_QuadJet15U"),
 # ----------------------  Muons   -------------------------------
-    #numberOfLept   = cms.int32(2),# for skims ! Total number of sel lepton,  -1 for no skiming
-    numberOfLept   = cms.int32(-1),# for skims ! Total number of sel lepton,  -1 for no skiming
-    numberOfMuon   = cms.int32(0),# number of sel muon
-    muon_cut_pt      = cms.double(10),
-   	muon_cut_iso     = cms.double(-1),  # PLEASE NO ISO FOR SKIMMING!!!
-  	useMuonIdSkim	      = cms.bool(False),
+    #numberOfLept = cms.int32(2),# for skims ! Total number of sel lepton,  -1 for no skiming
+    numberOfLept  = cms.int32(-1),# for skims ! Total number of sel lepton,  -1 for no skiming
+    numberOfMuon  = cms.int32(0),# number of sel muon
+    muon_cut_pt   = cms.double(10),
+    muon_cut_iso  = cms.double(-1),  # PLEASE NO ISO FOR SKIMMING!!!
+    useMuonIdSkim = cms.bool(False),
 # ----------------------  Electrons   -------------------------------
-        numberOfElec   = cms.int32(0),# number of sel electron
-  	useElectronIdSkim     = cms.bool(False),
-  	electron_cut_pt  = cms.double(7),
-  	electron_cut_iso = cms.double(-1), # PLEASE NO ISO FOR SKIMMING!!!
+    numberOfElec  = cms.int32(0),# number of sel electron
+    useElectronIdSkim = cms.bool(False),
+    electron_cut_pt   = cms.double(7),
+    electron_cut_iso  = cms.double(-1), # PLEASE NO ISO FOR SKIMMING!!!
 # ----------------------  MonteCarlo   -------------------------------
-	doTMEMESkimming       = cms.bool(False), # skim on the TMEME
-  	TMEMESkimList         = cms.vint32(),
-  	doMCDiLepSkimming     = cms.bool(False),
-  	MCDiLepList           = cms.vstring(""),
+    doTMEMESkimming       = cms.bool(False), # skim on the TMEME
+    TMEMESkimList         = cms.vint32(),
+    doMCDiLepSkimming     = cms.bool(False),
+    MCDiLepList           = cms.vstring(""),
 # ----------------------  Taus   -------------------------------
-	doTauSkimming    = cms.bool(False), # skim on the number of reco taus (no id so far)
-        numberOfTau      = cms.int32(1),
-	tau_cut_pt       = cms.double(5),
-	tau_algo         = cms.string("selectedPatTaus"),
+    doTauSkimming    = cms.bool(False), # skim on the number of reco taus (no id so far)
+    numberOfTau      = cms.int32(1),
+    tau_cut_pt       = cms.double(5),
+    tau_algo         = cms.string("selectedPatTaus"),
 # ----------------------  Jets   -------------------------------
-	doJetSkimming         = cms.bool(False), # skim on the number of jets
-	numberOfJet      = cms.int32(3),
-	jet_cut_pt       = cms.double(20),	
-	jet_cut_eta      = cms.double(2.5),
-	jet_algo         = cms.string("pf"))
+    doJetSkimming    = cms.bool(False), # skim on the number of jets
+    numberOfJet      = cms.int32(3),
+    jet_cut_pt       = cms.double(20),
+    jet_cut_eta      = cms.double(2.5),
+    jet_algo         = cms.string("pf"))
 )
 
 
 # =========================================
-#				Path
+#                  Path
 # =========================================
 
 # Let it run
@@ -374,17 +389,19 @@ process.p = cms.Path(
 '''
 
 process.p = cms.Path(
-	#process.patDefaultSequence*
-	getattr(process,"patPF2PATSequence"+postfix)*
+    process.patTrigger * 
+    process.patTriggerEvent * 
+    #process.patDefaultSequence*
+    getattr(process,"patPF2PATSequence"+postfix)*
     process.neutralPFCandidatesProducer*
     process.kt6NeutralPFJets*
-	process.MiniTreeProduction*
-	process.MyModule
+    process.MiniTreeProduction*
+    process.MyModule
     )
 
 
 # =========================================
-#				Input
+#                 Input
 # =========================================
 
 # Global tag
@@ -404,7 +421,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 
 
 # =========================================
-#				Output
+#                  Output
 # =========================================
 
 ## Output Module Configuration (expects a path 'p')
@@ -416,10 +433,10 @@ process.out = cms.OutputModule("PoolOutputModule",
                                # save PAT Layer 1 output; you need a '*' to
                                # unpack the list of commands 'patEventContent'
                                outputCommands = cms.untracked.vstring('drop *', 
-                           											  #'keep *_selected*_*_*',
-                          											  'keep IPHCTreeMTEvent_*_*_*',
-								   									  #*patEventContent
-																	  )
+                                                                      #'keep *_selected*_*_*',
+                                                                     'keep IPHCTreeMTEvent_*_*_*',
+                                                                     #*patEventContent
+                                                                    )
                                )
 
 process.outpath = cms.EndPath(process.out)
