@@ -440,8 +440,8 @@ void PlotBDToutput(TString thevertex, TString theVariable){
   qw->SetLineColor(0);
   qw->AddEntry(histBdt_Data,         "Data" ,                "ep");
   qw->AddEntry(histBdt_WZ,           "VV "                  ,"f");
-  qw->AddEntry(histBdt_DataZjets,    "DY "                  ,"f");
-  qw->AddEntry(histBdt_TTbar    ,    "Fake Lept."                  ,"f");
+  qw->AddEntry(histBdt_DataZjets,    "Fake Lept. "                  ,"f");
+  qw->AddEntry(histBdt_TTbar    ,    "t\bar{t}, single top"                  ,"f");
   qw->AddEntry(histBdt_FCNC,     " tZ "     ,"l");
 
   
