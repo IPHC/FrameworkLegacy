@@ -21,6 +21,16 @@
  -->
 
 
+
+<!--d name="DataMu"     add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"     filenames="/opt/sbg/data/data1/cms/jandrea/Data_8TeV_Dilepton/DoubleMu8TeV53Xv2/*.root" />
+<d name="DataEG"     add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"     filenames="/opt/sbg/data/data1/cms/jandrea/Data_8TeV_Dilepton/DoubleElectron8TeV53Xv2/*.root" />
+<d name="DataMuEG"   add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"     filenames="/opt/sbg/data/data1/cms/jandrea/Data_8TeV_Dilepton/MuEG8TeV53Xv2/*.root" /-->
+
+
+
+
+
+
 <d name="DataMu"       add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"     filenames="/opt/sbg/data/data1/cms/jlagram/data/Data_2011/skim_3lept/DoubleMu_2011_part*.root" />
 
 <d name="DataEG"       add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"     filenames="/opt/sbg/data/data1/cms/jlagram/data/Data_2011/skim_3lept/DoubleElectron_2011_part*.root" />
@@ -28,7 +38,12 @@
 <d name="DataMuEG"     add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"     filenames="/opt/sbg/data/data1/cms/jlagram/data/Data_2011/skim_3lept/MuEG_2011_part*.root" />
 
 
-<d name="FCNCkut"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="0.135"   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedKut.root" />
+<d name="FCNCkut"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedKut.root" />
+<d name="FCNCkct"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedKct.root" />
+<d name="FCNCxut"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedXut.root" />
+<d name="FCNCxct"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedXct.root" />
+<d name="FCNCzut"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedZut.root" />
+<d name="FCNCzct"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedZct.root" />
 
 
 <d name="TTbar"        add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="164"   filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/TTJets_*.root" /> 
@@ -39,10 +54,6 @@
 
 <d name="Zjets"        add="1" isData="0" color="4" ls="1" lw="2" normf="1" xsection="3048"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/DYJets_M50*.root" />
 <d name="Wjets"        add="1" isData="0" color="4" ls="1" lw="2" normf="1" xsection="31314" filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/W1Jet_*.root" />
-
-<d name="TtW"          add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.87"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/T_tW*.root" />
-<d name="TbartW"       add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="7.87"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/Tbar_tW*.root" />
-
 
 
 
@@ -79,6 +90,13 @@
 </Analysis>
 
 <Selection>
+
+<!--s type="Electron" Loaded="1" Algo="selectedPatElectronsPFlow" PtThreshold="20." EtaThreshold="2.5" RelIso="0.17" D0Cut="0.04" VertexMatchThr="1." DElectronETSCThr="15" RemuThr="0.1"/>
+<s type="Muon"     Loaded="1" Algo="selectedPatMuonsPFlow"     PtThreshold="20." EtaThreshold="2.4" RelIso="0.20" D0Cut="0.02" VertexMatchThr="1." NofValidHits="0"  NofValidTkHits="10" NormChi2="10" />
+<s type="Tau"      Loaded="0" Algo="selectedPatTaus"            PtThreshold="20." EtaThreshold="2.5" RelIso="0.15" D0Cut="0.04" VertexMatchThr="1." TauLeadTrkPtCut="10."/-->
+<s type="Vertex"   Loaded="1" Algo="offlinePrimaryVertices" VertexNdofThr="4" VertexZThr="24."   VertexRhoThr="2." />  
+
+
 <s type="Electron" Loaded="1" Algo="selectedPatElectronsPF2PAT" PtThreshold="20." EtaThreshold="2.5" RelIso="0.17" D0Cut="0.04" VertexMatchThr="1." DElectronETSCThr="15" RemuThr="0.1"/>
 <s type="Muon"     Loaded="1" Algo="selectedPatMuonsPF2PAT"     PtThreshold="20." EtaThreshold="2.4" RelIso="0.20" D0Cut="0.02" VertexMatchThr="1." NofValidHits="0"  NofValidTkHits="10" NormChi2="10" />
 <s type="Tau"      Loaded="0" Algo="selectedPatTaus"            PtThreshold="20." EtaThreshold="2.5" RelIso="0.15" D0Cut="0.04" VertexMatchThr="1." TauLeadTrkPtCut="10."/>
@@ -94,7 +112,7 @@
 2 for SM
 -->
 <!--s MinMassCut="12." METCutsEMU="0." METCutsLL="30." ZMassWindowMin="76." ZMassWindowMax="106." btagAlgo="0" btagDiscriCut="1.7" NofBtagJets="2" /-->
-<s MinMassCut="20." METCutsEMU="0." METCutsLL="40." ZMassWindowMin="76." ZMassWindowMax="106." btagAlgo="6" btagDiscriCut="0.244" NofBtagJets="2" />
+<s MinMassCut="20." METCutsEMU="0." METCutsLL="40." ZMassWindowMin="76." ZMassWindowMax="106." btagAlgo="6" btagDiscriCut="0.244" NofBtagJets="1" />
 </DiLeptonSelection>
 
 <Weight>
