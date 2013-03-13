@@ -190,7 +190,27 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> ErrCutFlow_eemu;
   std::vector<TH1F> ErrCutFlow_eee;
   
+  std::vector<TH1F> PU_before_mumumu;
+  std::vector<TH1F> PU_before_mumue;
+  std::vector<TH1F> PU_before_eemu;
+  std::vector<TH1F> PU_before_eee;
 
+  std::vector<TH1F> PU_intime_mumumu;
+  std::vector<TH1F> PU_intime_mumue;
+  std::vector<TH1F> PU_intime_eemu;
+  std::vector<TH1F> PU_intime_eee;
+  
+  std::vector<TH1F> PU_after_mumumu;
+  std::vector<TH1F> PU_after_mumue;
+  std::vector<TH1F> PU_after_eemu;
+  std::vector<TH1F> PU_after_eee; 
+  
+  
+  std::vector<TH1F> NVtx_mumumu;
+  std::vector<TH1F> NVtx_mumue;
+  std::vector<TH1F> NVtx_eemu;
+  std::vector<TH1F> NVtx_eee; 
+  
   std::vector<TH1F> NVtx_mumumu_aftertrigsel;
   std::vector<TH1F> NVtx_mumue_aftertrigsel;
   std::vector<TH1F> NVtx_eemu_aftertrigsel;

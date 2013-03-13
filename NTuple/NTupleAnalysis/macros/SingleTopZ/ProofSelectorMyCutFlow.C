@@ -315,6 +315,27 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   MyhistoManager.SetCutFlowAxisTitleFCNCMonotop(CutFlow_eee,      "CutFlow_eee"     ,datasetName);
   
   
+  MyhistoManager.CreateHisto(PU_before_mumumu, "PU_before_mumumu", datasetName, "Npileup", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(PU_before_mumue, "PU_before_mumue", datasetName, "Npileup", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(PU_before_eemu, "PU_before_eemu", datasetName, "Npileup", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(PU_before_eee, "PU_before_eee", datasetName, "Npileup", "Entries", 30, 0, 30);   
+  
+  MyhistoManager.CreateHisto(PU_intime_mumumu, "PU_intime_mumumu", datasetName, "Npileup", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(PU_intime_mumue, "PU_intime_mumue", datasetName, "Npileup", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(PU_intime_eemu, "PU_intime_eemu", datasetName, "Npileup", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(PU_intime_eee, "PU_intime_eee", datasetName, "Npileup", "Entries", 30, 0, 30);   
+  
+  MyhistoManager.CreateHisto(PU_after_mumumu, "PU_after_mumumu", datasetName, "Npileup", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(PU_after_mumue, "PU_after_mumue", datasetName, "Npileup", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(PU_after_eemu, "PU_after_eemu", datasetName, "Npileup", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(PU_after_eee, "PU_after_eee", datasetName, "Npileup", "Entries", 30, 0, 30);   
+  
+
+  MyhistoManager.CreateHisto(NVtx_mumumu, "NVtx_mumumu", datasetName, "Nvertex", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_mumue, "NVtx_mumue", datasetName, "Nvertex", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_eemu, "NVtx_eemu", datasetName, "Nvertex", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_eee, "NVtx_eee", datasetName, "Nvertex", "Entries", 30, 0, 30); 
+  
   MyhistoManager.CreateHisto(Nvtx_mumumu_afterleptsel, "Nvtx_mumumu_afterleptsel", datasetName , "NVtx", "Entries", 50, 0, 49) ;
   MyhistoManager.CreateHisto(Nvtx_mumue_afterleptsel,  "Nvtx_mumue_afterleptsel",  datasetName , "NVtx", "Entries", 50, 0, 49);
   MyhistoManager.CreateHisto(Nvtx_eemu_afterleptsel,   "Nvtx_eemu_afterleptsel",   datasetName , "NVtx", "Entries", 50, 0, 49);
@@ -1114,7 +1135,31 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
       
     }
    
+
+    if(IChannel == 0) MyhistoManager.FillHisto(PU_before_mumumu, "PU_before_mumumu", event->pileup.before_npu, datasetName, IsSignal, Dweight[ITypeMC]);
+    if(IChannel == 1) MyhistoManager.FillHisto(PU_before_mumue, "PU_before_mumue", event->pileup.before_npu, datasetName, IsSignal, Dweight[ITypeMC]);
+    if(IChannel == 2) MyhistoManager.FillHisto(PU_before_eemu, "PU_before_eemu", event->pileup.before_npu, datasetName, IsSignal, Dweight[ITypeMC]);
+    if(IChannel == 3) MyhistoManager.FillHisto(PU_before_eee, "PU_before_eee", event->pileup.before_npu, datasetName, IsSignal, Dweight[ITypeMC]);
+
+    if(IChannel == 0) MyhistoManager.FillHisto(PU_intime_mumumu, "PU_intime_mumumu", event->pileup.intime_npu, datasetName, IsSignal, Dweight[ITypeMC]);
+    if(IChannel == 1) MyhistoManager.FillHisto(PU_intime_mumue, "PU_intime_mumue", event->pileup.intime_npu, datasetName, IsSignal, Dweight[ITypeMC]);
+    if(IChannel == 2) MyhistoManager.FillHisto(PU_intime_eemu, "PU_intime_eemu", event->pileup.intime_npu, datasetName, IsSignal, Dweight[ITypeMC]);
+    if(IChannel == 3) MyhistoManager.FillHisto(PU_intime_eee, "PU_intime_eee", event->pileup.intime_npu, datasetName, IsSignal, Dweight[ITypeMC]);
+
+    if(IChannel == 0) MyhistoManager.FillHisto(PU_after_mumumu, "PU_after_mumumu", event->pileup.after_npu, datasetName, IsSignal, Dweight[ITypeMC]);
+    if(IChannel == 1) MyhistoManager.FillHisto(PU_after_mumue, "PU_after_mumue", event->pileup.after_npu, datasetName, IsSignal, Dweight[ITypeMC]);
+    if(IChannel == 2) MyhistoManager.FillHisto(PU_after_eemu, "PU_after_eemu", event->pileup.after_npu, datasetName, IsSignal, Dweight[ITypeMC]);
+    if(IChannel == 3) MyhistoManager.FillHisto(PU_after_eee, "PU_after_eee", event->pileup.after_npu, datasetName, IsSignal, Dweight[ITypeMC]);
+
+
+    if(IChannel == 0) MyhistoManager.FillHisto(NVtx_mumumu, "NVtx_mumumu", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
+    if(IChannel == 1) MyhistoManager.FillHisto(NVtx_mumue, "NVtx_mumue", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
+    if(IChannel == 2) MyhistoManager.FillHisto(NVtx_eemu, "NVtx_eemu", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
+    if(IChannel == 3) MyhistoManager.FillHisto(NVtx_eee, "NVtx_eee", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
+
+
     MyhistoManager.FillHisto(Nvertex, "Nvertex", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
+ 
  
 
     //*****************************************************************
@@ -2821,6 +2866,27 @@ void ProofSelectorMyCutFlow::SlaveTerminate()
   MyhistoManager.WriteMyHisto(CutFlow_eee,    "all" );
   
   
+  
+  MyhistoManager.WriteMyHisto(PU_before_mumumu, "all");  
+  MyhistoManager.WriteMyHisto(PU_before_mumue, "all");  
+  MyhistoManager.WriteMyHisto(PU_before_eemu, "all");  
+  MyhistoManager.WriteMyHisto(PU_before_eee, "all");  
+
+  MyhistoManager.WriteMyHisto(PU_intime_mumumu, "all");  
+  MyhistoManager.WriteMyHisto(PU_intime_mumue, "all");  
+  MyhistoManager.WriteMyHisto(PU_intime_eemu, "all");  
+  MyhistoManager.WriteMyHisto(PU_intime_eee, "all");  
+
+  MyhistoManager.WriteMyHisto(PU_after_mumumu, "all");  
+  MyhistoManager.WriteMyHisto(PU_after_mumue, "all");  
+  MyhistoManager.WriteMyHisto(PU_after_eemu, "all");  
+  MyhistoManager.WriteMyHisto(PU_after_eee, "all");  
+  
+  
+  MyhistoManager.WriteMyHisto(NVtx_mumumu, "all");  
+  MyhistoManager.WriteMyHisto(NVtx_mumue, "all");  
+  MyhistoManager.WriteMyHisto(NVtx_eemu, "all");  
+  MyhistoManager.WriteMyHisto(NVtx_eee, "all");  
   
   MyhistoManager.WriteMyHisto(Nvtx_mumumu_afterleptsel, "all" );
   MyhistoManager.WriteMyHisto(Nvtx_mumue_afterleptsel , "all" );
