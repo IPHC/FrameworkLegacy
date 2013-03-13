@@ -54,6 +54,17 @@ cd IPHCDataFormat/NTFormat/src
 make 
 cd ../../..
 
+# for systematics on jet energy
+cp /afs/cern.ch/user/s/speer/public/JR_Standalone.tgz .
+tar -xzvf JR_Standalone.tgz
+rm -rf JR_Standalone.tgz
+cd JR_Standalone/JetMETObjects/
+make
+cd ..
+mv lib/libJetMETObjects.so ../NTuple/NTupleAnalysis/.
+cd ..
+
+
 cd NTuple/NTupleAnalysis/
 mkdir .lib
 make all
