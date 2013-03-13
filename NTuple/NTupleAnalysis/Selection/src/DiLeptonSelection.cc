@@ -1380,7 +1380,7 @@ std::pair<bool,bool> DiLeptonSelection::passMETTriggerSelection (Dataset * datas
   if (!dataset->isData ()) {	//MC
     //cout << " test trigger list --------------------------------" << endl;
     
-    passTriggerMET = (   triggers->IsFired("HLT_CentralJet80_MET65_v1") 
+    passTriggerMET = (    triggers->IsFired("HLT_CentralJet80_MET65_v1") // Summer 11
                       || triggers->IsFired("HLT_CentralJet80_MET80_v1")
                       || triggers->IsFired("HLT_CentralJet80_MET100_v1")
                       || triggers->IsFired("HLT_CentralJet80_MET160_v1")
@@ -1388,13 +1388,30 @@ std::pair<bool,bool> DiLeptonSelection::passMETTriggerSelection (Dataset * datas
                       || triggers->IsFired("HLT_PFMHT150_v2")
                       || triggers->IsFired("HLT_MET100_v1")
                       || triggers->IsFired("HLT_MET120_v1")
-                      || triggers->IsFired("HLT_MET200_v1")   );
+                      || triggers->IsFired("HLT_MET200_v1")
+
+                      || triggers->IsFired("HLT_CentralJet80_MET65_v7") // Fall 11
+                      || triggers->IsFired("HLT_CentralJet80_MET80_v6")
+                      || triggers->IsFired("HLT_CentralJet80_MET100_v7")
+                      || triggers->IsFired("HLT_CentralJet80_MET160_v7")
+                      || triggers->IsFired("HLT_DiJet60_MET45_v7")
+                      || triggers->IsFired("HLT_PFMHT150_v12")
+                      || triggers->IsFired("HLT_MET65_v7")
+                      || triggers->IsFired("HLT_MET100_v7")
+                      || triggers->IsFired("HLT_MET120_v7")
+                      || triggers->IsFired("HLT_MET200_v7")
+                      || triggers->IsFired("HLT_MET400_v7")   );
    
     if( passTriggerMET ) 
-      passTriggerBTAGMET = (   triggers->IsFired("HLT_BTagMu_DiJet20_Mu5_v2") 
+      passTriggerBTAGMET = (   triggers->IsFired("HLT_BTagMu_DiJet20_Mu5_v2") // Summer 11
                 	    || triggers->IsFired("HLT_BTagMu_DiJet60_Mu7_v2")
                 	    || triggers->IsFired("HLT_BTagMu_DiJet80_Mu9_v2")
-                	    || triggers->IsFired("HLT_BTagMu_DiJet100_Mu9_v2")   );
+                	    || triggers->IsFired("HLT_BTagMu_DiJet100_Mu9_v2")
+
+                            || triggers->IsFired("HLT_BTagMu_DiJet20_Mu5_v10") // Fall 11
+                	    || triggers->IsFired("HLT_BTagMu_DiJet60_Mu5_v10")
+                	    || triggers->IsFired("HLT_BTagMu_DiJet80_Mu5_v10")
+                	    || triggers->IsFired("HLT_BTagMu_DiJet100_Mu5_v10")   );
      
    }
   else {
