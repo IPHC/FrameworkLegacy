@@ -14,7 +14,7 @@
 
 
 
-void PlotBDToutput(TString thevertex, TString theVariable){
+void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   
   double WZscale = 1.;
   
@@ -175,14 +175,9 @@ void PlotBDToutput(TString thevertex, TString theVariable){
   
    TFile * filechannel ;
    
-   if(thevertex == "zut") filechannel = new TFile("HistoBDToutput/TMVApp_zut_nom.root");
-   if(thevertex == "zct") filechannel = new TFile("HistoBDToutput/TMVApp_zct_nom.root");
-   if(thevertex == "kut") filechannel = new TFile("HistoBDToutput/TMVApp_kut_nom.root");
-   if(thevertex == "kct") filechannel = new TFile("HistoBDToutput/TMVApp_kct_nom.root");
-   if(thevertex == "xut") filechannel = new TFile("HistoBDToutput/TMVApp_xut_nom.root");
-   if(thevertex == "xct") filechannel = new TFile("HistoBDToutput/TMVApp_xct_nom.root");
-   
-   std::cout << "thevertex " << thevertex << std::endl;
+   filechannel = new TFile(theFile.Data());
+
+   std::cout << "file " << theFile << std::endl;
    
    
    TH1F * histBdt_Data      = (TH1F*)filechannel->Get( (theVariable+"_Data"     ).Data());
@@ -195,21 +190,10 @@ void PlotBDToutput(TString thevertex, TString theVariable){
    
    TH1F * histBdt_FCNC ;     
    if(theVariable == "MVA_BDT"){
-     if(thevertex == "zut") histBdt_FCNC = (TH1F*)filechannel->Get((theVariable+"_FCNC_zut").Data());	
-     if(thevertex == "zct") histBdt_FCNC = (TH1F*)filechannel->Get((theVariable+"_FCNC_zct").Data());	
-     if(thevertex == "kut") histBdt_FCNC = (TH1F*)filechannel->Get((theVariable+"_FCNC_kut").Data());	
-     if(thevertex == "kct") histBdt_FCNC = (TH1F*)filechannel->Get((theVariable+"_FCNC_kct").Data());	
-     if(thevertex == "xut") histBdt_FCNC = (TH1F*)filechannel->Get((theVariable+"_FCNC_xut").Data());	
-     if(thevertex == "xct") histBdt_FCNC = (TH1F*)filechannel->Get((theVariable+"_FCNC_xct").Data());  
+     histBdt_FCNC = (TH1F*)filechannel->Get((theVariable+"_FCNC_"+theVertex).Data());	 
    }
    else{
-   
-     if(thevertex == "zut") histBdt_FCNC = (TH1F*)filechannel->Get((theVariable+"_Signal").Data());	
-     if(thevertex == "zct") histBdt_FCNC = (TH1F*)filechannel->Get((theVariable+"_Signal").Data());	
-     if(thevertex == "kut") histBdt_FCNC = (TH1F*)filechannel->Get((theVariable+"_Signal").Data());	
-     if(thevertex == "kct") histBdt_FCNC = (TH1F*)filechannel->Get((theVariable+"_Signal").Data());	
-     if(thevertex == "xut") histBdt_FCNC = (TH1F*)filechannel->Get((theVariable+"_Signal").Data());	
-     if(thevertex == "xct") histBdt_FCNC = (TH1F*)filechannel->Get((theVariable+"_Signal").Data());  
+     histBdt_FCNC = (TH1F*)filechannel->Get((theVariable+"_Signal").Data());	 
    } 
   
   
@@ -451,8 +435,8 @@ void PlotBDToutput(TString thevertex, TString theVariable){
   
   
   
-  c1->SaveAs( ("plots/"+theVariable+"_"+thevertex+".pdf").Data());
-  c1->SaveAs( ("plots/"+theVariable+"_"+thevertex+".gif").Data());
+  c1->SaveAs( ("plots/"+theVariable+"_"+theVertex+".pdf").Data());
+  c1->SaveAs( ("plots/"+theVariable+"_"+theVertex+".gif").Data());
   
   
 }
@@ -470,50 +454,57 @@ void PlotBDToutput(){
    TString thevertex_xut = "xut";
    TString thevertex_xct = "xct";
    
-   /*PlotBDToutput(thevertex_zut, "MVA_BDT"       );
-   PlotBDToutput(thevertex_zut, "topMass"       );
-   PlotBDToutput(thevertex_zut, "totMass"       );
-   PlotBDToutput(thevertex_zut, "deltaPhilb"    );
-   PlotBDToutput(thevertex_zut, "deltaRlb"      );
-   PlotBDToutput(thevertex_zut, "deltaRTopZ"    );
-   PlotBDToutput(thevertex_zut, "asym"          );
-   PlotBDToutput(thevertex_zut, "Zpt"           );
-   PlotBDToutput(thevertex_zut, "ZEta"          );
-   PlotBDToutput(thevertex_zut, "topPt"         );
-   PlotBDToutput(thevertex_zut, "topEta"        );
-   PlotBDToutput(thevertex_zut, "NJets"         );   
-   PlotBDToutput(thevertex_zut, "NBJets"        );  
-   PlotBDToutput(thevertex_zut, "deltaRZl"      ); 
-   PlotBDToutput(thevertex_zut, "deltaPhiZmet"  );*/
-   PlotBDToutput(thevertex_zut, "btagDiscri"    );/*
-   PlotBDToutput(thevertex_zut, "leptWPt"       );
-   PlotBDToutput(thevertex_zut, "leptWEta"      );	    
-   PlotBDToutput(thevertex_zut, "leadJetPt"     );	      
-   PlotBDToutput(thevertex_zut, "leadJetEta"    );         
-   PlotBDToutput(thevertex_zut, "deltaPhiZleptW");*/
+   TString thefile_zut = "HistoBDToutput/TMVApp_zut_nom.root";
+   TString thefile_zct = "HistoBDToutput/TMVApp_zct_nom.root";
+   TString thefile_kut = "HistoBDToutput/TMVApp_kut_nom.root";
+   TString thefile_kct = "HistoBDToutput/TMVApp_kct_nom.root";
+   TString thefile_xut = "HistoBDToutput/TMVApp_xut_nom.root";
+   TString thefile_xct = "HistoBDToutput/TMVApp_xct_nom.root";
+   
+   /*PlotBDToutput(thevertex_zut, "MVA_BDT"       , theFile_zut);
+   PlotBDToutput(thevertex_zut, "topMass"       , theFile_zut);
+   PlotBDToutput(thevertex_zut, "totMass"       , theFile_zut);
+   PlotBDToutput(thevertex_zut, "deltaPhilb"    , theFile_zut);
+   PlotBDToutput(thevertex_zut, "deltaRlb"      , theFile_zut);
+   PlotBDToutput(thevertex_zut, "deltaRTopZ"    , theFile_zut);
+   PlotBDToutput(thevertex_zut, "asym"          , theFile_zut);
+   PlotBDToutput(thevertex_zut, "Zpt"           , theFile_zut);
+   PlotBDToutput(thevertex_zut, "ZEta"          , theFile_zut);
+   PlotBDToutput(thevertex_zut, "topPt"         , theFile_zut);
+   PlotBDToutput(thevertex_zut, "topEta"        , theFile_zut);
+   PlotBDToutput(thevertex_zut, "NJets"         , theFile_zut);   
+   PlotBDToutput(thevertex_zut, "NBJets"        , theFile_zut);  
+   PlotBDToutput(thevertex_zut, "deltaRZl"      , theFile_zut); 
+   PlotBDToutput(thevertex_zut, "deltaPhiZmet"  , theFile_zut);*/
+   PlotBDToutput(thevertex_zut, "btagDiscri"    , theFile_zut);/*
+   PlotBDToutput(thevertex_zut, "leptWPt"       , theFile_zut);
+   PlotBDToutput(thevertex_zut, "leptWEta"      , theFile_zut);	    
+   PlotBDToutput(thevertex_zut, "leadJetPt"     , theFile_zut);	      
+   PlotBDToutput(thevertex_zut, "leadJetEta"    , theFile_zut);         
+   PlotBDToutput(thevertex_zut, "deltaPhiZleptW", theFile_zut);*/
    
    /*
-   PlotBDToutput(thevertex_zct, "MVA_BDT"       );
-   PlotBDToutput(thevertex_zct, "topMass"       );
-   PlotBDToutput(thevertex_zct, "totMass"       );
-   PlotBDToutput(thevertex_zct, "deltaPhilb"    );
-   PlotBDToutput(thevertex_zct, "deltaRlb"      );
-   PlotBDToutput(thevertex_zct, "deltaRTopZ"    );
-   PlotBDToutput(thevertex_zct, "asym"          );
-   PlotBDToutput(thevertex_zct, "Zpt"           );
-   PlotBDToutput(thevertex_zct, "ZEta"          );
-   PlotBDToutput(thevertex_zct, "topPt"         );
-   PlotBDToutput(thevertex_zct, "topEta"        );
-   PlotBDToutput(thevertex_zct, "NJets"         );   
-   PlotBDToutput(thevertex_zct, "NBJets"        );  
-   PlotBDToutput(thevertex_zct, "deltaRZl"      ); 
-   PlotBDToutput(thevertex_zct, "deltaPhiZmet"  );
-   PlotBDToutput(thevertex_zct, "btagDiscri"    );
-   PlotBDToutput(thevertex_zct, "leptWPt"       );
-   PlotBDToutput(thevertex_zct, "leptWEta"      );	    
-   PlotBDToutput(thevertex_zct, "leadJetPt"     );	      
-   PlotBDToutput(thevertex_zct, "leadJetEta"    );         
-   PlotBDToutput(thevertex_zct, "deltaPhiZleptW");
+   PlotBDToutput(thevertex_zct, "MVA_BDT"       , theFile_zct);
+   PlotBDToutput(thevertex_zct, "topMass"       , theFile_zct);
+   PlotBDToutput(thevertex_zct, "totMass"       , theFile_zct);
+   PlotBDToutput(thevertex_zct, "deltaPhilb"    , theFile_zct);
+   PlotBDToutput(thevertex_zct, "deltaRlb"      , theFile_zct);
+   PlotBDToutput(thevertex_zct, "deltaRTopZ"    , theFile_zct);
+   PlotBDToutput(thevertex_zct, "asym"          , theFile_zct);
+   PlotBDToutput(thevertex_zct, "Zpt"           , theFile_zct);
+   PlotBDToutput(thevertex_zct, "ZEta"          , theFile_zct);
+   PlotBDToutput(thevertex_zct, "topPt"         , theFile_zct);
+   PlotBDToutput(thevertex_zct, "topEta"        , theFile_zct);
+   PlotBDToutput(thevertex_zct, "NJets"         , theFile_zct);   
+   PlotBDToutput(thevertex_zct, "NBJets"        , theFile_zct);  
+   PlotBDToutput(thevertex_zct, "deltaRZl"      , theFile_zct); 
+   PlotBDToutput(thevertex_zct, "deltaPhiZmet"  , theFile_zct);
+   PlotBDToutput(thevertex_zct, "btagDiscri"    , theFile_zct);
+   PlotBDToutput(thevertex_zct, "leptWPt"       , theFile_zct);
+   PlotBDToutput(thevertex_zct, "leptWEta"      , theFile_zct);	    
+   PlotBDToutput(thevertex_zct, "leadJetPt"     , theFile_zct);	      
+   PlotBDToutput(thevertex_zct, "leadJetEta"    , theFile_zct);         
+   PlotBDToutput(thevertex_zct, "deltaPhiZleptW", theFile_zct);
    */
 
 }

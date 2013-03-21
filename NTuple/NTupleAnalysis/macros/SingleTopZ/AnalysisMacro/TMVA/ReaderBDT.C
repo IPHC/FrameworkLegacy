@@ -14,8 +14,6 @@
 #include "TROOT.h"
 #include "TStopwatch.h"
 
-#include "test/TMVAGui.C"
-
 #include "TMVA/Tools.h"
 #include "TMVA/Reader.h"
 #include "TMVA/MethodCuts.h"
@@ -148,7 +146,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    TFile *input_FCNC    = new TFile(stringinput_FCNC, "read");
    
    
-   TFile *input_zjets   = new TFile("../RootFiles/backup_outputProof20-12-12_10-03-23_noSFapplied_Zenriched/proof_merged_noSF_Zenriched.root", "read");
+   TFile *input_zjets   = new TFile("../../backup_outputProof19-03-13_17-30-05/proof.root", "read");
    
    
    //*************************************************
@@ -186,6 +184,22 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    samples.push_back("WW");	 
    samples.push_back("Signal");	 
    
+   // Histos for control plots : training without the var. checked
+   samples.push_back("BDTcut_Data");	 
+   samples.push_back("BDTcut_Zjets");
+   samples.push_back("BDTcut_WZ");
+   samples.push_back("BDTcut_DataZjets");
+   samples.push_back("BDTcut_TTbarSig"); 
+   samples.push_back("BDTcut_Wjets");	 
+   samples.push_back("BDTcut_TtW");	 
+   samples.push_back("BDTcut_TbartW");   
+   samples.push_back("BDTcut_TtChan");   
+   samples.push_back("BDTcut_TbartChan");
+   samples.push_back("BDTcut_TsChan");   
+   samples.push_back("BDTcut_TbarsChan");
+   samples.push_back("BDTcut_ZZ");	 
+   samples.push_back("BDTcut_WW");	 
+   samples.push_back("BDTcut_Signal");	 
    
    
    std::vector<TString> variables;
@@ -387,7 +401,11 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      
      fillHisto("Data", theVar, ievt);
      
-     if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) ndataEvents_BCKenriched++;
+     if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut)
+     {
+       fillHisto("BDTcut_Data", theVar, ievt);
+       ndataEvents_BCKenriched++;
+     }
      //to calculate the BDT output
      //reader->EvaluateMVA( "BDT"           ) 
      
@@ -453,8 +471,11 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      fillHisto("Data", theVar, ievt);
      
      
-     if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) ndataEvents_BCKenriched++;
-     
+     if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut)
+     {
+       fillHisto("BDTcut_Data", theVar, ievt);
+       ndataEvents_BCKenriched++;
+     }
      //to calculate the BDT output
      //reader->EvaluateMVA( "BDT"           ) 
      
@@ -521,8 +542,11 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      
      fillHisto("Data", theVar, ievt);
      
-     if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) ndataEvents_BCKenriched++;
-     
+     if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut)
+     {
+       fillHisto("BDTcut_Data", theVar, ievt);
+       ndataEvents_BCKenriched++;
+     }
      //to calculate the BDT output
      //reader->EvaluateMVA( "BDT"           ) 
      
@@ -605,6 +629,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      
      fillHisto("WZ", theVar, ievt, EvtWeight);
      if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut){
+       fillHisto("BDTcut_WZ", theVar, ievt, EvtWeight);
        nwzEvents_BCKenriched = nwzEvents_BCKenriched+EvtWeight;
        nwzEvents_BCKenriched_unw++;
      }
@@ -683,6 +708,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      
      fillHisto("TTbarSig", theVar, ievt, EvtWeight);
      if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut){
+       fillHisto("BDTcut_TTbarSig", theVar, ievt, EvtWeight);
        nTTbarSigEvents_BCKenriched = nTTbarSigEvents_BCKenriched+EvtWeight;
        nTTbarSigEvents_BCKenriched_unw++;
      }
@@ -762,6 +788,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      
      fillHisto("Wjets", theVar, ievt, EvtWeight);
      if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut){
+       fillHisto("BDTcut_Wjets", theVar, ievt, EvtWeight);
        nWjetsEvents_BCKenriched = nWjetsEvents_BCKenriched+EvtWeight;
        nWjetsEvents_BCKenriched_unw++;
      }
@@ -842,6 +869,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
  
      fillHisto("TtW", theVar, ievt, EvtWeight);
      if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut){
+       fillHisto("BDTcut_TtW", theVar, ievt, EvtWeight);
        nTtWEvents_BCKenriched = nTtWEvents_BCKenriched+EvtWeight;
        nTtWEvents_BCKenriched_unw++;
       }
@@ -922,6 +950,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      
      fillHisto("TbartW", theVar, ievt, EvtWeight);
      if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut){
+      fillHisto("BDTcut_TbartW", theVar, ievt, EvtWeight);
       nTbartWEvents_BCKenriched = nTbartWEvents_BCKenriched+EvtWeight;
       nTbartWEvents_BCKenriched_unw++;
      }
@@ -1007,6 +1036,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
 
      fillHisto("TtChan", theVar, ievt, EvtWeight);
      if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut){
+      fillHisto("BDTcut_TtChan", theVar, ievt, EvtWeight);
       nTtChanEvents_BCKenriched = nTtChanEvents_BCKenriched+EvtWeight;
       nTtChanEvents_BCKenriched_unw++;
      }
@@ -1084,6 +1114,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
 
      fillHisto("TbartChan", theVar, ievt, EvtWeight);
      if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut){
+       fillHisto("BDTcut_TbartChan", theVar, ievt, EvtWeight);
        nTbartChanEvents_BCKenriched = nTbartChanEvents_BCKenriched+EvtWeight;
        nTbartChanEvents_BCKenriched_unw++;
       }
@@ -1166,6 +1197,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
 
      fillHisto("TsChan", theVar, ievt, EvtWeight);
      if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut){
+       fillHisto("BDTcut_TsChan", theVar, ievt, EvtWeight);
        nTsChanEvents_BCKenriched = nTsChanEvents_BCKenriched+EvtWeight;
        nTsChanEvents_BCKenriched_unw++;
      }
@@ -1244,6 +1276,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      
      fillHisto("TbarsChan", theVar, ievt, EvtWeight);
      if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut){
+       fillHisto("BDTcut_TbarsChan", theVar, ievt, EvtWeight);
        nTbarsChanEvents_BCKenriched = nTbarsChanEvents_BCKenriched+EvtWeight;
        nTbarsChanEvents_BCKenriched_unw++;
       }
@@ -1324,6 +1357,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      
      fillHisto("ZZ", theVar, ievt, EvtWeight);
      if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut){
+       fillHisto("BDTcut_ZZ", theVar, ievt, EvtWeight);
        nZZEvents_BCKenriched = nZZEvents_BCKenriched+EvtWeight;
        nZZEvents_BCKenriched_unw++;
      }
@@ -1406,6 +1440,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      
      fillHisto("WW", theVar, ievt, EvtWeight);
      if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut){
+       fillHisto("BDTcut_WW", theVar, ievt, EvtWeight);
        nWWEvents_BCKenriched = nWWEvents_BCKenriched+EvtWeight;
        nWWEvents_BCKenriched_unw++;
      }
@@ -1492,6 +1527,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      
      fillHisto("Zjets", theVar, ievt, EvtWeight);
      if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut){
+       fillHisto("BDTcut_Zjets", theVar, ievt, EvtWeight);
        mcexpectedZ = mcexpectedZ+EvtWeight;
        mcexpectedZ_unw++;
        
@@ -1573,6 +1609,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      
      fillHisto("Zjets", theVar, ievt, EvtWeight);
      if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut){
+       fillHisto("BDTcut_Zjets", theVar, ievt, EvtWeight);
        mcexpectedZ = mcexpectedZ+EvtWeight;
        mcexpectedZ++;
        if(Channel == 0) mcexpectedZ_mumumu += EvtWeight;
@@ -1662,6 +1699,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      
      fillHisto("Signal", theVar, ievt, EvtWeight*0.1);
      if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut){
+       fillHisto("BDTcut_Signal", theVar, ievt, EvtWeight*0.1);
        nsignalEvents_BCKenriched = nsignalEvents_BCKenriched + EvtWeight;
        nsignalEvents_BCKenriched_unw++;
      }
@@ -1743,6 +1781,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      
      fillHisto("DataZjets", theVar, ievt, EvtWeight);
      if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut){
+      fillHisto("BDTcut_DataZjets", theVar, ievt, EvtWeight);
       ndataEvents_Ztemplate++;
       if(Channel == 0) ndataEvents_Ztemplate_mumumu++;
       
@@ -1820,6 +1859,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      
      fillHisto("DataZjets",theVar , ievt, EvtWeight);
      if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut){
+        fillHisto("BDTcut_DataZjets",theVar , ievt, EvtWeight);
         ndataEvents_Ztemplate++;
      
         if(Channel == 3) ndataEvents_Ztemplate_eee++;
@@ -1900,6 +1940,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      fillHisto("DataZjets", theVar, ievt, EvtWeight);
      if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut){
      
+       fillHisto("BDTcut_DataZjets", theVar, ievt, EvtWeight);
        ndataEvents_Ztemplate++;
        
         if(Channel == 1) ndataEvents_Ztemplate_mumue++;
@@ -2206,6 +2247,7 @@ void ReaderBDT(){
    	"../RootFiles/backup_outputProof02-01-13_18-48-30_AllSFinclWZ/proof_merged.root",
    	"../RootFiles/backup_outputProof02-01-13_18-48-30_AllSFinclWZ/proof_merged.root",
 	 "nom");
+
    /*
    //for Jes Up
    ReaderBDT(thevertex_zct, 
