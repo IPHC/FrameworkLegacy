@@ -22,14 +22,6 @@
 
 
 
-<!--d name="DataMu"     add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"     filenames="/opt/sbg/data/data1/cms/jandrea/Data_8TeV_Dilepton/DoubleMu8TeV53Xv2/*.root" />
-<d name="DataEG"     add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"     filenames="/opt/sbg/data/data1/cms/jandrea/Data_8TeV_Dilepton/DoubleElectron8TeV53Xv2/*.root" />
-<d name="DataMuEG"   add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"     filenames="/opt/sbg/data/data1/cms/jandrea/Data_8TeV_Dilepton/MuEG8TeV53Xv2/*.root" /-->
-
-
-
-
-
 
 <d name="DataMu"       add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"     filenames="/opt/sbg/data/data1/cms/jlagram/data/Data_2011/skim_3lept/DoubleMu_2011_part*.root" />
 
@@ -37,13 +29,23 @@
 
 <d name="DataMuEG"     add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"     filenames="/opt/sbg/data/data1/cms/jlagram/data/Data_2011/skim_3lept/MuEG_2011_part*.root" />
 
-
+<!-- FastSim -->
+<!--
 <d name="FCNCkut"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedKut.root" />
 <d name="FCNCkct"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedKct.root" />
 <d name="FCNCxut"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedXut.root" />
 <d name="FCNCxct"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedXct.root" />
 <d name="FCNCzut"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedZut.root" />
 <d name="FCNCzct"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedZct.root" />
+-->
+
+
+<!-- FullSim -->
+
+<d name="FCNCzut"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Zut_nominal.root" />
+<d name="FCNCzct"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Zct_nominal.root" />
+<d name="FCNCkut"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Kut_nominal.root" />
+<d name="FCNCkct"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Kct_nominal.root" />
 
 
 <d name="TTbar"        add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="164"   filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/TTJets_*.root" /> 
@@ -64,6 +66,7 @@
 <d name="TsChan"          add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="3.19"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/T_t_*.root" />
 <d name="TbarsChan"       add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="1.44"  filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/Tbar_t_*.root" />
 
+<d name="TZq"          add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.0216"  filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_tZq_nominal.root" />
 
 
 
