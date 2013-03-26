@@ -36,7 +36,9 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   
   
   TString filename;
-  filename="backup_outputProof08-10-12_12-05-06/proof.root";  
+  //filename="backup_outputProof27-11-12_18-24-14/proof.root"; 
+  filename="backup_outputProof20-12-12_10-03-23_noSFapplied_Zenriched/proof_merged_noSF_Zenriched.root"; 
+  
   
   TString channel;
   if (namechan!="all") channel=namechan;
@@ -252,7 +254,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   TH1F * histo_Data;
   TH1F * histo_DataEG;
   TH1F * histo_DataMu;
-  TH1F * histo_FCNCkut;
+  TH1F * histo_FCNCzut;
   TH1F * histo_TTbarBkg;
   TH1F * histo_TTbarSig;
   TH1F * histo_Zjets;
@@ -360,18 +362,22 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   
  
  
-  TString histo_FCNCkut_name= plotname+channel+selection+"_FCNCkut";
-  histo_FCNCkut            = (TH1F*)filechannel->Get(histo_FCNCkut_name);
+  TString histo_FCNCzut_name= plotname+channel+selection+"_FCNCzut";
+  histo_FCNCzut            = (TH1F*)filechannel->Get(histo_FCNCzut_name);
+  histo_FCNCzut->Scale(0.1);
   if (namechan=="all") {
-    TString h_name2_FCNCkut=plotname+"mumue"+selection+"_FCNCkut";
-    TH1F * h_2_FCNCkut = (TH1F*)filechannel->Get(h_name2_FCNCkut);
-    TString h_name3_FCNCkut=plotname+"eemu"+selection+"_FCNCkut";
-    TH1F * h_3_FCNCkut = (TH1F*)filechannel->Get(h_name3_FCNCkut);
-    TString h_name4_FCNCkut=plotname+"eee"+selection+"_FCNCkut";
-    TH1F * h_4_FCNCkut = (TH1F*)filechannel->Get(h_name4_FCNCkut);
-    histo_FCNCkut->Add(histo_FCNCkut, h_2_FCNCkut     , 1, 1);
-    histo_FCNCkut->Add(histo_FCNCkut, h_3_FCNCkut     , 1, 1);
-    histo_FCNCkut->Add(histo_FCNCkut, h_4_FCNCkut     , 1, 1);
+    TString h_name2_FCNCzut=plotname+"mumue"+selection+"_FCNCzut";
+    TH1F * h_2_FCNCzut = (TH1F*)filechannel->Get(h_name2_FCNCzut);
+    h_2_FCNCzut->Scale(0.1);
+    TString h_name3_FCNCzut=plotname+"eemu"+selection+"_FCNCzut";
+    TH1F * h_3_FCNCzut = (TH1F*)filechannel->Get(h_name3_FCNCzut);
+    h_3_FCNCzut->Scale(0.1);
+    TString h_name4_FCNCzut=plotname+"eee"+selection+"_FCNCzut";
+    TH1F * h_4_FCNCzut = (TH1F*)filechannel->Get(h_name4_FCNCzut);
+    h_4_FCNCzut->Scale(0.1);
+    histo_FCNCzut->Add(histo_FCNCzut, h_2_FCNCzut     , 1, 1);
+    histo_FCNCzut->Add(histo_FCNCzut, h_3_FCNCzut     , 1, 1);
+    histo_FCNCzut->Add(histo_FCNCzut, h_4_FCNCzut     , 1, 1);
   }
 
 
@@ -701,7 +707,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
-    histo_FCNCkut->Rebin(bins);
+    histo_FCNCzut->Rebin(bins);
   }
   
   if(plotname =="HT_" ){
@@ -713,7 +719,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
-    histo_FCNCkut->Rebin(bins);
+    histo_FCNCzut->Rebin(bins);
   }
   
   
@@ -726,10 +732,10 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
-    histo_FCNCkut->Rebin(bins);
+    histo_FCNCzut->Rebin(bins);
   }
   
-  if(plotname =="Mt_" || plotname == "mWT_"){
+  if(plotname =="Mt_" || plotname == "mWT_" || plotname == "DijetInvM_"){
     int bins = 5;
     hmc->Rebin(bins);
     histo_VV->Rebin(bins);
@@ -738,7 +744,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
-    histo_FCNCkut->Rebin(bins);
+    histo_FCNCzut->Rebin(bins);
   }
   
   if(plotname =="LeptWPt_" ){
@@ -750,7 +756,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
-    histo_FCNCkut->Rebin(bins);
+    histo_FCNCzut->Rebin(bins);
   }
   
   if(plotname =="LeptZPt_" ){
@@ -762,7 +768,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
-    histo_FCNCkut->Rebin(bins);
+    histo_FCNCzut->Rebin(bins);
   }
   
   
@@ -775,7 +781,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
-    histo_FCNCkut->Rebin(bins);
+    histo_FCNCzut->Rebin(bins);
   }
   
   
@@ -788,7 +794,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
-    histo_FCNCkut->Rebin(bins);
+    histo_FCNCzut->Rebin(bins);
   }
   
   if(plotname =="RecoTopMass_" ){
@@ -800,7 +806,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
-    histo_FCNCkut->Rebin(bins);
+    histo_FCNCzut->Rebin(bins);
   }
   if(plotname =="RecoPtZ_" ){
     int bins = 10;
@@ -811,7 +817,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
-    histo_FCNCkut->Rebin(bins);
+    histo_FCNCzut->Rebin(bins);
   }
   if(plotname =="deltaPhilb_" ){
     int bins = 20;
@@ -822,7 +828,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
-    histo_FCNCkut->Rebin(bins);
+    histo_FCNCzut->Rebin(bins);
   }
   
   histo_ratio = (TH1F*) histo_Data->Clone();
@@ -838,96 +844,25 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     
     double error_all = 
        pow(
-         (histo_VV->GetBinContent(ilum+1)+histo_SingleToptW->GetBinContent(ilum+1))
+         (histo_VV->GetBinContent(ilum+1)+histo_SingleToptW->GetBinContent(ilum+1)+ histo_TTbarBkg->GetBinContent(ilum+1))
          *lumi_error, 
          2)+
        //*************************
        //uncertinty on trigger eff
        pow(
-       	 (histo_VV->GetBinContent(ilum+1)+histo_SingleToptW->GetBinContent(ilum+1))
+       	 (histo_VV->GetBinContent(ilum+1)+histo_SingleToptW->GetBinContent(ilum+1)+ histo_TTbarBkg->GetBinContent(ilum+1))
 	 *SF_trigger_error
 	 , 2)+
        //*************************
        //uncertinty on lepton sel
        pow(
-       	 (histo_VV->GetBinContent(ilum+1)+histo_SingleToptW->GetBinContent(ilum+1))
+       	 (histo_VV->GetBinContent(ilum+1)+histo_SingleToptW->GetBinContent(ilum+1)+ histo_TTbarBkg->GetBinContent(ilum+1))
 	 *SF_Lepton_error
-	 , 2)+
-       //*************************
-       //uncertinty on met sel
-       pow(
-       	 (histo_VV->GetBinContent(ilum+1)+histo_SingleToptW->GetBinContent(ilum+1))
-	 *SF_MET_error
 	 , 2);
      
-     //if(selection == "_afterjetcut" && namechan=="ee"  )  error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.077, 2) ;
-     //if(selection == "_afterjetcut" && namechan=="mumu")  error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.078, 2) ;
-     //if(selection == "_afterjetcut" ) {
-       error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.5, 2) ;
-       //cout << "test " << endl; 
-       //cout << "test " << endl;
-       //cout << "test " << endl;
-       //}
-     //if(selection == "_afterjetcut" )  error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.5, 2) ;
-     
-     if(selection == "MassPair_afterjetcut" && namechan=="ee"  )  error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.077/1.169, 2) ;
-     if(selection == "MassPair_afterjetcut" && namechan=="mumu")  error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.078/1.257, 2) ;
-     
+       error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.30, 2) ;
+       error_all += pow(histo_VV->GetBinContent(ilum+1)*0.20, 2) ;
 
-     
-     
-     
-     if(selection == "_aftermetcut"&& namechan=="ee"  )   error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.40/1.9281, 2) ;
-     if(selection == "_aftermetcut"&& namechan=="mumu")   error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.37/1.82219, 2) ;
-     
-     if(selection == "MassPair_aftermetcut"&& namechan=="ee"  )   error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.40/1.9281, 2) ;
-     if(selection == "MassPair_aftermetcut"&& namechan=="mumu")   error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.37/1.82219, 2) ;
-     
-     if(selection == "_aftermetbtag1"&& namechan=="ee"  ) error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.53/2.11816, 2) ;
-     if(selection == "_aftermetbtag1"&& namechan=="mumu") error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.43/1.73089, 2) ;
-     
-     if(selection == "_aftermetbtag2"&& namechan=="ee"  ) error_all += pow(histo_Zjets->GetBinContent(ilum+1)*1.07/2.1314, 2) ;
-     if(selection == "_aftermetbtag2"&& namechan=="mumu") error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.67/0.819327, 2) ;
-     
-     if( namechan=="emu"  ) error_all += pow(histo_Zjets->GetBinContent(ilum+1)*0.30/1.38872, 2) ;
-     
-     if( namechan=="all"  ){
-       
-       
-       
-       if(selection == "_afterjetcut" ||selection == "MassPair_afterjetcut" ){
-         error_all += pow(histo_Zjets->GetBinContent(ilum+1)*((0.077/1.169)*frac_ee + (0.078/1.257)*frac_mumu+  (0.30/1.38872)*frac_emu), 2);
-       }
-	 
-	 
-     
-       if(selection == "_aftermetcut"||selection == "MassPair_aftermetcut" ){
-          error_all += pow(histo_Zjets->GetBinContent(ilum+1)*((0.40/1.9281)*frac_ee + (0.37/1.82219)*frac_mumu+  (0.30/1.38872)*frac_emu), 2);
-       }
-     
-       if(selection == "_aftermetbtag1"){
-         error_all += pow(histo_Zjets->GetBinContent(ilum+1)*((0.53/2.11816)*frac_ee + (0.43/1.73089)*frac_mumu+  (0.30/1.38872)*frac_emu), 2);
-	}
-     
-       if(selection == "_aftermetbtag2"){
-        error_all += pow(histo_Zjets->GetBinContent(ilum+1)*((1.07/2.1314) *frac_ee + (0.67/0.819327)*frac_mumu+  (0.30/1.38872)*frac_emu), 2);
-       }
-       
-       if(selection == "_aftermetcutbutjetcut"){
-       
-         error_all += pow(histo_Zjets->GetBinContent(ilum+1)*(0.194017*frac_ee + 0.151741*frac_mumu+  0.30/1.38872*frac_emu), 2);
-  
-       } 
-     
-     }
-     
-     
-     
-     
-     
-     
-     
-     
      
      
      lumiband->SetBinError(ilum+1,sqrt(error_all));
@@ -935,8 +870,15 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
      //modifications
      hmc->SetBinError(ilum+1,sqrt(error_all));
      
-    
-    
+     /*cout << "------------------------------" << endl;
+     cout << "bin content is Data "  << histo_Data->GetBinContent(ilum+1) << endl;
+     cout << "bin content is VV   "  << histo_VV->GetBinContent(ilum+1) << endl;
+     cout << "bin content is WZ   "  << histo_WZ->GetBinContent(ilum+1) << endl;
+     cout << "bin content is DY   "  << histo_Zjets->GetBinContent(ilum+1) << endl;
+     cout << "bin content is WZ*0.2   "  << histo_WZ->GetBinContent(ilum+1)*0.20 << endl;
+     cout << "bin content is DY*0.3   "  << histo_Zjets->GetBinContent(ilum+1)*0.30<< endl;
+     cout << "uncertainty MC is   "  << lumiband->GetBinError(ilum+1) << endl;
+     cout << "uncertainty MC is   "  << sqrt(error_all) << endl;*/
     
   }
   TGraphErrors *thegraph = new TGraphErrors(lumiband);
@@ -1003,7 +945,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     }
     else {
       if (hs->GetMaximum()<histo_Data->GetMaximum()) {
-	hs->SetMaximum(histo_Data->GetMaximum()*(5));
+	hs->SetMaximum(histo_Data->GetMaximum()*(2));
       }
       hs->SetMinimum(0.1);
       //     hs->SetMinimum(0.1);
@@ -1041,9 +983,10 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   histo_Data->SetMarkerSize(1.2);
   histo_Data->Draw("epsame");
   
-  histo_FCNCkut->SetLineWidth(2.0);
-  histo_FCNCkut->Draw("same");
-  cout << histo_FCNCkut->Integral() << endl;
+  histo_FCNCzut->SetLineWidth(2.0);
+  histo_FCNCzut->SetLineColor(1.0);
+  histo_FCNCzut->Draw("same");
+  cout << histo_FCNCzut->Integral() << endl;
   
    
   TLatex *latex = new TLatex();
@@ -1105,12 +1048,12 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   //  qw->AddEntry(histo_Data,         info_data,                "p");
   qw->AddEntry(histo_Data,         "Data" ,                "ep");
   qw->AddEntry(histo_Zjets,        "DY "                  ,"f");
-  qw->AddEntry(histo_SingleToptW,  "tW "                  ,"f");
+  qw->AddEntry(histo_SingleToptW,  "single top "                  ,"f");
   qw->AddEntry(histo_VV,           "VV "                  ,"f");
   //qw->AddEntry(histo_Wjets,        "W  "                  ,"f");
   //qw->AddEntry(histo_TTbarBkg,     "t#bar{t} other  "     ,"f");
   qw->AddEntry(histo_TTbarBkg,     " t#bar{t} background "     ,"f");
-  qw->AddEntry(histo_FCNCkut,     " tZ "     ,"l");
+  qw->AddEntry(histo_FCNCzut,     " tZ "     ,"l");
   qw->SetFillColor(0);
   qw->SetTextFont(42);
   qw->Draw();
@@ -1236,7 +1179,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     //ratio.Draw("e")
     
     histo_ratio->SetMinimum(0.0);
-    histo_ratio->SetMaximum(5.0);
+    histo_ratio->SetMaximum(2.0);
     histo_ratio->Draw("E1X0");
     
     c1->cd();
@@ -1245,8 +1188,8 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   }
   
   TString end_name;
-  if(setlogy) end_name="_Logy.gif";
-  else end_name=".gif"; 
+  if(setlogy) end_name="_Logy.pdf";
+  else end_name=".pdf"; 
   TString ratname;
   if (ratio) ratname="_r";
   else ratname="_r";

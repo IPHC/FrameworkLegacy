@@ -60,7 +60,7 @@ void CutFlow(){
   //*********************************
   
   
-  TFile *f_data  = new TFile("backup_outputProof07-08-12_10-21-30/proof.root");
+  TFile *f_data  = new TFile("backup_outputProof02-01-13_18-48-30_AllSFinclWZ/proof_merged.root");
   
   f_data->cd();
   
@@ -82,8 +82,8 @@ void CutFlow(){
   // mumumu  
   TH1F *  CutFlow_mumumu_DataMu     = (TH1F*)gROOT->FindObject("CutFlow_mumumu_DataMu");
   if ( CutFlow_mumumu_DataMu==NULL ) std::cout<<"WARNING "<<"CutFlow_mumumu_DataMu empty"<<std::endl;
-  TH1F *  CutFlow_mumumu_FCNCkut   = (TH1F*)gROOT->FindObject("CutFlow_mumumu_FCNCkut");
-  if ( CutFlow_mumumu_FCNCkut==NULL) std::cout<<"WARNING "<<"CutFlow_mumumu_FCNCkut empty"<<std::endl;
+  TH1F *  CutFlow_mumumu_FCNCzut   = (TH1F*)gROOT->FindObject("CutFlow_mumumu_FCNCzut");
+  if ( CutFlow_mumumu_FCNCzut==NULL) std::cout<<"WARNING "<<"CutFlow_mumumu_FCNCzut empty"<<std::endl;
   TH1F *  CutFlow_mumumu_TTbarBkg   = (TH1F*)gROOT->FindObject("CutFlow_mumumu_TTbarBkg");
   if ( CutFlow_mumumu_TTbarBkg==NULL) std::cout<<"WARNING CutFlow_mumumu_TTbarBkg"<<" empty"<<std::endl;
   TH1F *  CutFlow_mumumu_Zjets      = (TH1F*)gROOT->FindObject("CutFlow_mumumu_Zjets");
@@ -118,8 +118,8 @@ void CutFlow(){
   
   TH1F *  ErrCutFlow_mumumu_DataMu     = (TH1F*)gROOT->FindObject("ErrCutFlow_mumumu_DataMu");
   if ( ErrCutFlow_mumumu_DataMu==NULL ) std::cout<<"WARNING "<<"ErrCutFlow_mumumu_DataMu empty"<<std::endl;
-  TH1F *  ErrCutFlow_mumumu_FCNCkut   = (TH1F*)gROOT->FindObject("ErrCutFlow_mumumu_FCNCkut");
-  if ( ErrCutFlow_mumumu_FCNCkut==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumumu_FCNCkut empty"<<std::endl;
+  TH1F *  ErrCutFlow_mumumu_FCNCzut   = (TH1F*)gROOT->FindObject("ErrCutFlow_mumumu_FCNCzut");
+  if ( ErrCutFlow_mumumu_FCNCzut==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumumu_FCNCzut empty"<<std::endl;
   TH1F *  ErrCutFlow_mumumu_TTbarBkg   = (TH1F*)gROOT->FindObject("ErrCutFlow_mumumu_TTbarBkg");
   if ( ErrCutFlow_mumumu_TTbarBkg==NULL) std::cout<<"WARNING ErrCutFlow_mumumu_TTbarBkg"<<" empty"<<std::endl;
   TH1F *  ErrCutFlow_mumumu_Zjets      = (TH1F*)gROOT->FindObject("ErrCutFlow_mumumu_Zjets");
@@ -157,8 +157,8 @@ void CutFlow(){
   // mumue  
   TH1F *  CutFlow_mumue_DataMu     = (TH1F*)gROOT->FindObject("CutFlow_mumue_DataMuEG");
   if ( CutFlow_mumue_DataMu==NULL ) std::cout<<"WARNING "<<"CutFlow_mumue_DataMuEG empty"<<std::endl;
-  TH1F *  CutFlow_mumue_FCNCkut   = (TH1F*)gROOT->FindObject("CutFlow_mumue_FCNCkut");
-  if ( CutFlow_mumue_FCNCkut==NULL) std::cout<<"WARNING "<<"CutFlow_mumue_FCNCkut empty"<<std::endl;
+  TH1F *  CutFlow_mumue_FCNCzut   = (TH1F*)gROOT->FindObject("CutFlow_mumue_FCNCzut");
+  if ( CutFlow_mumue_FCNCzut==NULL) std::cout<<"WARNING "<<"CutFlow_mumue_FCNCzut empty"<<std::endl;
   TH1F *  CutFlow_mumue_TTbarBkg   = (TH1F*)gROOT->FindObject("CutFlow_mumue_TTbarBkg");
   if ( CutFlow_mumue_TTbarBkg==NULL) std::cout<<"WARNING CutFlow_mumue_TTbarBkg"<<" empty"<<std::endl;
   TH1F *  CutFlow_mumue_Zjets      = (TH1F*)gROOT->FindObject("CutFlow_mumue_Zjets");
@@ -194,8 +194,8 @@ void CutFlow(){
   
   TH1F *  ErrCutFlow_mumue_DataMu     = (TH1F*)gROOT->FindObject("ErrCutFlow_mumue_DataMuEG");
   if ( ErrCutFlow_mumue_DataMu==NULL ) std::cout<<"WARNING "<<"ErrCutFlow_mumue_DataMuEG empty"<<std::endl;
-  TH1F *  ErrCutFlow_mumue_FCNCkut   = (TH1F*)gROOT->FindObject("ErrCutFlow_mumue_FCNCkut");
-  if ( ErrCutFlow_mumue_FCNCkut==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumue_FCNCkut empty"<<std::endl;
+  TH1F *  ErrCutFlow_mumue_FCNCzut   = (TH1F*)gROOT->FindObject("ErrCutFlow_mumue_FCNCzut");
+  if ( ErrCutFlow_mumue_FCNCzut==NULL) std::cout<<"WARNING "<<"ErrCutFlow_mumue_FCNCzut empty"<<std::endl;
   TH1F *  ErrCutFlow_mumue_TTbarBkg   = (TH1F*)gROOT->FindObject("ErrCutFlow_mumue_TTbarBkg");
   if ( ErrCutFlow_mumue_TTbarBkg==NULL) std::cout<<"WARNING ErrCutFlow_mumue_TTbarBkg"<<" empty"<<std::endl;
   TH1F *  ErrCutFlow_mumue_Zjets      = (TH1F*)gROOT->FindObject("ErrCutFlow_mumue_Zjets");
@@ -232,8 +232,8 @@ void CutFlow(){
   //eemu
   TH1F *  CutFlow_eemu_DataEG     = (TH1F*)gROOT->FindObject("CutFlow_eemu_DataMuEG");
   if ( CutFlow_eemu_DataEG==NULL ) std::cout<<"WARNING "<<"CutFlow_eemu_DataMuEG empty"<<std::endl;
-  TH1F *  CutFlow_eemu_FCNCkut   = (TH1F*)gROOT->FindObject("CutFlow_eemu_FCNCkut");
-  if ( CutFlow_eemu_FCNCkut==NULL) std::cout<<"WARNING "<<"CutFlow_eemu_FCNCkut empty"<<std::endl;
+  TH1F *  CutFlow_eemu_FCNCzut   = (TH1F*)gROOT->FindObject("CutFlow_eemu_FCNCzut");
+  if ( CutFlow_eemu_FCNCzut==NULL) std::cout<<"WARNING "<<"CutFlow_eemu_FCNCzut empty"<<std::endl;
   TH1F *  CutFlow_eemu_TTbarBkg   = (TH1F*)gROOT->FindObject("CutFlow_eemu_TTbarBkg");
   if ( CutFlow_eemu_TTbarBkg==NULL) std::cout<<"WARNING CutFlow_eemu_TTbarBkg"<<" empty"<<std::endl;
   TH1F *  CutFlow_eemu_Zjets      = (TH1F*)gROOT->FindObject("CutFlow_eemu_Zjets");
@@ -270,8 +270,8 @@ void CutFlow(){
   
   TH1F *  ErrCutFlow_eemu_DataEG     = (TH1F*)gROOT->FindObject("ErrCutFlow_eemu_DataMuEG");
   if ( ErrCutFlow_eemu_DataEG==NULL ) std::cout<<"WARNING "<<"ErrCutFlow_eemu_DataMuEG empty"<<std::endl;
-  TH1F *  ErrCutFlow_eemu_FCNCkut   = (TH1F*)gROOT->FindObject("ErrCutFlow_eemu_FCNCkut");
-  if ( ErrCutFlow_eemu_FCNCkut==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eemu_FCNCkut empty"<<std::endl;
+  TH1F *  ErrCutFlow_eemu_FCNCzut   = (TH1F*)gROOT->FindObject("ErrCutFlow_eemu_FCNCzut");
+  if ( ErrCutFlow_eemu_FCNCzut==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eemu_FCNCzut empty"<<std::endl;
   TH1F *  ErrCutFlow_eemu_TTbarBkg   = (TH1F*)gROOT->FindObject("ErrCutFlow_eemu_TTbarBkg");
   if ( ErrCutFlow_eemu_TTbarBkg==NULL) std::cout<<"WARNING ErrCutFlow_eemu_TTbarBkg"<<" empty"<<std::endl;
   TH1F *  ErrCutFlow_eemu_Zjets      = (TH1F*)gROOT->FindObject("ErrCutFlow_eemu_Zjets");
@@ -308,8 +308,8 @@ void CutFlow(){
   // eee   
   TH1F *  CutFlow_eee_DataEG     = (TH1F*)gROOT->FindObject("CutFlow_eee_DataEG");
   if ( CutFlow_eee_DataEG==NULL ) std::cout<<"WARNING "<<"CutFlow_eee_DataEG empty"<<std::endl;
-  TH1F *  CutFlow_eee_FCNCkut   = (TH1F*)gROOT->FindObject("CutFlow_eee_FCNCkut");
-  if ( CutFlow_eee_FCNCkut==NULL) std::cout<<"WARNING "<<"CutFlow_eee_FCNCkut empty"<<std::endl;
+  TH1F *  CutFlow_eee_FCNCzut   = (TH1F*)gROOT->FindObject("CutFlow_eee_FCNCzut");
+  if ( CutFlow_eee_FCNCzut==NULL) std::cout<<"WARNING "<<"CutFlow_eee_FCNCzut empty"<<std::endl;
   TH1F *  CutFlow_eee_TTbarBkg   = (TH1F*)gROOT->FindObject("CutFlow_eee_TTbarBkg");
   if ( CutFlow_eee_TTbarBkg==NULL) std::cout<<"WARNING CutFlow_eee_TTbarBkg"<<" empty"<<std::endl;
   TH1F *  CutFlow_eee_Zjets      = (TH1F*)gROOT->FindObject("CutFlow_eee_Zjets");
@@ -346,8 +346,8 @@ void CutFlow(){
   
   TH1F *  ErrCutFlow_eee_DataEG     = (TH1F*)gROOT->FindObject("ErrCutFlow_eee_DataEG");
   if ( ErrCutFlow_eee_DataEG==NULL ) std::cout<<"WARNING "<<"ErrCutFlow_eee_DataEG empty"<<std::endl;
-  TH1F *  ErrCutFlow_eee_FCNCkut   = (TH1F*)gROOT->FindObject("ErrCutFlow_eee_FCNCkut");
-  if ( ErrCutFlow_eee_FCNCkut==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eee_FCNCkut empty"<<std::endl;
+  TH1F *  ErrCutFlow_eee_FCNCzut   = (TH1F*)gROOT->FindObject("ErrCutFlow_eee_FCNCzut");
+  if ( ErrCutFlow_eee_FCNCzut==NULL) std::cout<<"WARNING "<<"ErrCutFlow_eee_FCNCzut empty"<<std::endl;
   TH1F *  ErrCutFlow_eee_TTbarBkg   = (TH1F*)gROOT->FindObject("ErrCutFlow_eee_TTbarBkg");
   if ( ErrCutFlow_eee_TTbarBkg==NULL) std::cout<<"WARNING ErrCutFlow_eee_TTbarBkg"<<" empty"<<std::endl;
   TH1F *  ErrCutFlow_eee_Zjets      = (TH1F*)gROOT->FindObject("ErrCutFlow_eee_Zjets");
@@ -393,6 +393,10 @@ void CutFlow(){
   std::string rep = "";
   std::cout << "Inputs : SF DY corrects ? [y/n] "<<std::endl;
   cin >> rep ;
+      CutFlow_mumumu_FCNCzut->Scale(0.1);
+      CutFlow_mumue_FCNCzut->Scale(0.1);
+      CutFlow_eemu_FCNCzut->Scale(0.1);
+      CutFlow_eee_FCNCzut->Scale(0.1);
   if ( rep=="y" ){ 
     
     
@@ -405,11 +409,11 @@ void CutFlow(){
       
       
       // mumumu channel  
-      if ( CutFlow_mumumu_FCNCkut!=NULL ) { 
-        TabFlow1[0][0][i] = CutFlow_mumumu_FCNCkut->GetBinContent(i+1);
-	TabFlow2[0][0][i] = ErrCutFlow_mumumu_FCNCkut->GetBinContent(i+1);
-        TabFlow1[4][0][i] += CutFlow_mumumu_FCNCkut->GetBinContent(i+1);
-	TabFlow2[4][0][i] += ErrCutFlow_mumumu_FCNCkut->GetBinContent(i+1);
+      if ( CutFlow_mumumu_FCNCzut!=NULL ) { 
+        TabFlow1[0][0][i] = CutFlow_mumumu_FCNCzut->GetBinContent(i+1);
+	TabFlow2[0][0][i] = ErrCutFlow_mumumu_FCNCzut->GetBinContent(i+1);
+        TabFlow1[4][0][i] += CutFlow_mumumu_FCNCzut->GetBinContent(i+1);
+	TabFlow2[4][0][i] += ErrCutFlow_mumumu_FCNCzut->GetBinContent(i+1);
       }	
       if ( CutFlow_mumumu_TTbarBkg!=NULL ) { 
         TabFlow1[0][1][i] = CutFlow_mumumu_TTbarBkg->GetBinContent(i+1);
@@ -512,11 +516,11 @@ void CutFlow(){
       
       
       // mumue channel  
-      if ( CutFlow_mumue_FCNCkut!=NULL ) { 
-        TabFlow1[1][0][i] = CutFlow_mumue_FCNCkut->GetBinContent(i+1);
-	TabFlow2[1][0][i] = ErrCutFlow_mumue_FCNCkut->GetBinContent(i+1);
-        TabFlow1[4][0][i] += CutFlow_mumue_FCNCkut->GetBinContent(i+1);
-	TabFlow2[4][0][i] += ErrCutFlow_mumue_FCNCkut->GetBinContent(i+1);
+      if ( CutFlow_mumue_FCNCzut!=NULL ) { 
+        TabFlow1[1][0][i] = CutFlow_mumue_FCNCzut->GetBinContent(i+1);
+	TabFlow2[1][0][i] = ErrCutFlow_mumue_FCNCzut->GetBinContent(i+1);
+        TabFlow1[4][0][i] += CutFlow_mumue_FCNCzut->GetBinContent(i+1);
+	TabFlow2[4][0][i] += ErrCutFlow_mumue_FCNCzut->GetBinContent(i+1);
       }	
       if ( CutFlow_mumue_TTbarBkg!=NULL ) { 
         TabFlow1[1][1][i] = CutFlow_mumue_TTbarBkg->GetBinContent(i+1);
@@ -617,11 +621,11 @@ void CutFlow(){
       
       
       // eemuchannel
-      if ( CutFlow_eemu_FCNCkut!=NULL ) { 
-        TabFlow1[2][0][i] = CutFlow_eemu_FCNCkut->GetBinContent(i+1);
-	TabFlow2[2][0][i] = ErrCutFlow_eemu_FCNCkut->GetBinContent(i+1);
-        TabFlow1[4][0][i] += CutFlow_eemu_FCNCkut->GetBinContent(i+1);
-	TabFlow2[4][0][i] += ErrCutFlow_eemu_FCNCkut->GetBinContent(i+1);
+      if ( CutFlow_eemu_FCNCzut!=NULL ) { 
+        TabFlow1[2][0][i] = CutFlow_eemu_FCNCzut->GetBinContent(i+1);
+	TabFlow2[2][0][i] = ErrCutFlow_eemu_FCNCzut->GetBinContent(i+1);
+        TabFlow1[4][0][i] += CutFlow_eemu_FCNCzut->GetBinContent(i+1);
+	TabFlow2[4][0][i] += ErrCutFlow_eemu_FCNCzut->GetBinContent(i+1);
       }	
       if ( CutFlow_eemu_TTbarBkg!=NULL ) { 
         TabFlow1[2][1][i] = CutFlow_eemu_TTbarBkg->GetBinContent(i+1);
@@ -633,8 +637,8 @@ void CutFlow(){
       if ( CutFlow_eemu_Zjets!=NULL ) {
         TabFlow1[2][2][i] = CutFlow_eemu_Zjets->GetBinContent(i+1);
 	TabFlow2[2][2][i] = ErrCutFlow_eemu_Zjets->GetBinContent(i+1);
-        TabFlow1[4][2][i] = CutFlow_eemu_Zjets->GetBinContent(i+1);
-	TabFlow2[4][2][i] = ErrCutFlow_eemu_Zjets->GetBinContent(i+1);
+        TabFlow1[4][2][i] += CutFlow_eemu_Zjets->GetBinContent(i+1);
+	TabFlow2[4][2][i] += ErrCutFlow_eemu_Zjets->GetBinContent(i+1);
       }	
       if ( CutFlow_eemu_DYToLL_M_10To50!=NULL ) {
 	TabFlow1[2][2][i] += CutFlow_eemu_DYToLL_M_10To50->GetBinContent(i+1) ;
@@ -720,11 +724,11 @@ void CutFlow(){
       }	
       
       // eee channel  
-      if ( CutFlow_eee_FCNCkut!=NULL ) { 
-        TabFlow1[3][0][i] = CutFlow_eee_FCNCkut->GetBinContent(i+1);
-	TabFlow2[3][0][i] = ErrCutFlow_eee_FCNCkut->GetBinContent(i+1);
-        TabFlow1[4][0][i] += CutFlow_eee_FCNCkut->GetBinContent(i+1);
-	TabFlow2[4][0][i] += ErrCutFlow_eee_FCNCkut->GetBinContent(i+1);
+      if ( CutFlow_eee_FCNCzut!=NULL ) { 
+        TabFlow1[3][0][i] = CutFlow_eee_FCNCzut->GetBinContent(i+1);
+	TabFlow2[3][0][i] = ErrCutFlow_eee_FCNCzut->GetBinContent(i+1);
+        TabFlow1[4][0][i] += CutFlow_eee_FCNCzut->GetBinContent(i+1);
+	TabFlow2[4][0][i] += ErrCutFlow_eee_FCNCzut->GetBinContent(i+1);
       }	
       if ( CutFlow_eee_TTbarBkg!=NULL ) { 
         TabFlow1[3][1][i] = CutFlow_eee_TTbarBkg->GetBinContent(i+1);
@@ -934,12 +938,13 @@ void CutFlow(){
       // ofile << "\\hline" << endl;
       ofile << "\\hline" << endl;
       ofile << "\\end{tabular}" << endl;
+      ofile << " " << endl;
       // end ajout Caro
-      ofile << "\\begin{tabular}{|l|c|c|c|c|c|}" << endl;
+      ofile << "\\begin{tabular}{|l|c|c|c|c|}" << endl;
       //ofile << "\\begin{tabular}{|l|c|c|c|c|c|c|c|}" << endl;
       ofile << "\\hline" << endl;
       ofile << "\\hline" << endl;
-      ofile << "Cut & Fake Rate Backg & SingleTop & DY & Diboson  \\\\" << endl;
+      ofile << "Cut & ttbar & SingleTop & DY & Diboson  \\\\" << endl;
       //ofile << "Cut & TopBackg & SingleTop & DY & Wjets  & Diboson & QCD  \\\\" << endl;
       ofile << "\\hline" << endl;
       
