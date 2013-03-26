@@ -115,13 +115,15 @@ class ProofSelectorMyCutFlow : public TSelector {
   
   //Here define Scale Factors
   //SF_trigger applied for mumu
-  double SF_trig_mumu ;  
-  double SF_trig_emu;  
-  double SF_trig_ee ;  
+  double SF_trig_mumumu ;  
+  double SF_trig_mumue;  
+  double SF_trig_eemu ;
+  double SF_trig_eee ;  
   
-  double SF_trig_mumu_error ;  
-  double SF_trig_emu_error;  
-  double SF_trig_ee_error ;  
+  double SF_trig_mumumu_error ;  
+  double SF_trig_mumue_error;  
+  double SF_trig_eemu_error ;  
+  double SF_trig_eee_error ;
   
   double SF_BranchingRatio_ll ; 
   double SF_BranchingRatio_lj ; 

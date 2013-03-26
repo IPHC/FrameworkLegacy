@@ -65,21 +65,21 @@ ProofSelectorMyCutFlow::ProofSelectorMyCutFlow()
   
   applyFakescale   = true;
   
-  SF_Fake.push_back(3.76); //mumumu
-  SF_Fake.push_back(1.52); //mumue
-  SF_Fake.push_back(3.66); //eemu
+  SF_Fake.push_back(3.63); //mumumu
+  SF_Fake.push_back(1.46); //mumue
+  SF_Fake.push_back(3.80); //eemu
   SF_Fake.push_back(2.24); //eee
   
 
   applyWZ          = true;
    
-  SF_WZ.push_back(0.66); //mumumu
-  SF_WZ.push_back(0.68); //mumue
-  SF_WZ.push_back(0.60); //eemu
-  SF_WZ.push_back(0.71); //eee
+  SF_WZ.push_back(0.64); //mumumu
+  SF_WZ.push_back(0.71); //mumue
+  SF_WZ.push_back(0.62); //eemu
+  SF_WZ.push_back(0.72); //eee
   
   
-  applyWZ_finalSel = true;
+  applyWZ_finalSel = false;
   SF_WZ_finalSel = 0.91; // 4 channels combined
   
   
@@ -96,7 +96,7 @@ ProofSelectorMyCutFlow::ProofSelectorMyCutFlow()
   
   
   useNonIsoWcand = false;
-  looseIso = 0.4;
+  looseIso = 0.4; //0.4
   rand.SetSeed(102994949);
 
 }
@@ -213,13 +213,18 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   
   
   
-  SF_trig_mumu = 0.977; 
-  SF_trig_emu= 1.008; 
-  SF_trig_ee = 0.962; 
+  SF_trig_mumumu = 1.012; 
+  SF_trig_mumue= 1.003; 
+  SF_trig_eemu = 0.971; 
+  SF_trig_eee = 0.959;
   
-  SF_trig_mumu_error  = 0.014; 
-  SF_trig_emu_error = 0.007; 
-  SF_trig_ee_error  = 0.016; 
+  
+  // Not full error, systematics on DY SF take into account only contamination from ttbar, WW, ZZ, singlet
+  // To be updated
+  SF_trig_mumumu_error  = 0.029; 
+  SF_trig_mumue_error = 0.031;
+  SF_trig_eemu_error = 0.038; 
+  SF_trig_eee_error  = 0.038; 
   
   
  
@@ -253,14 +258,16 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   //For trigger systematics 
   
   if(datasetName=="TTbarTriggerUp"){
-    SF_trig_mumu += SF_trig_mumu_error;
-    SF_trig_emu+= SF_trig_emu_error;  
-    SF_trig_ee += SF_trig_ee_error; 
+    SF_trig_mumumu += SF_trig_mumumu_error;
+    SF_trig_mumue+= SF_trig_mumue_error;  
+    SF_trig_eemu += SF_trig_eemu_error;
+    SF_trig_eee += SF_trig_eee_error; 
   } 
   if(datasetName=="TTbarTriggerDown"){
-    SF_trig_mumu  -= SF_trig_mumu_error;
-    SF_trig_emu -= SF_trig_emu_error;  
-    SF_trig_ee  -= SF_trig_ee_error; 
+    SF_trig_mumumu  -= SF_trig_mumumu_error;
+    SF_trig_mumue -= SF_trig_mumue_error;  
+    SF_trig_eemu  -= SF_trig_eemu_error;
+    SF_trig_eee  -= SF_trig_eee_error; 
   } 
   
   
@@ -1547,10 +1554,10 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	
 	if(applyTrigger  &&  !isData ){	
 	
-	  if(IChannel == 0 && cand3leptonChannel == "mumumu")Dweight[ITypeMC]*=SF_trig_mumu;
-          if(IChannel == 1 && cand3leptonChannel == "mumue" )Dweight[ITypeMC]*=SF_trig_emu;
-	  if(IChannel == 2 && cand3leptonChannel == "eemu"  )Dweight[ITypeMC]*=SF_trig_emu;
-	  if(IChannel == 3 && cand3leptonChannel == "eee"   )Dweight[ITypeMC]*=SF_trig_ee;
+	  if(IChannel == 0 && cand3leptonChannel == "mumumu")Dweight[ITypeMC]*=SF_trig_mumumu;
+          if(IChannel == 1 && cand3leptonChannel == "mumue" )Dweight[ITypeMC]*=SF_trig_mumue;
+	  if(IChannel == 2 && cand3leptonChannel == "eemu"  )Dweight[ITypeMC]*=SF_trig_eemu;
+	  if(IChannel == 3 && cand3leptonChannel == "eee"   )Dweight[ITypeMC]*=SF_trig_eee;
 	
 	}
 	
