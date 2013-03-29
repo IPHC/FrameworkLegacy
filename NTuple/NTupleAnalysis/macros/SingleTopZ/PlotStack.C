@@ -34,10 +34,10 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   
   
   
-  
+
   TString filename;
-  //filename="backup_outputProof27-11-12_18-24-14/proof.root"; 
-  filename="backup_outputProof20-12-12_10-03-23_noSFapplied_Zenriched/proof_merged_noSF_Zenriched.root"; 
+  //filename="backup_outputProof20-12-12_10-03-23_noSFapplied_Zenriched/proof_merged_noSF_Zenriched.root"; 
+  filename="RootFiles/proof_woWZSF.root";
   
   
   TString channel;
@@ -264,6 +264,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   TH1F * histo_WW ;
   TH1F * histo_WZ ;
   TH1F * histo_ZZ ;
+  TH1F * histo_TZq;
   TH1F * histo_SingleToptW;
   TH1F * histo_TtW;
   TH1F * histo_TbartW;
@@ -286,7 +287,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   TH1F * histo_Data_DataMu   = (TH1F*)filechannel->Get(histo_Data_name_DataMu);
   TH1F * histo_Data_DataMuEG = (TH1F*)filechannel->Get(histo_Data_name_DataMuEG);
   
-  
+ 
   if(namechan=="mumumu"){
     histo_Data  = (TH1F*) histo_Data_DataMu->Clone()  ;
   }
@@ -459,6 +460,20 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_Wjets->Add(histo_Wjets, h_4_Wjets     , 1, 1);
   }
   
+
+  TString histo_TZq_name = plotname+channel+selection+"_TZq";
+  histo_TZq         = (TH1F*)filechannel->Get(histo_TZq_name);
+  if (namechan=="all") {
+    TString h_name2_TZq=plotname+"mumue"+selection+"_TZq";
+    TH1F * h_2_TZq = (TH1F*)filechannel->Get(h_name2_TZq);
+    TString h_name3_TZq=plotname+"eemu"+selection+"_TZq";
+    TH1F * h_3_TZq = (TH1F*)filechannel->Get(h_name3_TZq);
+    TString h_name4_TZq=plotname+"eee"+selection+"_TZq";
+    TH1F * h_4_TZq = (TH1F*)filechannel->Get(h_name4_TZq);
+    histo_TZq->Add(histo_TZq, h_2_TZq     , 1, 1);
+    histo_TZq->Add(histo_TZq, h_3_TZq     , 1, 1);
+    histo_TZq->Add(histo_TZq, h_4_TZq     , 1, 1);
+  }
 
   TString histo_SingleToptW_name = plotname+channel+selection+"_SingleToptW";
   histo_SingleToptW         = (TH1F*)filechannel->Get(histo_SingleToptW_name);
@@ -677,13 +692,15 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   histo_Wjets->SetFillStyle(1001);
   histo_VV->SetFillStyle(1001);
   histo_SingleToptW->SetFillStyle(1001);
-    
+  histo_TZq->SetFillStyle(1001);
+  
   histo_TTbarBkg->SetFillColor(kRed-7);
   histo_Zjets->SetFillColor(kAzure-2);
   histo_Wjets->SetFillColor(kGreen-3);
   //    histo_VV->SetFillColor(kWhite);
   histo_VV->SetFillColor(13);
   histo_SingleToptW->SetFillColor(kMagenta);
+  histo_TZq->SetFillColor(kAzure+8);
   // color code for Z/DY -> tau tau : kAzure+8
   
   TH1F * hmc= (TH1F*) histo_TTbarBkg->Clone();
@@ -704,6 +721,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_VV->Rebin(bins);
     histo_Wjets->Rebin(bins);
     histo_SingleToptW->Rebin(bins);
+    histo_TZq->Rebin(bins);
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
@@ -716,6 +734,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_VV->Rebin(bins);
     histo_Wjets->Rebin(bins);
     histo_SingleToptW->Rebin(bins);
+    histo_TZq->Rebin(bins);
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
@@ -729,6 +748,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_VV->Rebin(bins);
     histo_Wjets->Rebin(bins);
     histo_SingleToptW->Rebin(bins);
+    histo_TZq->Rebin(bins);
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
@@ -741,6 +761,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_VV->Rebin(bins);
     histo_Wjets->Rebin(bins);
     histo_SingleToptW->Rebin(bins);
+    histo_TZq->Rebin(bins);
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
@@ -753,6 +774,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_VV->Rebin(bins);
     histo_Wjets->Rebin(bins);
     histo_SingleToptW->Rebin(bins);
+    histo_TZq->Rebin(bins);
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
@@ -765,6 +787,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_VV->Rebin(bins);
     histo_Wjets->Rebin(bins);
     histo_SingleToptW->Rebin(bins);
+    histo_TZq->Rebin(bins);
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
@@ -778,6 +801,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_VV->Rebin(bins);
     histo_Wjets->Rebin(bins);
     histo_SingleToptW->Rebin(bins);
+    histo_TZq->Rebin(bins);
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
@@ -791,6 +815,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_VV->Rebin(bins);
     histo_Wjets->Rebin(bins);
     histo_SingleToptW->Rebin(bins);
+    histo_TZq->Rebin(bins);
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
@@ -803,6 +828,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_VV->Rebin(bins);
     histo_Wjets->Rebin(bins);
     histo_SingleToptW->Rebin(bins);
+    histo_TZq->Rebin(bins);
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
@@ -814,6 +840,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_VV->Rebin(bins);
     histo_Wjets->Rebin(bins);
     histo_SingleToptW->Rebin(bins);
+    histo_TZq->Rebin(bins);
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
@@ -825,6 +852,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
     histo_VV->Rebin(bins);
     histo_Wjets->Rebin(bins);
     histo_SingleToptW->Rebin(bins);
+    histo_TZq->Rebin(bins);
     histo_TTbarBkg->Rebin(bins);
     histo_Zjets->Rebin(bins);
     histo_Data->Rebin(bins);
@@ -887,10 +915,10 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   
   
   THStack* hs= new THStack();
-  hs->Add(histo_TTbarBkg);
-  //hs->Add(histo_Wjets);
-  hs->Add(histo_VV);
   hs->Add(histo_SingleToptW);
+  hs->Add(histo_TTbarBkg);
+  hs->Add(histo_TZq);
+  hs->Add(histo_VV);
   hs->Add(histo_Zjets);
   
   histo_Data->GetXaxis()->SetTitle("");
@@ -1048,11 +1076,12 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   //  qw->AddEntry(histo_Data,         info_data,                "p");
   qw->AddEntry(histo_Data,         "Data" ,                "ep");
   qw->AddEntry(histo_Zjets,        "DY "                  ,"f");
-  qw->AddEntry(histo_SingleToptW,  "single top "                  ,"f");
   qw->AddEntry(histo_VV,           "VV "                  ,"f");
+  qw->AddEntry(histo_TZq,  "tZq "                  ,"f");
+  qw->AddEntry(histo_TTbarBkg,     " t#bar{t} background "     ,"f");
+  qw->AddEntry(histo_SingleToptW,  "single top "                  ,"f");
   //qw->AddEntry(histo_Wjets,        "W  "                  ,"f");
   //qw->AddEntry(histo_TTbarBkg,     "t#bar{t} other  "     ,"f");
-  qw->AddEntry(histo_TTbarBkg,     " t#bar{t} background "     ,"f");
   qw->AddEntry(histo_FCNCzut,     " tZ "     ,"l");
   qw->SetFillColor(0);
   qw->SetTextFont(42);

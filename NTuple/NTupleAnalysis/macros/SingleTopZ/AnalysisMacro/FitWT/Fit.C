@@ -47,14 +47,17 @@ int systematics_TTbar	  = 0;
 int systematics_SingleTop = 0;
 int systematics_WW	  = 0;
 int systematics_ZZ	  = 0;
+int systematics_TZq	  = 0;
 
 bool ExtractHisto(std::string sel, std::string obs, std::string channel, TH1F*& zMass_Data, TH1F*& totMC, TH1F*& totMC_DY, TH1F*& DYtemplate)
 {
   // Opening the input file
   std::cout << "Opening the input file ..." << std::endl;
-  std::string filename  = "proof_merged_noSF.root"; // for nom sample
-  std::string filename2 = "proof_merged_noSF_Zenriched.root"; // Z enriched
-  
+
+  //std::string filename  = "../../RootFiles/proof_woTrigEff3.root"; // for nom sample
+  //std::string filename2 = "../../RootFiles/proof_DataZjets_woTrigEff_good.root"; // Z enriched
+  std::string filename  = "../../RootFiles/proof_woBkgSF_good.root"; // for nom sample
+  std::string filename2 = "../../RootFiles/proof_DataZjets_woBkgSF_good.root"; // Z enriched
   
   TFile *f_data   = new TFile(filename.c_str());
   TFile *f_data2  = new TFile(filename2.c_str());
@@ -73,6 +76,7 @@ bool ExtractHisto(std::string sel, std::string obs, std::string channel, TH1F*& 
   histoName_List.push_back("WW");
   histoName_List.push_back("ZZ");
   histoName_List.push_back("WZ");
+  histoName_List.push_back("TZq");
 
   std::vector<TString> histoName_List_DY;
   if(channel == "mumumu"                    ) histoName_List_DY.push_back("DataMu");
@@ -132,7 +136,7 @@ bool ExtractHisto(std::string sel, std::string obs, std::string channel, TH1F*& 
     std::cout << "Loading plot for MC '" << histoname << "' ... " << std::endl;
     histo_List.push_back(dynamic_cast<TH1F*>( gROOT->FindObject(histoname.c_str()) ) );
     if (histo_List.back()==0) {std::cout << "ERROR : plot not found" << std::endl; return false; }
-    
+    std::cout<<"===== "<<histo_List.back()->Integral()<<std::endl;
     
     double weightfactor = 1;
     if(systematics ==  1  ) weightfactor = 1.3;
@@ -144,6 +148,7 @@ bool ExtractHisto(std::string sel, std::string obs, std::string channel, TH1F*& 
     if(histoName_List[i] == "TbartW"   &&  systematics_SingleTop!=0 ) histo_List.back()->Scale( weightfactor);
     if(histoName_List[i] == "WW"       &&  systematics_WW!=0        ) histo_List.back()->Scale( weightfactor);
     if(histoName_List[i] == "ZZ"       &&  systematics_ZZ!=0        ) histo_List.back()->Scale( weightfactor);
+    if(histoName_List[i] == "TZq"      &&  systematics_TZq!=0       ) histo_List.back()->Scale( weightfactor);
     
     
   }
@@ -450,7 +455,9 @@ int main(int argn, char **argv)
   TH1F* totMC_DY  =0;
   TH1F* DYtemplate=0;
   
-  std::string channel = "eee";
+  std::string channel = "mumumu";
+
+  if(argn>1) channel = argv[1];
   
   
   systematics	        = 0;
@@ -458,6 +465,7 @@ int main(int argn, char **argv)
   systematics_SingleTop = 0;
   systematics_WW        = 0;
   systematics_ZZ        = 0;
+  systematics_TZq       = 0;
   
  
   
@@ -468,6 +476,7 @@ int main(int argn, char **argv)
   systematics_SingleTop = 0;
   systematics_WW        = 0;
   systematics_ZZ        = 0;
+  systematics_TZq       = 0;
   
   
   if (!ExtractHisto("leptcut", // "leptcut"
@@ -497,6 +506,7 @@ int main(int argn, char **argv)
   systematics_SingleTop = 1;
   systematics_WW        = 0;
   systematics_ZZ        = 0;
+  systematics_TZq       = 0;
   if (!ExtractHisto("leptcut", // "leptcut"
                     "mWT", // "RecoPtZ", //"RecoTopMass", //"RecoPtZ", // RecoTopMass, //mWT
                     channel,
@@ -522,6 +532,7 @@ int main(int argn, char **argv)
   systematics_SingleTop = 0;
   systematics_WW        = 1;
   systematics_ZZ        = 0;
+  systematics_TZq       = 0;
   if (!ExtractHisto("leptcut", // "leptcut"
                     "mWT", // "RecoPtZ", //"RecoTopMass", //"RecoPtZ", // RecoTopMass, //mWT
                     channel,
@@ -548,6 +559,7 @@ int main(int argn, char **argv)
   systematics_SingleTop = 0;
   systematics_WW        = 0;
   systematics_ZZ        = 1;
+  systematics_TZq       = 0;
   if (!ExtractHisto("leptcut", // "leptcut"
                     "mWT", // "RecoPtZ", //"RecoTopMass", //"RecoPtZ", // RecoTopMass, //mWT
                     channel,
@@ -568,6 +580,32 @@ int main(int argn, char **argv)
   std::pair <double, double > backZZ2 = LikelihoodFit(channel,zMass_Data,totMC,totMC_DY, DYtemplate,&theApp);
   std::cout << " backTTbarfake SF " << backZZ2.first << "  non fake sf " << backZZ2.second << std::endl;
   
+  //------------- For TZq syst syst values -----------------
+  systematics	        = 1;
+  systematics_TTbar     = 0;
+  systematics_SingleTop = 0;
+  systematics_WW        = 0;
+  systematics_ZZ        = 0;
+  systematics_TZq       = 1;
+  if (!ExtractHisto("leptcut", // "leptcut"
+                    "mWT", // "RecoPtZ", //"RecoTopMass", //"RecoPtZ", // RecoTopMass, //mWT
+                    channel,
+                    zMass_Data,totMC, totMC_DY, DYtemplate)) abort();
+		    
+  
+  std::pair <double, double > backTZq1 = LikelihoodFit(channel,zMass_Data,totMC,totMC_DY, DYtemplate,&theApp);
+  std::cout << " backTZq SF " << backTZq1.first << "  non fake sf " << backTZq1.second << std::endl;
+  
+  
+  systematics	        = -1;
+  if (!ExtractHisto("leptcut", // "leptcut"
+                    "mWT", // "RecoPtZ", //"RecoTopMass", //"RecoPtZ", // RecoTopMass, //mWT
+                    channel,
+                    zMass_Data,totMC, totMC_DY, DYtemplate)) abort();
+		    
+  
+  std::pair <double, double > backTZq2 = LikelihoodFit(channel,zMass_Data,totMC,totMC_DY, DYtemplate,&theApp);
+  std::cout << " backTZq SF " << backTZq2.first << "  non fake sf " << backTZq2.second << std::endl;
   
   
  
@@ -578,6 +616,7 @@ int main(int argn, char **argv)
   systematics_SingleTop = 0;
   systematics_WW        = 0;
   systematics_ZZ        = 0;
+  systematics_TZq       = 0;
   
   
   if (!ExtractHisto("leptcut", // "leptcut"
@@ -602,6 +641,9 @@ int main(int argn, char **argv)
   double ZZuncert1 = (backZZ1.first-nom.first)/nom.first;
   double ZZuncert2 = (backZZ2.first-nom.first)/nom.first;
   
+  double TZquncert1 = (backTZq1.first-nom.first)/nom.first;
+  double TZquncert2 = (backTZq2.first-nom.first)/nom.first;
+  
   
   if(channel == "mumumu") std::cout << "  $\\mu\\mu\\mu$ &  " ;
   if(channel == "mumue")  std::cout << "  $\\mu\\mu e$   &  " ;   
@@ -612,7 +654,8 @@ int main(int argn, char **argv)
   std::cout <<  ttbaruncert1 << "/" <<  ttbaruncert2  << " & " ;
   std::cout <<  Stopuncert1  << "/" <<  Stopuncert2   << " & " ;
   std::cout <<  WWuncert1    << "/" <<  WWuncert2     << " & " ;
-  std::cout <<  ZZuncert1    << "/" <<  ZZuncert2     << " \\\\ " << endl;
+  std::cout <<  ZZuncert1    << "/" <<  ZZuncert2     << " & " ;
+  std::cout <<  TZquncert1   << "/" <<  TZquncert2    << " \\\\ " << endl;
   
   
   double totsys =  (backTTbar1.first-nom.first)*(backTTbar1.first-nom.first);
@@ -635,6 +678,11 @@ int main(int argn, char **argv)
   else totsys += (backZZ2.first-nom.first)*(backZZ2.first-nom.first);
   
   std::cout << "totsys4 " << totsys << std::endl;
+  
+  if(fabs(backTZq1.first-nom.first)  > fabs(backTZq2.first-nom.first)) totsys += (backTZq1.first-nom.first)*(backTZq1.first-nom.first);
+  else totsys += (backTZq2.first-nom.first)*(backTZq2.first-nom.first);
+  
+  std::cout << "totsys5 " << totsys << std::endl;
   
   
   
