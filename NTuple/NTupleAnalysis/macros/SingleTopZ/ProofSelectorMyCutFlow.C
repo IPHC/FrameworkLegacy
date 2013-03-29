@@ -65,18 +65,18 @@ ProofSelectorMyCutFlow::ProofSelectorMyCutFlow()
   
   applyFakescale   = true;
   
-  SF_Fake.push_back(3.63); //mumumu
-  SF_Fake.push_back(1.46); //mumue
-  SF_Fake.push_back(3.80); //eemu
-  SF_Fake.push_back(2.24); //eee
+  SF_Fake.push_back(3.71); //mumumu
+  SF_Fake.push_back(1.50); //mumue
+  SF_Fake.push_back(3.69); //eemu
+  SF_Fake.push_back(2.12); //eee
   
 
   applyWZ          = true;
    
-  SF_WZ.push_back(0.64); //mumumu
-  SF_WZ.push_back(0.71); //mumue
-  SF_WZ.push_back(0.62); //eemu
-  SF_WZ.push_back(0.72); //eee
+  SF_WZ.push_back(0.62); //mumumu
+  SF_WZ.push_back(0.68); //mumue
+  SF_WZ.push_back(0.63); //eemu
+  SF_WZ.push_back(0.70); //eee
   
   
   applyWZ_finalSel = false;
@@ -1165,7 +1165,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
     if(ChannelName == "mumue"  ) passtrigger = sel.passTriggerSelection ( dataset, "emu" );
     if(ChannelName == "eemu"   ) passtrigger = sel.passTriggerSelection ( dataset, "emu" );
     if(ChannelName == "eee"    ) passtrigger = sel.passTriggerSelection ( dataset, "ee"  );
-    passtrigger = true;
+
     
     if (   passtrigger   ) {
       //cout << "line 859, pass trigger selection " << endl;
