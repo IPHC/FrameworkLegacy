@@ -24,7 +24,8 @@ void doBDT_FCNC_tZ(TString thevertex){
    // This loads the library
    TMVA::Tools::Instance();
 
-  TString outfileName( "trainingBDT_FCNC_tZ.root" );
+  TString outfileName( "trainingBDT_FCNC_" );
+  outfileName+=thevertex+".root";
   TFile* outputFile = TFile::Open( outfileName, "RECREATE" );
 
   TMVA::Factory *factory ;
@@ -45,8 +46,8 @@ void doBDT_FCNC_tZ(TString thevertex){
    Double_t signalWeight     = 1;
    Double_t backgroundWeight = 1;
    
-   TFile *input_sig   = TFile::Open( "../RootFiles/backup_outputProof02-01-13_18-48-30_AllSFinclWZ/proof_merged.root" );
-   TFile *input_wz    = TFile::Open( "../RootFiles/backup_outputProof02-01-13_18-48-30_AllSFinclWZ/proof_merged.root" );
+   TFile *input_sig   = TFile::Open( "../../RootFiles/proof_woWZSF.root" );
+   TFile *input_wz    = TFile::Open( "../../RootFiles/proof_woWZSF.root" );
    
    
    
@@ -153,10 +154,10 @@ void trainingBDT_FCNC_tZ(){
    TString thevertex_xct = "xct";
 
    doBDT_FCNC_tZ (thevertex_zut);
-   //doBDT_FCNC_tZ (thevertex_zct);
-   
-   
-   
+   doBDT_FCNC_tZ (thevertex_zct);
+   doBDT_FCNC_tZ (thevertex_kut);
+   doBDT_FCNC_tZ (thevertex_kct);
+  
 }
 
 

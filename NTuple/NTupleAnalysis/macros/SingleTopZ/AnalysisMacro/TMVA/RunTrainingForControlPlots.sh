@@ -9,6 +9,7 @@ OUTPUTFILE=trainingBDT_FCNC_tZ.root
 
 `eval scramv1 ru -sh`
 NVAR=`wc -l $VAR_FILE | awk '{print $1}'`
+NVAR=3
 OUTPUT=`echo $OUTPUTFILE | awk -F. '{print $1}'`
 mv $CODE $CODE.save
 
