@@ -79,8 +79,8 @@ ProofSelectorMyCutFlow::ProofSelectorMyCutFlow()
   SF_WZ.push_back(0.70); //eee
   
   
-  applyWZ_finalSel = false;
-  SF_WZ_finalSel = 0.91; // 4 channels combined
+  applyWZ_finalSel = true;
+  SF_WZ_finalSel = 0.93; // 4 channels combined
   
   
   applyLeptonSF  = true;
@@ -219,8 +219,6 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   SF_trig_eee = 0.959;
   
   
-  // Not full error, systematics on DY SF take into account only contamination from ttbar, WW, ZZ, singlet
-  // To be updated
   SF_trig_mumumu_error  = 0.029; 
   SF_trig_mumue_error = 0.031;
   SF_trig_eemu_error = 0.038; 

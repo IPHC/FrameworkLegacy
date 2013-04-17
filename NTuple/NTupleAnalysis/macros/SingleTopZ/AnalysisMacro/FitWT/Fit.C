@@ -54,8 +54,6 @@ bool ExtractHisto(std::string sel, std::string obs, std::string channel, TH1F*& 
   // Opening the input file
   std::cout << "Opening the input file ..." << std::endl;
 
-  //std::string filename  = "../../RootFiles/proof_woTrigEff3.root"; // for nom sample
-  //std::string filename2 = "../../RootFiles/proof_DataZjets_woTrigEff_good.root"; // Z enriched
   std::string filename  = "../../RootFiles/proof_woBkgSF_good.root"; // for nom sample
   std::string filename2 = "../../RootFiles/proof_DataZjets_woBkgSF_good.root"; // Z enriched
   
@@ -437,7 +435,8 @@ TApplication* theApp)
   std::cout << "-----------------------------------------------------------------------" << std::endl;
   std::cout << "That's all folk!" << std::endl;
   
-  
+  if(systematics==0) c1->Print("mWT.pdf");
+ 
   thereturn.first  = coeffModel.getVal()*zMass_Data->Integral()/(totMC_DY->Integral());
   thereturn.second = (1.-coeffModel.getVal())*zMass_Data->Integral()/(totMC->Integral());
   
