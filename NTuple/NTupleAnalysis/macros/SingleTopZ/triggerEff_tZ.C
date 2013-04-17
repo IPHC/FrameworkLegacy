@@ -28,6 +28,8 @@ void MC_error(float &eff_MC, float &err_MC, float eff_Zjets, float err_Zjets, fl
  float a, float err_a, float a_sf, float err_a_sf, float c, float err_c)
 {
   // c = a*a_sf+b*b_sf
+  // a : DY
+  // c : all data
   eff_MC = ( eff_Zjets*a*a_sf + eff_WZ*(c-a*a_sf) )/c;
   err_MC = pow(a*a_sf*err_Zjets,2) + pow((c-a*a_sf)*err_WZ,2) + pow(a_sf*(eff_Zjets-eff_WZ)*err_a,2)
            + pow(a*(eff_Zjets-eff_WZ)*err_a_sf,2) + pow(a*a_sf*(-eff_Zjets+eff_WZ)/c*err_c,2);
@@ -214,6 +216,12 @@ triggerEff(string chan){
     // SF eemu   3.66+/-2.63 SF 0.60
     // SF eee    2.24+/-0.31 SF 0.71
 
+    // Correct SF +/- stat. uncert.
+    // mumumu 3.68+/-0.35
+    // mumue  1.53+/-0.06
+    // eemu   3.52+/-0.41
+    // eee    2.15+/-0.06
+
     float eff_MC, err_MC, err_syst_MC;
     
     /*if (chan=="mumumu")
@@ -230,29 +238,37 @@ triggerEff(string chan){
     // Fully separate stat and syst errors
     // stat (data+MC)
     if (chan=="mumumu")
-      MC_error(eff_MC, err_MC, eff_Zjets, err_Zjets, eff_WZ, err_WZ, 9.2, 3.6, 3.76, 1.91, 196, 14);
+      //MC_error(eff_MC, err_MC, eff_Zjets, err_Zjets, eff_WZ, err_WZ, 9.2, 3.6, 3.76, 1.91, 196, 14);
+      MC_error(eff_MC, err_MC, eff_Zjets, err_Zjets, eff_WZ, err_WZ, 9.2, 3.6, 3.69, 1.87, 196, 14);
     if (chan=="mumue")
-      MC_error(eff_MC, err_MC, eff_Zjets, err_Zjets, eff_WZ, err_WZ, 145.9, 9.9, 1.52, 0.24, 356, 18.9);
+      //MC_error(eff_MC, err_MC, eff_Zjets, err_Zjets, eff_WZ, err_WZ, 145.9, 9.9, 1.52, 0.24, 356, 18.9);
+      MC_error(eff_MC, err_MC, eff_Zjets, err_Zjets, eff_WZ, err_WZ, 145.9, 9.9, 1.53, 0.24, 356, 18.9);
     if (chan=="eemu")
-      MC_error(eff_MC, err_MC, eff_Zjets, err_Zjets, eff_WZ, err_WZ, 3.9, 1.5, 3.66, 2.60, 133, 11.5);
+      //MC_error(eff_MC, err_MC, eff_Zjets, err_Zjets, eff_WZ, err_WZ, 3.9, 1.5, 3.66, 2.60, 133, 11.5);
+      MC_error(eff_MC, err_MC, eff_Zjets, err_Zjets, eff_WZ, err_WZ, 3.9, 1.5, 3.59, 2.63, 133, 11.5);
     if (chan=="eee")
     {
-      MC_error(eff_MC, err_MC, eff_Zjets, err_Zjets, eff_WZ, err_WZ, 91.3, 7.8, 2.24, 0.30, 250, 15.8);
+      //MC_error(eff_MC, err_MC, eff_Zjets, err_Zjets, eff_WZ, err_WZ, 91.3, 7.8, 2.24, 0.30, 250, 15.8);
       // Can compute eff_MC for eee + eemu, but we are not sure that the proportion of WZ and DY is the same when eemu is 
       // triggered by ee or emu trigger. Anyway get a very small difference.
       //MC_error(eff_MC, err_MC, eff_Zjets, err_Zjets, eff_WZ, err_WZ, 3.9, 1.5, 3.66, 2.60, 133, 11.5, 91.3, 7.8, 2.24, 0.30, 250, 15.8);
+      MC_error(eff_MC, err_MC, eff_Zjets, err_Zjets, eff_WZ, err_WZ, 91.3, 7.8, 2.15, 0.29, 250, 15.8);
     }
     // syst
     if (chan=="mumumu")
-      MC_error(eff_MC, err_syst_MC, eff_Zjets, (1-eff_Zjets), eff_WZ, 0, 9.2, 0, 3.76, 0.35, 196, 0);
+      //MC_error(eff_MC, err_syst_MC, eff_Zjets, (1-eff_Zjets), eff_WZ, 0, 9.2, 0, 3.76, 0.35, 196, 0);
+      MC_error(eff_MC, err_syst_MC, eff_Zjets, (1-eff_Zjets), eff_WZ, 0, 9.2, 0, 3.69, 1.23, 196, 0);
     if (chan=="mumue")
-      MC_error(eff_MC, err_syst_MC, eff_Zjets, (1-eff_Zjets), eff_WZ, 0, 145.9, 0, 1.52, 0.06, 356, 0);
+      //MC_error(eff_MC, err_syst_MC, eff_Zjets, (1-eff_Zjets), eff_WZ, 0, 145.9, 0, 1.52, 0.06, 356, 0);
+      MC_error(eff_MC, err_syst_MC, eff_Zjets, (1-eff_Zjets), eff_WZ, 0, 145.9, 0, 1.53, 0.35, 356, 0);
     if (chan=="eemu")
-      MC_error(eff_MC, err_syst_MC, eff_Zjets, (1-eff_Zjets), eff_WZ, 0, 3.9, 0, 3.66, 0.42, 133, 0);
+      //MC_error(eff_MC, err_syst_MC, eff_Zjets, (1-eff_Zjets), eff_WZ, 0, 3.9, 0, 3.66, 0.42, 133, 0);
+      MC_error(eff_MC, err_syst_MC, eff_Zjets, (1-eff_Zjets), eff_WZ, 0, 3.9, 0, 3.59, 1.04, 133, 0);
     if (chan=="eee")
     {
-      MC_error(eff_MC, err_syst_MC, eff_Zjets, (1-eff_Zjets), eff_WZ, 0, 91.3, 0, 2.24, 0.06, 250, 0);
+      //MC_error(eff_MC, err_syst_MC, eff_Zjets, (1-eff_Zjets), eff_WZ, 0, 91.3, 0, 2.24, 0.06, 250, 0);
       //MC_error(eff_MC, err_syst_MC, eff_Zjets, (1-eff_Zjets), eff_WZ, 0, 3.9, 0, 3.66, 0.42, 133, 0, 91.3, 0, 2.24, 0.06, 250, 0);
+      MC_error(eff_MC, err_syst_MC, eff_Zjets, (1-eff_Zjets), eff_WZ, 0, 91.3, 0, 2.15, 0.27, 250, 0);
     }
     cout << " Eff " << "MC" << " " <<  eff_MC << " +/- " << err_MC << " +/- " << err_syst_MC << " +/- " << 0.01 << endl;
     // With 1% for correlations
