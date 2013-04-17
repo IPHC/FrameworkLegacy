@@ -186,6 +186,7 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
    TH1F * histBdt_Zjets     = (TH1F*)filechannel->Get( (theVariable+"_Zjets"    ).Data());
    TH1F * histBdt_DataZjets = (TH1F*)filechannel->Get( (theVariable+"_DataZjets").Data());  
    TH1F * histBdt_TTbar     = (TH1F*)filechannel->Get( (theVariable+"_TTbarSig" ).Data());
+   TH1F * histBdt_TZq       = (TH1F*)filechannel->Get( (theVariable+"_TZq"      ).Data());
    
    
    TH1F * histBdt_FCNC ;     
@@ -208,6 +209,7 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
     histBdt_Zjets->Rebin(2);	     
     histBdt_FCNC->Rebin(2);  
     histBdt_DataZjets->Rebin(2);
+    histBdt_TZq->Rebin(2);
   }
   
   //histBdt_WZ->Scale(0.905713);
@@ -217,6 +219,7 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   
   histBdt_WZ->SetFillColor(13);
   histBdt_DataZjets->SetFillColor(kAzure-2);
+  histBdt_TZq->SetFillColor(kAzure+8);
   
   THStack* hs= new THStack();
   
@@ -228,6 +231,7 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   
   hs->Add(histBdt_WZ);
   hs->Add(histBdt_TTbar);
+  hs->Add(histBdt_TZq);
   hs->Add(histBdt_DataZjets);
 
 
@@ -263,6 +267,7 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
                         + pow(histBdt_DataZjets->GetBinContent(ierr)*0.30, 2) // syst SF
                         + pow(histBdt_ZZ->GetBinContent(ierr)*0.30, 2) // syst SF 
                         + pow(histBdt_TTbar->GetBinContent(ierr)*0.30, 2) // syst SF 
+                        + pow(histBdt_TZq->GetBinContent(ierr)*0.30, 2) // syst SF 
                         + pow(herrorband->GetBinContent(ierr)*0.025, 2); // syst lumi
     herrorband->SetBinError(ierr, sqrt(error_all));
     
@@ -285,6 +290,7 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   TH1F * histo_mc    = (TH1F*) histBdt_WZ->Clone();
   histo_mc->Add(histBdt_DataZjets);
   histo_mc->Add(histBdt_TTbar);
+  histo_mc->Add(histBdt_TZq);
   histo_ratio->Sumw2();
   histo_mc->Sumw2();
   histo_ratio->Divide(histo_ratio, histo_mc, 1, 1, "b");
@@ -425,7 +431,8 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   qw->AddEntry(histBdt_Data,         "Data" ,                "ep");
   qw->AddEntry(histBdt_WZ,           "VV "                  ,"f");
   qw->AddEntry(histBdt_DataZjets,    "Fake Lept. "                  ,"f");
-  qw->AddEntry(histBdt_TTbar    ,    "t\bar{t}, single top"                  ,"f");
+  qw->AddEntry(histBdt_TTbar    ,    "t#bar{t}, single top"                  ,"f");
+  qw->AddEntry(histBdt_TZq    ,    "tZq SM"                  ,"f");
   qw->AddEntry(histBdt_FCNC,     " tZ "     ,"l");
 
   
@@ -454,15 +461,15 @@ void PlotBDToutput(){
    TString thevertex_xut = "xut";
    TString thevertex_xct = "xct";
    
-   TString thefile_zut = "HistoBDToutput/TMVApp_zut_nom.root";
-   TString thefile_zct = "HistoBDToutput/TMVApp_zct_nom.root";
-   TString thefile_kut = "HistoBDToutput/TMVApp_kut_nom.root";
-   TString thefile_kct = "HistoBDToutput/TMVApp_kct_nom.root";
-   TString thefile_xut = "HistoBDToutput/TMVApp_xut_nom.root";
-   TString thefile_xct = "HistoBDToutput/TMVApp_xct_nom.root";
+   TString theFile_zut = "HistoBDToutput/TMVApp_zut_nom.root";
+   TString theFile_zct = "HistoBDToutput/TMVApp_zct_nom.root";
+   TString theFile_kut = "HistoBDToutput/TMVApp_kut_nom.root";
+   TString theFile_kct = "HistoBDToutput/TMVApp_kct_nom.root";
+   TString theFile_xut = "HistoBDToutput/TMVApp_xut_nom.root";
+   TString theFile_xct = "HistoBDToutput/TMVApp_xct_nom.root";
    
-   /*PlotBDToutput(thevertex_zut, "MVA_BDT"       , theFile_zut);
-   PlotBDToutput(thevertex_zut, "topMass"       , theFile_zut);
+   PlotBDToutput(thevertex_zut, "MVA_BDT"       , theFile_zut);
+   /*PlotBDToutput(thevertex_zut, "topMass"       , theFile_zut);
    PlotBDToutput(thevertex_zut, "totMass"       , theFile_zut);
    PlotBDToutput(thevertex_zut, "deltaPhilb"    , theFile_zut);
    PlotBDToutput(thevertex_zut, "deltaRlb"      , theFile_zut);
@@ -483,9 +490,9 @@ void PlotBDToutput(){
    PlotBDToutput(thevertex_zut, "leadJetEta"    , theFile_zut);         
    PlotBDToutput(thevertex_zut, "deltaPhiZleptW", theFile_zut);*/
    
-   /*
+   
    PlotBDToutput(thevertex_zct, "MVA_BDT"       , theFile_zct);
-   PlotBDToutput(thevertex_zct, "topMass"       , theFile_zct);
+   /*PlotBDToutput(thevertex_zct, "topMass"       , theFile_zct);
    PlotBDToutput(thevertex_zct, "totMass"       , theFile_zct);
    PlotBDToutput(thevertex_zct, "deltaPhilb"    , theFile_zct);
    PlotBDToutput(thevertex_zct, "deltaRlb"      , theFile_zct);
@@ -507,4 +514,6 @@ void PlotBDToutput(){
    PlotBDToutput(thevertex_zct, "deltaPhiZleptW", theFile_zct);
    */
 
+   PlotBDToutput(thevertex_kut, "MVA_BDT"       , theFile_kut);
+   PlotBDToutput(thevertex_kct, "MVA_BDT"       , theFile_kct);
 }

@@ -120,7 +120,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
   //double WZscale = 0.91;
   double WZscale = 1.;
-   float bdt_BCK_cut = -0.20;
+   float bdt_BCK_cut = -0.15;
    
    
    // This loads the library
@@ -146,7 +146,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    TFile *input_FCNC    = new TFile(stringinput_FCNC, "read");
    
    
-   TFile *input_zjets   = new TFile("../../backup_outputProof19-03-13_17-30-05/proof.root", "read");
+   TFile *input_zjets   = new TFile("../../RootFiles/proof_DataZjets_woBkgSF_good.root", "read");
    
    
    //*************************************************
@@ -180,6 +180,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    samples.push_back("TbartChan");
    samples.push_back("TsChan");   
    samples.push_back("TbarsChan");
+   samples.push_back("TZq");
    samples.push_back("ZZ");	 
    samples.push_back("WW");	 
    samples.push_back("Signal");	 
@@ -197,6 +198,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    samples.push_back("BDTcut_TbartChan");
    samples.push_back("BDTcut_TsChan");   
    samples.push_back("BDTcut_TbarsChan");
+   samples.push_back("BDTcut_TZq");
    samples.push_back("BDTcut_ZZ");	 
    samples.push_back("BDTcut_WW");	 
    samples.push_back("BDTcut_Signal");	 
@@ -316,6 +318,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    TH1F* histBdt_TbartChan      = new TH1F( "MVA_BDT_TbartChan", "MVA_BDT_TbartChan",  nbin, -0.5, 0.8 );
    TH1F* histBdt_TsChan         = new TH1F( "MVA_BDT_TsChan",	 "MVA_BDT_TsChan",     nbin, -0.5, 0.8 );
    TH1F* histBdt_TbarsChan      = new TH1F( "MVA_BDT_TbarsChan", "MVA_BDT_TbarsChan",  nbin, -0.5, 0.8 );
+   TH1F* histBdt_TZq            = new TH1F( "MVA_BDT_TZq",       "MVA_BDT_TZq",        nbin, -0.5, 0.8 );
    TH1F* histBdt_ZZ             = new TH1F( "MVA_BDT_ZZ",	 "MVA_BDT_ZZ",         nbin, -0.5, 0.8 );
    TH1F* histBdt_WW             = new TH1F( "MVA_BDT_WW",	 "MVA_BDT_WW",         nbin, -0.5, 0.8 );
    
@@ -1290,6 +1293,82 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
     
    
+  //-----------------------------------------------------
+   //for TZq jets from MC 
+   //-----------------------------------------------------
+   //define the tree to read
+   TTree* theTree_TZq = (TTree*)input->Get("Ttree_TZq");
+   theTree_TZq->SetBranchAddress( "tree_totMass",	   &totMass);	
+   theTree_TZq->SetBranchAddress( "tree_topMass",     &topMass );
+   theTree_TZq->SetBranchAddress( "tree_deltaRlb",	   &deltaRlb);
+   theTree_TZq->SetBranchAddress( "tree_deltaRTopZ",  &deltaRTopZ);
+   theTree_TZq->SetBranchAddress( "tree_deltaPhilb",  &deltaPhilb );
+   theTree_TZq->SetBranchAddress( "tree_asym",        &asym );
+   theTree_TZq->SetBranchAddress( "tree_Zpt",         &Zpt );
+   theTree_TZq->SetBranchAddress( "tree_ZEta",	   &ZEta);
+   theTree_TZq->SetBranchAddress( "tree_topPt",	   &topPt);
+   theTree_TZq->SetBranchAddress( "tree_topEta",	   &topEta); 
+   theTree_TZq->SetBranchAddress( "tree_NJets",	   &NJets);
+   theTree_TZq->SetBranchAddress( "tree_NBJets",	   &NBJets);
+   theTree_TZq->SetBranchAddress( "tree_deltaRZl",   &deltaRZl);   
+   theTree_TZq->SetBranchAddress( "tree_deltaPhiZmet",&deltaPhiZmet);
+   theTree_TZq->SetBranchAddress( "tree_btagDiscri",  &btagDiscri);  
+   
+   
+   theTree_TZq->SetBranchAddress("tree_leptWPt",       &leptWPt);	     
+   theTree_TZq->SetBranchAddress("tree_leptWEta",      &leptWEta);	     
+   theTree_TZq->SetBranchAddress("tree_leadJetPt",     &leadJetPt);	      
+   theTree_TZq->SetBranchAddress("tree_leadJetEta",	&leadJetEta);	      
+   //theTree_TZq->SetBranchAddress("tree_deltaRZleptW",	&deltaRZleptW);     
+   theTree_TZq->SetBranchAddress("tree_deltaPhiZleptW", &deltaPhiZleptW);
+   
+   
+   theTree_TZq->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);  
+   
+   float nTZqEvents_BCKenriched = 0;
+   float nTZqEvents_BCKenriched_unw = 0;
+   //loop on the events and calculate the BDT output
+   for (Long64_t ievt=0; ievt<theTree_TZq->GetEntries();ievt++) {    
+     //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
+     theTree_TZq->GetEntry(ievt);
+     histBdt_TZq->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+         
+     std::vector<double > theVar;
+     theVar.push_back(topMass);
+     theVar.push_back(totMass );
+     theVar.push_back(deltaPhilb );
+     theVar.push_back(deltaRlb);
+     theVar.push_back(deltaRTopZ);
+     theVar.push_back(asym );
+     theVar.push_back(Zpt );
+     theVar.push_back(ZEta);
+     theVar.push_back(topPt);
+     theVar.push_back(topEta);
+     theVar.push_back(NJets);
+     theVar.push_back(NBJets);		   
+     theVar.push_back(deltaRZl);   
+     theVar.push_back(deltaPhiZmet);
+     theVar.push_back(btagDiscri);
+   
+     theVar.push_back(leptWPt);  	  
+     theVar.push_back(leptWEta); 	  
+     theVar.push_back(leadJetPt);	    
+     theVar.push_back(leadJetEta);	     
+     theVar.push_back(deltaPhiZleptW);
+     
+     fillHisto("TZq", theVar, ievt, EvtWeight);
+     if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut){
+       fillHisto("BDTcut_TZq", theVar, ievt, EvtWeight);
+       nTZqEvents_BCKenriched = nTZqEvents_BCKenriched+EvtWeight;
+       nTZqEvents_BCKenriched_unw++;
+     }
+     
+     //to calculate the BDT output
+     //reader->EvaluateMVA( "BDT"           ) 
+     
+   }
+   
+   
    
    
    //-----------------------------------------------------
@@ -1986,6 +2065,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
 	  nTsChanEvents_BCKenriched + 
 	  nTbarsChanEvents_BCKenriched + 
 	  nZZEvents_BCKenriched + 
+	  nTZqEvents_BCKenriched + 
 	  nWWEvents_BCKenriched;
    
    cout << "number of Z+jets events with BDT   <  " << bdt_BCK_cut << " is " << nexpectedZ << endl;
@@ -1997,6 +2077,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    cout << "nTbartChanEvents_BCKenriched " << nTbartChanEvents_BCKenriched << endl;
    cout << "nTsChanEvents_BCKenriched    " << nTsChanEvents_BCKenriched    << endl;
    cout << "nTbarsChanEvents_BCKenriched " << nTbarsChanEvents_BCKenriched << endl;
+   cout << "nTZqEvents_BCKenriched       " << nTZqEvents_BCKenriched       << endl;
    cout << "nZZEvents_BCKenriched        " << nZZEvents_BCKenriched        << endl;
    cout << "nWWEvents_BCKenriched        " << nWWEvents_BCKenriched        << endl;
    
@@ -2022,6 +2103,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    if(nTbartChanEvents_BCKenriched_unw > 0 ) error_MC_stat +=  pow( (nTbartChanEvents_BCKenriched/nTbartChanEvents_BCKenriched_unw)*pow(nTbartChanEvents_BCKenriched_unw,0.5)/nwzEvents_BCKenriched, 2);
    if(nTsChanEvents_BCKenriched_unw    > 0 ) error_MC_stat +=  pow( (nTsChanEvents_BCKenriched/nTsChanEvents_BCKenriched_unw)      *pow(nTsChanEvents_BCKenriched_unw   ,0.5)/nwzEvents_BCKenriched, 2);
    if(nTbarsChanEvents_BCKenriched_unw > 0 ) error_MC_stat +=  pow( (nTbarsChanEvents_BCKenriched/nTbarsChanEvents_BCKenriched_unw)*pow(nTbarsChanEvents_BCKenriched_unw,0.5)/nwzEvents_BCKenriched, 2);
+   if(nTZqEvents_BCKenriched_unw       > 0 ) error_MC_stat +=  pow( (nTZqEvents_BCKenriched/nTZqEvents_BCKenriched_unw)            *pow(nTZqEvents_BCKenriched_unw      ,0.5)/nwzEvents_BCKenriched, 2);
    if(nZZEvents_BCKenriched_unw        > 0 ) error_MC_stat +=  pow( (nZZEvents_BCKenriched/nZZEvents_BCKenriched_unw)              *pow(nZZEvents_BCKenriched_unw       ,0.5)/nwzEvents_BCKenriched, 2);
    if(nWWEvents_BCKenriched_unw        > 0 ) error_MC_stat +=  pow( (nWWEvents_BCKenriched/nWWEvents_BCKenriched_unw)              *pow(nWWEvents_BCKenriched_unw       ,0.5)/nwzEvents_BCKenriched, 2);
   
@@ -2035,23 +2117,24 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
     error_MC_weight += pow( nTtChanEvents_BCKenriched   *normuncert/nwzEvents_BCKenriched, 2);
     error_MC_weight += pow( nTsChanEvents_BCKenriched   *normuncert/nwzEvents_BCKenriched, 2);
     error_MC_weight += pow( nTbarsChanEvents_BCKenriched*normuncert/nwzEvents_BCKenriched, 2);
+    error_MC_weight += pow( nTZqEvents_BCKenriched      *normuncert/nwzEvents_BCKenriched, 2);
     error_MC_weight += pow( nZZEvents_BCKenriched       *normuncert/nwzEvents_BCKenriched, 2);
     error_MC_weight += pow( nWWEvents_BCKenriched       *normuncert/nwzEvents_BCKenriched, 2);
     
    
    cout << "---------------------------------------" << endl;
    double meanZjetsSF = 
-	(3.7687*mcexpectedZ_mumumu +
-	1.51623*mcexpectedZ_mumue + 
-	3.64732*mcexpectedZ_eemu  +
-	2.23334*mcexpectedZ_eee )/
+	(3.71*mcexpectedZ_mumumu +
+	1.50*mcexpectedZ_mumue + 
+	3.69*mcexpectedZ_eemu  +
+	2.12*mcexpectedZ_eee )/
 	(mcexpectedZ_mumumu+mcexpectedZ_mumue+mcexpectedZ_eemu+mcexpectedZ_eee)  ;
 
    double meanZjetsSFError = 
-	(1.94*mcexpectedZ_mumumu +
-	0.25*mcexpectedZ_mumue + 
-	2.63*mcexpectedZ_eemu  +
-	0.31*mcexpectedZ_eee)/
+	(2.21*mcexpectedZ_mumumu +
+	0.43*mcexpectedZ_mumue + 
+	2.90*mcexpectedZ_eemu  +
+	0.40*mcexpectedZ_eee)/
 	(mcexpectedZ_mumumu+mcexpectedZ_mumue+mcexpectedZ_eemu+mcexpectedZ_eee)
 	   ;
    
@@ -2107,13 +2190,14 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
   
    cout << "signal contamination for       <  " << bdt_BCK_cut << " is " <<  nsignalEvents_BCKenriched 
    
-     << "  (" <<  nsignalEvents_BCKenriched/ndataEvents_BCKenriched<< "%) " << endl;
+     << "  (" <<  nsignalEvents_BCKenriched/ndataEvents_BCKenriched*100<< "%) " << endl;
    
    
    
    std::cout << "WZ integral 1 " << histBdt_WZ->Integral() << endl;
    histBdt_WZ->Scale(WZscaleFactor);
    std::cout << "WZ integral 2 " << histBdt_WZ->Integral() << endl;
+   std::cout << "WZ data check " << ndataEvents_BCKenriched <<" "<<nwzEvents_BCKenriched<< endl;
    
    
    
@@ -2147,6 +2231,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    histBdt_TbartChan->Write();
    histBdt_TsChan->Write();   
    histBdt_TbarsChan->Write();
+   histBdt_TZq->Write();	 
    histBdt_ZZ->Write();	 
    histBdt_WW->Write();
    
@@ -2176,8 +2261,8 @@ void ReaderBDT(){
    //******************************************
    
    ReaderBDT(thevertex_zut, 
-   	"../RootFiles/backup_outputProof02-01-13_18-48-30_AllSFinclWZ/proof_merged.root",
-   	"../RootFiles/backup_outputProof02-01-13_18-48-30_AllSFinclWZ/proof_merged.root",
+   	"../../RootFiles/proof_woWZSF.root",
+   	"../../RootFiles/proof_woWZSF.root",
 	 "nom");
    /*
    //for Jes Up
@@ -2244,8 +2329,8 @@ void ReaderBDT(){
    //******************************************
    
    ReaderBDT(thevertex_zct, 
-   	"../RootFiles/backup_outputProof02-01-13_18-48-30_AllSFinclWZ/proof_merged.root",
-   	"../RootFiles/backup_outputProof02-01-13_18-48-30_AllSFinclWZ/proof_merged.root",
+   	"../../RootFiles/proof_woWZSF.root",
+   	"../../RootFiles/proof_woWZSF.root",
 	 "nom");
 
    /*
@@ -2307,5 +2392,17 @@ void ReaderBDT(){
    	"../RootFiles/backup_outputProof03-01-13_19-01-07_btagdown/proof_merged_btagdown.root",
 	 "btagdown");
    */
+
+
+   ReaderBDT(thevertex_kut,
+        "../../RootFiles/proof_woWZSF.root",
+        "../../RootFiles/proof_woWZSF.root",
+         "nom");
+
+   ReaderBDT(thevertex_kct,
+        "../../RootFiles/proof_woWZSF.root",
+        "../../RootFiles/proof_woWZSF.root",
+         "nom");
+
    
 }
