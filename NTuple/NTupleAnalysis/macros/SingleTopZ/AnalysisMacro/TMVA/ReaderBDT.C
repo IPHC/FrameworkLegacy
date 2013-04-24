@@ -25,6 +25,9 @@
 std::map<TString,std::vector<TH1F*> > theHistoMap;
 
 
+static double WZscale = 1.;
+static float  bdt_BCK_cut = -0.3;
+static bool   apply_BCK_cut = false;
 
 void fillHisto(TString sample, std::vector<double> theVar, int ievt, double weight=1){
    
@@ -118,9 +121,6 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
 
 
    
-  //double WZscale = 0.91;
-  double WZscale = 1.;
-   float bdt_BCK_cut = -0.15;
    
    
    // This loads the library
@@ -280,15 +280,15 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    Int_t Channel;
 
    reader->AddVariable("tree_topMass",    &topMass    );
-   reader->AddVariable("tree_totMass",    &totMass    );
+   //reader->AddVariable("tree_totMass",    &totMass    );
    reader->AddVariable("tree_deltaPhilb", &deltaPhilb );
    reader->AddVariable("tree_deltaRlb",     &deltaRlb);
-   reader->AddVariable("tree_deltaRTopZ",   &deltaRTopZ);
+   //reader->AddVariable("tree_deltaRTopZ",   &deltaRTopZ);
    reader->AddVariable("tree_asym",	  &asym       );
    reader->AddVariable("tree_Zpt",	  &Zpt        );
    
    reader->AddVariable("tree_ZEta",	     &ZEta);
-   reader->AddVariable("tree_topPt",         &topPt);
+   //reader->AddVariable("tree_topPt",         &topPt);
    reader->AddVariable("tree_topEta",        &topEta); 
    reader->AddVariable("tree_NJets",         &NJets);	  
    reader->AddVariable("tree_NBJets",        &NBJets);	    
@@ -296,8 +296,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    reader->AddVariable("tree_deltaPhiZmet",  &deltaPhiZmet);
    reader->AddVariable("tree_btagDiscri",    &btagDiscri);     
     		    
-   reader->AddVariable("tree_leptWPt",        &leptWPt);	    
-   reader->AddVariable("tree_leptWEta",       &leptWEta);	    
+   //reader->AddVariable("tree_leptWPt",        &leptWPt);	    
+   //reader->AddVariable("tree_leptWEta",       &leptWEta);	    
    reader->AddVariable("tree_leadJetPt",      &leadJetPt);	      
    reader->AddVariable("tree_leadJetEta",     &leadJetEta);	     
    //reader->AddVariable("tree_deltaRZleptW",   &deltaRZleptW);	   
@@ -305,31 +305,31 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    
    UInt_t nbin = 40;
-   TH1F* histBdt_Data           = new TH1F( "MVA_BDT_Data",      "MVA_BDT_Data",       nbin, -0.5, 0.8 );
-   TH1F* histBdt_Zjets          = new TH1F( "MVA_BDT_Zjets",     "MVA_BDT_Zjets",      nbin, -0.5, 0.8 );
-   TH1F* histBdt_WZ             = new TH1F( "MVA_BDT_WZ",        "MVA_BDT_WZ",	       nbin, -0.5, 0.8 );
-   TH1F* histBdt_DataZjets      = new TH1F( "MVA_BDT_DataZjets", "MVA_BDT_DataZjets",  nbin, -0.5, 0.8 );
+   TH1F* histBdt_Data           = new TH1F( "MVA_BDT_Data",      "MVA_BDT_Data",       nbin, -1, 1 );
+   TH1F* histBdt_Zjets          = new TH1F( "MVA_BDT_Zjets",     "MVA_BDT_Zjets",      nbin, -1, 1 );
+   TH1F* histBdt_WZ             = new TH1F( "MVA_BDT_WZ",        "MVA_BDT_WZ",	       nbin, -1, 1 );
+   TH1F* histBdt_DataZjets      = new TH1F( "MVA_BDT_DataZjets", "MVA_BDT_DataZjets",  nbin, -1, 1 );
    
-   TH1F* histBdt_TTbarSig       = new TH1F( "MVA_BDT_TTbarSig",	 "MVA_BDT_TTbarSig",   nbin, -0.5, 0.8 );
-   TH1F* histBdt_Wjets          = new TH1F( "MVA_BDT_Wjets",	 "MVA_BDT_Wjets",      nbin, -0.5, 0.8 );
-   TH1F* histBdt_TtW            = new TH1F( "MVA_BDT_TtW",	 "MVA_BDT_TtW",        nbin, -0.5, 0.8 );
-   TH1F* histBdt_TbartW         = new TH1F( "MVA_BDT_TbartW",	 "MVA_BDT_TbartW",     nbin, -0.5, 0.8 );
-   TH1F* histBdt_TtChan         = new TH1F( "MVA_BDT_TtChan",	 "MVA_BDT_TtChan",     nbin, -0.5, 0.8 );
-   TH1F* histBdt_TbartChan      = new TH1F( "MVA_BDT_TbartChan", "MVA_BDT_TbartChan",  nbin, -0.5, 0.8 );
-   TH1F* histBdt_TsChan         = new TH1F( "MVA_BDT_TsChan",	 "MVA_BDT_TsChan",     nbin, -0.5, 0.8 );
-   TH1F* histBdt_TbarsChan      = new TH1F( "MVA_BDT_TbarsChan", "MVA_BDT_TbarsChan",  nbin, -0.5, 0.8 );
-   TH1F* histBdt_TZq            = new TH1F( "MVA_BDT_TZq",       "MVA_BDT_TZq",        nbin, -0.5, 0.8 );
-   TH1F* histBdt_ZZ             = new TH1F( "MVA_BDT_ZZ",	 "MVA_BDT_ZZ",         nbin, -0.5, 0.8 );
-   TH1F* histBdt_WW             = new TH1F( "MVA_BDT_WW",	 "MVA_BDT_WW",         nbin, -0.5, 0.8 );
+   TH1F* histBdt_TTbarSig       = new TH1F( "MVA_BDT_TTbarSig",	 "MVA_BDT_TTbarSig",   nbin, -1, 1 );
+   TH1F* histBdt_Wjets          = new TH1F( "MVA_BDT_Wjets",	 "MVA_BDT_Wjets",      nbin, -1, 1 );
+   TH1F* histBdt_TtW            = new TH1F( "MVA_BDT_TtW",	 "MVA_BDT_TtW",        nbin, -1, 1 );
+   TH1F* histBdt_TbartW         = new TH1F( "MVA_BDT_TbartW",	 "MVA_BDT_TbartW",     nbin, -1, 1 );
+   TH1F* histBdt_TtChan         = new TH1F( "MVA_BDT_TtChan",	 "MVA_BDT_TtChan",     nbin, -1, 1 );
+   TH1F* histBdt_TbartChan      = new TH1F( "MVA_BDT_TbartChan", "MVA_BDT_TbartChan",  nbin, -1, 1 );
+   TH1F* histBdt_TsChan         = new TH1F( "MVA_BDT_TsChan",	 "MVA_BDT_TsChan",     nbin, -1, 1 );
+   TH1F* histBdt_TbarsChan      = new TH1F( "MVA_BDT_TbarsChan", "MVA_BDT_TbarsChan",  nbin, -1, 1 );
+   TH1F* histBdt_TZq            = new TH1F( "MVA_BDT_TZq",       "MVA_BDT_TZq",        nbin, -1, 1 );
+   TH1F* histBdt_ZZ             = new TH1F( "MVA_BDT_ZZ",	 "MVA_BDT_ZZ",         nbin, -1, 1 );
+   TH1F* histBdt_WW             = new TH1F( "MVA_BDT_WW",	 "MVA_BDT_WW",         nbin, -1, 1 );
    
    TH1F* histBdt_FCNC;
    
-   if(thevertex == "zut") histBdt_FCNC = new TH1F( "MVA_BDT_FCNC_zut",   "MVA_BDT_FCNC_zut", nbin, -0.5, 0.8 );
-   if(thevertex == "zct") histBdt_FCNC = new TH1F( "MVA_BDT_FCNC_zct",   "MVA_BDT_FCNC_zct", nbin, -0.5, 0.8 );
-   if(thevertex == "kut") histBdt_FCNC = new TH1F( "MVA_BDT_FCNC_kut",   "MVA_BDT_FCNC_kut", nbin, -0.5, 0.8 );
-   if(thevertex == "kct") histBdt_FCNC = new TH1F( "MVA_BDT_FCNC_kct",   "MVA_BDT_FCNC_kct", nbin, -0.5, 0.8 );
-   if(thevertex == "xut") histBdt_FCNC = new TH1F( "MVA_BDT_FCNC_xut",   "MVA_BDT_FCNC_xut", nbin, -0.5, 0.8 );
-   if(thevertex == "xct") histBdt_FCNC = new TH1F( "MVA_BDT_FCNC_xct",   "MVA_BDT_FCNC_xct", nbin, -0.5, 0.8 );
+   if(thevertex == "zut") histBdt_FCNC = new TH1F( "MVA_BDT_FCNC_zut",   "MVA_BDT_FCNC_zut", nbin, -1, 1 );
+   if(thevertex == "zct") histBdt_FCNC = new TH1F( "MVA_BDT_FCNC_zct",   "MVA_BDT_FCNC_zct", nbin, -1, 1 );
+   if(thevertex == "kut") histBdt_FCNC = new TH1F( "MVA_BDT_FCNC_kut",   "MVA_BDT_FCNC_kut", nbin, -1, 1 );
+   if(thevertex == "kct") histBdt_FCNC = new TH1F( "MVA_BDT_FCNC_kct",   "MVA_BDT_FCNC_kct", nbin, -1, 1 );
+   if(thevertex == "xut") histBdt_FCNC = new TH1F( "MVA_BDT_FCNC_xut",   "MVA_BDT_FCNC_xut", nbin, -1, 1 );
+   if(thevertex == "xct") histBdt_FCNC = new TH1F( "MVA_BDT_FCNC_xct",   "MVA_BDT_FCNC_xct", nbin, -1, 1 );
    
    //Get the BDT trainning through an xml file, created during the trainning phase
    if(thevertex == "zut") reader->BookMVA( "BDT", "weights/BDT_trainning_zut_BDT.weights.xml" ); 
@@ -375,7 +375,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      
      theTree_DataMu->GetEntry(ievt);
-     histBdt_Data->Fill( reader->EvaluateMVA( "BDT"           ) );
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_Data->Fill( reader->EvaluateMVA( "BDT"           ) );
+     } else {histBdt_Data->Fill( reader->EvaluateMVA( "BDT"           ) );}
      
      
      std::vector<double > theVar;
@@ -444,7 +446,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_DataEG->GetEntries();ievt++) {    
      if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_DataEG->GetEntry(ievt);
-     histBdt_Data->Fill( reader->EvaluateMVA( "BDT"           ) );
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_Data->Fill( reader->EvaluateMVA( "BDT"           ) );
+     } else {histBdt_Data->Fill( reader->EvaluateMVA( "BDT"           ) );}
      
      
      std::vector<double > theVar;
@@ -516,7 +520,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_DataMuEG->GetEntries();ievt++) {    
      if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_DataMuEG->GetEntry(ievt);
-     histBdt_Data->Fill( reader->EvaluateMVA( "BDT"           ) );
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_Data->Fill( reader->EvaluateMVA( "BDT"           ) );
+     } else {histBdt_Data->Fill( reader->EvaluateMVA( "BDT"           ) );}
      
      
      std::vector<double > theVar;
@@ -603,7 +609,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      EvtWeight*=WZscale;
      
      
-     histBdt_WZ->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_WZ->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     } else {histBdt_WZ->Fill( reader->EvaluateMVA( "BDT"           ),  EvtWeight );}
      
      
      std::vector<double > theVar;
@@ -682,7 +690,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TTbarSig->GetEntries();ievt++) {    
      if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TTbarSig->GetEntry(ievt);
-     histBdt_TTbarSig->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_TTbarSig->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     } else {histBdt_TTbarSig->Fill( reader->EvaluateMVA( "BDT"           ),  EvtWeight );}
      
      
      std::vector<double > theVar;
@@ -761,7 +771,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_Wjets->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_Wjets->GetEntry(ievt);
-     histBdt_Wjets->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_Wjets->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     } else {histBdt_Wjets->Fill( reader->EvaluateMVA( "BDT"           ),  EvtWeight );}
      
      
      std::vector<double > theVar;
@@ -842,7 +854,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TtW->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TtW->GetEntry(ievt);
-     histBdt_TtW->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight); 
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_TtW->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight); 
+     } else {histBdt_TtW->Fill( reader->EvaluateMVA( "BDT"           ) ,  EvtWeight);}
        
      std::vector<double > theVar;
      theVar.push_back(topMass);
@@ -925,7 +939,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TbartW->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TbartW->GetEntry(ievt);
-     histBdt_TbartW->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_TbartW->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     } else {histBdt_TbartW->Fill( reader->EvaluateMVA( "BDT"           ),  EvtWeight );}
        
      std::vector<double > theVar;
      theVar.push_back(topMass);
@@ -1011,7 +1027,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TtChan->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TtChan->GetEntry(ievt);
-     histBdt_TtChan->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight); 
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_TtChan->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     } else {histBdt_TtChan->Fill( reader->EvaluateMVA( "BDT"           ),  EvtWeight );} 
          
      std::vector<double > theVar;
      theVar.push_back(topMass);
@@ -1089,7 +1107,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TbartChan->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TbartChan->GetEntry(ievt);
-     histBdt_TbartChan->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_TbartChan->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     } else {histBdt_TbartChan->Fill( reader->EvaluateMVA( "BDT"           ) ,  EvtWeight);}
          
      std::vector<double > theVar;
      theVar.push_back(topMass);
@@ -1172,7 +1192,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TsChan->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TsChan->GetEntry(ievt);
-     histBdt_TsChan->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_TsChan->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     } else {histBdt_TsChan->Fill( reader->EvaluateMVA( "BDT"           ) ,  EvtWeight);}
          
      std::vector<double > theVar;
      theVar.push_back(topMass);
@@ -1252,7 +1274,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TbarsChan->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TbarsChan->GetEntry(ievt);
-     histBdt_TbarsChan->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_TbarsChan->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     } else {histBdt_TbarsChan->Fill( reader->EvaluateMVA( "BDT"           ),  EvtWeight );}
          
      std::vector<double > theVar;
      theVar.push_back(topMass);
@@ -1331,7 +1355,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TZq->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TZq->GetEntry(ievt);
-     histBdt_TZq->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_TZq->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     } else {histBdt_TZq->Fill( reader->EvaluateMVA( "BDT"           ),  EvtWeight );}
          
      std::vector<double > theVar;
      theVar.push_back(topMass);
@@ -1409,7 +1435,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_ZZ->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_ZZ->GetEntry(ievt);
-     histBdt_ZZ->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_ZZ->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     } else {histBdt_ZZ->Fill( reader->EvaluateMVA( "BDT"           ),  EvtWeight );}
          
      std::vector<double > theVar;
      theVar.push_back(topMass);
@@ -1492,7 +1520,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_WW->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_WW->GetEntry(ievt);
-     histBdt_WW->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_WW->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
+     } else {histBdt_WW->Fill( reader->EvaluateMVA( "BDT"           ),  EvtWeight );}
          
      std::vector<double > theVar;
      theVar.push_back(topMass);
@@ -1579,7 +1609,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_Zjets->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_Zjets->GetEntry(ievt);
-     histBdt_Zjets ->Fill( reader->EvaluateMVA( "BDT") ,  EvtWeight);
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_Zjets->Fill( reader->EvaluateMVA( "BDT") ,  EvtWeight);
+     } else {histBdt_Zjets->Fill( reader->EvaluateMVA( "BDT"           ),  EvtWeight );}
          
      std::vector<double > theVar;
      theVar.push_back(topMass);
@@ -1661,7 +1693,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_DYToLL_M10_50->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_DYToLL_M10_50->GetEntry(ievt);
-     histBdt_Zjets ->Fill( reader->EvaluateMVA( "BDT") ,  EvtWeight);
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_Zjets ->Fill( reader->EvaluateMVA( "BDT") ,  EvtWeight);
+     } else {histBdt_Zjets->Fill( reader->EvaluateMVA( "BDT"           ),  EvtWeight );}
      
      std::vector<double > theVar;
      theVar.push_back(topMass);
@@ -1751,7 +1785,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_FCNC->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_FCNC->GetEntry(ievt);
-     histBdt_FCNC ->Fill( reader->EvaluateMVA( "BDT") , EvtWeight);
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_FCNC ->Fill( reader->EvaluateMVA( "BDT") , EvtWeight);
+     } else {histBdt_FCNC->Fill( reader->EvaluateMVA( "BDT"           ) ,  EvtWeight);}
      
      std::vector<double > theVar;
      theVar.push_back(topMass);
@@ -1833,7 +1869,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_DataMuZjets->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_DataMuZjets->GetEntry(ievt);
-     histBdt_DataZjets ->Fill( reader->EvaluateMVA( "BDT") );
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_DataZjets ->Fill( reader->EvaluateMVA( "BDT") );
+     } else {histBdt_DataZjets->Fill( reader->EvaluateMVA( "BDT"           ),  EvtWeight );}
      
      std::vector<double > theVar;
      theVar.push_back(topMass);
@@ -1911,7 +1949,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_DataEGZjets->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_DataEGZjets->GetEntry(ievt);
-     histBdt_DataZjets ->Fill( reader->EvaluateMVA( "BDT") );
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_DataZjets ->Fill( reader->EvaluateMVA( "BDT") );
+     } else {histBdt_DataZjets->Fill( reader->EvaluateMVA( "BDT"           ),  EvtWeight );}
      
      std::vector<double > theVar;
      theVar.push_back(topMass);
@@ -1991,7 +2031,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_DataMuEGZjets->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_DataMuEGZjets->GetEntry(ievt);
-     histBdt_DataZjets ->Fill( reader->EvaluateMVA( "BDT") );
+     if(apply_BCK_cut) {
+       if(reader->EvaluateMVA( "BDT") < bdt_BCK_cut) histBdt_DataZjets ->Fill( reader->EvaluateMVA( "BDT") );
+     } else {histBdt_DataZjets->Fill( reader->EvaluateMVA( "BDT"           ),  EvtWeight );}
      
      std::vector<double > theVar;
      theVar.push_back(topMass);
@@ -2264,6 +2306,22 @@ void ReaderBDT(){
    	"../../RootFiles/proof_woWZSF.root",
    	"../../RootFiles/proof_woWZSF.root",
 	 "nom");
+	 
+   ReaderBDT(thevertex_zct, 
+   	"../../RootFiles/proof_woWZSF.root",
+   	"../../RootFiles/proof_woWZSF.root",
+	 "nom");
+
+   ReaderBDT(thevertex_kut,
+        "../../RootFiles/proof_woWZSF.root",
+        "../../RootFiles/proof_woWZSF.root",
+         "nom");
+
+   ReaderBDT(thevertex_kct,
+        "../../RootFiles/proof_woWZSF.root",
+        "../../RootFiles/proof_woWZSF.root",
+         "nom");
+	 
    /*
    //for Jes Up
    ReaderBDT(thevertex_zut, 
@@ -2328,11 +2386,7 @@ void ReaderBDT(){
    // for Zct ac
    //******************************************
    
-   ReaderBDT(thevertex_zct, 
-   	"../../RootFiles/proof_woWZSF.root",
-   	"../../RootFiles/proof_woWZSF.root",
-	 "nom");
-
+  
    /*
    //for Jes Up
    ReaderBDT(thevertex_zct, 
@@ -2393,16 +2447,6 @@ void ReaderBDT(){
 	 "btagdown");
    */
 
-
-   ReaderBDT(thevertex_kut,
-        "../../RootFiles/proof_woWZSF.root",
-        "../../RootFiles/proof_woWZSF.root",
-         "nom");
-
-   ReaderBDT(thevertex_kct,
-        "../../RootFiles/proof_woWZSF.root",
-        "../../RootFiles/proof_woWZSF.root",
-         "nom");
 
    
 }

@@ -70,22 +70,22 @@ void doBDT_FCNC_tZ(TString thevertex){
      
    
    factory->AddVariable("tree_topMass",    'F'); 
-   factory->AddVariable("tree_totMass",    'F');  
+   //factory->AddVariable("tree_totMass",    'F');  
    factory->AddVariable("tree_deltaPhilb", 'F');
    factory->AddVariable("tree_deltaRlb",   'F');
-   factory->AddVariable("tree_deltaRTopZ", 'F');
+   //factory->AddVariable("tree_deltaRTopZ", 'F');
    factory->AddVariable("tree_asym",       'F');
    factory->AddVariable("tree_Zpt",        'F');
    factory->AddVariable("tree_ZEta",       'F');
-   factory->AddVariable("tree_topPt",      'F');
+   //factory->AddVariable("tree_topPt",      'F');
    factory->AddVariable("tree_topEta",     'F');
    factory->AddVariable("tree_NJets",        'F');
    factory->AddVariable("tree_NBJets",         'F');
    factory->AddVariable("tree_deltaRZl ",     'F');   
    factory->AddVariable("tree_deltaPhiZmet",  'F');
    factory->AddVariable("tree_btagDiscri",    'F');  	    
-   factory->AddVariable("tree_leptWPt",       'F');  		   
-   factory->AddVariable("tree_leptWEta",      'F');  		   
+   //factory->AddVariable("tree_leptWPt",       'F');  		   
+   //factory->AddVariable("tree_leptWEta",      'F');  		   
    factory->AddVariable("tree_leadJetPt",     'F');  	     
    factory->AddVariable("tree_leadJetEta",    'F');  	    
    //factory->AddVariable("tree_deltaRZleptW",  'F');  	  
@@ -110,6 +110,9 @@ void doBDT_FCNC_tZ(TString thevertex){
    
    
    //factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=400:nEventsMin=400:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
+   //for zut factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=50:nEventsMin=100:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
+   //for kct factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=30:nEventsMin=100:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
+   //for zct factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=150:nEventsMin=100:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
    factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=100:nEventsMin=100:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
 
 
