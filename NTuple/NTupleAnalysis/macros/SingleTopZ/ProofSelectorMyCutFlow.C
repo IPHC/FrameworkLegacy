@@ -336,25 +336,25 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   MyhistoManager.CreateHisto(PU_after_eee, "PU_after_eee", datasetName, "Npileup", "Entries", 30, 0, 30);   
   
 
-  MyhistoManager.CreateHisto(NVtx_mumumu, "NVtx_mumumu", datasetName, "Nvertex", "Entries", 30, 0, 30); 
-  MyhistoManager.CreateHisto(NVtx_mumue, "NVtx_mumue", datasetName, "Nvertex", "Entries", 30, 0, 30); 
-  MyhistoManager.CreateHisto(NVtx_eemu, "NVtx_eemu", datasetName, "Nvertex", "Entries", 30, 0, 30); 
-  MyhistoManager.CreateHisto(NVtx_eee, "NVtx_eee", datasetName, "Nvertex", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_mumumu, "NVtx_mumumu", datasetName, "Nvertex", "Entries", 31, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_mumue,  "NVtx_mumue",  datasetName, "Nvertex", "Entries", 31, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_eemu,   "NVtx_eemu",   datasetName, "Nvertex", "Entries", 31, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_eee,    "NVtx_eee",    datasetName, "Nvertex", "Entries", 31, 0, 30); 
   
   MyhistoManager.CreateHisto(Nvtx_mumumu_afterleptsel, "Nvtx_mumumu_afterleptsel", datasetName , "NVtx", "Entries", 50, 0, 49) ;
   MyhistoManager.CreateHisto(Nvtx_mumue_afterleptsel,  "Nvtx_mumue_afterleptsel",  datasetName , "NVtx", "Entries", 50, 0, 49);
   MyhistoManager.CreateHisto(Nvtx_eemu_afterleptsel,   "Nvtx_eemu_afterleptsel",   datasetName , "NVtx", "Entries", 50, 0, 49);
   MyhistoManager.CreateHisto(Nvtx_eee_afterleptsel,    "Nvtx_eee_afterleptsel",    datasetName , "NVtx", "Entries", 50, 0, 49);
   
-  MyhistoManager.CreateHisto(NVtx_mumumu_aftertrigsel, "NVtx_mumumu_aftertrigsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
-  MyhistoManager.CreateHisto(NVtx_mumue_aftertrigsel, "NVtx_mumue_aftertrigsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
-  MyhistoManager.CreateHisto(NVtx_eemu_aftertrigsel, "NVtx_eemu_aftertrigsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
-  MyhistoManager.CreateHisto(NVtx_eee_aftertrigsel, "NVtx_eee_aftertrigsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_mumumu_aftertrigsel, "NVtx_mumumu_aftertrigsel", datasetName, "Nvertex", "Entries", 31, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_mumue_aftertrigsel,  "NVtx_mumue_aftertrigsel",  datasetName, "Nvertex", "Entries", 31, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_eemu_aftertrigsel,   "NVtx_eemu_aftertrigsel",   datasetName, "Nvertex", "Entries", 31, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_eee_aftertrigsel,    "NVtx_eee_aftertrigsel",    datasetName, "Nvertex", "Entries", 31, 0, 30); 
   
-  MyhistoManager.CreateHisto(NVtx_mumumu_afterleptsel, "NVtx_mumumu_afterleptsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
-  MyhistoManager.CreateHisto(NVtx_mumue_afterleptsel, "NVtx_mumue_afterleptsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
-  MyhistoManager.CreateHisto(NVtx_eemu_afterleptsel, "NVtx_eemu_afterleptsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
-  MyhistoManager.CreateHisto(NVtx_eee_afterleptsel, "NVtx_eee_afterleptsel", datasetName, "Nvertex", "Entries", 30, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_mumumu_afterleptsel, "NVtx_mumumu_afterleptsel", datasetName, "Nvertex", "Entries", 31, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_mumue_afterleptsel,  "NVtx_mumue_afterleptsel",  datasetName, "Nvertex", "Entries", 31, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_eemu_afterleptsel,   "NVtx_eemu_afterleptsel",   datasetName, "Nvertex", "Entries", 31, 0, 30); 
+  MyhistoManager.CreateHisto(NVtx_eee_afterleptsel,    "NVtx_eee_afterleptsel",    datasetName, "Nvertex", "Entries", 31, 0, 30); 
 
   
   
@@ -813,7 +813,8 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   
   
   if (IReweight ) {
-    
+
+   
     string mcfile;
     //if( datasetName == "FCNCkut" ) // FastSim, in-time PU only
     //   mcfile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUMC_InTime_Fall11.root");
@@ -833,6 +834,9 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
       if( IReweight_puUp ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_71.4mb.root");
     //}
     fexists(datafile, true);
+ 
+ 
+
  
  
     
@@ -957,6 +961,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
   double weightITypeMC=0;
   
   
+  
   //*****************************************************************
   // Loop over the datasets (lepton pairs which triggered the events)
   //*****************************************************************
@@ -998,6 +1003,27 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
       else weightITypeMC = weightITypeMC_save;
     }
     else weightITypeMC = 1;
+
+    //double reweightPrivateProd[30] = {  1.08203 , 0.965983 , 0.948305 , 0.9541 , 0.979744 , 1.00502 , 1.014 , 1.01024 , 1.01328 , 1.01665 , 1.01683 , 1.01021 , 1.01111 , 1.00089 , 0.999908 , 0.995804 , 0.996283 , 0.99994 , 0.988876 , 1.00544 , 1.00754 , 1.0149 , 1.02353 , 1.06242 , 1.0624 , 1.07799 , 1.09178 , 1.10063 , 1.0843 , 1.10092 };
+    //double reweightPrivateProd[30] = {  1.13238 , 0.949412 , 0.909075 , 0.914348 , 0.959149 , 0.990995 , 0.99766 , 1.00601 , 1.02268 , 1.03553 , 1.04722 , 1.05685 , 1.05455 , 1.03764 , 1.04671 , 1.04368 , 1.05231 , 1.05121 , 1.03173 , 1.07179 , 1.06419 , 1.07846 , 1.04479 , 1.14572 , 1.15027 , 1.19357 , 1.25374 , 1.31405 , 1.24932 , 1.30296 } ;
+
+    
+    
+    
+    
+    //if(selVertices.size() == 0) cout << "nooooooo vertex " << endl;
+    //cout << "weightITypeMC 1 " << weightITypeMC  << " selVertices.size " << selVertices.size()  << endl;
+    
+    //if(WZprivate){ 
+    
+      std::vector<double> reweightPrivateProd = GetNvertexWeight("datasetName");
+
+      if(selVertices.size() <=31 ) weightITypeMC = weightITypeMC*reweightPrivateProd[ selVertices.size()];
+      else weightITypeMC = weightITypeMC*reweightPrivateProd[31];
+    
+    
+    //}
+    //cout << "weightITypeMC 2 " << weightITypeMC  <<  endl;
     
     
     //*****************************************************************
@@ -1085,7 +1111,11 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
     else if ( datasetName=="SingleToptW" || datasetName=="TtW" || datasetName=="TbartW"
 	      || datasetName=="TtWScaleUp" || datasetName=="TtWScaleDown"
 	      || datasetName=="TbartWScaleUp" || datasetName=="TbartWScaleDown"
-	      || datasetName=="TZq") { 
+	      || datasetName=="TZq"
+	      || datasetName=="TZq_matchup"|| datasetName=="TZq_matchdown"
+	      || datasetName=="TZq_scaleup"|| datasetName=="TZq_scaledown"
+	      || datasetName=="TZq_topup"|| datasetName=="TZq_topdown") { 
+	      
       ITypeMC = 4; IsSignal = false;  Dweight[ITypeMC]= weightITypeMC; 
       EventYieldWeightError = Dweight[ITypeMC]*Dweight[ITypeMC];
       
@@ -1095,7 +1125,11 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
       //TabFlow1[IChannel][ITypeMC][0]+=Dweight[ITypeMC];
       //TabFlow2[IChannel][ITypeMC][0]+=Dweight[ITypeMC]*Dweight[ITypeMC];
     }
-    else if ( datasetName=="WZ" || datasetName=="WW" || datasetName=="ZZ"  || datasetName=="VV") { 
+    else if ( datasetName=="WZ" || datasetName=="WW" || datasetName=="ZZ"  || datasetName=="VV"
+     || datasetName=="WZprivate" || datasetName=="WZprivate_scaleup"|| datasetName=="WZprivate_scaledown"
+     || datasetName=="WZprivate_matchup" || datasetName=="WZprivate_down" 
+    
+    ) { 
       ITypeMC = 5; IsSignal = false;  Dweight[ITypeMC]= weightITypeMC; 
       EventYieldWeightError = Dweight[ITypeMC]*Dweight[ITypeMC];
 
@@ -1106,6 +1140,30 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
          datasetName=="FCNCkut" || datasetName=="FCNCkct" 
        ||datasetName=="FCNCxut" || datasetName=="FCNCxct" 
        ||datasetName=="FCNCzut" || datasetName=="FCNCzct" 
+       
+       ||datasetName=="FCNCkut_matchup" || datasetName=="FCNCkct_matchup" 
+       ||datasetName=="FCNCxut_matchup" || datasetName=="FCNCxct_matchup" 
+       ||datasetName=="FCNCzut_matchup" || datasetName=="FCNCzct_matchup" 
+       
+       ||datasetName=="FCNCkut_matchdown" || datasetName=="FCNCkct_matchdown" 
+       ||datasetName=="FCNCxut_matchdown" || datasetName=="FCNCxct_matchdown" 
+       ||datasetName=="FCNCzut_matchdown" || datasetName=="FCNCzct_matchdown" 
+       
+       ||datasetName=="FCNCkut_scaleup" || datasetName=="FCNCkct_scaleup" 
+       ||datasetName=="FCNCxut_scaleup" || datasetName=="FCNCxct_scaleup" 
+       ||datasetName=="FCNCzut_scaleup" || datasetName=="FCNCzct_scaleup" 
+       
+       ||datasetName=="FCNCkut_scaledown" || datasetName=="FCNCkct_scaledown" 
+       ||datasetName=="FCNCxut_scaledown" || datasetName=="FCNCxct_scaledown" 
+       ||datasetName=="FCNCzut_scaledown" || datasetName=="FCNCzct_scaledown" 
+       
+       ||datasetName=="FCNCkut_topup" || datasetName=="FCNCkct_topup" 
+       ||datasetName=="FCNCxut_topup" || datasetName=="FCNCxct_topup" 
+       ||datasetName=="FCNCzut_topup" || datasetName=="FCNCzct_topup" 
+       
+       ||datasetName=="FCNCkut_topdown" || datasetName=="FCNCkct_topdown" 
+       ||datasetName=="FCNCxut_topdown" || datasetName=="FCNCxct_topdown" 
+       ||datasetName=="FCNCzut_topdown" || datasetName=="FCNCzct_topdown" 
        
        ) { 
       ITypeMC = 6; IsSignal = false;  Dweight[ITypeMC]= weightITypeMC; 
@@ -1142,13 +1200,21 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
     if(IChannel == 2) MyhistoManager.FillHisto(PU_after_eemu, "PU_after_eemu", event->pileup.after_npu, datasetName, IsSignal, Dweight[ITypeMC]);
     if(IChannel == 3) MyhistoManager.FillHisto(PU_after_eee, "PU_after_eee", event->pileup.after_npu, datasetName, IsSignal, Dweight[ITypeMC]);
 
+    
+    
+    
+    //if(IChannel == 0) MyhistoManager.FillHisto(NVtx_mumumu, "NVtx_mumumu", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
+    //if(IChannel == 1) MyhistoManager.FillHisto(NVtx_mumue,  "NVtx_mumue",  selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
+    //if(IChannel == 2) MyhistoManager.FillHisto(NVtx_eemu,   "NVtx_eemu",   selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
+    //if(IChannel == 3) MyhistoManager.FillHisto(NVtx_eee,    "NVtx_eee",    selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
 
-    if(IChannel == 0) MyhistoManager.FillHisto(NVtx_mumumu, "NVtx_mumumu", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
-    if(IChannel == 1) MyhistoManager.FillHisto(NVtx_mumue, "NVtx_mumue", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
-    if(IChannel == 2) MyhistoManager.FillHisto(NVtx_eemu, "NVtx_eemu", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
-    if(IChannel == 3) MyhistoManager.FillHisto(NVtx_eee, "NVtx_eee", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
-
-
+    if(IChannel == 0) MyhistoManager.FillHisto(NVtx_mumumu, "NVtx_mumumu", selVertices.size(), datasetName, IsSignal, 1);
+    if(IChannel == 1) MyhistoManager.FillHisto(NVtx_mumue,  "NVtx_mumue",  selVertices.size(), datasetName, IsSignal, 1);
+    if(IChannel == 2) MyhistoManager.FillHisto(NVtx_eemu,   "NVtx_eemu",   selVertices.size(), datasetName, IsSignal, 1);
+    if(IChannel == 3) MyhistoManager.FillHisto(NVtx_eee,    "NVtx_eee",    selVertices.size(), datasetName, IsSignal, 1);
+    
+    
+    
     MyhistoManager.FillHisto(Nvertex, "Nvertex", selVertices.size(), datasetName, IsSignal, Dweight[ITypeMC]);
  
  
@@ -3767,3 +3833,315 @@ void ProofSelectorMyCutFlow::Terminate()
     c1->Update();
   */
 }
+
+
+std::vector<double> ProofSelectorMyCutFlow::GetNvertexWeight(TString datasetName){
+
+    
+    std::vector<double> reweightPrivateProd;
+    
+    // for kut
+    if(datasetName == "FCNCkut"){
+     double reweightPrivateProd_tmp[31] = {  0 , 0.907961 , 0.874912 , 0.852147 , 0.935751 , 0.99628 , 1.03062 , 1.07897 , 1.07771 , 1.04004 , 1.04899 , 1.00515 , 0.998906 , 1.07023 , 1.04179 , 1.0139 , 1.03238 , 0.970094 , 1.01184 , 0.982466 , 0.961056 , 0.929841 , 1.04474 , 1.07386 , 1.36141 , 1.66165 , 1.89831 , 1.2499 , 1.40118 , 1.40688 , 0  };
+     reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+    
+    // for kct
+    else if(datasetName == "FCNCkct"){
+     double reweightPrivateProd_tmp[31]= {  0 , 0.712725 , 0.656884 , 0.753967 , 0.960977 , 1.08034 , 1.13014 , 1.13592 , 1.02528 , 0.950872 , 0.965542 , 0.982825 , 1.03358 , 1.13427 , 1.18196 , 1.19021 , 1.19707 , 1.15671 , 1.20606 , 1.1747 , 1.19182 , 1.17983 , 1.35037 , 1.48941 , 1.68852 , 1.79627 , 1.63421 , 4.39171 , 3.72483 , 3.31721 , 0  };
+      reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+ 
+    // for zut
+    else if(datasetName == "FCNCzut"){
+     double reweightPrivateProd_tmp[31]= {  14.2631 , 0.697375 , 0.809106 , 0.869676 , 0.899343 , 0.956851 , 1.00431 , 1.05732 , 1.06992 , 1.04496 , 1.04483 , 1.03554 , 1.11835 , 1.09721 , 1.12549 , 1.18966 , 1.13856 , 1.11547 , 1.10133 , 1.09732 , 1.01627 , 0.990315 , 0.956436 , 1.01717 , 1.04933 , 1.49887 , 1.9157 , 1.67661 , 1.39616 , 1.51968 , 0  };
+      reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+ 
+    // for zct
+    else if(datasetName == "FCNCzct"){
+     double reweightPrivateProd_tmp[31]= {  0 , 0.692144 , 0.817213 , 0.921795 , 0.909188 , 0.920288 , 0.945239 , 1.04917 , 1.10059 , 1.08028 , 1.06175 , 0.964076 , 0.960537 , 0.996581 , 1.00754 , 1.07115 , 1.18039 , 1.32376 , 1.31678 , 1.43264 , 1.29996 , 1.44647 , 1.68392 , 2.07507 , 2.74374 , 4.04146 , 4.44285 , 4.11708 , 12.5709 , 18.6586 , 0  };
+     reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+    // for kut
+    else if(datasetName == "FCNCkut_scaleup"){
+     double reweightPrivateProd_tmp[31]= {  15.1379 , 0.551451 , 0.627648 , 0.837559 , 1.04268 , 1.11849 , 1.06767 , 1.03912 , 0.997338 , 0.930993 , 0.980354 , 0.991143 , 1.08498 , 1.16188 , 1.18731 , 1.19847 , 1.23108 , 1.3609 , 1.19203 , 1.29347 , 1.29243 , 1.20005 , 1.43753 , 1.28594 , 1.39211 , 1.59079 , 1.92023 , 1.60149 , 1.48179 , 1.05188 , 0 };
+      reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+ 
+ 
+ 
+ 
+ 
+    // for zut
+    else if(datasetName == "FCNCzut_scaleup"){
+     double reweightPrivateProd_tmp[31]= {  40.0456 , 0.795185 , 0.952177 , 0.97578 , 0.965051 , 0.945924 , 0.947971 , 0.957591 , 0.906844 , 0.890566 , 0.947077 , 1.00407 , 1.08736 , 1.12073 , 1.19486 , 1.24646 , 1.29959 , 1.34313 , 1.33116 , 1.26193 , 1.23704 , 1.26307 , 1.27553 , 1.44578 , 1.5832 , 1.63655 , 1.75838 , 2.54194 , 1.65842 , 2.13335 , 0  };
+      reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+ 
+    // for zct
+    else if(datasetName == "FCNCzct_scaleup"){
+     double reweightPrivateProd_tmp[31]= {  0 , 0.938284 , 0.923777 , 0.991521 , 1.0126 , 0.916387 , 0.833552 , 0.854684 , 0.846158 , 0.826356 , 0.870978 , 0.990614 , 1.07197 , 1.15189 , 1.26719 , 1.569 , 1.68764 , 1.8092 , 2.11854 , 2.23978 , 2.3613 , 3.14149 , 2.98911 , 4.45639 , 4.47219 , 6.46073 , 13.035 , 9.0594 , 7.68374 , 22.8096 , 0  };
+     reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+    // for kut
+    else if(datasetName == "FCNCkut_scaledown"){
+     double reweightPrivateProd_tmp[31]= {  0 , 0.745082 , 0.809829 , 0.898396 , 0.969705 , 0.984589 , 1.00252 , 1.01246 , 1.03578 , 1.0233 , 1.02326 , 1.02118 , 0.998246 , 1.02082 , 1.05408 , 1.06153 , 1.11223 , 1.14877 , 1.09703 , 1.12478 , 1.2645 , 1.19921 , 1.38483 , 1.55163 , 2.08558 , 2.16232 , 2.47029 , 2.37721 , 2.09688 , 3.89044 , 0  };
+      reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+    // for kct
+    else if(datasetName == "FCNCkct_scaledown"){
+     double reweightPrivateProd_tmp[31]= { 0 , 0.703597 , 0.727591 , 1.28895 , 1.61283 , 1.42395 , 1.18867 , 0.922161 , 0.834933 , 0.76834 , 0.754498 , 0.779636 , 0.804281 , 0.871038 , 1.03117 , 1.07804 , 1.14148 , 1.20386 , 1.18028 , 1.35359 , 1.46127 , 1.69478 , 1.86092 , 2.46661 , 2.07899 , 3.19344 , 4.24813 , 5.16684 , 9.34882 , 6.93812 , 0  } ;
+      reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+    // for zut
+    else if(datasetName == "FCNCzut_scaledown"){
+     double reweightPrivateProd_tmp[31]= {  0 , 0.910875 , 1.00395 , 0.979439 , 0.965395 , 0.981437 , 1.02583 , 1.06932 , 1.11198 , 1.01895 , 0.958027 , 0.91515 , 0.8691 , 0.925065 , 0.942151 , 0.91838 , 1.03337 , 0.996567 , 1.09232 , 1.1754 , 1.18656 , 1.36198 , 1.39598 , 1.50597 , 1.86258 , 1.68986 , 2.82751 , 3.69909 , 3.87895 , 3.95824 , 0  };
+      reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+ 
+    // for zct
+    else if(datasetName == "FCNCzct_scaledown"){
+     double reweightPrivateProd_tmp[31]= {  36.327 , 0.910983 , 0.695497 , 0.748991 , 0.964121 , 1.11941 , 1.12051 , 1.02468 , 1.0327 , 1.04627 , 1.08918 , 1.118 , 1.10832 , 1.07402 , 1.05069 , 1.05511 , 1.03379 , 1.00201 , 0.948706 , 0.982789 , 1.01898 , 0.946641 , 0.935019 , 1.02865 , 1.29136 , 0.998972 , 1.20211 , 1.22654 , 1.11757 , 2.23299 , 0  };
+     reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+    // for kut
+    else if(datasetName == "FCNCkut_matchup"){
+     double reweightPrivateProd_tmp[31]= {  0 , 0.762897 , 0.764029 , 0.884739 , 0.844435 , 0.76688 , 0.794838 , 0.817928 , 0.880097 , 0.977448 , 1.1276 , 1.23209 , 1.38688 , 1.4933 , 1.49885 , 1.74964 , 1.88273 , 2.009 , 2.23029 , 2.43118 , 2.99231 , 2.75765 , 3.4293 , 2.87149 , 6.48376 , 9.01983 , 5.99938 , 14.5937 , 6.6014 , 0 , 0  };
+      reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+
+
+
+    // for kct
+    else if(datasetName == "FCNCkct_matchup"){
+     double reweightPrivateProd_tmp[31]= { 0 , 0.698017 , 0.719593 , 0.743384 , 0.747518 , 0.872695 , 1.15409 , 1.25711 , 1.21695 , 1.08732 , 1.03162 , 1.05062 , 1.09648 , 1.12552 , 1.21891 , 1.23022 , 1.24022 , 1.11835 , 1.17996 , 1.16561 , 1.31478 , 1.29517 , 1.3183 , 1.74909 , 1.5515 , 1.59628 , 1.85804 , 2.5827 , 2.54897 , 2.97265 , 0  } ;
+      reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+
+
+
+
+
+
+ 
+    // for zut
+    else if(datasetName == "FCNCzut_matchup"){
+     double reweightPrivateProd_tmp[31]= {  0 , 0.841243 , 1.44438 , 1.45269 , 1.21106 , 1.00853 , 0.944302 , 0.886085 , 0.894557 , 0.850107 , 0.839717 , 0.849464 , 0.91427 , 0.941008 , 1.00291 , 1.05408 , 1.12743 , 1.12569 , 1.09497 , 1.07089 , 1.16715 , 1.08432 , 1.1993 , 1.22656 , 2.17072 , 1.57554 , 2.24958 , 2.0572 , 5.30425 , 2.4603 , 0 };
+      reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+ 
+    // for zct
+    else if(datasetName == "FCNCzct_matchup"){
+     double reweightPrivateProd_tmp[31]= {  17.5605 , 0.596561 , 0.688948 , 0.832575 , 1.11862 , 1.20398 , 1.13964 , 1.0901 , 0.986408 , 0.966402 , 0.967177 , 1.00395 , 0.965944 , 1.0281 , 1.07703 , 1.07344 , 1.05414 , 1.1098 , 1.05357 , 1.06254 , 1.03471 , 0.948667 , 1.14736 , 1.0849 , 1.23809 , 1.1112 , 1.27288 , 1.79786 , 1.71893 , 3.11834 , 0 };
+     reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+    // for kut
+    else if(datasetName == "FCNCkut_matchdown"){
+     double reweightPrivateProd_tmp[31]= {  50.4888 , 0.707003 , 0.747977 , 0.818406 , 0.853953 , 0.949151 , 1.03146 , 1.02546 , 1.0191 , 0.981608 , 1.04264 , 1.05989 , 1.07686 , 1.16623 , 1.2507 , 1.26121 , 1.23155 , 1.25147 , 1.31989 , 1.35846 , 1.33442 , 1.33587 , 1.46197 , 2.1134 , 1.64292 , 1.74777 , 2.45278 , 2.28917 , 2.36364 , 2.52159 , 0  };
+      reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+    // for kct
+    else if(datasetName == "FCNCkct_matchdown"){
+     double reweightPrivateProd_tmp[31]= { 0 , 0.663241 , 0.633681 , 0.901797 , 1.28888 , 1.18535 , 1.05819 , 0.918223 , 0.866225 , 0.86927 , 0.930297 , 0.967001 , 0.985765 , 1.06207 , 1.09894 , 1.13441 , 1.34766 , 1.41431 , 1.27042 , 1.46696 , 1.70405 , 1.54996 , 1.58161 , 1.93062 , 2.62567 , 1.91766 , 2.12583 , 5.17113 , 3.50872 , 0 , 0  } ; 
+      reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+
+
+
+
+
+
+
+
+ 
+    // for zut
+    else if(datasetName == "FCNCzut_matchdown"){
+     double reweightPrivateProd_tmp[31]= {  0 , 0.722843 , 1.0616 , 1.05239 , 0.966535 , 0.911082 , 0.898049 , 0.885217 , 0.851363 , 0.887488 , 0.928911 , 1.0243 , 1.00966 , 1.17086 , 1.23454 , 1.32743 , 1.35913 , 1.35151 , 1.45697 , 1.6665 , 1.83476 , 1.97466 , 2.24081 , 2.87341 , 2.89334 , 3.01879 , 6.24678 , 6.51233 , 3.535 , 0 , 0 };
+      reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+ 
+    // for zct
+    else if(datasetName == "FCNCzct_matchdown"){
+     double reweightPrivateProd_tmp[31]= {  20.1409 , 0.846448 , 0.805092 , 0.784806 , 0.849833 , 0.985978 , 1.03221 , 1.05127 , 1.00932 , 0.991493 , 1.01662 , 1.04498 , 1.07889 , 1.13574 , 1.17261 , 1.1563 , 1.27704 , 1.23133 , 1.28447 , 1.13989 , 1.24961 , 1.26282 , 1.20286 , 1.23771 , 1.7388 , 1.85198 , 2.55487 , 6.39236 , 2.40964 , 2.01182 , 0  };
+     reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+    // for kut
+    else if(datasetName == "FCNCkut_topup"){
+     double reweightPrivateProd_tmp[31]= {  0 , 1.03004 , 0.960673 , 1.08199 , 1.01634 , 0.966311 , 0.986895 , 0.979055 , 0.990711 , 0.975136 , 0.969891 , 0.960413 , 0.982091 , 1.02613 , 1.01741 , 1.00422 , 1.03575 , 0.986282 , 0.98827 , 1.00417 , 1.03863 , 1.01223 , 1.09841 , 1.31879 , 1.48158 , 1.664 , 2.55901 , 2.12651 , 3.16059 , 2.46288 , 0  };
+      reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+
+    // for kct
+    else if(datasetName == "FCNCkct_topup"){
+     double reweightPrivateProd_tmp[31]= {  0 , 0.578898 , 0.612173 , 0.783089 , 0.944304 , 1.08885 , 1.23533 , 1.3013 , 1.18122 , 1.0511 , 0.993603 , 0.956608 , 0.965738 , 0.980513 , 1.04356 , 1.02931 , 1.05583 , 1.07781 , 1.10004 , 1.08476 , 1.10286 , 1.17233 , 1.24038 , 1.48819 , 1.73382 , 1.97577 , 2.3626 , 3.03526 , 2.71852 , 3.15237 , 0 } ; 
+      reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+
+
+
+
+
+ 
+    // for zut
+    else if(datasetName == "FCNCzut_topup"){
+     double reweightPrivateProd_tmp[31]= {  0 , 1.35821 , 1.05842 , 0.962271 , 1.05702 , 1.07218 , 0.951359 , 0.925066 , 0.951599 , 0.933318 , 0.938659 , 0.906345 , 0.933653 , 0.948235 , 0.99131 , 1.0065 , 1.09457 , 1.12502 , 1.23387 , 1.17505 , 1.23879 , 1.24366 , 1.2617 , 1.58252 , 1.68672 , 1.85151 , 2.48519 , 3.55041 , 3.33557 , 2.47546 , 0  };
+      reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+     
+    // for zct
+    else if(datasetName == "FCNCzct_topup"){
+     double reweightPrivateProd_tmp[31]= {  41.5534 , 0.764022 , 0.718226 , 0.860688 , 0.876271 , 0.893366 , 0.992805 , 1.09479 , 1.12378 , 1.07315 , 1.08742 , 1.10158 , 1.06466 , 1.09712 , 1.06265 , 1.14782 , 1.17845 , 1.13282 , 1.14177 , 1.13039 , 1.14367 , 1.18426 , 1.31807 , 1.48169 , 1.47715 , 1.94077 , 2.15634 , 2.27384 , 1.44331 , 2.55425 , 0  };
+     reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+    // for kut
+    else if(datasetName == "FCNCkut_topdown"){
+     double reweightPrivateProd_tmp[31]= {  9.125 , 0.980759 , 1.14075 , 0.959074 , 0.875701 , 0.884457 , 0.897158 , 0.940597 , 0.952344 , 0.979812 , 1.03483 , 1.11915 , 1.12613 , 1.17311 , 1.12708 , 1.10673 , 1.16769 , 1.15769 , 1.16511 , 1.18459 , 1.10422 , 1.12766 , 1.23306 , 1.36658 , 1.40733 , 1.4026 , 1.71583 , 1.71803 , 1.6775 , 1.96317 , 0  };
+      reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+    // for kct
+    else if(datasetName == "FCNCkct_topdown"){
+     double reweightPrivateProd_tmp[31]= {  0 , 0.60354 , 0.6397 , 0.986734 , 1.26481 , 1.18199 , 1.0277 , 0.902555 , 0.858423 , 0.838187 , 0.954761 , 0.993142 , 1.06956 , 1.17508 , 1.13329 , 1.14773 , 1.24981 , 1.17382 , 1.39394 , 1.23581 , 1.29021 , 1.41998 , 1.54785 , 1.81228 , 2.04698 , 2.54562 , 5.0144 , 5.03396 , 3.07408 , 3.25913 , 0 } ; 
+      reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+
+
+
+
+ 
+    // for zut
+    else if(datasetName == "FCNCzut_topdown"){
+     double reweightPrivateProd_tmp[31]= {  0 , 0.608823 , 0.733166 , 0.784112 , 0.911624 , 0.957957 , 1.00966 , 1.07282 , 1.20318 , 1.24168 , 1.15363 , 1.14219 , 1.03602 , 1.04011 , 1.08254 , 1.08701 , 1.05019 , 1.06686 , 1.05638 , 1.03762 , 0.938022 , 1.0018 , 1.00685 , 1.30297 , 1.47545 , 1.20477 , 1.72019 , 1.66048 , 1.22909 , 1.50506 , 0  };
+      reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+ 
+    // for zct
+    else if(datasetName == "FCNCzct_topdown"){
+     double reweightPrivateProd_tmp[31]= {  28.6416 , 0.932728 , 0.772171 , 0.824685 , 1.00605 , 0.995949 , 0.940026 , 0.908997 , 0.980909 , 1.00116 , 1.02356 , 1.09983 , 1.08679 , 1.14295 , 1.22058 , 1.14861 , 1.22009 , 1.24146 , 1.27108 , 1.15123 , 1.31055 , 1.16199 , 1.07328 , 1.19028 , 1.40885 , 1.53229 , 1.21106 , 2.27258 , 1.92749 , 2.86093 , 0  };
+     reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+    // for WZ private
+    else if(datasetName == "WZprivate"){
+     double reweightPrivateProd_tmp[31]= {  5.60045 , 1.05978 , 0.79694 , 0.781762 , 0.883931 , 0.968911 , 0.981463 , 1.00412 , 1.07303 , 1.1176 , 1.14079 , 1.16191 , 1.13931 , 1.06695 , 1.10416 , 1.0904 , 1.11693 , 1.07321 , 1.01076 , 0.984842 , 0.968539 , 0.921287 , 0.883743 , 1.04358 , 1.16515 , 1.24631 , 1.27875 , 1.48123 , 1.50757 , 1.49177 , 0 };
+     reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+    // for WZ private matchup
+    else if(datasetName == "WZprivate_matchup"){
+     double reweightPrivateProd_tmp[31]= {  3.97022 , 0.641981 , 0.735831 , 0.851583 , 0.850335 , 0.942161 , 1.07982 , 1.07316 , 0.989848 , 0.940942 , 0.949548 , 0.990726 , 1.04251 , 1.14313 , 1.21043 , 1.32572 , 1.37966 , 1.38649 , 1.50986 , 1.57969 , 1.60366 , 1.60547 , 1.61868 , 2.59631 , 2.72351 , 3.26013 , 4.72966 , 4.72528 , 4.27493 , 9.51777 , 0 };
+     reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+    // for WZ private matchdown
+    else if(datasetName == "WZprivate_matchdown"){
+     double reweightPrivateProd_tmp[31]= {  4.97165 , 0.943345 , 0.995265 , 1.11425 , 1.1736 , 0.966863 , 0.86165 , 0.806637 , 0.863769 , 0.927898 , 1.02027 , 1.06075 , 1.05789 , 1.14124 , 1.133 , 1.1397 , 1.13974 , 1.16056 , 1.16869 , 1.11429 , 1.14865 , 1.18922 , 1.21618 , 1.40092 , 1.31446 , 1.69609 , 1.56576 , 2.25416 , 1.86199 , 3.97283 , 0  };
+     reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+    // for WZ private scaleup
+    else if(datasetName == "WZprivate_scaleup"){
+     double reweightPrivateProd_tmp[31]= {  3.8893 , 0.758531 , 0.851 , 0.914643 , 1.01246 , 0.991989 , 0.903277 , 0.87064 , 0.890912 , 0.93049 , 0.979772 , 1.03688 , 1.14387 , 1.2145 , 1.2883 , 1.31274 , 1.31185 , 1.35892 , 1.45586 , 1.33054 , 1.35821 , 1.30395 , 1.35144 , 1.4297 , 1.41312 , 1.72276 , 2.26047 , 2.16019 , 2.66497 , 2.29005 , 0 };
+     reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+    // for WZ private scaledown
+    else if(datasetName == "WZprivate_scaledown"){
+     double reweightPrivateProd_tmp[31]= {  3.8805 , 0.673692 , 0.823117 , 0.879461 , 0.944958 , 0.992174 , 0.943534 , 0.906341 , 0.929292 , 0.934526 , 0.989993 , 1.07523 , 1.10036 , 1.20668 , 1.25037 , 1.31577 , 1.36481 , 1.35275 , 1.39318 , 1.42934 , 1.43312 , 1.41591 , 1.40472 , 1.69364 , 1.93794 , 2.33865 , 2.35352 , 2.22736 , 1.91977 , 2.92862 , 0  };
+     reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+    // for  TZq
+    else if(datasetName == "TZq"){
+     double reweightPrivateProd_tmp[31]= {  0 , 0.973806 , 0.887764 , 0.822885 , 0.872453 , 0.939798 , 0.940942 , 0.99365 , 1.03431 , 1.05627 , 1.05617 , 1.14854 , 1.05693 , 1.12571 , 1.08706 , 1.05765 , 1.12804 , 1.15374 , 1.24244 , 1.21423 , 1.19548 , 1.11615 , 1.25506 , 1.3633 , 1.38904 , 1.48147 , 3.832 , 2.99618 , 2.03297 , 1.50874 , 0 };
+     reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+    // for  TZq matchup
+    else if(datasetName == "TZq_matchup"){
+     double reweightPrivateProd_tmp[31]= {  0 , 0.826837 , 0.812389 , 0.84089 , 0.865891 , 0.893724 , 0.955301 , 1.00185 , 1.03626 , 1.03305 , 1.01178 , 1.00955 , 1.05831 , 1.11531 , 1.15173 , 1.19961 , 1.31234 , 1.32658 , 1.39132 , 1.44248 , 1.62267 , 1.58019 , 1.82971 , 2.03203 , 2.33843 , 2.62749 , 7.57307 , 5.26334 , 8.33299 , 18.5527 , 0  };
+     reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+    // for  TZq matchdown
+    else if(datasetName == "TZq_matchdown"){
+     double reweightPrivateProd_tmp[31]= {  0 , 0.88192 , 0.741805 , 0.887731 , 0.999574 , 1.02477 , 1.1351 , 0.971376 , 1.00494 , 0.946958 , 0.988118 , 1.0501 , 1.02462 , 1.02386 , 1.02603 , 0.975517 , 1.0667 , 1.18406 , 1.15494 , 1.11834 , 1.00729 , 1.19381 , 2.10356 , 1.58955 , 2.16182 , 1.5037 , 1.63359 , 5.6768 , 1.28394 , 1.42929 , 0 };
+     reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+    
+    else
+    {
+     double reweightPrivateProd_tmp[31]= {  1 ,1 , 1 , 1 , 1 , 1 ,1 , 1 , 1.  , 1 ,1 , 1 ,1 , 1, 1 , 1 ,1 ,1 , 1  , 1 , 1.  , 1.  ,1, 1 , 1 , 1 , 1 , 1 , 1  , 1  , 1 };
+     reweightPrivateProd = TableToVector(reweightPrivateProd_tmp, 31);
+    }
+
+ 
+
+    return reweightPrivateProd;
+
+}
+
+
+std::vector<double> ProofSelectorMyCutFlow::TableToVector(double *theTable, int size){
+
+
+
+   std::vector<double> thevector;
+   
+   
+   for(int i=0; i<size; i++){
+   
+     thevector.push_back(theTable[i]);
+   } 
+
+
+
+  return thevector;
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
