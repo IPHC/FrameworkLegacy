@@ -97,11 +97,16 @@ class ProofSelectorMyCutFlow : public TSelector {
   
   bool useNonIsoWcand;
   bool applyTrigger ;
+  bool applyTriggerUp ;
+  bool applyTriggerDown ;
   
   bool applyWZ ;
   bool applyWZ_finalSel ;
   bool applyFakescale ;
+
   bool applyLeptonSF;
+  bool applyLeptonSFUp;
+  bool applyLeptonSFDown;
   
   
   double SF_WZ_finalSel;
@@ -145,13 +150,15 @@ class ProofSelectorMyCutFlow : public TSelector {
   
  
   
-  double sumSFlept_ee;
-  double sumSFlept_mumu;
-  double sumSFlept_emu;
+  double sumSFlept_mumumu;
+  double sumSFlept_mumue;
+  double sumSFlept_eemu;
+  double sumSFlept_eee;
   
-  double nEvents_ee;
-  double nEvents_mumu;
-  double nEvents_emu;
+  double nEvents_mumumu;
+  double nEvents_mumue;
+  double nEvents_eemu;
+  double nEvents_eee;
   
    
    

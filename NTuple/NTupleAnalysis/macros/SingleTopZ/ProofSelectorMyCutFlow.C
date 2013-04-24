@@ -79,12 +79,18 @@ ProofSelectorMyCutFlow::ProofSelectorMyCutFlow()
   SF_WZ.push_back(0.70); //eee
   
   
-  applyWZ_finalSel = true;
+  applyWZ_finalSel = false;
   SF_WZ_finalSel = 0.93; // 4 channels combined
   
   
   applyLeptonSF  = true;
   applyTrigger   = true;
+  
+  applyLeptonSFUp    = false;
+  applyLeptonSFDown  = false;
+
+  applyTriggerUp   = false;
+  applyTriggerDown = false;
   
   
   IReweight		= true;
@@ -235,13 +241,15 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   
   
   
-  sumSFlept_ee    = 0;
-  sumSFlept_mumu  = 0;
-  sumSFlept_emu   = 0;
+  sumSFlept_mumumu  = 0;
+  sumSFlept_mumue   = 0;
+  sumSFlept_eemu    = 0;
+  sumSFlept_eee     = 0;
   
-  nEvents_ee   = 0;
-  nEvents_mumu   = 0;
-  nEvents_emu   = 0;
+  nEvents_mumumu  = 0;
+  nEvents_mumue   = 0;
+  nEvents_eemu    = 0;
+  nEvents_eee     = 0;
   
   
   scaleElec = 1.0; // 1 to switch off
@@ -255,13 +263,13 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   //************************************
   //For trigger systematics 
   
-  if(datasetName=="TTbarTriggerUp"){
+  if(applyTriggerUp){
     SF_trig_mumumu += SF_trig_mumumu_error;
     SF_trig_mumue+= SF_trig_mumue_error;  
     SF_trig_eemu += SF_trig_eemu_error;
     SF_trig_eee += SF_trig_eee_error; 
   } 
-  if(datasetName=="TTbarTriggerDown"){
+  if(applyTriggerDown){
     SF_trig_mumumu  -= SF_trig_mumumu_error;
     SF_trig_mumue -= SF_trig_mumue_error;  
     SF_trig_eemu  -= SF_trig_eemu_error;
@@ -1572,25 +1580,72 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
  
         if(applyLeptonSF && !isData){
 
-          if(IChannel == 0 && cand3leptonChannel == "mumumu")
-           LeptonSF = sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "mu") 
-                     * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "mu") 
-                     * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "mu");
-          if(IChannel == 1 && cand3leptonChannel == "mumue")
-           LeptonSF = sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "mu")
-                     * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "mu")
-                     * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "e");
-          if(IChannel == 2 && cand3leptonChannel == "eemu")
-           LeptonSF = sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "e")
-                     * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "e")
-                     * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "mu");
-          if(IChannel == 3 && cand3leptonChannel == "eee")
-           LeptonSF = sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "e")
-                     * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "e")
-                     * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "e");
+	  if(IChannel == 0 && cand3leptonChannel == "mumumu"){
+            sumSFlept_mumumu += Dweight[ITypeMC];
+            LeptonSF = sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "mu") 
+                      * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "mu") 
+                      * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "mu");
+	    if(applyLeptonSFUp)
+            LeptonSF = (sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "mu")+sel.getLeptonScaleFactorError( lept1.Pt(), lept1.Eta(), "mu"))
+                      * (sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "mu")+sel.getLeptonScaleFactorError( lept2.Pt(), lept2.Eta(), "mu"))
+                      * (sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "mu")+sel.getLeptonScaleFactorError( lept3.Pt(), lept3.Eta(), "mu"));		  
+	    if(applyLeptonSFDown)
+            LeptonSF = (sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "mu")-sel.getLeptonScaleFactorError( lept1.Pt(), lept1.Eta(), "mu"))
+                      * (sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "mu")-sel.getLeptonScaleFactorError( lept2.Pt(), lept2.Eta(), "mu")) 
+                      * (sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "mu")-sel.getLeptonScaleFactorError( lept3.Pt(), lept3.Eta(), "mu"));		  
+ 	    nEvents_mumumu += Dweight[ITypeMC]*LeptonSF;
+          }
+	  
+	  if(IChannel == 1 && cand3leptonChannel == "mumue"){
+            sumSFlept_mumue += Dweight[ITypeMC];
+            LeptonSF = sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "mu")
+                      * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "mu")
+                      * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "e");
+	    if(applyLeptonSFUp)
+            LeptonSF = (sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "mu")+sel.getLeptonScaleFactorError( lept1.Pt(), lept1.Eta(), "mu"))
+                      * (sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "mu")+sel.getLeptonScaleFactorError( lept2.Pt(), lept2.Eta(), "mu")) 
+                      * (sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "e")+sel.getLeptonScaleFactorError( lept3.Pt(), lept3.Eta(), "e"));		  
+	    if(applyLeptonSFDown)
+            LeptonSF = (sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "mu")-sel.getLeptonScaleFactorError( lept1.Pt(), lept1.Eta(), "mu"))
+                      * (sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "mu")-sel.getLeptonScaleFactorError( lept2.Pt(), lept2.Eta(), "mu")) 
+                      * (sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "e")-sel.getLeptonScaleFactorError( lept3.Pt(), lept3.Eta(), "e"));		  
+	    nEvents_mumue += Dweight[ITypeMC]*LeptonSF;
+	  }
+	  
+          if(IChannel == 2 && cand3leptonChannel == "eemu"){
+            sumSFlept_eemu += Dweight[ITypeMC];
+            LeptonSF = sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "e")
+                      * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "e")
+                      * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "mu");
+ 	    if(applyLeptonSFUp)
+            LeptonSF = (sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "e")+sel.getLeptonScaleFactorError( lept1.Pt(), lept1.Eta(), "e"))
+                      * (sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "e")+sel.getLeptonScaleFactorError( lept2.Pt(), lept2.Eta(), "e")) 
+                      * (sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "mu")+sel.getLeptonScaleFactorError( lept3.Pt(), lept3.Eta(), "mu"));		  
+	    if(applyLeptonSFDown)
+            LeptonSF = (sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "e")-sel.getLeptonScaleFactorError( lept1.Pt(), lept1.Eta(), "e"))
+                      * (sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "e")-sel.getLeptonScaleFactorError( lept2.Pt(), lept2.Eta(), "e")) 
+                      * (sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "mu")-sel.getLeptonScaleFactorError( lept3.Pt(), lept3.Eta(), "mu"));		  
+	    nEvents_eemu += Dweight[ITypeMC]*LeptonSF;
+          }
+	  
+          if(IChannel == 3 && cand3leptonChannel == "eee"){
+            sumSFlept_eee += Dweight[ITypeMC];
+            LeptonSF = sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "e")
+                      * sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "e")
+                      * sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "e");
+	    if(applyLeptonSFUp)
+            LeptonSF = (sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "e")+sel.getLeptonScaleFactorError( lept1.Pt(), lept1.Eta(), "e"))
+                      * (sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "e")+sel.getLeptonScaleFactorError( lept2.Pt(), lept2.Eta(), "e")) 
+                      * (sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "e")+sel.getLeptonScaleFactorError( lept3.Pt(), lept3.Eta(), "e"));		  
+	    if(applyLeptonSFDown)
+            LeptonSF = (sel.getLeptonScaleFactor( lept1.Pt(), lept1.Eta(), "e")-sel.getLeptonScaleFactorError( lept1.Pt(), lept1.Eta(), "e"))
+                      * (sel.getLeptonScaleFactor( lept2.Pt(), lept2.Eta(), "e")-sel.getLeptonScaleFactorError( lept2.Pt(), lept2.Eta(), "e")) 
+                      * (sel.getLeptonScaleFactor( lept3.Pt(), lept3.Eta(), "e")-sel.getLeptonScaleFactorError( lept3.Pt(), lept3.Eta(), "e"));		  
+	    nEvents_eee += Dweight[ITypeMC]*LeptonSF;
+          }
 
           //if(event->general.eventNb%10==0) cout<< IChannel << "  " << cand3leptonChannel<<" SF "<<LeptonSF<<endl; 
-          Dweight[ITypeMC]*=LeptonSF;
+	  Dweight[ITypeMC]*=LeptonSF;
 
         }
 	
@@ -3789,6 +3844,10 @@ void ProofSelectorMyCutFlow::SlaveTerminate()
   
   
   
+    cout << "global lepton SF mumumu : " << nEvents_mumumu/sumSFlept_mumumu << endl;
+    cout << "global lepton SF mumue  : " << nEvents_mumue/sumSFlept_mumue << endl;
+    cout << "global lepton SF eemu   : " << nEvents_eemu/sumSFlept_eemu << endl;
+    cout << "global lepton SF eee    : " << nEvents_eee/sumSFlept_eee << endl;
   
   
   
