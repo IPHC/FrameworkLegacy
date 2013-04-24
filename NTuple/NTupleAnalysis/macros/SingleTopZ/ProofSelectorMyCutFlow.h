@@ -712,6 +712,14 @@ class ProofSelectorMyCutFlow : public TSelector {
   virtual void    Terminate();
   
   ClassDef(ProofSelectorMyCutFlow,0);
+  
+  
+  std::vector<double>  GetNvertexWeight(TString datasetName);
+  
+  std::vector<double>  TableToVector(double * theTable, int size);
+  
+  
+  
 };
 
 #endif
