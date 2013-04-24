@@ -1016,7 +1016,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
     
     //if(WZprivate){ 
     
-      std::vector<double> reweightPrivateProd = GetNvertexWeight("datasetName");
+      std::vector<double> reweightPrivateProd = GetNvertexWeight(datasetName);
 
       if(selVertices.size() <=31 ) weightITypeMC = weightITypeMC*reweightPrivateProd[ selVertices.size()];
       else weightITypeMC = weightITypeMC*reweightPrivateProd[31];
