@@ -30,14 +30,14 @@
 <d name="DataMuEG"     add="1" isData="1" color="2" ls="1" lw="2" normf="1" xsection="1"     filenames="/opt/sbg/data/data1/cms/jlagram/data/Data_2011/skim_3lept/MuEG_2011_part*.root" />
 
 <!-- FastSim -->
-<!--
-<d name="FCNCkut"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedKut.root" />
+
+<!--d name="FCNCkut"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedKut.root" />
 <d name="FCNCkct"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedKct.root" />
 <d name="FCNCxut"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedXut.root" />
 <d name="FCNCxct"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedXct.root" />
 <d name="FCNCzut"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedZut.root" />
-<d name="FCNCzct"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedZct.root" />
--->
+<d name="FCNCzct"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7/src/NTuple/NTupleAnalysis/macros/SingleTopZ/NTuple7TeV/SkimmedZct.root" /-!!>
+
 
 
 <!-- FullSim -->
@@ -46,6 +46,64 @@
 <d name="FCNCzct"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Zct_nominal.root" />
 <d name="FCNCkut"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Kut_nominal.root" />
 <d name="FCNCkct"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Kct_nominal.root" />
+
+
+
+<d name="FCNCzut_matchup"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Zut_matchup.root" />
+<d name="FCNCzct_matchup"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Zct_matchup.root.root" />
+<d name="FCNCkut_matchup"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Kut_matchup.root" />
+<d name="FCNCkct_matchup"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Kct_matchup.root" />
+
+
+
+<d name="FCNCzut_matchdown"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Zut_matchdown.root" />
+<d name="FCNCzct_matchdown"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Zct_matchdown.root" />
+<d name="FCNCkut_matchdown"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Kut_matchdown.root" />
+<d name="FCNCkct_matchdown"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Kct_matchdown.root" />
+
+
+
+<d name="FCNCzut_scaleup"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Zut_scaleup.root" />
+<d name="FCNCzct_scaleup"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Zct_scaleup.root" />
+<d name="FCNCkut_scaleup"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Kut_scaleup.root" />
+<d name="FCNCkct_scaleup"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Kct_scaleup.root" />
+
+
+
+<d name="FCNCzut_scaledown"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Zut_scaledown.root" />
+<d name="FCNCzct_scaledown"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Zct_scaledown.root" />
+<d name="FCNCkut_scaledown"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Kut_scaledown.root" />
+<d name="FCNCkct_scaledown"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Kct_scaledown.root" />
+
+
+
+<d name="FCNCzut_topup"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Zut_topup.root" />
+<d name="FCNCzct_topup"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Zct_topup.root" />
+<d name="FCNCkut_topup"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Kut_topup.root" />
+<d name="FCNCkct_topup"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Kct_topup.root" />
+
+
+
+<d name="FCNCzut_topdown"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Zut_topdown.root" />
+<d name="FCNCzct_topdown"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Zct_topdown.root" />
+<d name="FCNCkut_topdown"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Kut_topdown.root" />
+<d name="FCNCkct_topdown"      add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="1."   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_Kct_topdown.root" />
+
+
+<d name="WZprivate"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="1.558"   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_WZjets_nominal.root" />
+<d name="WZprivate_scaleup"   add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="1.558"   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_WZjets_scaleup.root" />
+<d name="WZprivate_scaledown" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="1.558"   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_WZjets_scaledown.root" />
+<d name="WZprivate_matchup"   add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="1.558"   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_WZjets_matchup.root" />
+<d name="WZprivate_matchdown" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="1.558"   filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_WZjets_matchdown.root" />
+
+
+<d name="TZq"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.0216"  filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_tZq_nominal.root" />
+<!--d name="TZq_scaleup"   add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.0216"  filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_tZq_scaleup.root" />
+<d name="TZq_scaledown" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.0216"  filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_tZq_scaledown.root" /-->
+<d name="TZq_matchup"   add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.0216"  filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_tZq_matchup.root" />
+<d name="TZq_matchdown" add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.0216"  filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_tZq_matchdown.root" />
+<!--d name="TZq_topup"     add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.0216"  filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_tZq_topup.root" />
+<d name="TZq_topdown"   add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.0216"  filenames="/opt/sbg/data/data1/cms/jlagram/data/MC_428p7/FEB2013/FEB2013_tZq_topdown.root" /-->
 
 
 <d name="TTbar"        add="1" isData="0" color="2" ls="1" lw="2" normf="1" xsection="164"   filenames="/opt/sbg/data/data2/cms/jlagram/data/MC_428p7/skim_3lept/TTJets_*.root" /> 
@@ -74,6 +132,7 @@
 <d name="ZZ"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="0.0782262"  filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/ZZ/NTuple_ZZ.root" />
 <d name="WW"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="4.99003"    filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/WW/NTuple_WW.root" />
 
+<!--d name="WZ"           add="1" isData="0" color="6" ls="1" lw="2" normf="1" xsection="1.558"   filenames="/opt/sbg/data/data2/cms/jandrea/SamplesFCNC_topZ/WZ/NTuple_WZ_MG.root" /-->
 
 
 </Datasets>
@@ -177,4 +236,4 @@ You can change the number of points (not fixed) used in values but take care of 
 <s obs="NjetsNBjets_6_0.898" dim="2" NofBins="5,5" axisName="Njets,NBjets" axisRange="-0.5,4.5|-0.5,4.5"/-->
 </Observables>
 
-
+	 
