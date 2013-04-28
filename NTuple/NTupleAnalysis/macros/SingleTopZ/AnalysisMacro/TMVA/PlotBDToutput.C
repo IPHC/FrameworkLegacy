@@ -468,7 +468,14 @@ void PlotBDToutput(){
    TString theFile_xut = "HistoBDToutput/TMVApp_xut_nom.root";
    TString theFile_xct = "HistoBDToutput/TMVApp_xct_nom.root";
    
-   PlotBDToutput(thevertex_zut, "MVA_BDT"       , theFile_zut);
+   //PlotBDToutput(thevertex_zut, "MVA_BDT"       , theFile_zut);
+   //PlotBDToutput(thevertex_zct, "MVA_BDT"       , theFile_zct);
+   //PlotBDToutput(thevertex_kut, "MVA_BDT"       , theFile_kut);
+   PlotBDToutput(thevertex_kct, "MVA_BDT"       , theFile_kct);
+   
+   
+   
+   
    /*PlotBDToutput(thevertex_zut, "topMass"       , theFile_zut);
    PlotBDToutput(thevertex_zut, "totMass"       , theFile_zut);
    PlotBDToutput(thevertex_zut, "deltaPhilb"    , theFile_zut);
@@ -482,8 +489,8 @@ void PlotBDToutput(){
    PlotBDToutput(thevertex_zut, "NJets"         , theFile_zut);   
    PlotBDToutput(thevertex_zut, "NBJets"        , theFile_zut);  
    PlotBDToutput(thevertex_zut, "deltaRZl"      , theFile_zut); 
-   PlotBDToutput(thevertex_zut, "deltaPhiZmet"  , theFile_zut);*/
-   PlotBDToutput(thevertex_zut, "btagDiscri"    , theFile_zut);/*
+   PlotBDToutput(thevertex_zut, "deltaPhiZmet"  , theFile_zut);
+   PlotBDToutput(thevertex_zut, "btagDiscri"    , theFile_zut);
    PlotBDToutput(thevertex_zut, "leptWPt"       , theFile_zut);
    PlotBDToutput(thevertex_zut, "leptWEta"      , theFile_zut);	    
    PlotBDToutput(thevertex_zut, "leadJetPt"     , theFile_zut);	      
@@ -491,7 +498,6 @@ void PlotBDToutput(){
    PlotBDToutput(thevertex_zut, "deltaPhiZleptW", theFile_zut);*/
    
    
-   PlotBDToutput(thevertex_zct, "MVA_BDT"       , theFile_zct);
    /*PlotBDToutput(thevertex_zct, "topMass"       , theFile_zct);
    PlotBDToutput(thevertex_zct, "totMass"       , theFile_zct);
    PlotBDToutput(thevertex_zct, "deltaPhilb"    , theFile_zct);
@@ -514,6 +520,5 @@ void PlotBDToutput(){
    PlotBDToutput(thevertex_zct, "deltaPhiZleptW", theFile_zct);
    */
 
-   PlotBDToutput(thevertex_kut, "MVA_BDT"       , theFile_kut);
-   PlotBDToutput(thevertex_kct, "MVA_BDT"       , theFile_kct);
+
 }
