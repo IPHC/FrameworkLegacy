@@ -1149,6 +1149,10 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
        ||datasetName=="FCNCxut" || datasetName=="FCNCxct" 
        ||datasetName=="FCNCzut" || datasetName=="FCNCzct" 
        
+       ||datasetName=="FCNCkutFullSim" || datasetName=="FCNCkctFullSim" 
+       ||datasetName=="FCNCxutFullSim" || datasetName=="FCNCxctFullSim" 
+       ||datasetName=="FCNCzutFullSim" || datasetName=="FCNCzctFullSim" 
+       
        ||datasetName=="FCNCkut_matchup" || datasetName=="FCNCkct_matchup" 
        ||datasetName=="FCNCxut_matchup" || datasetName=="FCNCxct_matchup" 
        ||datasetName=="FCNCzut_matchup" || datasetName=="FCNCzct_matchup" 
