@@ -14,23 +14,103 @@ using namespace std;
 
 
 void prodtemplate(std::string signalname, 
+                  std::string outputname,
                   bool WZ_PRIVATE, 
                   bool WZ_SYS,
-                  bool TZq_SYS);
+                  bool TZq_SYS,
+                  bool doJES, bool doJER, bool doBTag, bool doPU, bool doLept, 
+                  bool doTopMass, bool doPDF, bool doScale, bool doMatch);
 
-int main()
+
+int main(int argc,char *argv[])
 {
-  bool WZ_PRIVATE  = false;
+
+  std::cout << "Welcome to ProdTemplate macro" << std::endl << std::endl;
+  std::cout << "By default, all the boolean parameters are set to true." << std::endl;
+
+  std::vector<std::string> arguments;
+  if (argc>1)
+  {
+    for (int i=1;i<argc;i++) arguments.push_back(argv[i]);
+  }
+
+  bool WZ_PRIVATE  = true;
   bool WZ_SYS      = true;
   bool TZq_SYS     = true;
-  prodtemplate("zut",WZ_PRIVATE, WZ_SYS, TZq_SYS);
+
+  bool doJES=true;
+  bool doJER=true;
+  bool doBTag=true;
+  bool doPU=true;
+  bool doLept=true;
+  bool doTopMass=true;
+  bool doPDF=true;
+  bool doScale=true;
+  bool doMatch=true;
+
+  std::string signalname="zut";
+  std::string outputname="NewFileToBeUsedForThetaWithAutoNamingConvention_allpoints.root";
+
+
+  for (unsigned int i=0;i<arguments.size();i++)
+  {
+    if (arguments[i]=="WZ_PRIVATE=true")       WZ_PRIVATE=true;
+    else if (arguments[i]=="WZ_PRIVATE=false") WZ_PRIVATE=false;
+    else if (arguments[i]=="WZ_SYS=true")      WZ_SYS=true;
+    else if (arguments[i]=="WZ_SYS=false")     WZ_SYS=false;
+    else if (arguments[i]=="TZq_SYS=true")     TZq_SYS=true;
+    else if (arguments[i]=="TZq_SYS=false")    TZq_SYS=false;
+    else if (arguments[i]=="doJES=false")      doJES=false;
+    else if (arguments[i]=="doJER=false")      doJER=false;
+    else if (arguments[i]=="doBTag=false")     doBTag=false;
+    else if (arguments[i]=="doPU=false")       doPU=false;
+    else if (arguments[i]=="doLept=false")     doLept=false;
+    else if (arguments[i]=="doTopMass=false")  doTopMass=false;
+    else if (arguments[i]=="doPDF=false")      doPDF=false;
+    else if (arguments[i]=="doScale=false")    doScale=false;
+    else if (arguments[i]=="doMatch=false")    doMatch=false;
+    else if (arguments[i]=="signal=zut")       signalname="zut";
+    else if (arguments[i]=="signal=zct")       signalname="zct";
+    else if (arguments[i]=="signal=kut")       signalname="kut";
+    else if (arguments[i]=="signal=kct")       signalname="kct";
+    else if (arguments[i].find("output=")==0)
+    {
+      outputname=arguments[i].substr(7,std::string::npos);
+    }
+    else 
+    {
+      std::cout << "ERROR: the parameter '" << arguments[i] 
+                << "' is unknown. Skip it!" << std::endl;
+    }
+  }
+
+  // Display configuration
+  std::cout << "--------------------------------------" << std::endl;
+  std::cout << "Configuration: " << std::endl;
+  std::cout << std::endl;
+  std::cout << " Signal name = " << signalname << std::endl;
+  std::cout << " Output name = " << outputname << std::endl;
+  std::cout << std::endl;
+  std::cout << " WZ_PRIVATE=" << WZ_PRIVATE << "   WZ_SYS ="  << WZ_SYS  << "   TZq_SYS  =" << TZq_SYS   << std::endl;
+  std::cout << " doJES     =" << doJES      << "   doJER  ="  << doJER   << "   doBTag   =" << doBTag    << std::endl;
+  std::cout << " doPU      =" << doPU       << "   doLept ="  << doLept  << "   doTopMass=" << doTopMass << std::endl;
+  std::cout << " doPDF     =" << doPDF      << "   doScale=" << doScale << "   doMatch  =" << doMatch   << std::endl; 
+  std::cout << "--------------------------------------" << std::endl;
+
+  prodtemplate(signalname,outputname,WZ_PRIVATE, WZ_SYS, TZq_SYS, doJES, doJER, doBTag, doPU, doLept, doTopMass, doPDF, doScale, doMatch);
+
+
   return 0;
+
 }
 
-void prodtemplate(std::string signalname, 
+
+void prodtemplate(std::string signalname, std::string outputname,
                   bool WZ_PRIVATE, 
                   bool WZ_SYS,
-                  bool TZq_SYS)
+                  bool TZq_SYS,
+                  bool doJES, bool doJER, bool doBTag, bool doPU, bool doLept, 
+                  bool doTopMass, bool doPDF, bool doScale, bool doMatch)
 {
   // Initializing scale factors
   double WZscaleFactor = 0.;
@@ -840,7 +920,7 @@ void prodtemplate(std::string signalname,
   //----------------------------------------------------------------------------------------
   std::cout << "Saving histograms ... " << std::endl;
   //TFile * outputfile = new TFile("NewFileToBeUsedForThetaWithAutoNamingConvention.root","new");
-  TFile * outputfile = new TFile("NewFileToBeUsedForThetaWithAutoNamingConvention_allpoints.root","RECREATE");
+  TFile * outputfile = new TFile(outputname.c_str(),"RECREATE");
   outputfile->cd();
   
   /*
@@ -870,127 +950,181 @@ void prodtemplate(std::string signalname,
   histo_ZZ.Write();
   histo_TTbar.Write();
 
-  std::cout << " - JES up" << std::endl;
-  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_JES_up[i]->Write();
-  histo_Sig_JES_up.Write();
-  histo_WZ_JES_up.Write();
-  histo_TZq_JES_up.Write();
-  histo_ZZ_JES_up.Write();
-  histo_TTbar_JES_up.Write();
+  if (doJES)
+  {
+    std::cout << " - JES up" << std::endl;
+    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_JES_up[i]->Write();
+    histo_Sig_JES_up.Write();
+    histo_WZ_JES_up.Write();
+    histo_TZq_JES_up.Write();
+    histo_ZZ_JES_up.Write();
+    histo_TTbar_JES_up.Write();
+  }
 
-  std::cout << " - JES down" << std::endl;
-  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_JES_down[i]->Write();
-  histo_Sig_JES_down.Write();
-  histo_WZ_JES_down.Write();
-  histo_TZq_JES_down.Write();
-  histo_ZZ_JES_down.Write();
-  histo_TTbar_JES_down.Write();
+  if (doJES)
+  {
+    std::cout << " - JES down" << std::endl;
+    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_JES_down[i]->Write();
+    histo_Sig_JES_down.Write();
+    histo_WZ_JES_down.Write();
+    histo_TZq_JES_down.Write();
+    histo_ZZ_JES_down.Write();
+    histo_TTbar_JES_down.Write();
+  }
 
-  std::cout << " - JER up" << std::endl;
-  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_JER_up[i]->Write();
-  histo_Sig_JER_up.Write();
-  histo_WZ_JER_up.Write();
-  histo_TZq_JER_up.Write();
-  histo_ZZ_JER_up.Write();
-  histo_TTbar_JER_up.Write();
+  if (doJER)
+  {
+    std::cout << " - JER up" << std::endl;
+    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_JER_up[i]->Write();
+    histo_Sig_JER_up.Write();
+    histo_WZ_JER_up.Write();
+    histo_TZq_JER_up.Write();
+    histo_ZZ_JER_up.Write();
+    histo_TTbar_JER_up.Write();
+  }
 
-  std::cout << " - JER down" << std::endl;
-  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_JER_down[i]->Write();
-  histo_Sig_JER_down.Write();
-  histo_WZ_JER_down.Write();
-  histo_TZq_JER_down.Write();
-  histo_ZZ_JER_down.Write();
-  histo_TTbar_JER_down.Write();
+  if (doJER)
+  {
+    std::cout << " - JER down" << std::endl;
+    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_JER_down[i]->Write();
+    histo_Sig_JER_down.Write();
+    histo_WZ_JER_down.Write();
+    histo_TZq_JER_down.Write();
+    histo_ZZ_JER_down.Write();
+    histo_TTbar_JER_down.Write();
+  }
 
-  std::cout << " - BTag up" << std::endl;
-  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_BTag_up[i]->Write();
-  histo_Sig_BTag_up.Write();
-  histo_WZ_BTag_up.Write();
-  histo_TZq_BTag_up.Write();
-  histo_ZZ_BTag_up.Write();
-  histo_TTbar_BTag_up.Write();
+  if (doBTag)
+  {
+    std::cout << " - BTag up" << std::endl;
+    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_BTag_up[i]->Write();
+    histo_Sig_BTag_up.Write();
+    histo_WZ_BTag_up.Write();
+    histo_TZq_BTag_up.Write();
+    histo_ZZ_BTag_up.Write();
+    histo_TTbar_BTag_up.Write();
+  }
 
-  std::cout << " - BTag down" << std::endl;
-  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_BTag_down[i]->Write();
-  histo_Sig_BTag_down.Write();
-  histo_WZ_BTag_down.Write();
-  histo_TZq_BTag_down.Write();
-  histo_ZZ_BTag_down.Write();
-  histo_TTbar_BTag_down.Write();
+  if (doBTag)
+  {
+    std::cout << " - BTag down" << std::endl;
+    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_BTag_down[i]->Write();
+    histo_Sig_BTag_down.Write();
+    histo_WZ_BTag_down.Write();
+    histo_TZq_BTag_down.Write();
+    histo_ZZ_BTag_down.Write();
+    histo_TTbar_BTag_down.Write();
+  }
 
-  std::cout << " - PU up" << std::endl;
-  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_PU_up[i]->Write();
-  histo_Sig_PU_up.Write();
-  histo_WZ_PU_up.Write();
-  histo_TZq_PU_up.Write();
-  histo_ZZ_PU_up.Write();
-  histo_TTbar_PU_up.Write();
+  if (doPU)
+  {
+    std::cout << " - PU up" << std::endl;
+    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_PU_up[i]->Write();
+    histo_Sig_PU_up.Write();
+    histo_WZ_PU_up.Write();
+    histo_TZq_PU_up.Write();
+    histo_ZZ_PU_up.Write();
+    histo_TTbar_PU_up.Write();
+  }
 
-  std::cout << " - PU down" << std::endl;
-  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_PU_up[i]->Write();
-  histo_Sig_PU_up.Write();
-  histo_WZ_PU_up.Write();
-  histo_TZq_PU_up.Write();
-  histo_ZZ_PU_up.Write();
-  histo_TTbar_PU_up.Write();
+  if (doPU)
+  {
+    std::cout << " - PU down" << std::endl;
+    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_PU_up[i]->Write();
+    histo_Sig_PU_up.Write();
+    histo_WZ_PU_up.Write();
+    histo_TZq_PU_up.Write();
+    histo_ZZ_PU_up.Write();
+    histo_TTbar_PU_up.Write();
+  }
 
-  std::cout << " - Lept up" << std::endl;
-  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Lept_up[i]->Write();
-  histo_Sig_Lept_up.Write();
-  histo_WZ_Lept_up.Write();
-  histo_TZq_Lept_up.Write();
-  histo_ZZ_Lept_up.Write();
-  histo_TTbar_Lept_up.Write();
+  if (doLept)
+  {
+    std::cout << " - Lept up" << std::endl;
+    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Lept_up[i]->Write();
+    histo_Sig_Lept_up.Write();
+    histo_WZ_Lept_up.Write();
+    histo_TZq_Lept_up.Write();
+    histo_ZZ_Lept_up.Write();
+    histo_TTbar_Lept_up.Write();
+  }
 
-  std::cout << " - Lept down" << std::endl;
-  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Lept_down[i]->Write();
-  histo_Sig_Lept_down.Write();
-  histo_WZ_Lept_down.Write();
-  histo_TZq_Lept_down.Write();
-  histo_ZZ_Lept_down.Write();
-  histo_TTbar_Lept_down.Write();
+  if (doLept)
+  {
+    std::cout << " - Lept down" << std::endl;
+    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Lept_down[i]->Write();
+    histo_Sig_Lept_down.Write();
+    histo_WZ_Lept_down.Write();
+    histo_TZq_Lept_down.Write();
+    histo_ZZ_Lept_down.Write();
+    histo_TTbar_Lept_down.Write();
+  }
 
-  std::cout << " - TopMass up" << std::endl;
-  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Mtop_up[i]->Write();
-  histo_Sig_Mtop_up.Write();
+  if (doTopMass)
+  {
+    std::cout << " - TopMass up" << std::endl;
+    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Mtop_up[i]->Write();
+    histo_Sig_Mtop_up.Write();
+  }
 
-  std::cout << " - TopMass down" << std::endl;
-  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Mtop_down[i]->Write();
-  histo_Sig_Mtop_down.Write();
+  if (doTopMass)
+  {
+    std::cout << " - TopMass down" << std::endl;
+    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Mtop_down[i]->Write();
+    histo_Sig_Mtop_down.Write();
+  }
 
-  std::cout << " - PDF up" << std::endl;
-  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_PDF_up[i]->Write();
-  histo_Sig_PDF_up.Write();
-  histo_WZ_PDF_up.Write();
-  histo_TZq_PDF_up.Write();
+  if (doPDF)
+  {
+    std::cout << " - PDF up" << std::endl;
+    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_PDF_up[i]->Write();
+    histo_Sig_PDF_up.Write();
+    histo_WZ_PDF_up.Write();
+    histo_TZq_PDF_up.Write();
+  }
 
-  std::cout << " - PDF down" << std::endl;
-  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_PDF_down[i]->Write();
-  histo_Sig_PDF_down.Write();
-  histo_WZ_PDF_down.Write();
-  histo_TZq_PDF_down.Write();
+  if (doPDF)
+  {
+    std::cout << " - PDF down" << std::endl;
+    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_PDF_down[i]->Write();
+    histo_Sig_PDF_down.Write();
+    histo_WZ_PDF_down.Write();
+    histo_TZq_PDF_down.Write();
+  }
 
-  std::cout << " - Scale up" << std::endl;
-  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Scale_up[i]->Write();
-  histo_Sig_Scale_up.Write();
-  if (WZ_SYS) histo_WZ_Scale_up.Write();
+  if (doScale)
+  {
+    std::cout << " - Scale up" << std::endl;
+    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Scale_up[i]->Write();
+    histo_Sig_Scale_up.Write();
+    if (WZ_SYS) histo_WZ_Scale_up.Write();
+  }
 
-  std::cout << " - Scale down" << std::endl;
-  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Scale_down[i]->Write();
-  histo_Sig_Scale_down.Write();
-  if (WZ_SYS) histo_WZ_Scale_down.Write();
+  if (doScale)
+  {
+    std::cout << " - Scale down" << std::endl;
+    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Scale_down[i]->Write();
+    histo_Sig_Scale_down.Write();
+    if (WZ_SYS) histo_WZ_Scale_down.Write();
+  }
 
-  std::cout << " - Match up" << std::endl;
-  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Match_up[i]->Write();
-  histo_Sig_Match_up.Write();
-  if (WZ_SYS)  histo_WZ_Match_up.Write();
-  if (TZq_SYS) histo_TZq_Match_up.Write();
+  if (doMatch)
+  {
+    std::cout << " - Match up" << std::endl;
+    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Match_up[i]->Write();
+    histo_Sig_Match_up.Write();
+    if (WZ_SYS)  histo_WZ_Match_up.Write();
+    if (TZq_SYS) histo_TZq_Match_up.Write();
+  }
 
-  std::cout << " - Match down" << std::endl;
-  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Match_down[i]->Write();
-  histo_Sig_Match_down.Write();
-  if (WZ_SYS)  histo_WZ_Match_down.Write();
-  if (TZq_SYS) histo_TZq_Match_down.Write();
+  if (doMatch)
+  {
+    std::cout << " - Match down" << std::endl;
+    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Match_down[i]->Write();
+    histo_Sig_Match_down.Write();
+    if (WZ_SYS)  histo_WZ_Match_down.Write();
+    if (TZq_SYS) histo_TZq_Match_down.Write();
+  }
 
   std::cout << "Closing output file ... " << std::endl;
   outputfile->Close();  
