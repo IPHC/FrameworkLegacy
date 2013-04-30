@@ -17,10 +17,11 @@ int main(int argc, char* argv[]){
   // Global variables: could be give as argument later
   //---------------------------------------//
   
-  int nwnodes = 4; //8 to 10 is the optimal
+  int nwnodes = 10; //8 to 10 is the optimal
   string macroName = "ProofSelectorMyCutFlow.C+"; //"+" should be put at the end to use ACLIC complication - This macro should inherit from TSelector 
   //In order to allow the node to access the xml, the name should be given with the full path
   string xmlFileName = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/config/MyCutFlow_2011AB_FCNCkut.xml");
+  //string xmlFileName = "/opt/sbg/data/data1/cms/jandrea/JLAgram_06072012/CMSSW_4_2_8_patch7//src/NTuple/NTupleAnalysis/config/MyCutFlow_2011AB_FCNCkut.xml";
   string outputFileName = "proof.root";
   
   //---------------------------------------//
@@ -104,9 +105,12 @@ int main(int argc, char* argv[]){
     //Possibility to give float ... ex:
     //Double_t f = 3.14;
     //proof->SetParameter("IN_FLOAT",f);
+    string outputnameSample = "proof_"+datasets[i].Name();
+    
     
     proof->AddInput(new TNamed("PROOF_XMLFILENAME", xmlFileName));
-    proof->AddInput(new TNamed("PROOF_OUTPUTFILE", outputFileName));
+    //proof->AddInput(new TNamed("PROOF_OUTPUTFILE", outputFileName));
+    proof->AddInput(new TNamed("PROOF_OUTPUTFILE", outputnameSample));
     
     cout<<"#------------------------------------# "<<endl;
     cout<<"PROOF PARAMETERS SUMMARY"<<endl;
@@ -123,19 +127,21 @@ int main(int argc, char* argv[]){
     //gSystem->Load("../../../MiniTreeFormat/NTFormat/src/libNTuple.so");
     proof->Process(datasets[i].Name().c_str(),macroName.c_str());
     string newFileName = outputFileNameModif+"_"+datasets[i].Name()+".root";
-    //system("sleep 30");
+    system("sleep 10");
     cout<<"Copying the output file with the name "<<endl;
     //string command = "cp "+outputFileName+" "+newFileName;
     //MergingCommand+=newFileName+" ";
     //system(command.c_str());
     proof->ClearInput();
+    //system("sleep 10");
+    
     
   }
   
   //cout<<"## Merging of all the dataset into one single file with hadd: "<<outputFileName<<endl;
   //system(MergingCommand.c_str());
   cout << "start backuping proof root files " << endl;
-  system("mkdir backup_outputProof`date +\"%d-%m-%y_%H-%M-%S\"`; mv proof*.root  backup_outputProof`date +\"%d-%m-%y_%H-%M-%S\"`/.");
+  system("mkdir backup_outputProof`date +\"%d-%m-%y_%H-%M\"`;mv proof*.root  backup_outputProof`date +\"%d-%m-%y_%H-%M\"`/.");
   
   cout<<"###############################################################"<<endl;
   cout<<"################ 	   May your job 	##############"<<endl;
