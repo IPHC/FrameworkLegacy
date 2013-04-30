@@ -56,15 +56,14 @@ void doBDT_FCNC_tZ(TString thevertex, bool doScan,  double Vut=0, double Vct=0, 
   TMVA::Factory *factory ;
   
   
-  if(doScan){ 
+  if(!doScan){ 
     if(thevertex == "zut")      factory = new TMVA::Factory( "BDT_trainning_zut", outputFile,"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
     else if(thevertex == "zct") factory = new TMVA::Factory( "BDT_trainning_zct", outputFile,"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
     else if(thevertex == "kut") factory = new TMVA::Factory( "BDT_trainning_kut", outputFile,"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
     else if(thevertex == "kct") factory = new TMVA::Factory( "BDT_trainning_kct", outputFile,"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
     else if(thevertex == "xut") factory = new TMVA::Factory( "BDT_trainning_xut", outputFile,"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
     else if(thevertex == "xct") factory = new TMVA::Factory( "BDT_trainning_xct", outputFile,"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
-  }{
-    
+  }else{
     if(thevertex == "zut")      factory = new TMVA::Factory( TString("BDT_trainning_zut")+"_"+sVut+"_"+sVct+"_"+syst, outputFile,"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
     else if(thevertex == "zct") factory = new TMVA::Factory( TString("BDT_trainning_zct")+"_"+sVut+"_"+sVct+"_"+syst, outputFile,"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
     else if(thevertex == "kut") factory = new TMVA::Factory( TString("BDT_trainning_kut")+"_"+sVut+"_"+sVct+"_"+syst, outputFile,"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
@@ -75,12 +74,14 @@ void doBDT_FCNC_tZ(TString thevertex, bool doScan,  double Vut=0, double Vct=0, 
   }
 
    
-   TFile *input_sig1   = TFile::Open( "../../RootFiles/proof_woWZSF.root" );
+   //TFile *input_sig1   = TFile::Open( "../../RootFiles/proof_woWZSF.root" );
+   TFile *input_sig1   = TFile::Open( "../../backup_outputProof29-04-13_11-38_nom/proof_merged.root" );
    if(doScan){
      if(thevertex == "zut") input_sig1   = TFile::Open( "FilesBenchmark/TreeMVA_benchmark_"+sVut+"_"+sVct+"_"+syst+"_"+"zqt.root" );
      if(thevertex == "kut") input_sig1   = TFile::Open( "FilesBenchmark/TreeMVA_benchmark_"+sVut+"_"+sVct+"_"+syst+"_"+"kqt.root" );
    }
-   TFile *input_wz    = TFile::Open( "../../RootFiles/proof_woWZSF.root" );
+   //TFile *input_wz    = TFile::Open( "../../RootFiles/proof_woWZSF.root" );
+   TFile *input_wz    = TFile::Open( "../../backup_outputProof29-04-13_11-38_nom/proof_merged.root" );
    
    cout << "line 74 " <<  "FilesBenchmark/TreeMVA_benchmark_"+sVut+"_"+sVct+"_"+syst+"_"+"zqt.root"   << endl;
    
@@ -193,11 +194,11 @@ void doBDT_FCNC_tZ(TString thevertex, bool doScan,  double Vut=0, double Vct=0, 
    
    
    
-   if(thevertex == "zut")      factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=30:nEventsMin=400:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
-   else if(thevertex == "zct") factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=30:nEventsMin=400:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
-   else if(thevertex == "kut") factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=30:nEventsMin=400:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
-   else if(thevertex == "kct") factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=50:nEventsMin=200:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
-   else factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=47:nEventsMin=300:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
+   if(thevertex == "zut")      factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=100:nEventsMin=100:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
+   else if(thevertex == "zct") factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=100:nEventsMin=100:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
+   else if(thevertex == "kut") factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=100:nEventsMin=100:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
+   else if(thevertex == "kct") factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=100:nEventsMin=100:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
+   else factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=100:nEventsMin=100:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
 
 
 
@@ -221,7 +222,7 @@ void doBDT_FCNC_tZ(TString thevertex, bool doScan,  double Vut=0, double Vct=0, 
    delete factory;
 
    // Launch the GUI for the root macros
-   //if (!gROOT->IsBatch()) TMVAGui( outfileName );
+   //if (!gROOT->IsBatch() && !doScan) TMVAGui( outfileName );
 
 
    cout << "signalWeight1 " << signalWeight1 << " sumWeight1 " << sumWeight1 << endl;
@@ -241,14 +242,16 @@ void trainingBDT_FCNC_tZ(){
    TString thevertex_xut = "xut";
    TString thevertex_xct = "xct";
 
-   //doBDT_FCNC_tZ (thevertex_zut, false);
-   //doBDT_FCNC_tZ (thevertex_zct, false);
-   //doBDT_FCNC_tZ (thevertex_kut, false);
-   //doBDT_FCNC_tZ (thevertex_kct, false);
+   doBDT_FCNC_tZ (thevertex_zut, false);
+   doBDT_FCNC_tZ (thevertex_zct, false);
+   doBDT_FCNC_tZ (thevertex_kut, false);
+   doBDT_FCNC_tZ (thevertex_kct, false);
    
    //doBDT_FCNC_tZ ( thevertex_zct,  false);
    //doBDT_FCNC_tZ ( thevertex_zut,  true, 0., 1., "nom");
    
+   
+   /*
    
    std::vector<double> bench_vut, bench_vct;
  
@@ -266,7 +269,7 @@ void trainingBDT_FCNC_tZ(){
        doBDT_FCNC_tZ ( thevertex_zut, true, bench_vut[ibench], bench_vct[jbench], "nom");
    
      } 
-   }
+   }*/
    
    
 

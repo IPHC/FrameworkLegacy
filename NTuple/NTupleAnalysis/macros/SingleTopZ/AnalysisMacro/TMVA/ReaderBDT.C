@@ -26,8 +26,8 @@ std::map<TString,std::vector<TH1F*> > theHistoMap;
 
 
 static double WZscale = 1.;
-static float  bdt_BCK_cut = -0.3;
-static bool   apply_BCK_cut = false;
+static float  bdt_BCK_cut = -0.2;
+static bool   apply_BCK_cut = true;
 
 void fillHisto(TString sample, std::vector<double> theVar, int ievt, double weight=1){
    
@@ -147,6 +147,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    
    TFile *input_zjets   = new TFile("../../RootFiles/proof_DataZjets_woBkgSF_good.root", "read");
+   //TFile *input_zjets   = new TFile("../../backup_outputProof29-04-13_11-38_nom/proof_merged.root", "read");
    
    
    //*************************************************
@@ -165,6 +166,18 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    if(thevertex == "xut") target= new TFile( ("HistoBDToutput/TMVApp_xut_"+syst+".root").Data(),"RECREATE" );
    if(thevertex == "xct") target= new TFile( ("HistoBDToutput/TMVApp_xct_"+syst+".root").Data(),"RECREATE" );
    
+   
+   if(apply_BCK_cut){
+     
+     if(thevertex == "zut") target= new TFile( "HistoBDToutput/TMVApp_zut_bdtcut.root","RECREATE" );
+     if(thevertex == "zct") target= new TFile( "HistoBDToutput/TMVApp_zct_bdtcut.root","RECREATE" );
+     if(thevertex == "kut") target= new TFile( "HistoBDToutput/TMVApp_kut_bdtcut.root","RECREATE" );
+     if(thevertex == "kct") target= new TFile( "HistoBDToutput/TMVApp_kct_bdtcut.root","RECREATE" );
+     if(thevertex == "xut") target= new TFile( "HistoBDToutput/TMVApp_xut_bdtcut.root","RECREATE" );
+     if(thevertex == "xct") target= new TFile( "HistoBDToutput/TMVApp_xct_bdtcut.root","RECREATE" );
+     
+     
+   }
    
    std::vector<TString> samples;
    
@@ -1740,16 +1753,16 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    
    
-   
+   cout << "start FCNC " << endl;
    input_FCNC->cd();
    //define the tree to read
    TTree* theTree_FCNC ;
-   if(thevertex == "zut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCzut");
-   if(thevertex == "zct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCzct");
-   if(thevertex == "kut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCkut");
-   if(thevertex == "kct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCkct");
-   if(thevertex == "xut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCxut");
-   if(thevertex == "xct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCxct");
+   if(thevertex == "zut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCzutFullSim");
+   if(thevertex == "zct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCzctFullSim");
+   if(thevertex == "kut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCkutFullSim");
+   if(thevertex == "kct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCkctFullSim");
+   if(thevertex == "xut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCxutFullSim");
+   if(thevertex == "xct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCxctFullSim");
    
    
    theTree_FCNC->SetBranchAddress( "tree_totMass",	   &totMass);	
@@ -2303,23 +2316,23 @@ void ReaderBDT(){
    //******************************************
    
    ReaderBDT(thevertex_zut, 
-   	"../../RootFiles/proof_woWZSF.root",
-   	"../../RootFiles/proof_woWZSF.root",
+   	"../../backup_outputProof29-04-13_11-38_nom/proof_merged.root",
+   	"../../backup_outputProof29-04-13_11-38_nom/proof_merged.root",
 	 "nom");
 	 
    ReaderBDT(thevertex_zct, 
-   	"../../RootFiles/proof_woWZSF.root",
-   	"../../RootFiles/proof_woWZSF.root",
+   	"../../backup_outputProof29-04-13_11-38_nom/proof_merged.root",
+   	"../../backup_outputProof29-04-13_11-38_nom/proof_merged.root",
 	 "nom");
 
    ReaderBDT(thevertex_kut,
-        "../../RootFiles/proof_woWZSF.root",
-        "../../RootFiles/proof_woWZSF.root",
+        "../../backup_outputProof29-04-13_11-38_nom/proof_merged.root",
+        "../../backup_outputProof29-04-13_11-38_nom/proof_merged.root",
          "nom");
 
    ReaderBDT(thevertex_kct,
-        "../../RootFiles/proof_woWZSF.root",
-        "../../RootFiles/proof_woWZSF.root",
+        "../../backup_outputProof29-04-13_11-38_nom/proof_merged.root",
+        "../../backup_outputProof29-04-13_11-38_nom/proof_merged.root",
          "nom");
 	 
    /*
