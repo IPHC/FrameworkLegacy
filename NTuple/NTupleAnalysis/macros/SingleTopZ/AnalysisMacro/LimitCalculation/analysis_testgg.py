@@ -1,5 +1,6 @@
 # for model building:
-def get_model():
+def get_model(signalname):
+
     # Read in and build the model automatically from the histograms in the root file. 
     # This model will contain all shape uncertainties given according to the templates
     # which also includes rate changes according to the alternate shapes.
@@ -14,7 +15,7 @@ def get_model():
 
     # define what the signal processes are. All other processes are assumed to make up the 
     # 'background-only' model.
-    model.set_signal_processes('FCNC_zut*')
+    model.set_signal_processes('FCNC_'+signalname+'*')
 
     # Add some lognormal rate uncertainties. The first parameter is the name of the
     # uncertainty (which will also be the name of the nuisance parameter), the second
@@ -55,7 +56,10 @@ def get_model():
     # python script, so use this power!
     return model
 
-model = get_model()
+# -------------- TO CHANGE BY THE USER
+signalname = 'zut'
+# -------------- TO CHANGE BY THE USER
+model = get_model(signalname)
 
 
 # first, it is a good idea to generate a summary report to make sure everything has worked
@@ -75,9 +79,23 @@ model_summary(model)
 # See cls_limits documentation for more options.
 
 # la ligne ci dessous ne fonctionne pas=> changer directement cls_limit.py
+
+# ------------------- TO CHANGE BY THE USER
+xsections = ['05','10','20','30','50']
+# ------------------- TO CHANGE BY THE USER
+
+xsections2 = []
+for item in xsections :
+    tmp=[]
+    tmp.append('FCNC_'+signalname+item)
+    xsections2.append(tmp)
+print "Signal processes : " + str(xsections2)
+
+plot_exp, plot_obs = cls_limits(model, signal_processes = xsections2)
+
 #plot_exp, plot_obs = cls_limits(model, ts_column = ['lr'], signal_processes = [['FCNC_zut']])
 #plot_exp, plot_obs = cls_limits(model, signal_processes = [['FCNC_zut05'],['FCNC_zut10'],['FCNC_zut20'],['FCNC_zut30'],['FCNC_zut50'],['FCNC_zut57']])
-plot_exp, plot_obs = cls_limits(model, signal_processes = [['FCNC_zut05'],['FCNC_zut10'],['FCNC_zut20']])
+#plot_exp, plot_obs = cls_limits(model, signal_processes = [['FCNC_zut05'],['FCNC_zut10'],['FCNC_zut20']])
 #plot_exp, plot_obs = cls_limits(model, signal_processes = [['FCNC_zut05']])
 #plot_exp, plot_obs = cls_limits(model, signal_processes = [['FCNC_zut20']])
 #plot_exp, plot_obs = cls_limits(model, ts_column = ['lhclike'], signal_processes = [['FCNC_zut']])

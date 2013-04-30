@@ -1,6 +1,5 @@
 #include "TH1F.h"
 #include "TFile.h"
-
 #include "TString.h"
 #include "TStyle.h"
 #include "TFile.h"
@@ -11,46 +10,114 @@
 #include "THStack.h"
 #include <iostream>
 
-void prodtemplate(){
+using namespace std;
+
+
+void prodtemplate(std::string signalname, 
+                  bool WZ_PRIVATE, 
+                  bool WZ_SYS,
+                  bool TZq_SYS);
+
+int main()
+{
+  bool WZ_PRIVATE  = false;
+  bool WZ_SYS      = true;
+  bool TZq_SYS     = true;
+  prodtemplate("zut",WZ_PRIVATE, WZ_SYS, TZq_SYS);
+  return 0;
+}
+
+void prodtemplate(std::string signalname, 
+                  bool WZ_PRIVATE, 
+                  bool WZ_SYS,
+                  bool TZq_SYS)
+{
+  // Initializing scale factors
+  double WZscaleFactor = 0.;
+  if (WZ_PRIVATE) WZscaleFactor = 4.0;
+  else WZscaleFactor = 4.0;
+  double TZqscaleFactor  = 4.0;
+  //  double datasf          = 4.0;
+  double ZjetscaleFactor = 4.0;
+  double ZZscaleFactor   = 4.0;
+  double TTbarscaleFactor= 4.0;
+
+  // Initializing WZ name
+  std::string WZname;
+  if (WZ_PRIVATE) WZname = "WZprivate";
+  else WZname = "WZ";
+  std::string MVA_WZname="MVA_BDT_"+WZname;
+
+  //----------------------------------------------------------------------------------------
+  //   STEP 1 : Opening ROOT files
+  //----------------------------------------------------------------------------------------
+  std::cout << "Opening ROOT files ..." << std::endl;
+
+  // Opening file  
+  TFile * nomFile       = new TFile(("inputFiles/TMVApp_"+signalname+"_nom.root").c_str());
+  if (!nomFile->IsOpen()) return;
+
+  TFile * nomJES_up     = new TFile(("inputFiles/TMVApp_"+signalname+"_JESup.root").c_str());
+  if (!nomJES_up->IsOpen()) return;
+
+  TFile * nomJES_down   = new TFile(("inputFiles/TMVApp_"+signalname+"_JESdown.root").c_str()  );
+  if (!nomJES_down->IsOpen()) return;
+
+  TFile * nomJER        = new TFile(("inputFiles/TMVApp_"+signalname+"_JER.root").c_str()      );
+  if (!nomJER->IsOpen()) return;
+
+  TFile * nomLeptUp     = new TFile(("inputFiles/TMVApp_"+signalname+"_LeptSFup.root").c_str()   );
+  if (!nomLeptUp->IsOpen()) return;
+
+  TFile * nomLeptDown   = new TFile(("inputFiles/TMVApp_"+signalname+"_LeptSFdown.root").c_str()   );
+  if (!nomLeptDown->IsOpen()) return;
+
+  TFile * nomPU_up      = new TFile(("inputFiles/TMVApp_"+signalname+"_PUup.root").c_str()     );
+  if (!nomPU_up->IsOpen()) return;
+
+  TFile * nomPU_down    = new TFile(("inputFiles/TMVApp_"+signalname+"_PUdown.root").c_str()   );
+  if (!nomPU_down->IsOpen()) return;
+
+  TFile * nomBTag_up    = new TFile(("inputFiles/TMVApp_"+signalname+"_btagup.root").c_str()   );
+  if (!nomBTag_up->IsOpen()) return;
+
+  TFile * nomBTag_down  = new TFile(("inputFiles/TMVApp_"+signalname+"_btagdown.root").c_str() );
+  if (!nomBTag_down->IsOpen()) return;
+
+  TFile * nomScale_up   = new TFile(("inputFiles/TMVApp_"+signalname+"_Scaleup.root").c_str()    );
+  if (!nomScale_up->IsOpen()) return;
+
+  TFile * nomScale_down = new TFile(("inputFiles/TMVApp_"+signalname+"_Scaledown.root").c_str()  );
+  if (!nomScale_down->IsOpen()) return;
+
+  TFile * nomMatch_up   = new TFile(("inputFiles/TMVApp_"+signalname+"_Matchup.root").c_str()     );
+  if (!nomMatch_up->IsOpen()) return;
+
+  TFile * nomMatch_down = new TFile(("inputFiles/TMVApp_"+signalname+"_Matchdown.root").c_str()   );
+  if (!nomMatch_down->IsOpen()) return;
+
+  TFile * nomMtop_up    = new TFile(("inputFiles/TMVApp_"+signalname+"_Mtopup.root").c_str()   );
+  if (!nomMtop_up->IsOpen()) return;
+
+  TFile * nomMtop_down  = new TFile(("inputFiles/TMVApp_"+signalname+"_Mtopdown.root").c_str() );
+  if (!nomMtop_down->IsOpen()) return;
+
+  TFile * nomPDF_up     = new TFile(("inputFiles/TMVApp_"+signalname+"_PDFup.root").c_str()   );
+  if (!nomPDF_up->IsOpen()) return;
+
+  TFile * nomPDF_down   = new TFile(("inputFiles/TMVApp_"+signalname+"_PDFdown.root").c_str() );
+  if (!nomPDF_down->IsOpen()) return;
   
-  // using namespace RooFit;
-  // using namespace RooStats;
-  
-  
-  //////////////////////////////////////////////////////////////////////////////////////////////////
-  
-  
-  double WZscaleFacor = 4.0;
-  double datasf       = 4.0;
-  double ZjetscaleFacor = 4.0;
-  double ZZscaleFacor   = 4.0;
-  double TTbarscaleFacor= 4.0;
-  
-  
-  TFile * nomFile       = new TFile("inputFiles/TMVApp_zut_nom.root"      );
-  TFile * nomJES_up     = new TFile("inputFiles/TMVApp_zut_JESup.root"    );
-  TFile * nomJES_down   = new TFile("inputFiles/TMVApp_zut_JESdown.root"  );
-  TFile * nomJER        = new TFile("inputFiles/TMVApp_zut_JER.root"      );
-  TFile * nomLept       = new TFile("inputFiles/TMVApp_zut_LeptSF.root"   );
-  TFile * nomPU_up      = new TFile("inputFiles/TMVApp_zut_PUup.root"     );
-  TFile * nomPU_down    = new TFile("inputFiles/TMVApp_zut_PUdown.root"   );
-  TFile * nomBTag_up    = new TFile("inputFiles/TMVApp_zut_btagup.root"   );
-  TFile * nomBTag_down  = new TFile("inputFiles/TMVApp_zut_btagdown.root" );
-  
-  
-  
-  //-----------------------------------------------
   //nominal templates 
   TH1F histo_Data;
   TH1F histo_Zjets;
   TH1F histo_ZjetsMC;
   TH1F histo_WZ ;
+  TH1F histo_TZq;
   TH1F histo_Sig;
   TH1F histo_TTbar;
   TH1F histo_ZZ;       
   
-  
-  //-----------------------------------------------
   //templates for JES
   TH1F  histo_TTbar_JES_up;
   TH1F  histo_TTbar_JES_down;
@@ -58,25 +125,23 @@ void prodtemplate(){
   TH1F  histo_ZZ_JES_down;
   TH1F  histo_WZ_JES_up;
   TH1F  histo_WZ_JES_down;
+  TH1F  histo_TZq_JES_up;
+  TH1F  histo_TZq_JES_down;
   TH1F  histo_Sig_JES_up;
   TH1F  histo_Sig_JES_down;
   
-  
-  //-----------------------------------------------
   //templates for JER
   TH1F  histo_TTbar_JER_up;
   TH1F  histo_ZZ_JER_up;
   TH1F  histo_WZ_JER_up;
+  TH1F  histo_TZq_JER_up;
   TH1F  histo_Sig_JER_up;
-  
   TH1F  histo_TTbar_JER_down;
   TH1F  histo_ZZ_JER_down;
   TH1F  histo_WZ_JER_down;
+  TH1F  histo_TZq_JER_down;
   TH1F  histo_Sig_JER_down;
   
-  
-  
-  //-----------------------------------------------
   //templates for BTag
   TH1F  histo_TTbar_BTag_up;
   TH1F  histo_TTbar_BTag_down;
@@ -84,12 +149,11 @@ void prodtemplate(){
   TH1F  histo_ZZ_BTag_down;
   TH1F  histo_WZ_BTag_up;
   TH1F  histo_WZ_BTag_down;
+  TH1F  histo_TZq_BTag_up;
+  TH1F  histo_TZq_BTag_down;
   TH1F  histo_Sig_BTag_up;
   TH1F  histo_Sig_BTag_down;
   
-  
-  
-  //-----------------------------------------------
   //templates for PU
   TH1F  histo_TTbar_PU_up;
   TH1F  histo_TTbar_PU_down;
@@ -97,12 +161,11 @@ void prodtemplate(){
   TH1F  histo_ZZ_PU_down;
   TH1F  histo_WZ_PU_up;
   TH1F  histo_WZ_PU_down;
+  TH1F  histo_TZq_PU_up;
+  TH1F  histo_TZq_PU_down;
   TH1F  histo_Sig_PU_up;
   TH1F  histo_Sig_PU_down;
   
-  
-  
-  //-----------------------------------------------
   //templates for LeptSF
   TH1F  histo_TTbar_Lept_up;
   TH1F  histo_TTbar_Lept_down;
@@ -110,653 +173,827 @@ void prodtemplate(){
   TH1F  histo_ZZ_Lept_down;
   TH1F  histo_WZ_Lept_up;
   TH1F  histo_WZ_Lept_down;
+  TH1F  histo_TZq_Lept_up;
+  TH1F  histo_TZq_Lept_down;
   TH1F  histo_Sig_Lept_up;
   TH1F  histo_Sig_Lept_down;
+
+  //templates for mtop
+  TH1F histo_Sig_Mtop_up;
+  TH1F histo_Sig_Mtop_down;
+
+  //templates for pdf
+  TH1F histo_Sig_PDF_up;
+  TH1F histo_Sig_PDF_down;
+  TH1F histo_WZ_PDF_up;
+  TH1F histo_WZ_PDF_down;
+  TH1F histo_TZq_PDF_up;
+  TH1F histo_TZq_PDF_down;
+
+  //templates for scale
+  TH1F histo_Sig_Scale_up;
+  TH1F histo_Sig_Scale_down;
+  TH1F histo_WZ_Scale_up;
+  TH1F histo_WZ_Scale_down;
+
+  //templates for match
+  TH1F histo_Sig_Match_up;
+  TH1F histo_Sig_Match_down;
+  TH1F histo_WZ_Match_up;
+  TH1F histo_WZ_Match_down;
+  TH1F histo_TZq_Match_up;
+  TH1F histo_TZq_Match_down;
   
-  cout << "line 113 " << endl;
   
-  //-----------------------------------------------
-  //templates for DY
-  TH1F * histo_DataZjets;
-  
+  //----------------------------------------------------------------------------------------
+  //   STEP 2 : Getting histograms from ROOT files
+  //----------------------------------------------------------------------------------------
+  std::cout << "Getting histograms from ROOT files ..." << std::endl;
+  std::cout << " - nominal" << std::endl;
   nomFile->cd();
-  cout << "line 121 " << endl;
   //histo_Data = *(TH1F*)nomFile->Get("MVA_BDT_Data");
   //histo_Data.Scale(datasf);
   histo_Zjets               = *(TH1F*)nomFile->Get("MVA_BDT_DataZjets");
   histo_ZjetsMC             = *(TH1F*)nomFile->Get("MVA_BDT_Zjets");
   histo_Zjets.Scale(histo_ZjetsMC.Integral()/histo_Zjets.Integral());
-  histo_Zjets.Scale(ZjetscaleFacor);
+  histo_Zjets.Scale(ZjetscaleFactor);
   
-  histo_WZ                  = *(TH1F*)nomFile->Get("MVA_BDT_WZ");
-  histo_WZ.Scale(WZscaleFacor);  
-  histo_Sig                 = *(TH1F*)nomFile->Get("MVA_BDT_FCNC_zut");
+  histo_WZ                  = *(TH1F*)nomFile->Get(MVA_WZname.c_str());
+  histo_WZ.Scale(WZscaleFactor);  
+  histo_Sig                 = *(TH1F*)nomFile->Get(("MVA_BDT_FCNC_"+signalname).c_str());
   histo_TTbar               = *(TH1F*)nomFile->Get("MVA_BDT_TTbarSig");
-  histo_TTbar.Scale(TTbarscaleFacor);
+  histo_TTbar.Scale(TTbarscaleFactor);
   histo_ZZ                  = *(TH1F*)nomFile->Get("MVA_BDT_ZZ");
-  histo_ZZ.Scale(ZZscaleFacor);
-  
+  histo_ZZ.Scale(ZZscaleFactor);
+  histo_TZq                 = *(TH1F*)nomFile->Get("MVA_BDT_TZq");  
   
   histo_Data = histo_WZ;
   histo_Data.Add(&histo_TTbar);
   histo_Data.Add(&histo_ZZ);
   histo_Data.Add(&histo_Zjets);
+  histo_Data.Add(&histo_TZq);
+
   
-  
-  //histo_Data.Scale(datasf);
-  
-  cout << "line 132 " << endl;
-  //-----------------------------------------------
   //template for JES up
+  std::cout << " - JES up" << std::endl;
   nomJES_up->cd();
   
   histo_TTbar_JES_up = *(TH1F*)nomJES_up->Get("MVA_BDT_TTbarSig");
   histo_ZZ_JES_up    = *(TH1F*)nomJES_up->Get("MVA_BDT_ZZ"   );
-  histo_WZ_JES_up    = *(TH1F*)nomJES_up->Get("MVA_BDT_WZ"   );
-  histo_WZ_JES_up.Scale(WZscaleFacor);  
-  histo_Sig_JES_up   = *(TH1F*)nomJES_up->Get("MVA_BDT_FCNC_zut"  );
+  histo_WZ_JES_up    = *(TH1F*)nomJES_up->Get(MVA_WZname.c_str()   );
+  histo_WZ_JES_up.Scale(WZscaleFactor);  
+  histo_TZq_JES_up   = *(TH1F*)nomJES_up->Get("MVA_BDT_TZq");
+  histo_TZq_JES_up.Scale(TZqscaleFactor);  
+  histo_Sig_JES_up   = *(TH1F*)nomJES_up->Get(("MVA_BDT_FCNC_"+signalname).c_str() );
+
   
-  
-  //-----------------------------------------------
   //template for JES down
+  std::cout << " - JES down" << std::endl;
   nomJES_down->cd();
   
   histo_TTbar_JES_down = *(TH1F*)nomJES_down->Get("MVA_BDT_TTbarSig");
   histo_ZZ_JES_down    = *(TH1F*)nomJES_down->Get("MVA_BDT_ZZ"   );
-  histo_WZ_JES_down    = *(TH1F*)nomJES_down->Get("MVA_BDT_WZ"   );
-  histo_WZ_JES_down.Scale(WZscaleFacor);  
-  histo_Sig_JES_down   = *(TH1F*)nomJES_down->Get("MVA_BDT_FCNC_zut"  );
+  histo_WZ_JES_down    = *(TH1F*)nomJES_down->Get(MVA_WZname.c_str()   );
+  histo_WZ_JES_down.Scale(WZscaleFactor);  
+  histo_TZq_JES_down   = *(TH1F*)nomJES_down->Get("MVA_BDT_TZq");
+  histo_TZq_JES_down.Scale(TZqscaleFactor);  
+  histo_Sig_JES_down   = *(TH1F*)nomJES_down->Get(("MVA_BDT_FCNC_"+signalname).c_str()  );
   
   
   
-  cout << "line 154 " << endl;
-  //-----------------------------------------------
-  //template for JER
+  //template for JER up
+  std::cout << " - JER up" << std::endl;
   nomJER->cd();
   
   histo_TTbar_JER_up = *(TH1F*)nomJER->Get("MVA_BDT_TTbarSig");
   histo_ZZ_JER_up    = *(TH1F*)nomJER->Get("MVA_BDT_ZZ"   );
-  histo_WZ_JER_up    = *(TH1F*)nomJER->Get("MVA_BDT_WZ"   );
-  histo_WZ_JER_up.Scale(WZscaleFacor);  
-  histo_Sig_JER_up   = *(TH1F*)nomJER->Get("MVA_BDT_FCNC_zut"  );
+  histo_WZ_JER_up    = *(TH1F*)nomJER->Get(MVA_WZname.c_str()   );
+  histo_WZ_JER_up.Scale(WZscaleFactor);  
+  histo_TZq_JER_up   = *(TH1F*)nomJER->Get("MVA_BDT_TZq");
+  histo_TZq_JER_up.Scale(TZqscaleFactor);  
+  histo_Sig_JER_up   = *(TH1F*)nomJER->Get(("MVA_BDT_FCNC_"+signalname).c_str()  );
   
   
+  //template for JER down
+  std::cout << " - JER down" << std::endl;
   nomFile->cd();
+
   histo_TTbar_JER_down = *(TH1F*)nomFile->Get("MVA_BDT_TTbarSig");
   histo_ZZ_JER_down    = *(TH1F*)nomFile->Get("MVA_BDT_ZZ"   );
-  histo_WZ_JER_down    = *(TH1F*)nomFile->Get("MVA_BDT_WZ"   );
-  histo_WZ_JER_down.Scale(WZscaleFacor);  
-  histo_Sig_JER_down   = *(TH1F*)nomFile->Get("MVA_BDT_FCNC_zut"  );
+  histo_WZ_JER_down    = *(TH1F*)nomFile->Get(MVA_WZname.c_str()   );
+  histo_WZ_JER_down.Scale(WZscaleFactor);  
+  histo_TZq_JER_down   = *(TH1F*)nomFile->Get("MVA_BDT_TZq");
+  histo_TZq_JER_down.Scale(TZqscaleFactor);  
+  histo_Sig_JER_down   = *(TH1F*)nomFile->Get(("MVA_BDT_FCNC_"+signalname).c_str()  );
   
   
-  cout << "line 172 " << endl;
-  //-----------------------------------------------
   //template for BTag up
+  std::cout << " - BTag up" << std::endl;
   nomBTag_up->cd();
   
   histo_TTbar_BTag_up = *(TH1F*)nomBTag_up->Get("MVA_BDT_TTbarSig");
   histo_ZZ_BTag_up    = *(TH1F*)nomBTag_up->Get("MVA_BDT_ZZ"   );
-  histo_WZ_BTag_up    = *(TH1F*)nomBTag_up->Get("MVA_BDT_WZ"   );
-  histo_WZ_BTag_up.Scale(WZscaleFacor);  
-  histo_Sig_BTag_up   = *(TH1F*)nomBTag_up->Get("MVA_BDT_FCNC_zut"  );
+  histo_WZ_BTag_up    = *(TH1F*)nomBTag_up->Get(MVA_WZname.c_str()   );
+  histo_WZ_BTag_up.Scale(WZscaleFactor);  
+  histo_TZq_BTag_up   = *(TH1F*)nomBTag_up->Get("MVA_BDT_TZq");
+  histo_TZq_BTag_up.Scale(TZqscaleFactor);  
+  histo_Sig_BTag_up   = *(TH1F*)nomBTag_up->Get(("MVA_BDT_FCNC_"+signalname).c_str()  );
   
   
-  //-----------------------------------------------
   //template for BTag down
+  std::cout << " - BTag down" << std::endl;
   nomBTag_down->cd();
   
   histo_TTbar_BTag_down = *(TH1F*)nomBTag_down->Get("MVA_BDT_TTbarSig");
   histo_ZZ_BTag_down    = *(TH1F*)nomBTag_down->Get("MVA_BDT_ZZ"   );
-  histo_WZ_BTag_down    = *(TH1F*)nomBTag_down->Get("MVA_BDT_WZ"   );
-  histo_WZ_BTag_down.Scale(WZscaleFacor);  
-  histo_Sig_BTag_down   = *(TH1F*)nomBTag_down->Get("MVA_BDT_FCNC_zut"  );
+  histo_WZ_BTag_down    = *(TH1F*)nomBTag_down->Get(MVA_WZname.c_str()   );
+  histo_WZ_BTag_down.Scale(WZscaleFactor);  
+  histo_TZq_BTag_down   = *(TH1F*)nomBTag_down->Get("MVA_BDT_TZq");
+  histo_TZq_BTag_down.Scale(TZqscaleFactor);  
+  histo_Sig_BTag_down   = *(TH1F*)nomBTag_down->Get(("MVA_BDT_FCNC_"+signalname).c_str()  );
   
   
-  cout << "line 193 " << endl;
-  
-  //-----------------------------------------------
   //template for PU up
+  std::cout << " - PU up" << std::endl;
   nomPU_up->cd();
   
   histo_TTbar_PU_up = *(TH1F*)nomPU_up->Get("MVA_BDT_TTbarSig");
   histo_ZZ_PU_up    = *(TH1F*)nomPU_up->Get("MVA_BDT_ZZ"   );
-  histo_WZ_PU_up    = *(TH1F*)nomPU_up->Get("MVA_BDT_WZ"   );
-  histo_WZ_PU_up.Scale(WZscaleFacor);  
-  histo_Sig_PU_up   = *(TH1F*)nomPU_up->Get("MVA_BDT_FCNC_zut"  );
+  histo_WZ_PU_up    = *(TH1F*)nomPU_up->Get(MVA_WZname.c_str()   );
+  histo_WZ_PU_up.Scale(WZscaleFactor);  
+  histo_TZq_PU_up   = *(TH1F*)nomPU_up->Get("MVA_BDT_TZq");
+  histo_TZq_PU_up.Scale(TZqscaleFactor);  
+  histo_Sig_PU_up   = *(TH1F*)nomPU_up->Get(("MVA_BDT_FCNC_"+signalname).c_str()  );
   
   
-  //-----------------------------------------------
   //template for PU down
+  std::cout << " - PU down" << std::endl;
   nomPU_down->cd();
   
   histo_TTbar_PU_down = *(TH1F*)nomPU_down->Get("MVA_BDT_TTbarSig");
   histo_ZZ_PU_down    = *(TH1F*)nomPU_down->Get("MVA_BDT_ZZ"   );
-  histo_WZ_PU_down    = *(TH1F*)nomPU_down->Get("MVA_BDT_WZ"   );
-  histo_WZ_PU_down.Scale(WZscaleFacor);  
-  histo_Sig_PU_down   = *(TH1F*)nomPU_down->Get("MVA_BDT_FCNC_zut"  );
+  histo_WZ_PU_down    = *(TH1F*)nomPU_down->Get(MVA_WZname.c_str()   );
+  histo_WZ_PU_down.Scale(WZscaleFactor);  
+  histo_TZq_PU_down   = *(TH1F*)nomPU_down->Get("MVA_BDT_TZq");
+  histo_TZq_PU_down.Scale(TZqscaleFactor);  
+  histo_Sig_PU_down   = *(TH1F*)nomPU_down->Get(("MVA_BDT_FCNC_"+signalname).c_str()  );
+
   
-  
-  
-    
-  cout << "line 217" << endl;
-  
-  //-----------------------------------------------
   //template for Lept up
-  nomLept->cd();
+  std::cout << " - Lept up" << std::endl;
+  nomLeptUp->cd();
   
-  histo_TTbar_Lept_up = *(TH1F*)nomLept->Get("MVA_BDT_TTbarSig");
-  histo_ZZ_Lept_up    = *(TH1F*)nomLept->Get("MVA_BDT_ZZ"   );
-  histo_WZ_Lept_up    = *(TH1F*)nomLept->Get("MVA_BDT_WZ"   );
-  histo_WZ_Lept_up.Scale(WZscaleFacor);  
-  histo_Sig_Lept_up   = *(TH1F*)nomLept->Get("MVA_BDT_FCNC_zut"  );
+  histo_TTbar_Lept_up = *(TH1F*)nomLeptUp->Get("MVA_BDT_TTbarSig");
+  histo_ZZ_Lept_up    = *(TH1F*)nomLeptUp->Get("MVA_BDT_ZZ"   );
+  histo_WZ_Lept_up    = *(TH1F*)nomLeptUp->Get(MVA_WZname.c_str()   );
+  histo_WZ_Lept_up.Scale(WZscaleFactor);  
+  histo_TZq_Lept_up   = *(TH1F*)nomLeptUp->Get("MVA_BDT_TZq");
+  histo_TZq_Lept_up.Scale(TZqscaleFactor);  
+  histo_Sig_Lept_up   = *(TH1F*)nomLeptUp->Get(("MVA_BDT_FCNC_"+signalname).c_str()  );
   
   
-  //-----------------------------------------------
   //template for Lept down
-  nomFile->cd();
+  std::cout << " - Lept down" << std::endl;
+  nomLeptDown->cd();
   
-  histo_TTbar_Lept_down = *(TH1F*)nomFile->Get("MVA_BDT_TTbarSig");
-  histo_ZZ_Lept_down    = *(TH1F*)nomFile->Get("MVA_BDT_ZZ"   );
-  histo_WZ_Lept_down    = *(TH1F*)nomFile->Get("MVA_BDT_WZ"   );
-  histo_WZ_Lept_down.Scale(WZscaleFacor);  
-  histo_Sig_Lept_down   = *(TH1F*)nomFile->Get("MVA_BDT_FCNC_zut"  );
+  histo_TTbar_Lept_down = *(TH1F*)nomLeptDown->Get("MVA_BDT_TTbarSig");
+  histo_ZZ_Lept_down    = *(TH1F*)nomLeptDown->Get("MVA_BDT_ZZ"   );
+  histo_WZ_Lept_down    = *(TH1F*)nomLeptDown->Get(MVA_WZname.c_str()   );
+  histo_WZ_Lept_down.Scale(WZscaleFactor);  
+  histo_TZq_Lept_down    = *(TH1F*)nomLeptDown->Get("MVA_BDT_TZq"   );
+  histo_TZq_Lept_down.Scale(TZqscaleFactor);  
+  histo_Sig_Lept_down   = *(TH1F*)nomLeptDown->Get(("MVA_BDT_FCNC_"+signalname).c_str()  );
+
+  // template for mtop up
+  std::cout << " - TopMass up" << std::endl;
+  nomMtop_up->cd();
+  histo_Sig_Mtop_up = *(TH1F*)nomMtop_up->Get(("MVA_BDT_FCNC_"+signalname).c_str() );
   
-  
-  
-  
-  
-  cout << "125 " << endl;
-  
-  // Needed by Theta: correct empty bins of the model corresponding to non empty bins for the data (if not, Theta crashs)
-  for (int k = 1; k < histo_Sig.GetNbinsX()+1; k++) {
-  
-    if ( histo_Sig.GetBinContent(k)  <=0 ) histo_Sig.SetBinContent(  k,0.000001);
-    if ( histo_Data.GetBinContent(k) <=0 ) histo_Data.SetBinContent( k,0.000001);
-    if ( histo_Zjets.GetBinContent(k)<=0 ) histo_Zjets.SetBinContent(k,0.000001);
-    if ( histo_WZ.GetBinContent(k)   <=0 ) histo_WZ.SetBinContent(   k,0.000001);
-    if ( histo_ZZ.GetBinContent(k)   <=0 ) histo_ZZ.SetBinContent(   k,0.000001);    
-    if ( histo_TTbar.GetBinContent(k)<=0 ) histo_TTbar.SetBinContent(k,0.000001);
-    
-    
-    if ( histo_TTbar_JES_up.GetBinContent(k)  <=0 ) histo_TTbar_JES_up.SetBinContent(k,0.000001);
-    if ( histo_ZZ_JES_up.GetBinContent(k)     <=0 ) histo_ZZ_JES_up.SetBinContent(   k,0.000001); 
-    if ( histo_WZ_JES_up.GetBinContent(k)     <=0 ) histo_WZ_JES_up.SetBinContent(   k,0.000001); 
-    if ( histo_Sig_JES_up.GetBinContent(k)    <=0 ) histo_Sig_JES_up.SetBinContent(  k,0.000001);
-    
-    if ( histo_TTbar_JES_down.GetBinContent(k)  <=0 ) histo_TTbar_JES_down.SetBinContent(k,0.000001);
-    if ( histo_ZZ_JES_down.GetBinContent(k)     <=0 ) histo_ZZ_JES_down.SetBinContent(   k,0.000001);
-    if ( histo_WZ_JES_down.GetBinContent(k)     <=0 ) histo_WZ_JES_down.SetBinContent(   k,0.000001);  
-    if ( histo_Sig_JES_down.GetBinContent(k)    <=0 ) histo_Sig_JES_down.SetBinContent(  k,0.000001);
-    
-    
-   
-    if ( histo_TTbar_JER_up.GetBinContent(k)  <=0 ) histo_TTbar_JER_up.SetBinContent(k,0.000001);
-    if ( histo_ZZ_JER_up.GetBinContent(k)     <=0 ) histo_ZZ_JER_up.SetBinContent(   k,0.000001);
-    if ( histo_WZ_JER_up.GetBinContent(k)     <=0 ) histo_WZ_JER_up.SetBinContent(   k,0.000001);
-    if ( histo_Sig_JER_up.GetBinContent(k)    <=0 ) histo_Sig_JER_up.SetBinContent(  k,0.000001);
-    
-    if ( histo_TTbar_JER_down.GetBinContent(k)  <=0 ) histo_TTbar_JER_down.SetBinContent(k,0.000001);
-    if ( histo_ZZ_JER_down.GetBinContent(k)     <=0 ) histo_ZZ_JER_down.SetBinContent(   k,0.000001);	
-    if ( histo_WZ_JER_down.GetBinContent(k)     <=0 ) histo_WZ_JER_down.SetBinContent(   k,0.000001);	
-    if ( histo_Sig_JER_down.GetBinContent(k)    <=0 ) histo_Sig_JER_down.SetBinContent(  k,0.000001);	
-     
-    
-    if ( histo_TTbar_BTag_up.GetBinContent(k)  <=0 ) histo_TTbar_BTag_up.SetBinContent(k,0.000001);
-    if ( histo_ZZ_BTag_up.GetBinContent(k)     <=0 ) histo_ZZ_BTag_up.SetBinContent(   k,0.000001); 
-    if ( histo_WZ_BTag_up.GetBinContent(k)     <=0 ) histo_WZ_BTag_up.SetBinContent(   k,0.000001); 
-    if ( histo_Sig_BTag_up.GetBinContent(k)    <=0 ) histo_Sig_BTag_up.SetBinContent(  k,0.000001);
-    
-    if ( histo_TTbar_BTag_down.GetBinContent(k)  <=0 ) histo_TTbar_BTag_down.SetBinContent(k,0.000001);
-    if ( histo_ZZ_BTag_down.GetBinContent(k)     <=0 ) histo_ZZ_BTag_down.SetBinContent(   k,0.000001);
-    if ( histo_WZ_BTag_down.GetBinContent(k)     <=0 ) histo_WZ_BTag_down.SetBinContent(   k,0.000001);  
-    if ( histo_Sig_BTag_down.GetBinContent(k)    <=0 ) histo_Sig_BTag_down.SetBinContent(  k,0.000001);
-     
-    
-    if ( histo_TTbar_PU_up.GetBinContent(k)  <=0 ) histo_TTbar_PU_up.SetBinContent(k,0.000001);
-    if ( histo_ZZ_PU_up.GetBinContent(k)     <=0 ) histo_ZZ_PU_up.SetBinContent(   k,0.000001); 
-    if ( histo_WZ_PU_up.GetBinContent(k)     <=0 ) histo_WZ_PU_up.SetBinContent(   k,0.000001); 
-    if ( histo_Sig_PU_up.GetBinContent(k)    <=0 ) histo_Sig_PU_up.SetBinContent(  k,0.000001);
-    
-    if ( histo_TTbar_PU_down.GetBinContent(k)  <=0 ) histo_TTbar_PU_down.SetBinContent(k,0.000001);
-    if ( histo_ZZ_PU_down.GetBinContent(k)     <=0 ) histo_ZZ_PU_down.SetBinContent(   k,0.000001);
-    if ( histo_WZ_PU_down.GetBinContent(k)     <=0 ) histo_WZ_PU_down.SetBinContent(   k,0.000001);  
-    if ( histo_Sig_PU_down.GetBinContent(k)    <=0 ) histo_Sig_PU_down.SetBinContent(  k,0.000001);
-     
-    
-    if ( histo_TTbar_Lept_up.GetBinContent(k)  <=0 ) histo_TTbar_Lept_up.SetBinContent(k,0.000001);
-    if ( histo_ZZ_Lept_up.GetBinContent(k)     <=0 ) histo_ZZ_Lept_up.SetBinContent(   k,0.000001); 
-    if ( histo_WZ_Lept_up.GetBinContent(k)     <=0 ) histo_WZ_Lept_up.SetBinContent(   k,0.000001); 
-    if ( histo_Sig_Lept_up.GetBinContent(k)    <=0 ) histo_Sig_Lept_up.SetBinContent(  k,0.000001);
-    
-    if ( histo_TTbar_Lept_down.GetBinContent(k)  <=0 ) histo_TTbar_Lept_down.SetBinContent(k,0.000001);
-    if ( histo_ZZ_Lept_down.GetBinContent(k)     <=0 ) histo_ZZ_Lept_down.SetBinContent(   k,0.000001);
-    if ( histo_WZ_Lept_down.GetBinContent(k)     <=0 ) histo_WZ_Lept_down.SetBinContent(   k,0.000001);  
-    if ( histo_Sig_Lept_down.GetBinContent(k)    <=0 ) histo_Sig_Lept_down.SetBinContent(  k,0.000001);
+  // template for mtop down
+  std::cout << " - TopMass down" << std::endl;
+  nomMtop_down->cd();
+  histo_Sig_Mtop_down = *(TH1F*)nomMtop_down->Get(("MVA_BDT_FCNC_"+signalname).c_str() );
+
+  // template for scale up
+  std::cout << " - Scale up" << std::endl;
+  nomScale_up->cd();
+  histo_Sig_Scale_up = *(TH1F*)nomScale_up->Get(("MVA_BDT_FCNC_"+signalname).c_str() );
+  if (WZ_SYS)
+  {
+    histo_WZ_Scale_up  = *(TH1F*)nomScale_up->Get(MVA_WZname.c_str());
+    histo_WZ_Scale_up.Scale(WZscaleFactor);  
   }
+
+  // template for scale down
+  std::cout << " - Scale down" << std::endl;
+  nomScale_down->cd();
+  histo_Sig_Scale_down = *(TH1F*)nomScale_down->Get(("MVA_BDT_FCNC_"+signalname).c_str() );
+  if (WZ_SYS)
+  {
+    histo_WZ_Scale_down  = *(TH1F*)nomScale_down->Get(MVA_WZname.c_str());
+    histo_WZ_Scale_down.Scale(WZscaleFactor);  
+  }
+
+  // template for match up
+  std::cout << " - Match up" << std::endl;
+  nomMatch_up->cd();
+  histo_Sig_Match_up = *(TH1F*)nomMatch_up->Get(("MVA_BDT_FCNC_"+signalname).c_str() );
+  if (WZ_SYS)
+  {
+    histo_WZ_Match_up  = *(TH1F*)nomMatch_up->Get(MVA_WZname.c_str());
+    histo_WZ_Match_up.Scale(WZscaleFactor);  
+  }
+  if (TZq_SYS)
+  {
+    histo_TZq_Match_up  = *(TH1F*)nomMatch_up->Get("MVA_BDT_TZq");
+    histo_TZq_Match_up.Scale(TZqscaleFactor);  
+  }
+
+  // template for match down
+  std::cout << " - Match down" << std::endl;
+  nomMatch_down->cd();
+  histo_Sig_Match_down = *(TH1F*)nomMatch_down->Get(("MVA_BDT_FCNC_"+signalname).c_str() );
+  if (WZ_SYS)
+  {
+    histo_WZ_Match_down  = *(TH1F*)nomMatch_down->Get(MVA_WZname.c_str());
+    histo_WZ_Match_down.Scale(WZscaleFactor);  
+  }
+  if (TZq_SYS)
+  {
+    histo_TZq_Match_down  = *(TH1F*)nomMatch_down->Get("MVA_BDT_TZq");
+    histo_TZq_Match_down.Scale(TZqscaleFactor);  
+  }
+
+  // template for PDF up
+  std::cout << " - PDF up" << std::endl;
+  nomPDF_up->cd();
+  histo_Sig_PDF_up = *(TH1F*)nomPDF_up->Get(("MVA_BDT_FCNC_"+signalname).c_str() );
+  histo_WZ_PDF_up  = *(TH1F*)nomPDF_up->Get(MVA_WZname.c_str());
+  histo_WZ_PDF_up.Scale(WZscaleFactor);  
+  histo_TZq_PDF_up  = *(TH1F*)nomPDF_up->Get("MVA_BDT_TZq");
+  histo_TZq_PDF_up.Scale(TZqscaleFactor);  
+
+  // template for PDF down
+  std::cout << " - PDF down" << std::endl;
+  nomPDF_down->cd();
+  histo_Sig_PDF_down = *(TH1F*)nomPDF_down->Get(("MVA_BDT_FCNC_"+signalname).c_str() );
+  histo_WZ_PDF_down  = *(TH1F*)nomPDF_down->Get(MVA_WZname.c_str());
+  histo_WZ_PDF_down.Scale(WZscaleFactor);  
+  histo_TZq_PDF_down  = *(TH1F*)nomPDF_down->Get("MVA_BDT_TZq");
+  histo_TZq_PDF_down.Scale(TZqscaleFactor);  
   
   
-  histo_Sig.SetName  ("MVABDT__FCNC_zut57" );
+  //----------------------------------------------------------------------------------------
+  //   STEP 3 : Needed by Theta: correct empty bins of the model 
+  //            corresponding to non empty bins for the data (if not, Theta crashs)
+  //----------------------------------------------------------------------------------------
+  std::cout << "Correcting empty bins (required by THETA) ... " << std::endl;
+  for (int k = 1; k < histo_Sig.GetNbinsX()+1; k++) 
+  {
+    if ( histo_Sig.GetBinContent(k)  <=0 ) histo_Sig.SetBinContent(  k,1e-6);
+    if ( histo_Data.GetBinContent(k) <=0 ) histo_Data.SetBinContent( k,1e-6);
+    if ( histo_Zjets.GetBinContent(k)<=0 ) histo_Zjets.SetBinContent(k,1e-6);
+    if ( histo_WZ.GetBinContent(k)   <=0 ) histo_WZ.SetBinContent(   k,1e-6);
+    if ( histo_TZq.GetBinContent(k)  <=0 ) histo_TZq.SetBinContent(  k,1e-6);
+    if ( histo_ZZ.GetBinContent(k)   <=0 ) histo_ZZ.SetBinContent(   k,1e-6);    
+    if ( histo_TTbar.GetBinContent(k)<=0 ) histo_TTbar.SetBinContent(k,1e-6);
+    
+    if ( histo_TTbar_JES_up.GetBinContent(k)  <=0 ) histo_TTbar_JES_up.SetBinContent(k,1e-6);
+    if ( histo_ZZ_JES_up.GetBinContent(k)     <=0 ) histo_ZZ_JES_up.SetBinContent(   k,1e-6); 
+    if ( histo_WZ_JES_up.GetBinContent(k)     <=0 ) histo_WZ_JES_up.SetBinContent(   k,1e-6); 
+    if ( histo_TZq_JES_up.GetBinContent(k)    <=0 ) histo_TZq_JES_up.SetBinContent(  k,1e-6); 
+    if ( histo_Sig_JES_up.GetBinContent(k)    <=0 ) histo_Sig_JES_up.SetBinContent(  k,1e-6);
+    
+    if ( histo_TTbar_JES_down.GetBinContent(k)  <=0 ) histo_TTbar_JES_down.SetBinContent(k,1e-6);
+    if ( histo_ZZ_JES_down.GetBinContent(k)     <=0 ) histo_ZZ_JES_down.SetBinContent(   k,1e-6);
+    if ( histo_WZ_JES_down.GetBinContent(k)     <=0 ) histo_WZ_JES_down.SetBinContent(   k,1e-6);  
+    if ( histo_TZq_JES_down.GetBinContent(k)    <=0 ) histo_TZq_JES_down.SetBinContent(  k,1e-6);  
+    if ( histo_Sig_JES_down.GetBinContent(k)    <=0 ) histo_Sig_JES_down.SetBinContent(  k,1e-6);
+   
+    if ( histo_TTbar_JER_up.GetBinContent(k)  <=0 ) histo_TTbar_JER_up.SetBinContent(k,1e-6);
+    if ( histo_ZZ_JER_up.GetBinContent(k)     <=0 ) histo_ZZ_JER_up.SetBinContent(   k,1e-6);
+    if ( histo_WZ_JER_up.GetBinContent(k)     <=0 ) histo_WZ_JER_up.SetBinContent(   k,1e-6);
+    if ( histo_TZq_JER_up.GetBinContent(k)    <=0 ) histo_TZq_JER_up.SetBinContent(  k,1e-6);
+    if ( histo_Sig_JER_up.GetBinContent(k)    <=0 ) histo_Sig_JER_up.SetBinContent(  k,1e-6);
+    
+    if ( histo_TTbar_JER_down.GetBinContent(k)  <=0 ) histo_TTbar_JER_down.SetBinContent(k,1e-6);
+    if ( histo_ZZ_JER_down.GetBinContent(k)     <=0 ) histo_ZZ_JER_down.SetBinContent(   k,1e-6);	
+    if ( histo_WZ_JER_down.GetBinContent(k)     <=0 ) histo_WZ_JER_down.SetBinContent(   k,1e-6);	
+    if ( histo_TZq_JER_down.GetBinContent(k)    <=0 ) histo_TZq_JER_down.SetBinContent(  k,1e-6);	
+    if ( histo_Sig_JER_down.GetBinContent(k)    <=0 ) histo_Sig_JER_down.SetBinContent(  k,1e-6);	
+    
+    if ( histo_TTbar_BTag_up.GetBinContent(k)  <=0 ) histo_TTbar_BTag_up.SetBinContent(k,1e-6);
+    if ( histo_ZZ_BTag_up.GetBinContent(k)     <=0 ) histo_ZZ_BTag_up.SetBinContent(   k,1e-6); 
+    if ( histo_WZ_BTag_up.GetBinContent(k)     <=0 ) histo_WZ_BTag_up.SetBinContent(   k,1e-6); 
+    if ( histo_TZq_BTag_up.GetBinContent(k)    <=0 ) histo_TZq_BTag_up.SetBinContent(  k,1e-6); 
+    if ( histo_Sig_BTag_up.GetBinContent(k)    <=0 ) histo_Sig_BTag_up.SetBinContent(  k,1e-6);
+    
+    if ( histo_TTbar_BTag_down.GetBinContent(k)  <=0 ) histo_TTbar_BTag_down.SetBinContent(k,1e-6);
+    if ( histo_ZZ_BTag_down.GetBinContent(k)     <=0 ) histo_ZZ_BTag_down.SetBinContent(   k,1e-6);
+    if ( histo_WZ_BTag_down.GetBinContent(k)     <=0 ) histo_WZ_BTag_down.SetBinContent(   k,1e-6);  
+    if ( histo_TZq_BTag_down.GetBinContent(k)    <=0 ) histo_TZq_BTag_down.SetBinContent(  k,1e-6);  
+    if ( histo_Sig_BTag_down.GetBinContent(k)    <=0 ) histo_Sig_BTag_down.SetBinContent(  k,1e-6);
+     
+    if ( histo_TTbar_PU_up.GetBinContent(k)  <=0 ) histo_TTbar_PU_up.SetBinContent(k,1e-6);
+    if ( histo_ZZ_PU_up.GetBinContent(k)     <=0 ) histo_ZZ_PU_up.SetBinContent(   k,1e-6); 
+    if ( histo_WZ_PU_up.GetBinContent(k)     <=0 ) histo_WZ_PU_up.SetBinContent(   k,1e-6); 
+    if ( histo_TZq_PU_up.GetBinContent(k)    <=0 ) histo_TZq_PU_up.SetBinContent(  k,1e-6); 
+    if ( histo_Sig_PU_up.GetBinContent(k)    <=0 ) histo_Sig_PU_up.SetBinContent(  k,1e-6);
+    
+    if ( histo_TTbar_PU_down.GetBinContent(k)  <=0 ) histo_TTbar_PU_down.SetBinContent(k,1e-6);
+    if ( histo_ZZ_PU_down.GetBinContent(k)     <=0 ) histo_ZZ_PU_down.SetBinContent(   k,1e-6);
+    if ( histo_WZ_PU_down.GetBinContent(k)     <=0 ) histo_WZ_PU_down.SetBinContent(   k,1e-6);  
+    if ( histo_TZq_PU_down.GetBinContent(k)    <=0 ) histo_TZq_PU_down.SetBinContent(  k,1e-6);  
+    if ( histo_Sig_PU_down.GetBinContent(k)    <=0 ) histo_Sig_PU_down.SetBinContent(  k,1e-6);
+    
+    if ( histo_TTbar_Lept_up.GetBinContent(k)  <=0 ) histo_TTbar_Lept_up.SetBinContent(k,1e-6);
+    if ( histo_ZZ_Lept_up.GetBinContent(k)     <=0 ) histo_ZZ_Lept_up.SetBinContent(   k,1e-6); 
+    if ( histo_WZ_Lept_up.GetBinContent(k)     <=0 ) histo_WZ_Lept_up.SetBinContent(   k,1e-6); 
+    if ( histo_TZq_Lept_up.GetBinContent(k)    <=0 ) histo_TZq_Lept_up.SetBinContent(  k,1e-6); 
+    if ( histo_Sig_Lept_up.GetBinContent(k)    <=0 ) histo_Sig_Lept_up.SetBinContent(  k,1e-6);
+    
+    if ( histo_TTbar_Lept_down.GetBinContent(k)  <=0 ) histo_TTbar_Lept_down.SetBinContent(k,1e-6);
+    if ( histo_ZZ_Lept_down.GetBinContent(k)     <=0 ) histo_ZZ_Lept_down.SetBinContent(   k,1e-6);
+    if ( histo_WZ_Lept_down.GetBinContent(k)     <=0 ) histo_WZ_Lept_down.SetBinContent(   k,1e-6);  
+    if ( histo_TZq_Lept_down.GetBinContent(k)    <=0 ) histo_TZq_Lept_down.SetBinContent(  k,1e-6);  
+    if ( histo_Sig_Lept_down.GetBinContent(k)    <=0 ) histo_Sig_Lept_down.SetBinContent(  k,1e-6);
+
+    if (histo_Sig_Mtop_up.GetBinContent(k) <=0 ) histo_Sig_Mtop_up.SetBinContent(k,1e-6);
+    if (histo_Sig_Mtop_down.GetBinContent(k) <=0 ) histo_Sig_Mtop_down.SetBinContent(k,1e-6);
+
+    if (histo_Sig_PDF_up.GetBinContent(k) <=0 ) histo_Sig_PDF_up.SetBinContent(k,1e-6);
+    if (histo_Sig_PDF_down.GetBinContent(k) <=0 ) histo_Sig_PDF_down.SetBinContent(k,1e-6);
+    if (histo_WZ_PDF_up.GetBinContent(k) <=0 ) histo_WZ_PDF_up.SetBinContent(k,1e-6);
+    if (histo_WZ_PDF_down.GetBinContent(k) <=0 ) histo_WZ_PDF_down.SetBinContent(k,1e-6);
+
+    if (histo_Sig_Scale_up.GetBinContent(k) <=0 ) histo_Sig_Scale_up.SetBinContent(k,1e-6);
+    if (histo_Sig_Scale_down.GetBinContent(k) <=0 ) histo_Sig_Scale_down.SetBinContent(k,1e-6);
+    if (histo_WZ_Scale_up.GetBinContent(k) <=0 ) histo_WZ_Scale_up.SetBinContent(k,1e-6);
+    if (histo_WZ_Scale_down.GetBinContent(k) <=0 ) histo_WZ_Scale_down.SetBinContent(k,1e-6);
+
+    if (histo_Sig_Match_up.GetBinContent(k) <=0 ) histo_Sig_Match_up.SetBinContent(k,1e-6);
+    if (histo_Sig_Match_down.GetBinContent(k) <=0 ) histo_Sig_Match_down.SetBinContent(k,1e-6);
+    if (histo_WZ_Match_up.GetBinContent(k) <=0 ) histo_WZ_Match_up.SetBinContent(k,1e-6);
+    if (histo_WZ_Match_down.GetBinContent(k) <=0 ) histo_WZ_Match_down.SetBinContent(k,1e-6);
+    if (histo_TZq_Match_up.GetBinContent(k) <=0 ) histo_TZq_Match_up.SetBinContent(k,1e-6);
+    if (histo_TZq_Match_down.GetBinContent(k) <=0 ) histo_TZq_Match_down.SetBinContent(k,1e-6);
+  }
+
+  //----------------------------------------------------------------------------------------
+  //   STEP 4 : Setting histogram names
+  //----------------------------------------------------------------------------------------
+  std::cout << "Setting histogram names ... " << std::endl;
+  histo_Sig.SetName  (("MVABDT__FCNC_"+signalname+"57").c_str() );
   histo_Data.SetName ("MVABDT__DATA"      );
   histo_Zjets.SetName("MVABDT__DataZjets" );
   histo_WZ.SetName   ("MVABDT__WZ"        );
+  histo_TZq.SetName  ("MVABDT__WZ"        );
   histo_ZZ.SetName   ("MVABDT__ZZ"        );
   histo_TTbar.SetName("MVABDT__TTbar"     );
   
-  
-  
-  
-  
-  histo_Sig_JES_up.SetName  ("MVABDT__FCNC_zut57__JES__plus" );
+  histo_Sig_JES_up.SetName  (("MVABDT__FCNC_"+signalname+"57__JES__plus").c_str() );
   histo_WZ_JES_up.SetName   ("MVABDT__WZ__JES__plus"        );
+  histo_TZq_JES_up.SetName   ("MVABDT__TZq__JES__plus"        );
   histo_ZZ_JES_up.SetName   ("MVABDT__ZZ__JES__plus"        );
   histo_TTbar_JES_up.SetName("MVABDT__TTbar__JES__plus"     );
   
-  histo_Sig_JES_down.SetName  ("MVABDT__FCNC_zut57__JES__minus" );
+  histo_Sig_JES_down.SetName  (("MVABDT__FCNC_"+signalname+"57__JES__minus").c_str() );
   histo_WZ_JES_down.SetName   ("MVABDT__WZ__JES__minus"        );
+  histo_TZq_JES_down.SetName   ("MVABDT__TZq__JES__minus"        );
   histo_ZZ_JES_down.SetName   ("MVABDT__ZZ__JES__minus"        );
   histo_TTbar_JES_down.SetName("MVABDT__TTbar__JES__minus"     );
-  
-  
-  
-  histo_Sig_JER_up.SetName  ("MVABDT__FCNC_zut57__JER__plus" );
+
+  histo_Sig_JER_up.SetName  (("MVABDT__FCNC_"+signalname+"57__JER__plus").c_str() );
   histo_WZ_JER_up.SetName   ("MVABDT__WZ__JER__plus"        );
+  histo_TZq_JER_up.SetName  ("MVABDT__TZq__JER__plus"        );
   histo_ZZ_JER_up.SetName   ("MVABDT__ZZ__JER__plus"        );
   histo_TTbar_JER_up.SetName("MVABDT__TTbar__JER__plus"     );
   
-  
-  
-  
-  histo_Sig_JER_down.SetName  ("MVABDT__FCNC_zut57__JER__minus" );
+  histo_Sig_JER_down.SetName  (("MVABDT__FCNC_"+signalname+"57__JER__minus").c_str() );
   histo_WZ_JER_down.SetName   ("MVABDT__WZ__JER__minus"        );
+  histo_TZq_JER_down.SetName  ("MVABDT__TZq__JER__minus"        );
   histo_ZZ_JER_down.SetName   ("MVABDT__ZZ__JER__minus"        );
   histo_TTbar_JER_down.SetName("MVABDT__TTbar__JER__minus"     );
  
-  
-  
-  
-  histo_Sig_BTag_up.SetName  ("MVABDT__FCNC_zut57__BTag__plus" );
+  histo_Sig_BTag_up.SetName  (("MVABDT__FCNC_"+signalname+"57__BTag__plus").c_str() );
   histo_WZ_BTag_up.SetName   ("MVABDT__WZ__BTag__plus"        );
+  histo_TZq_BTag_up.SetName  ("MVABDT__TZq__BTag__plus"        );
   histo_ZZ_BTag_up.SetName   ("MVABDT__ZZ__BTag__plus"        );
   histo_TTbar_BTag_up.SetName("MVABDT__TTbar__BTag__plus"     );
   
-  histo_Sig_BTag_down.SetName  ("MVABDT__FCNC_zut57__BTag__minus" );
+  histo_Sig_BTag_down.SetName  (("MVABDT__FCNC_"+signalname+"57__BTag__minus").c_str() );
   histo_WZ_BTag_down.SetName   ("MVABDT__WZ__BTag__minus"        );
+  histo_TZq_BTag_down.SetName  ("MVABDT__TZq__BTag__minus"        );
   histo_ZZ_BTag_down.SetName   ("MVABDT__ZZ__BTag__minus"        );
   histo_TTbar_BTag_down.SetName("MVABDT__TTbar__BTag__minus"     );
   
-  
-  
-  
-  histo_Sig_PU_up.SetName  ("MVABDT__FCNC_zut57__PU__plus" );
+  histo_Sig_PU_up.SetName  (("MVABDT__FCNC_"+signalname+"57__PU__plus").c_str() );
   histo_WZ_PU_up.SetName   ("MVABDT__WZ__PU__plus"        );
+  histo_TZq_PU_up.SetName  ("MVABDT__TZq__PU__plus"        );
   histo_ZZ_PU_up.SetName   ("MVABDT__ZZ__PU__plus"        );
   histo_TTbar_PU_up.SetName("MVABDT__TTbar__PU__plus"     );
   
-  histo_Sig_PU_down.SetName  ("MVABDT__FCNC_zut57__PU__minus" );
+  histo_Sig_PU_down.SetName  (("MVABDT__FCNC_"+signalname+"57__PU__minus").c_str() );
   histo_WZ_PU_down.SetName   ("MVABDT__WZ__PU__minus"        );
+  histo_TZq_PU_down.SetName  ("MVABDT__tEq__PU__minus"        );
   histo_ZZ_PU_down.SetName   ("MVABDT__ZZ__PU__minus"        );
   histo_TTbar_PU_down.SetName("MVABDT__TTbar__PU__minus"     );
   
-  
-  
-  histo_Sig_Lept_up.SetName  ("MVABDT__FCNC_zut57__Lept__plus" );
+  histo_Sig_Lept_up.SetName  (("MVABDT__FCNC_"+signalname+"57__Lept__plus").c_str() );
   histo_WZ_Lept_up.SetName   ("MVABDT__WZ__Lept__plus"        );
+  histo_WZ_Lept_up.SetName   ("MVABDT__TZq__Lept__plus"        );
   histo_ZZ_Lept_up.SetName   ("MVABDT__ZZ__Lept__plus"        );
   histo_TTbar_Lept_up.SetName("MVABDT__TTbar__Lept__plus"     );
   
-  histo_Sig_Lept_down.SetName  ("MVABDT__FCNC_zut57__Lept__minus" );
+  histo_Sig_Lept_down.SetName  (("MVABDT__FCNC_"+signalname+"57__Lept__minus").c_str() );
   histo_WZ_Lept_down.SetName   ("MVABDT__WZ__Lept__minus"        );
+  histo_TZq_Lept_down.SetName  ("MVABDT__TZq__Lept__minus"        );
   histo_ZZ_Lept_down.SetName   ("MVABDT__ZZ__Lept__minus"        );
   histo_TTbar_Lept_down.SetName("MVABDT__TTbar__Lept__minus"     );
   
-  // Add 2 additionnal points  
-  
-  
-  TH1F *  histo_Sig_05   = new TH1F ("histo_Sig_05", "histo_Sig_05", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_10   = new TH1F ("histo_Sig_10", "histo_Sig_10", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_20   = new TH1F ("histo_Sig_20", "histo_Sig_20", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_30   = new TH1F ("histo_Sig_30", "histo_Sig_30", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_50   = new TH1F ("histo_Sig_50", "histo_Sig_50", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  
-  
-  
-  TH1F *  histo_Sig_05_JES_up   = new TH1F ("histo_Sig_05_JES_up", "histo_Sig_05_JES_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_10_JES_up   = new TH1F ("histo_Sig_10_JES_up", "histo_Sig_10_JES_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_20_JES_up   = new TH1F ("histo_Sig_20_JES_up", "histo_Sig_20_JES_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_30_JES_up   = new TH1F ("histo_Sig_30_JES_up", "histo_Sig_30_JES_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_50_JES_up   = new TH1F ("histo_Sig_50_JES_up", "histo_Sig_50_JES_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  
- 
- 
-  
-  TH1F *  histo_Sig_05_JES_down   = new TH1F ("histo_Sig_05_JES_down", "histo_Sig_05_JES_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_10_JES_down   = new TH1F ("histo_Sig_10_JES_down", "histo_Sig_10_JES_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_20_JES_down   = new TH1F ("histo_Sig_20_JES_down", "histo_Sig_20_JES_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_30_JES_down   = new TH1F ("histo_Sig_30_JES_down", "histo_Sig_30_JES_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_50_JES_down   = new TH1F ("histo_Sig_50_JES_down", "histo_Sig_50_JES_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  
- 
-  
-  TH1F *  histo_Sig_05_JER_up   = new TH1F ("histo_Sig_05_JER_up", "histo_Sig_05_JER_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_10_JER_up   = new TH1F ("histo_Sig_10_JER_up", "histo_Sig_10_JER_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_20_JER_up   = new TH1F ("histo_Sig_20_JER_up", "histo_Sig_20_JER_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_30_JER_up   = new TH1F ("histo_Sig_30_JER_up", "histo_Sig_30_JER_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_50_JER_up   = new TH1F ("histo_Sig_50_JER_up", "histo_Sig_50_JER_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  
- 
- 
-  
-  TH1F *  histo_Sig_05_JER_down   = new TH1F ("histo_Sig_05_JER_down", "histo_Sig_05_JER_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_10_JER_down   = new TH1F ("histo_Sig_10_JER_down", "histo_Sig_10_JER_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_20_JER_down   = new TH1F ("histo_Sig_20_JER_down", "histo_Sig_20_JER_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_30_JER_down   = new TH1F ("histo_Sig_30_JER_down", "histo_Sig_30_JER_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_50_JER_down   = new TH1F ("histo_Sig_50_JER_down", "histo_Sig_50_JER_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  
+  histo_Sig_Mtop_up.SetName(("MVABDT__FCNC_"+signalname+"57__Mtop__plus").c_str());
+  histo_Sig_Mtop_down.SetName(("MVABDT__FCNC_"+signalname+"57__Mtop__minus").c_str());
+
+  histo_Sig_PDF_up.SetName(("MVABDT__FCNC_"+signalname+"57__PDF__plus").c_str());
+  histo_Sig_PDF_down.SetName(("MVABDT__FCNC_"+signalname+"57__PDF__minus").c_str());
+  histo_WZ_PDF_up.SetName("MVABDT__WZ__PDF__plus");
+  histo_WZ_PDF_down.SetName("MVABDT__WZ__PDF__minus");
+
+  histo_Sig_Scale_up.SetName(("MVABDT__FCNC_"+signalname+"57__Scale__plus").c_str());
+  histo_Sig_Scale_down.SetName(("MVABDT__FCNC_"+signalname+"57__Scale__minus").c_str());
+  histo_WZ_Scale_up.SetName("MVABDT__WZ__Scale__plus");
+  histo_WZ_Scale_down.SetName("MVABDT__WZ__Scale__minus");
+
+  histo_Sig_Match_up.SetName(("MVABDT__FCNC_"+signalname+"57__Match__plus").c_str());
+  histo_Sig_Match_down.SetName(("MVABDT__FCNC_"+signalname+"57__Match__minus").c_str());
+  histo_WZ_Match_up.SetName("MVABDT__WZ__Match__plus");
+  histo_WZ_Match_down.SetName("MVABDT__WZ__Match__minus");
+  histo_TZq_Match_up.SetName("MVABDT__TZq__Match__plus");
+  histo_TZq_Match_down.SetName("MVABDT__TZq__Match__minus");
 
 
-   
-  TH1F *  histo_Sig_05_BTag_up   = new TH1F ("histo_Sig_05_BTag_up", "histo_Sig_05_BTag_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_10_BTag_up   = new TH1F ("histo_Sig_10_BTag_up", "histo_Sig_10_BTag_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_20_BTag_up   = new TH1F ("histo_Sig_20_BTag_up", "histo_Sig_20_BTag_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_30_BTag_up   = new TH1F ("histo_Sig_30_BTag_up", "histo_Sig_30_BTag_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_50_BTag_up   = new TH1F ("histo_Sig_50_BTag_up", "histo_Sig_50_BTag_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
+  //----------------------------------------------------------------------------------------
+  //   STEP 5 : Creating additional histograms related to signal with other xsection values
+  //----------------------------------------------------------------------------------------
+  std::cout << "Creating additional signal histograms with different xsection values ... " << std::endl;
+  double xmin = histo_Sig.GetXaxis()->GetXmin();
+  double xmax = histo_Sig.GetXaxis()->GetXmax();
+  unsigned int nbins = histo_Sig.GetXaxis()->GetNbins();
+  std::vector<double> xsections;
+  std::vector<std::string> xnames;
 
-  
-  TH1F *  histo_Sig_05_BTag_down   = new TH1F ("histo_Sig_05_BTag_down", "histo_Sig_05_BTag_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_10_BTag_down   = new TH1F ("histo_Sig_10_BTag_down", "histo_Sig_10_BTag_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_20_BTag_down   = new TH1F ("histo_Sig_20_BTag_down", "histo_Sig_20_BTag_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_30_BTag_down   = new TH1F ("histo_Sig_30_BTag_down", "histo_Sig_30_BTag_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_50_BTag_down   = new TH1F ("histo_Sig_50_BTag_down", "histo_Sig_50_BTag_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  
-   
-  TH1F *  histo_Sig_05_PU_up   = new TH1F ("histo_Sig_05_PU_up", "histo_Sig_05_PU_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_10_PU_up   = new TH1F ("histo_Sig_10_PU_up", "histo_Sig_10_PU_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_20_PU_up   = new TH1F ("histo_Sig_20_PU_up", "histo_Sig_20_PU_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_30_PU_up   = new TH1F ("histo_Sig_30_PU_up", "histo_Sig_30_PU_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_50_PU_up   = new TH1F ("histo_Sig_50_PU_up", "histo_Sig_50_PU_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  
- 
- 
-  
-  TH1F *  histo_Sig_05_PU_down   = new TH1F ("histo_Sig_05_PU_down", "histo_Sig_05_PU_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_10_PU_down   = new TH1F ("histo_Sig_10_PU_down", "histo_Sig_10_PU_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_20_PU_down   = new TH1F ("histo_Sig_20_PU_down", "histo_Sig_20_PU_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_30_PU_down   = new TH1F ("histo_Sig_30_PU_down", "histo_Sig_30_PU_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_50_PU_down   = new TH1F ("histo_Sig_50_PU_down", "histo_Sig_50_PU_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  
-   
-  TH1F *  histo_Sig_05_Lept_up   = new TH1F ("histo_Sig_05_Lept_up", "histo_Sig_05_Lept_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_10_Lept_up   = new TH1F ("histo_Sig_10_Lept_up", "histo_Sig_10_Lept_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_20_Lept_up   = new TH1F ("histo_Sig_20_Lept_up", "histo_Sig_20_Lept_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_30_Lept_up   = new TH1F ("histo_Sig_30_Lept_up", "histo_Sig_30_Lept_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_50_Lept_up   = new TH1F ("histo_Sig_50_Lept_up", "histo_Sig_50_Lept_up", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  
- 
- 
-  
-  TH1F *  histo_Sig_05_Lept_down   = new TH1F ("histo_Sig_05_Lept_down", "histo_Sig_05_Lept_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_10_Lept_down   = new TH1F ("histo_Sig_10_Lept_down", "histo_Sig_10_Lept_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_20_Lept_down   = new TH1F ("histo_Sig_20_Lept_down", "histo_Sig_20_Lept_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_30_Lept_down   = new TH1F ("histo_Sig_30_Lept_down", "histo_Sig_30_Lept_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  TH1F *  histo_Sig_50_Lept_down   = new TH1F ("histo_Sig_50_Lept_down", "histo_Sig_50_Lept_down", histo_Sig.GetXaxis()->GetNbins(),histo_Sig.GetXaxis()->GetXmin(),       histo_Sig.GetXaxis()->GetXmax() );
-  
-   
-  
+  // ------------------- TO CHANGE BY THE USER
+  xsections.push_back(5.); xnames.push_back("05"); 
+  xsections.push_back(10.); xnames.push_back("10"); 
+  xsections.push_back(20.); xnames.push_back("20"); 
+  xsections.push_back(30.); xnames.push_back("30"); 
+  xsections.push_back(50.); xnames.push_back("50"); 
+  // -------------- TO CHANGE BY THE USER
 
- 
+  std::vector<TH1F*> histo_newSig;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    std::string histoname = "histo_Sig_"+xnames[i];
+    histo_newSig.push_back(new TH1F(histoname.c_str(), histoname.c_str(), nbins, xmin, xmax) );
+  }
 
-  for (int k = 1; k < histo_Sig.GetNbinsX()+1; k++) {
-  
-  
-    histo_Sig_05->SetBinContent(k,05.*histo_Sig.GetBinContent(k)/histo_Sig.Integral());
-    histo_Sig_10->SetBinContent(k,10.*histo_Sig.GetBinContent(k)/histo_Sig.Integral());
-    histo_Sig_20->SetBinContent(k,20.*histo_Sig.GetBinContent(k)/histo_Sig.Integral());
-    histo_Sig_30->SetBinContent(k,30.*histo_Sig.GetBinContent(k)/histo_Sig.Integral());
-    histo_Sig_50->SetBinContent(k,50.*histo_Sig.GetBinContent(k)/histo_Sig.Integral());
-    
-    
-    histo_Sig_05_JES_up->SetBinContent(k,05.*histo_Sig_JES_up.GetBinContent(k)/histo_Sig_JES_up.Integral());
-    histo_Sig_10_JES_up->SetBinContent(k,10.*histo_Sig_JES_up.GetBinContent(k)/histo_Sig_JES_up.Integral());
-    histo_Sig_20_JES_up->SetBinContent(k,20.*histo_Sig_JES_up.GetBinContent(k)/histo_Sig_JES_up.Integral());
-    histo_Sig_30_JES_up->SetBinContent(k,30.*histo_Sig_JES_up.GetBinContent(k)/histo_Sig_JES_up.Integral());
-    histo_Sig_50_JES_up->SetBinContent(k,50.*histo_Sig_JES_up.GetBinContent(k)/histo_Sig_JES_up.Integral());
-    
-    histo_Sig_05_JES_down->SetBinContent(k,05.*histo_Sig_JES_down.GetBinContent(k)/histo_Sig_JES_down.Integral());
-    histo_Sig_10_JES_down->SetBinContent(k,10.*histo_Sig_JES_down.GetBinContent(k)/histo_Sig_JES_down.Integral());
-    histo_Sig_20_JES_down->SetBinContent(k,20.*histo_Sig_JES_down.GetBinContent(k)/histo_Sig_JES_down.Integral());
-    histo_Sig_30_JES_down->SetBinContent(k,30.*histo_Sig_JES_down.GetBinContent(k)/histo_Sig_JES_down.Integral());
-    histo_Sig_50_JES_down->SetBinContent(k,50.*histo_Sig_JES_down.GetBinContent(k)/histo_Sig_JES_down.Integral());
-    
-    histo_Sig_05_JER_up->SetBinContent(k,05.*histo_Sig_JER_up.GetBinContent(k)/histo_Sig_JER_up.Integral());
-    histo_Sig_10_JER_up->SetBinContent(k,10.*histo_Sig_JER_up.GetBinContent(k)/histo_Sig_JER_up.Integral());
-    histo_Sig_20_JER_up->SetBinContent(k,20.*histo_Sig_JER_up.GetBinContent(k)/histo_Sig_JER_up.Integral());
-    histo_Sig_30_JER_up->SetBinContent(k,30.*histo_Sig_JER_up.GetBinContent(k)/histo_Sig_JER_up.Integral());
-    histo_Sig_50_JER_up->SetBinContent(k,50.*histo_Sig_JER_up.GetBinContent(k)/histo_Sig_JER_up.Integral());
-    
-    histo_Sig_05_JER_down->SetBinContent(k,05.*histo_Sig_JER_down.GetBinContent(k)/histo_Sig_JER_down.Integral());
-    histo_Sig_10_JER_down->SetBinContent(k,10.*histo_Sig_JER_down.GetBinContent(k)/histo_Sig_JER_down.Integral());
-    histo_Sig_20_JER_down->SetBinContent(k,20.*histo_Sig_JER_down.GetBinContent(k)/histo_Sig_JER_down.Integral());
-    histo_Sig_30_JER_down->SetBinContent(k,30.*histo_Sig_JER_down.GetBinContent(k)/histo_Sig_JER_down.Integral());
-    histo_Sig_50_JER_down->SetBinContent(k,50.*histo_Sig_JER_down.GetBinContent(k)/histo_Sig_JER_down.Integral());
-    
-    
-    histo_Sig_05_BTag_up->SetBinContent(k,05.*histo_Sig_BTag_up.GetBinContent(k)/histo_Sig_BTag_up.Integral());
-    histo_Sig_10_BTag_up->SetBinContent(k,10.*histo_Sig_BTag_up.GetBinContent(k)/histo_Sig_BTag_up.Integral());
-    histo_Sig_20_BTag_up->SetBinContent(k,20.*histo_Sig_BTag_up.GetBinContent(k)/histo_Sig_BTag_up.Integral());
-    histo_Sig_30_BTag_up->SetBinContent(k,30.*histo_Sig_BTag_up.GetBinContent(k)/histo_Sig_BTag_up.Integral());
-    histo_Sig_50_BTag_up->SetBinContent(k,50.*histo_Sig_BTag_up.GetBinContent(k)/histo_Sig_BTag_up.Integral());
-    
-    histo_Sig_05_BTag_down->SetBinContent(k,05.*histo_Sig_BTag_down.GetBinContent(k)/histo_Sig_BTag_down.Integral());
-    histo_Sig_10_BTag_down->SetBinContent(k,10.*histo_Sig_BTag_down.GetBinContent(k)/histo_Sig_BTag_down.Integral());
-    histo_Sig_20_BTag_down->SetBinContent(k,20.*histo_Sig_BTag_down.GetBinContent(k)/histo_Sig_BTag_down.Integral());
-    histo_Sig_30_BTag_down->SetBinContent(k,30.*histo_Sig_BTag_down.GetBinContent(k)/histo_Sig_BTag_down.Integral());
-    histo_Sig_50_BTag_down->SetBinContent(k,50.*histo_Sig_BTag_down.GetBinContent(k)/histo_Sig_BTag_down.Integral());
-    
-    histo_Sig_05_Lept_up->SetBinContent(k,05.*histo_Sig_Lept_up.GetBinContent(k)/histo_Sig_Lept_up.Integral());
-    histo_Sig_10_Lept_up->SetBinContent(k,10.*histo_Sig_Lept_up.GetBinContent(k)/histo_Sig_Lept_up.Integral());
-    histo_Sig_20_Lept_up->SetBinContent(k,20.*histo_Sig_Lept_up.GetBinContent(k)/histo_Sig_Lept_up.Integral());
-    histo_Sig_30_Lept_up->SetBinContent(k,30.*histo_Sig_Lept_up.GetBinContent(k)/histo_Sig_Lept_up.Integral());
-    histo_Sig_50_Lept_up->SetBinContent(k,50.*histo_Sig_Lept_up.GetBinContent(k)/histo_Sig_Lept_up.Integral());
-    
-    histo_Sig_05_Lept_down->SetBinContent(k,05.*histo_Sig_Lept_down.GetBinContent(k)/histo_Sig_Lept_down.Integral());
-    histo_Sig_10_Lept_down->SetBinContent(k,10.*histo_Sig_Lept_down.GetBinContent(k)/histo_Sig_Lept_down.Integral());
-    histo_Sig_20_Lept_down->SetBinContent(k,20.*histo_Sig_Lept_down.GetBinContent(k)/histo_Sig_Lept_down.Integral());
-    histo_Sig_30_Lept_down->SetBinContent(k,30.*histo_Sig_Lept_down.GetBinContent(k)/histo_Sig_Lept_down.Integral());
-    histo_Sig_50_Lept_down->SetBinContent(k,50.*histo_Sig_Lept_down.GetBinContent(k)/histo_Sig_Lept_down.Integral());
-    
-    
+  std::vector<TH1F*> histo_newSig_JES_up;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    std::string histoname = "histo_Sig_"+xnames[i]+"_JES_up";
+    histo_newSig_JES_up.push_back(new TH1F(histoname.c_str(), histoname.c_str(), nbins, xmin, xmax) );
   }
   
-  histo_Sig_05->SetName("MVABDT__FCNC_zut05");
-  histo_Sig_10->SetName("MVABDT__FCNC_zut10");
-  histo_Sig_20->SetName("MVABDT__FCNC_zut20");
-  histo_Sig_30->SetName("MVABDT__FCNC_zut30");
-  histo_Sig_50->SetName("MVABDT__FCNC_zut50");
+  std::vector<TH1F*> histo_newSig_JES_down;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    std::string histoname = "histo_Sig_"+xnames[i]+"_JES_down";
+    histo_newSig_JES_down.push_back(new TH1F(histoname.c_str(), histoname.c_str(), nbins, xmin, xmax) );
+  }
+
+  std::vector<TH1F*> histo_newSig_JER_up;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    std::string histoname = "histo_Sig_"+xnames[i]+"_JER_up";
+    histo_newSig_JER_up.push_back(new TH1F(histoname.c_str(), histoname.c_str(), nbins, xmin, xmax) );
+  }
   
-  histo_Sig_05_JES_up->SetName("MVABDT__FCNC_zut05__JES__plus");
-  histo_Sig_10_JES_up->SetName("MVABDT__FCNC_zut10__JES__plus");
-  histo_Sig_20_JES_up->SetName("MVABDT__FCNC_zut20__JES__plus");
-  histo_Sig_30_JES_up->SetName("MVABDT__FCNC_zut30__JES__plus");
-  histo_Sig_50_JES_up->SetName("MVABDT__FCNC_zut50__JES__plus");
+  std::vector<TH1F*> histo_newSig_JER_down;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    std::string histoname = "histo_Sig_"+xnames[i]+"_JER_down";
+    histo_newSig_JER_down.push_back(new TH1F(histoname.c_str(), histoname.c_str(), nbins, xmin, xmax) );
+  }
+
+  std::vector<TH1F*> histo_newSig_BTag_up;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    std::string histoname = "histo_Sig_"+xnames[i]+"_BTag_up";
+    histo_newSig_BTag_up.push_back(new TH1F(histoname.c_str(), histoname.c_str(), nbins, xmin, xmax) );
+  }
   
-  histo_Sig_05_JES_down->SetName("MVABDT__FCNC_zut05__JES__minus");
-  histo_Sig_10_JES_down->SetName("MVABDT__FCNC_zut10__JES__minus");
-  histo_Sig_20_JES_down->SetName("MVABDT__FCNC_zut20__JES__minus");
-  histo_Sig_30_JES_down->SetName("MVABDT__FCNC_zut30__JES__minus");
-  histo_Sig_50_JES_down->SetName("MVABDT__FCNC_zut50__JES__minus");
+  std::vector<TH1F*> histo_newSig_BTag_down;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    std::string histoname = "histo_Sig_"+xnames[i]+"_BTag_down";
+    histo_newSig_BTag_down.push_back(new TH1F(histoname.c_str(), histoname.c_str(), nbins, xmin, xmax) );
+  }
+
+  std::vector<TH1F*> histo_newSig_PU_up;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    std::string histoname = "histo_Sig_"+xnames[i]+"_PU_up";
+    histo_newSig_PU_up.push_back(new TH1F(histoname.c_str(), histoname.c_str(), nbins, xmin, xmax) );
+  }
   
+  std::vector<TH1F*> histo_newSig_PU_down;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    std::string histoname = "histo_Sig_"+xnames[i]+"_PU_down";
+    histo_newSig_PU_down.push_back(new TH1F(histoname.c_str(), histoname.c_str(), nbins, xmin, xmax) );
+  }
+
+  std::vector<TH1F*> histo_newSig_Lept_up;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    std::string histoname = "histo_Sig_"+xnames[i]+"_Lept_up";
+    histo_newSig_Lept_up.push_back(new TH1F(histoname.c_str(), histoname.c_str(), nbins, xmin, xmax) );
+  }
   
-  histo_Sig_05_JER_up->SetName("MVABDT__FCNC_zut05__JER__plus");
-  histo_Sig_10_JER_up->SetName("MVABDT__FCNC_zut10__JER__plus");
-  histo_Sig_20_JER_up->SetName("MVABDT__FCNC_zut20__JER__plus");
-  histo_Sig_30_JER_up->SetName("MVABDT__FCNC_zut30__JER__plus");
-  histo_Sig_50_JER_up->SetName("MVABDT__FCNC_zut50__JER__plus");
+  std::vector<TH1F*> histo_newSig_Lept_down;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    std::string histoname = "histo_Sig_"+xnames[i]+"_Lept_down";
+    histo_newSig_Lept_down.push_back(new TH1F(histoname.c_str(), histoname.c_str(), nbins, xmin, xmax) );
+  }
   
-  histo_Sig_05_JER_down->SetName("MVABDT__FCNC_zut05__JER__minus");
-  histo_Sig_10_JER_down->SetName("MVABDT__FCNC_zut10__JER__minus");
-  histo_Sig_20_JER_down->SetName("MVABDT__FCNC_zut20__JER__minus");
-  histo_Sig_30_JER_down->SetName("MVABDT__FCNC_zut30__JER__minus");
-  histo_Sig_50_JER_down->SetName("MVABDT__FCNC_zut50__JER__minus");
+  std::vector<TH1F*> histo_newSig_Mtop_up;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    std::string histoname = "histo_Sig_"+xnames[i]+"_Mtop_up";
+    histo_newSig_Mtop_up.push_back(new TH1F(histoname.c_str(), histoname.c_str(), nbins, xmin, xmax) );
+  }
   
+  std::vector<TH1F*> histo_newSig_Mtop_down;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    std::string histoname = "histo_Sig_"+xnames[i]+"_Mtop_down";
+    histo_newSig_Mtop_down.push_back(new TH1F(histoname.c_str(), histoname.c_str(), nbins, xmin, xmax) );
+  }
+
+  std::vector<TH1F*> histo_newSig_PDF_up;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    std::string histoname = "histo_Sig_"+xnames[i]+"_PDF_up";
+    histo_newSig_PDF_up.push_back(new TH1F(histoname.c_str(), histoname.c_str(), nbins, xmin, xmax) );
+  }
   
-  histo_Sig_05_BTag_up->SetName("MVABDT__FCNC_zut05__BTag__plus");
-  histo_Sig_10_BTag_up->SetName("MVABDT__FCNC_zut10__BTag__plus");
-  histo_Sig_20_BTag_up->SetName("MVABDT__FCNC_zut20__BTag__plus");
-  histo_Sig_30_BTag_up->SetName("MVABDT__FCNC_zut30__BTag__plus");
-  histo_Sig_50_BTag_up->SetName("MVABDT__FCNC_zut50__BTag__plus");
+  std::vector<TH1F*> histo_newSig_PDF_down;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    std::string histoname = "histo_Sig_"+xnames[i]+"_PDF_down";
+    histo_newSig_PDF_down.push_back(new TH1F(histoname.c_str(), histoname.c_str(), nbins, xmin, xmax) );
+  }
+
+  std::vector<TH1F*> histo_newSig_Scale_up;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    std::string histoname = "histo_Sig_"+xnames[i]+"_Scale_up";
+    histo_newSig_Scale_up.push_back(new TH1F(histoname.c_str(), histoname.c_str(), nbins, xmin, xmax) );
+  }
   
-  histo_Sig_05_BTag_down->SetName("MVABDT__FCNC_zut05__BTag__minus");
-  histo_Sig_10_BTag_down->SetName("MVABDT__FCNC_zut10__BTag__minus");
-  histo_Sig_20_BTag_down->SetName("MVABDT__FCNC_zut20__BTag__minus");
-  histo_Sig_30_BTag_down->SetName("MVABDT__FCNC_zut30__BTag__minus");
-  histo_Sig_50_BTag_down->SetName("MVABDT__FCNC_zut50__BTag__minus");
+  std::vector<TH1F*> histo_newSig_Scale_down;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    std::string histoname = "histo_Sig_"+xnames[i]+"_Scale_down";
+    histo_newSig_Scale_down.push_back(new TH1F(histoname.c_str(), histoname.c_str(), nbins, xmin, xmax) );
+  }
+
+  std::vector<TH1F*> histo_newSig_Match_up;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    std::string histoname = "histo_Sig_"+xnames[i]+"_Match_up";
+    histo_newSig_Match_up.push_back(new TH1F(histoname.c_str(), histoname.c_str(), nbins, xmin, xmax) );
+  }
   
-  histo_Sig_05_Lept_up->SetName("MVABDT__FCNC_zut05__Lept__plus");
-  histo_Sig_10_Lept_up->SetName("MVABDT__FCNC_zut10__Lept__plus");
-  histo_Sig_20_Lept_up->SetName("MVABDT__FCNC_zut20__Lept__plus");
-  histo_Sig_30_Lept_up->SetName("MVABDT__FCNC_zut30__Lept__plus");
-  histo_Sig_50_Lept_up->SetName("MVABDT__FCNC_zut50__Lept__plus");
+  std::vector<TH1F*> histo_newSig_Match_down;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    std::string histoname = "histo_Sig_"+xnames[i]+"_Match_down";
+    histo_newSig_Match_down.push_back(new TH1F(histoname.c_str(), histoname.c_str(), nbins, xmin, xmax) );
+  }
+
+
+  //----------------------------------------------------------------------------------------
+  //   STEP 6 : Scaling additional signal histograms
+  //----------------------------------------------------------------------------------------
+  std::cout << "Scaling additional signal histograms ... " << std::endl;
+  for (int k = 1; k < histo_Sig.GetNbinsX()+1; k++) 
+    for (unsigned int i=0;i<xsections.size();i++)
+    {
+      histo_newSig[i]           -> SetBinContent(k,xsections[i]*histo_Sig.GetBinContent(k)/histo_Sig.Integral());
+      histo_newSig_JES_up[i]    -> SetBinContent(k,xsections[i]*histo_Sig_JES_up.GetBinContent(k)/histo_Sig_JES_up.Integral());
+      histo_newSig_JES_down[i]  -> SetBinContent(k,xsections[i]*histo_Sig_JES_down.GetBinContent(k)/histo_Sig_JES_down.Integral());
+      histo_newSig_JER_up[i]    -> SetBinContent(k,xsections[i]*histo_Sig_JER_up.GetBinContent(k)/histo_Sig_JER_up.Integral());
+      histo_newSig_JER_down[i]  -> SetBinContent(k,xsections[i]*histo_Sig_JER_down.GetBinContent(k)/histo_Sig_JER_down.Integral());
+      histo_newSig_BTag_up[i]   -> SetBinContent(k,xsections[i]*histo_Sig_BTag_up.GetBinContent(k)/histo_Sig_BTag_up.Integral());
+      histo_newSig_BTag_down[i] -> SetBinContent(k,xsections[i]*histo_Sig_BTag_down.GetBinContent(k)/histo_Sig_BTag_down.Integral());
+      histo_newSig_Lept_up[i]   -> SetBinContent(k,xsections[i]*histo_Sig_Lept_up.GetBinContent(k)/histo_Sig_Lept_up.Integral());
+      histo_newSig_Lept_down[i] -> SetBinContent(k,xsections[i]*histo_Sig_Lept_down.GetBinContent(k)/histo_Sig_Lept_down.Integral());
+      histo_newSig_Mtop_up[i]   -> SetBinContent(k,xsections[i]*histo_Sig_Mtop_up.GetBinContent(k)/histo_Sig_Mtop_up.Integral());
+      histo_newSig_Mtop_down[i] -> SetBinContent(k,xsections[i]*histo_Sig_Mtop_down.GetBinContent(k)/histo_Sig_Mtop_down.Integral());
+      histo_newSig_PDF_up[i]    -> SetBinContent(k,xsections[i]*histo_Sig_PDF_up.GetBinContent(k)/histo_Sig_PDF_up.Integral());
+      histo_newSig_PDF_down[i]  -> SetBinContent(k,xsections[i]*histo_Sig_PDF_down.GetBinContent(k)/histo_Sig_PDF_down.Integral());
+      histo_newSig_Scale_up[i]  -> SetBinContent(k,xsections[i]*histo_Sig_Scale_up.GetBinContent(k)/histo_Sig_Scale_up.Integral());
+      histo_newSig_Scale_down[i]-> SetBinContent(k,xsections[i]*histo_Sig_Scale_down.GetBinContent(k)/histo_Sig_Scale_down.Integral());
+      histo_newSig_Match_up[i]  -> SetBinContent(k,xsections[i]*histo_Sig_Match_up.GetBinContent(k)/histo_Sig_Match_up.Integral());
+      histo_newSig_Match_down[i]-> SetBinContent(k,xsections[i]*histo_Sig_Match_down.GetBinContent(k)/histo_Sig_Match_down.Integral());
+  }
+
+  //----------------------------------------------------------------------------------------
+  //   STEP 7 : Setting name to additional histograms 
+  //----------------------------------------------------------------------------------------
+  std::cout << "Setting name to additional signal histograms ... " << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    histo_newSig[i]           -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]).c_str());
+    histo_newSig_JES_up[i]    -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__JES__plus"   ).c_str());
+    histo_newSig_JES_down[i]  -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__JES__minus"  ).c_str());
+    histo_newSig_JER_up[i]    -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__JER__plus"   ).c_str());
+    histo_newSig_JER_down[i]  -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__JER__minus"  ).c_str());
+    histo_newSig_BTag_up[i]   -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__BTag__plus"  ).c_str());
+    histo_newSig_BTag_down[i] -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__BTag__minus" ).c_str());
+    histo_newSig_Lept_up[i]   -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__Lept__plus"  ).c_str());
+    histo_newSig_Lept_down[i] -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__Lept__minus" ).c_str());
+    histo_newSig_Mtop_up[i]   -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__Mtop__plus"  ).c_str());
+    histo_newSig_Mtop_down[i] -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__Mtop__minus" ).c_str());
+    histo_newSig_PDF_up[i]    -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__PDF__plus"   ).c_str());
+    histo_newSig_PDF_down[i]  -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__PDF__minus"  ).c_str());
+    histo_newSig_Scale_up[i]  -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__Scale__plus" ).c_str());
+    histo_newSig_Scale_down[i]-> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__Scale__minus").c_str());
+    histo_newSig_Match_up[i]  -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__Match__plus" ).c_str());
+    histo_newSig_Match_down[i]-> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__Match__minus").c_str());
+  }
   
-  histo_Sig_05_Lept_down->SetName("MVABDT__FCNC_zut05__Lept__minus");
-  histo_Sig_10_Lept_down->SetName("MVABDT__FCNC_zut10__Lept__minus");
-  histo_Sig_20_Lept_down->SetName("MVABDT__FCNC_zut20__Lept__minus");
-  histo_Sig_30_Lept_down->SetName("MVABDT__FCNC_zut30__Lept__minus");
-  histo_Sig_50_Lept_down->SetName("MVABDT__FCNC_zut50__Lept__minus");
-  
-  
+  //----------------------------------------------------------------------------------------
+  //   STEP 8 : Saving histograms
+  //----------------------------------------------------------------------------------------
+  std::cout << "Saving histograms ... " << std::endl;
   //TFile * outputfile = new TFile("NewFileToBeUsedForThetaWithAutoNamingConvention.root","new");
-  TFile * outputfile = new TFile("NewFileToBeUsedForThetaWithAutoNamingConvention_allpoints.root","new");
-  
+  TFile * outputfile = new TFile("NewFileToBeUsedForThetaWithAutoNamingConvention_allpoints.root","RECREATE");
   outputfile->cd();
   
-    
-  
-  // add histo for making bands
-  
   /*
-  histo_Sig_05->Rebin(4);
-  histo_Sig_10->Rebin(4);
-  histo_Sig_20->Rebin(4);
-  histo_Sig_30->Rebin(4);
-  histo_Sig_50->Rebin(4);
-  histo_Sig.Rebin(4);
+    // add histo for making bands
+    histo_Sig_05->Rebin(4);
+    histo_Sig_10->Rebin(4);
+    histo_Sig_20->Rebin(4);
+    histo_Sig_30->Rebin(4);
+    histo_Sig_50->Rebin(4);
+    histo_Sig.Rebin(4);
   
-  histo_Data.Rebin(4);
-  histo_Zjets.Rebin(4);
-  histo_WZ.Rebin(4);
-  histo_ZZ.Rebin(4);
-  histo_TTbar.Rebin(4);
+    histo_Data.Rebin(4);
+    histo_Zjets.Rebin(4);
+    histo_WZ.Rebin(4);
+    histo_ZZ.Rebin(4);
+    histo_TTbar.Rebin(4);
   */
   
-  
-  
   // add histo for making bands
-  
-  
-  histo_Sig_05->Write();
-  histo_Sig_10->Write();
-  histo_Sig_20->Write();
-  histo_Sig_30->Write();
-  histo_Sig_50->Write();
+  std::cout << " - nominal" << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++) histo_newSig[i]->Write();
   histo_Sig.Write();
-  /*
-  histo_Sig_05_JES_up->Write();
-  histo_Sig_10_JES_up->Write();
-  histo_Sig_20_JES_up->Write();
-  histo_Sig_30_JES_up->Write();
-  histo_Sig_50_JES_up->Write();
-  histo_Sig_JES_up.Write();
-  
-  histo_Sig_05_JES_down->Write();
-  histo_Sig_10_JES_down->Write();
-  histo_Sig_20_JES_down->Write();
-  histo_Sig_30_JES_down->Write();
-  histo_Sig_50_JES_down->Write();
-  histo_Sig_JES_down.Write();
-  
-  histo_Sig_05_JER_up->Write();
-  histo_Sig_10_JER_up->Write();
-  histo_Sig_20_JER_up->Write();
-  histo_Sig_30_JER_up->Write();
-  histo_Sig_50_JER_up->Write();
-  histo_Sig_JER_up.Write();
-  
-  histo_Sig_05_JER_down->Write();
-  histo_Sig_10_JER_down->Write();
-  histo_Sig_20_JER_down->Write();
-  histo_Sig_30_JER_down->Write();
-  histo_Sig_50_JER_down->Write();
-  histo_Sig_JER_down.Write(); 
-  
-  histo_Sig_05_BTag_up->Write();
-  histo_Sig_10_BTag_up->Write();
-  histo_Sig_20_BTag_up->Write();
-  histo_Sig_30_BTag_up->Write();
-  histo_Sig_50_BTag_up->Write();
-  histo_Sig_BTag_up.Write();
-  
-  histo_Sig_05_BTag_down->Write();
-  histo_Sig_10_BTag_down->Write();
-  histo_Sig_20_BTag_down->Write();
-  histo_Sig_30_BTag_down->Write();
-  histo_Sig_50_BTag_down->Write();
-  histo_Sig_BTag_down.Write();
-  
-  
-  histo_Sig_05_Lept_up->Write();
-  histo_Sig_10_Lept_up->Write();
-  histo_Sig_20_Lept_up->Write();
-  histo_Sig_30_Lept_up->Write();
-  histo_Sig_50_Lept_up->Write();
-  histo_Sig_Lept_up.Write();
-  
-  histo_Sig_05_Lept_down->Write();
-  histo_Sig_10_Lept_down->Write();
-  histo_Sig_20_Lept_down->Write();
-  histo_Sig_30_Lept_down->Write();
-  histo_Sig_50_Lept_down->Write();
-  histo_Sig_Lept_down.Write();
-  */
   histo_Data.Write();
   histo_Zjets.Write();
   histo_WZ.Write();
+  histo_TZq.Write();
   histo_ZZ.Write();
   histo_TTbar.Write();
- /*
+
+  std::cout << " - JES up" << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_JES_up[i]->Write();
+  histo_Sig_JES_up.Write();
   histo_WZ_JES_up.Write();
+  histo_TZq_JES_up.Write();
   histo_ZZ_JES_up.Write();
   histo_TTbar_JES_up.Write();
-  
+
+  std::cout << " - JES down" << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_JES_down[i]->Write();
+  histo_Sig_JES_down.Write();
   histo_WZ_JES_down.Write();
+  histo_TZq_JES_down.Write();
   histo_ZZ_JES_down.Write();
   histo_TTbar_JES_down.Write();
- 
+
+  std::cout << " - JER up" << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_JER_up[i]->Write();
+  histo_Sig_JER_up.Write();
   histo_WZ_JER_up.Write();
+  histo_TZq_JER_up.Write();
   histo_ZZ_JER_up.Write();
   histo_TTbar_JER_up.Write();
- 
+
+  std::cout << " - JER down" << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_JER_down[i]->Write();
+  histo_Sig_JER_down.Write();
   histo_WZ_JER_down.Write();
+  histo_TZq_JER_down.Write();
   histo_ZZ_JER_down.Write();
   histo_TTbar_JER_down.Write();
-  
-  
+
+  std::cout << " - BTag up" << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_BTag_up[i]->Write();
+  histo_Sig_BTag_up.Write();
   histo_WZ_BTag_up.Write();
+  histo_TZq_BTag_up.Write();
   histo_ZZ_BTag_up.Write();
   histo_TTbar_BTag_up.Write();
-  
+
+  std::cout << " - BTag down" << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_BTag_down[i]->Write();
+  histo_Sig_BTag_down.Write();
   histo_WZ_BTag_down.Write();
+  histo_TZq_BTag_down.Write();
   histo_ZZ_BTag_down.Write();
   histo_TTbar_BTag_down.Write();
-  
-  
+
+  std::cout << " - PU up" << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_PU_up[i]->Write();
+  histo_Sig_PU_up.Write();
+  histo_WZ_PU_up.Write();
+  histo_TZq_PU_up.Write();
+  histo_ZZ_PU_up.Write();
+  histo_TTbar_PU_up.Write();
+
+  std::cout << " - PU down" << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_PU_up[i]->Write();
+  histo_Sig_PU_up.Write();
+  histo_WZ_PU_up.Write();
+  histo_TZq_PU_up.Write();
+  histo_ZZ_PU_up.Write();
+  histo_TTbar_PU_up.Write();
+
+  std::cout << " - Lept up" << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Lept_up[i]->Write();
+  histo_Sig_Lept_up.Write();
   histo_WZ_Lept_up.Write();
+  histo_TZq_Lept_up.Write();
   histo_ZZ_Lept_up.Write();
   histo_TTbar_Lept_up.Write();
-  
+
+  std::cout << " - Lept down" << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Lept_down[i]->Write();
+  histo_Sig_Lept_down.Write();
   histo_WZ_Lept_down.Write();
+  histo_TZq_Lept_down.Write();
   histo_ZZ_Lept_down.Write();
   histo_TTbar_Lept_down.Write();
-*/
+
+  std::cout << " - TopMass up" << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Mtop_up[i]->Write();
+  histo_Sig_Mtop_up.Write();
+
+  std::cout << " - TopMass down" << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Mtop_down[i]->Write();
+  histo_Sig_Mtop_down.Write();
+
+  std::cout << " - PDF up" << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_PDF_up[i]->Write();
+  histo_Sig_PDF_up.Write();
+  histo_WZ_PDF_up.Write();
+  histo_TZq_PDF_up.Write();
+
+  std::cout << " - PDF down" << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_PDF_down[i]->Write();
+  histo_Sig_PDF_down.Write();
+  histo_WZ_PDF_down.Write();
+  histo_TZq_PDF_down.Write();
+
+  std::cout << " - Scale up" << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Scale_up[i]->Write();
+  histo_Sig_Scale_up.Write();
+  if (WZ_SYS) histo_WZ_Scale_up.Write();
+
+  std::cout << " - Scale down" << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Scale_down[i]->Write();
+  histo_Sig_Scale_down.Write();
+  if (WZ_SYS) histo_WZ_Scale_down.Write();
+
+  std::cout << " - Match up" << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Match_up[i]->Write();
+  histo_Sig_Match_up.Write();
+  if (WZ_SYS)  histo_WZ_Match_up.Write();
+  if (TZq_SYS) histo_TZq_Match_up.Write();
+
+  std::cout << " - Match down" << std::endl;
+  for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Match_down[i]->Write();
+  histo_Sig_Match_down.Write();
+  if (WZ_SYS)  histo_WZ_Match_down.Write();
+  if (TZq_SYS) histo_TZq_Match_down.Write();
+
+  std::cout << "Closing output file ... " << std::endl;
   outputfile->Close();  
-  
+
+  std::cout << "End!" << std::endl;  
 } 
