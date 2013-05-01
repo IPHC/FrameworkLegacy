@@ -44,7 +44,7 @@ int main(int argc,char *argv[])
   bool doPU=true;
   bool doLept=true;
   bool doTopMass=true;
-  bool doPDF=true;
+  bool doPDF=false;
   bool doScale=true;
   bool doMatch=true;
 
@@ -114,13 +114,13 @@ void prodtemplate(std::string signalname, std::string outputname,
 {
   // Initializing scale factors
   double WZscaleFactor = 0.;
-  if (WZ_PRIVATE) WZscaleFactor = 4.0;
-  else WZscaleFactor = 4.0;
-  double TZqscaleFactor  = 4.0;
+  if (WZ_PRIVATE) WZscaleFactor = 1.0;
+  else WZscaleFactor = 1.0;
+  double TZqscaleFactor  = 1.0;
   //  double datasf          = 4.0;
-  double ZjetscaleFactor = 4.0;
-  double ZZscaleFactor   = 4.0;
-  double TTbarscaleFactor= 4.0;
+  double ZjetscaleFactor = 1.0;
+  double ZZscaleFactor   = 1.0;
+  double TTbarscaleFactor= 1.0;
 
   // Initializing WZ name
   std::string WZname;
@@ -623,7 +623,7 @@ void prodtemplate(std::string signalname, std::string outputname,
   //   STEP 4 : Setting histogram names
   //----------------------------------------------------------------------------------------
   std::cout << "Setting histogram names ... " << std::endl;
-  histo_Sig.SetName  (("MVABDT__FCNC_"+signalname+"57").c_str() );
+  histo_Sig.SetName  (("MVABDT__FCNC_"+signalname+"74").c_str() );
   histo_Data.SetName ("MVABDT__DATA"      );
   histo_Zjets.SetName("MVABDT__DataZjets" );
   histo_WZ.SetName   ("MVABDT__WZ"        );
@@ -631,81 +631,81 @@ void prodtemplate(std::string signalname, std::string outputname,
   histo_ZZ.SetName   ("MVABDT__ZZ"        );
   histo_TTbar.SetName("MVABDT__TTbar"     );
   
-  histo_Sig_JES_up.SetName  (("MVABDT__FCNC_"+signalname+"57__JES__plus").c_str() );
+  histo_Sig_JES_up.SetName  (("MVABDT__FCNC_"+signalname+"74__JES__plus").c_str() );
   histo_WZ_JES_up.SetName   ("MVABDT__WZ__JES__plus"        );
   histo_TZq_JES_up.SetName   ("MVABDT__TZq__JES__plus"        );
   histo_ZZ_JES_up.SetName   ("MVABDT__ZZ__JES__plus"        );
   histo_TTbar_JES_up.SetName("MVABDT__TTbar__JES__plus"     );
   
-  histo_Sig_JES_down.SetName  (("MVABDT__FCNC_"+signalname+"57__JES__minus").c_str() );
+  histo_Sig_JES_down.SetName  (("MVABDT__FCNC_"+signalname+"74__JES__minus").c_str() );
   histo_WZ_JES_down.SetName   ("MVABDT__WZ__JES__minus"        );
   histo_TZq_JES_down.SetName   ("MVABDT__TZq__JES__minus"        );
   histo_ZZ_JES_down.SetName   ("MVABDT__ZZ__JES__minus"        );
   histo_TTbar_JES_down.SetName("MVABDT__TTbar__JES__minus"     );
 
-  histo_Sig_JER_up.SetName  (("MVABDT__FCNC_"+signalname+"57__JER__plus").c_str() );
+  histo_Sig_JER_up.SetName  (("MVABDT__FCNC_"+signalname+"74__JER__plus").c_str() );
   histo_WZ_JER_up.SetName   ("MVABDT__WZ__JER__plus"        );
   histo_TZq_JER_up.SetName  ("MVABDT__TZq__JER__plus"        );
   histo_ZZ_JER_up.SetName   ("MVABDT__ZZ__JER__plus"        );
   histo_TTbar_JER_up.SetName("MVABDT__TTbar__JER__plus"     );
   
-  histo_Sig_JER_down.SetName  (("MVABDT__FCNC_"+signalname+"57__JER__minus").c_str() );
+  histo_Sig_JER_down.SetName  (("MVABDT__FCNC_"+signalname+"74__JER__minus").c_str() );
   histo_WZ_JER_down.SetName   ("MVABDT__WZ__JER__minus"        );
   histo_TZq_JER_down.SetName  ("MVABDT__TZq__JER__minus"        );
   histo_ZZ_JER_down.SetName   ("MVABDT__ZZ__JER__minus"        );
   histo_TTbar_JER_down.SetName("MVABDT__TTbar__JER__minus"     );
  
-  histo_Sig_BTag_up.SetName  (("MVABDT__FCNC_"+signalname+"57__BTag__plus").c_str() );
+  histo_Sig_BTag_up.SetName  (("MVABDT__FCNC_"+signalname+"74__BTag__plus").c_str() );
   histo_WZ_BTag_up.SetName   ("MVABDT__WZ__BTag__plus"        );
   histo_TZq_BTag_up.SetName  ("MVABDT__TZq__BTag__plus"        );
   histo_ZZ_BTag_up.SetName   ("MVABDT__ZZ__BTag__plus"        );
   histo_TTbar_BTag_up.SetName("MVABDT__TTbar__BTag__plus"     );
   
-  histo_Sig_BTag_down.SetName  (("MVABDT__FCNC_"+signalname+"57__BTag__minus").c_str() );
+  histo_Sig_BTag_down.SetName  (("MVABDT__FCNC_"+signalname+"74__BTag__minus").c_str() );
   histo_WZ_BTag_down.SetName   ("MVABDT__WZ__BTag__minus"        );
   histo_TZq_BTag_down.SetName  ("MVABDT__TZq__BTag__minus"        );
   histo_ZZ_BTag_down.SetName   ("MVABDT__ZZ__BTag__minus"        );
   histo_TTbar_BTag_down.SetName("MVABDT__TTbar__BTag__minus"     );
   
-  histo_Sig_PU_up.SetName  (("MVABDT__FCNC_"+signalname+"57__PU__plus").c_str() );
+  histo_Sig_PU_up.SetName  (("MVABDT__FCNC_"+signalname+"74__PU__plus").c_str() );
   histo_WZ_PU_up.SetName   ("MVABDT__WZ__PU__plus"        );
   histo_TZq_PU_up.SetName  ("MVABDT__TZq__PU__plus"        );
   histo_ZZ_PU_up.SetName   ("MVABDT__ZZ__PU__plus"        );
   histo_TTbar_PU_up.SetName("MVABDT__TTbar__PU__plus"     );
   
-  histo_Sig_PU_down.SetName  (("MVABDT__FCNC_"+signalname+"57__PU__minus").c_str() );
+  histo_Sig_PU_down.SetName  (("MVABDT__FCNC_"+signalname+"74__PU__minus").c_str() );
   histo_WZ_PU_down.SetName   ("MVABDT__WZ__PU__minus"        );
-  histo_TZq_PU_down.SetName  ("MVABDT__tEq__PU__minus"        );
+  histo_TZq_PU_down.SetName  ("MVABDT__TZq__PU__minus"       );
   histo_ZZ_PU_down.SetName   ("MVABDT__ZZ__PU__minus"        );
   histo_TTbar_PU_down.SetName("MVABDT__TTbar__PU__minus"     );
   
-  histo_Sig_Lept_up.SetName  (("MVABDT__FCNC_"+signalname+"57__Lept__plus").c_str() );
+  histo_Sig_Lept_up.SetName  (("MVABDT__FCNC_"+signalname+"74__Lept__plus").c_str() );
   histo_WZ_Lept_up.SetName   ("MVABDT__WZ__Lept__plus"        );
-  histo_WZ_Lept_up.SetName   ("MVABDT__TZq__Lept__plus"        );
+  histo_TZq_Lept_up.SetName   ("MVABDT__TZq__Lept__plus"        );
   histo_ZZ_Lept_up.SetName   ("MVABDT__ZZ__Lept__plus"        );
   histo_TTbar_Lept_up.SetName("MVABDT__TTbar__Lept__plus"     );
   
-  histo_Sig_Lept_down.SetName  (("MVABDT__FCNC_"+signalname+"57__Lept__minus").c_str() );
+  histo_Sig_Lept_down.SetName  (("MVABDT__FCNC_"+signalname+"74__Lept__minus").c_str() );
   histo_WZ_Lept_down.SetName   ("MVABDT__WZ__Lept__minus"        );
   histo_TZq_Lept_down.SetName  ("MVABDT__TZq__Lept__minus"        );
   histo_ZZ_Lept_down.SetName   ("MVABDT__ZZ__Lept__minus"        );
   histo_TTbar_Lept_down.SetName("MVABDT__TTbar__Lept__minus"     );
   
-  histo_Sig_Mtop_up.SetName(("MVABDT__FCNC_"+signalname+"57__Mtop__plus").c_str());
-  histo_Sig_Mtop_down.SetName(("MVABDT__FCNC_"+signalname+"57__Mtop__minus").c_str());
+  histo_Sig_Mtop_up.SetName(("MVABDT__FCNC_"+signalname+"74__Mtop__plus").c_str());
+  histo_Sig_Mtop_down.SetName(("MVABDT__FCNC_"+signalname+"74__Mtop__minus").c_str());
 
-  histo_Sig_PDF_up.SetName(("MVABDT__FCNC_"+signalname+"57__PDF__plus").c_str());
-  histo_Sig_PDF_down.SetName(("MVABDT__FCNC_"+signalname+"57__PDF__minus").c_str());
+  histo_Sig_PDF_up.SetName(("MVABDT__FCNC_"+signalname+"74__PDF__plus").c_str());
+  histo_Sig_PDF_down.SetName(("MVABDT__FCNC_"+signalname+"74__PDF__minus").c_str());
   histo_WZ_PDF_up.SetName("MVABDT__WZ__PDF__plus");
   histo_WZ_PDF_down.SetName("MVABDT__WZ__PDF__minus");
 
-  histo_Sig_Scale_up.SetName(("MVABDT__FCNC_"+signalname+"57__Scale__plus").c_str());
-  histo_Sig_Scale_down.SetName(("MVABDT__FCNC_"+signalname+"57__Scale__minus").c_str());
+  histo_Sig_Scale_up.SetName(("MVABDT__FCNC_"+signalname+"74__Scale__plus").c_str());
+  histo_Sig_Scale_down.SetName(("MVABDT__FCNC_"+signalname+"74__Scale__minus").c_str());
   histo_WZ_Scale_up.SetName("MVABDT__WZ__Scale__plus");
   histo_WZ_Scale_down.SetName("MVABDT__WZ__Scale__minus");
 
-  histo_Sig_Match_up.SetName(("MVABDT__FCNC_"+signalname+"57__Match__plus").c_str());
-  histo_Sig_Match_down.SetName(("MVABDT__FCNC_"+signalname+"57__Match__minus").c_str());
+  histo_Sig_Match_up.SetName(("MVABDT__FCNC_"+signalname+"74__Match__plus").c_str());
+  histo_Sig_Match_down.SetName(("MVABDT__FCNC_"+signalname+"74__Match__minus").c_str());
   histo_WZ_Match_up.SetName("MVABDT__WZ__Match__plus");
   histo_WZ_Match_down.SetName("MVABDT__WZ__Match__minus");
   histo_TZq_Match_up.SetName("MVABDT__TZq__Match__plus");
@@ -878,6 +878,8 @@ void prodtemplate(std::string signalname, std::string outputname,
       histo_newSig_JER_down[i]  -> SetBinContent(k,xsections[i]*histo_Sig_JER_down.GetBinContent(k)/histo_Sig_JER_down.Integral());
       histo_newSig_BTag_up[i]   -> SetBinContent(k,xsections[i]*histo_Sig_BTag_up.GetBinContent(k)/histo_Sig_BTag_up.Integral());
       histo_newSig_BTag_down[i] -> SetBinContent(k,xsections[i]*histo_Sig_BTag_down.GetBinContent(k)/histo_Sig_BTag_down.Integral());
+      histo_newSig_PU_up[i]     -> SetBinContent(k,xsections[i]*histo_Sig_PU_up.GetBinContent(k)/histo_Sig_PU_up.Integral());
+      histo_newSig_PU_down[i]   -> SetBinContent(k,xsections[i]*histo_Sig_PU_down.GetBinContent(k)/histo_Sig_PU_down.Integral());
       histo_newSig_Lept_up[i]   -> SetBinContent(k,xsections[i]*histo_Sig_Lept_up.GetBinContent(k)/histo_Sig_Lept_up.Integral());
       histo_newSig_Lept_down[i] -> SetBinContent(k,xsections[i]*histo_Sig_Lept_down.GetBinContent(k)/histo_Sig_Lept_down.Integral());
       histo_newSig_Mtop_up[i]   -> SetBinContent(k,xsections[i]*histo_Sig_Mtop_up.GetBinContent(k)/histo_Sig_Mtop_up.Integral());
@@ -903,6 +905,8 @@ void prodtemplate(std::string signalname, std::string outputname,
     histo_newSig_JER_down[i]  -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__JER__minus"  ).c_str());
     histo_newSig_BTag_up[i]   -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__BTag__plus"  ).c_str());
     histo_newSig_BTag_down[i] -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__BTag__minus" ).c_str());
+    histo_newSig_PU_up[i]     -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__PU__plus"    ).c_str());
+    histo_newSig_PU_down[i]   -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__PU__minus"   ).c_str());
     histo_newSig_Lept_up[i]   -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__Lept__plus"  ).c_str());
     histo_newSig_Lept_down[i] -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__Lept__minus" ).c_str());
     histo_newSig_Mtop_up[i]   -> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__Mtop__plus"  ).c_str());
@@ -1030,12 +1034,12 @@ void prodtemplate(std::string signalname, std::string outputname,
   if (doPU)
   {
     std::cout << " - PU down" << std::endl;
-    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_PU_up[i]->Write();
-    histo_Sig_PU_up.Write();
-    histo_WZ_PU_up.Write();
-    histo_TZq_PU_up.Write();
-    histo_ZZ_PU_up.Write();
-    histo_TTbar_PU_up.Write();
+    for (unsigned int i=0;i<xsections.size();i++) histo_newSig_PU_down[i]->Write();
+    histo_Sig_PU_down.Write();
+    histo_WZ_PU_down.Write();
+    histo_TZq_PU_down.Write();
+    histo_ZZ_PU_down.Write();
+    histo_TTbar_PU_down.Write();
   }
 
   if (doLept)
