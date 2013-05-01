@@ -34,23 +34,22 @@ int main(int argc,char *argv[])
     for (int i=1;i<argc;i++) arguments.push_back(argv[i]);
   }
 
-  bool WZ_PRIVATE  = true;
+  bool WZ_PRIVATE  = false;
   bool WZ_SYS      = true;
   bool TZq_SYS     = true;
 
   bool doJES=true;
   bool doJER=true;
   bool doBTag=true;
-  bool doPU=true;
-  bool doLept=true;
-  bool doTopMass=true;
-  bool doPDF=false;
-  bool doScale=true;
-  bool doMatch=true;
+  bool doPU=false;
+  bool doLept=false;
+  bool doTopMass=false;
+  bool doPDF=false; //dfd
+  bool doScale=false;
+  bool doMatch=false;
 
   std::string signalname="zut";
   std::string outputname="NewFileToBeUsedForThetaWithAutoNamingConvention_allpoints.root";
-
 
   for (unsigned int i=0;i<arguments.size();i++)
   {
@@ -114,8 +113,8 @@ void prodtemplate(std::string signalname, std::string outputname,
 {
   // Initializing scale factors
   double WZscaleFactor = 0.;
-  if (WZ_PRIVATE) WZscaleFactor = 1.0;
-  else WZscaleFactor = 1.0;
+  if (WZ_PRIVATE) WZscaleFactor = 0.82;
+  else WZscaleFactor = 0.82;
   double TZqscaleFactor  = 1.0;
   //  double datasf          = 4.0;
   double ZjetscaleFactor = 1.0;
@@ -291,7 +290,8 @@ void prodtemplate(std::string signalname, std::string outputname,
   std::cout << "Getting histograms from ROOT files ..." << std::endl;
   std::cout << " - nominal" << std::endl;
   nomFile->cd();
-  //histo_Data = *(TH1F*)nomFile->Get("MVA_BDT_Data");
+  
+  histo_Data = *(TH1F*)nomFile->Get("MVA_BDT_Data");
   //histo_Data.Scale(datasf);
   histo_Zjets               = *(TH1F*)nomFile->Get("MVA_BDT_DataZjets");
   histo_ZjetsMC             = *(TH1F*)nomFile->Get("MVA_BDT_Zjets");
@@ -307,12 +307,13 @@ void prodtemplate(std::string signalname, std::string outputname,
   histo_ZZ.Scale(ZZscaleFactor);
   histo_TZq                 = *(TH1F*)nomFile->Get("MVA_BDT_TZq");  
   
+  /*
   histo_Data = histo_WZ;
   histo_Data.Add(&histo_TTbar);
   histo_Data.Add(&histo_ZZ);
   histo_Data.Add(&histo_Zjets);
   histo_Data.Add(&histo_TZq);
-
+  */
   
   //template for JES up
   std::cout << " - JES up" << std::endl;
@@ -530,44 +531,52 @@ void prodtemplate(std::string signalname, std::string outputname,
   std::cout << "Correcting empty bins (required by THETA) ... " << std::endl;
   for (int k = 1; k < histo_Sig.GetNbinsX()+1; k++) 
   {
+    //nominal templates 
     if ( histo_Sig.GetBinContent(k)  <=0 ) histo_Sig.SetBinContent(  k,1e-6);
     if ( histo_Data.GetBinContent(k) <=0 ) histo_Data.SetBinContent( k,1e-6);
     if ( histo_Zjets.GetBinContent(k)<=0 ) histo_Zjets.SetBinContent(k,1e-6);
+    if ( histo_ZjetsMC.GetBinContent(k)<=0 ) histo_ZjetsMC.SetBinContent(k,1e-6);
     if ( histo_WZ.GetBinContent(k)   <=0 ) histo_WZ.SetBinContent(   k,1e-6);
     if ( histo_TZq.GetBinContent(k)  <=0 ) histo_TZq.SetBinContent(  k,1e-6);
     if ( histo_ZZ.GetBinContent(k)   <=0 ) histo_ZZ.SetBinContent(   k,1e-6);    
     if ( histo_TTbar.GetBinContent(k)<=0 ) histo_TTbar.SetBinContent(k,1e-6);
     
+    //templates for JES up
     if ( histo_TTbar_JES_up.GetBinContent(k)  <=0 ) histo_TTbar_JES_up.SetBinContent(k,1e-6);
     if ( histo_ZZ_JES_up.GetBinContent(k)     <=0 ) histo_ZZ_JES_up.SetBinContent(   k,1e-6); 
     if ( histo_WZ_JES_up.GetBinContent(k)     <=0 ) histo_WZ_JES_up.SetBinContent(   k,1e-6); 
     if ( histo_TZq_JES_up.GetBinContent(k)    <=0 ) histo_TZq_JES_up.SetBinContent(  k,1e-6); 
     if ( histo_Sig_JES_up.GetBinContent(k)    <=0 ) histo_Sig_JES_up.SetBinContent(  k,1e-6);
-    
+   
+    //templates for JES down
     if ( histo_TTbar_JES_down.GetBinContent(k)  <=0 ) histo_TTbar_JES_down.SetBinContent(k,1e-6);
     if ( histo_ZZ_JES_down.GetBinContent(k)     <=0 ) histo_ZZ_JES_down.SetBinContent(   k,1e-6);
     if ( histo_WZ_JES_down.GetBinContent(k)     <=0 ) histo_WZ_JES_down.SetBinContent(   k,1e-6);  
     if ( histo_TZq_JES_down.GetBinContent(k)    <=0 ) histo_TZq_JES_down.SetBinContent(  k,1e-6);  
     if ( histo_Sig_JES_down.GetBinContent(k)    <=0 ) histo_Sig_JES_down.SetBinContent(  k,1e-6);
    
+    //templates for JER up
     if ( histo_TTbar_JER_up.GetBinContent(k)  <=0 ) histo_TTbar_JER_up.SetBinContent(k,1e-6);
     if ( histo_ZZ_JER_up.GetBinContent(k)     <=0 ) histo_ZZ_JER_up.SetBinContent(   k,1e-6);
     if ( histo_WZ_JER_up.GetBinContent(k)     <=0 ) histo_WZ_JER_up.SetBinContent(   k,1e-6);
     if ( histo_TZq_JER_up.GetBinContent(k)    <=0 ) histo_TZq_JER_up.SetBinContent(  k,1e-6);
     if ( histo_Sig_JER_up.GetBinContent(k)    <=0 ) histo_Sig_JER_up.SetBinContent(  k,1e-6);
     
+    //templates for JER down
     if ( histo_TTbar_JER_down.GetBinContent(k)  <=0 ) histo_TTbar_JER_down.SetBinContent(k,1e-6);
     if ( histo_ZZ_JER_down.GetBinContent(k)     <=0 ) histo_ZZ_JER_down.SetBinContent(   k,1e-6);	
     if ( histo_WZ_JER_down.GetBinContent(k)     <=0 ) histo_WZ_JER_down.SetBinContent(   k,1e-6);	
     if ( histo_TZq_JER_down.GetBinContent(k)    <=0 ) histo_TZq_JER_down.SetBinContent(  k,1e-6);	
     if ( histo_Sig_JER_down.GetBinContent(k)    <=0 ) histo_Sig_JER_down.SetBinContent(  k,1e-6);	
     
+    // templates for BTag up
     if ( histo_TTbar_BTag_up.GetBinContent(k)  <=0 ) histo_TTbar_BTag_up.SetBinContent(k,1e-6);
     if ( histo_ZZ_BTag_up.GetBinContent(k)     <=0 ) histo_ZZ_BTag_up.SetBinContent(   k,1e-6); 
     if ( histo_WZ_BTag_up.GetBinContent(k)     <=0 ) histo_WZ_BTag_up.SetBinContent(   k,1e-6); 
     if ( histo_TZq_BTag_up.GetBinContent(k)    <=0 ) histo_TZq_BTag_up.SetBinContent(  k,1e-6); 
     if ( histo_Sig_BTag_up.GetBinContent(k)    <=0 ) histo_Sig_BTag_up.SetBinContent(  k,1e-6);
     
+    // templates for BTag down
     if ( histo_TTbar_BTag_down.GetBinContent(k)  <=0 ) histo_TTbar_BTag_down.SetBinContent(k,1e-6);
     if ( histo_ZZ_BTag_down.GetBinContent(k)     <=0 ) histo_ZZ_BTag_down.SetBinContent(   k,1e-6);
     if ( histo_WZ_BTag_down.GetBinContent(k)     <=0 ) histo_WZ_BTag_down.SetBinContent(   k,1e-6);  
@@ -605,6 +614,8 @@ void prodtemplate(std::string signalname, std::string outputname,
     if (histo_Sig_PDF_down.GetBinContent(k) <=0 ) histo_Sig_PDF_down.SetBinContent(k,1e-6);
     if (histo_WZ_PDF_up.GetBinContent(k) <=0 ) histo_WZ_PDF_up.SetBinContent(k,1e-6);
     if (histo_WZ_PDF_down.GetBinContent(k) <=0 ) histo_WZ_PDF_down.SetBinContent(k,1e-6);
+    if (histo_TZq_PDF_up.GetBinContent(k) <=0 ) histo_TZq_PDF_up.SetBinContent(k,1e-6);
+    if (histo_TZq_PDF_down.GetBinContent(k) <=0 ) histo_TZq_PDF_down.SetBinContent(k,1e-6);
 
     if (histo_Sig_Scale_up.GetBinContent(k) <=0 ) histo_Sig_Scale_up.SetBinContent(k,1e-6);
     if (histo_Sig_Scale_down.GetBinContent(k) <=0 ) histo_Sig_Scale_down.SetBinContent(k,1e-6);
@@ -627,7 +638,7 @@ void prodtemplate(std::string signalname, std::string outputname,
   histo_Data.SetName ("MVABDT__DATA"      );
   histo_Zjets.SetName("MVABDT__DataZjets" );
   histo_WZ.SetName   ("MVABDT__WZ"        );
-  histo_TZq.SetName  ("MVABDT__WZ"        );
+  histo_TZq.SetName  ("MVABDT__TZq"        );
   histo_ZZ.SetName   ("MVABDT__ZZ"        );
   histo_TTbar.SetName("MVABDT__TTbar"     );
   
