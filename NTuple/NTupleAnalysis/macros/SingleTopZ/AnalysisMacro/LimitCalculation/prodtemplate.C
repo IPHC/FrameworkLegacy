@@ -41,11 +41,11 @@ int main(int argc,char *argv[])
   bool doJES=true;
   bool doJER=true;
   bool doBTag=true;
-  bool doPU=false;
-  bool doLept=false;
-  bool doTopMass=false;
+  bool doPU=true;
+  bool doLept=true;
+  bool doTopMass=true;
   bool doPDF=false; //dfd
-  bool doScale=false;
+  bool doScale=true;
   bool doMatch=false;
 
   std::string signalname="zut";
@@ -930,6 +930,126 @@ void prodtemplate(std::string signalname, std::string outputname,
     histo_newSig_Match_down[i]-> SetName(("MVABDT__FCNC_"+signalname+xnames[i]+"__Match__minus").c_str());
   }
   
+
+
+
+  //----------------------------------------------------------------------------------------
+  //   STEP 7.5 : Rebinning histogram names
+  //----------------------------------------------------------------------------------------
+  std::cout << "Rebinning histograms ... " << std::endl;
+  unsigned int rebin = 2;
+  histo_Sig.Rebin(rebin);
+  histo_Data.Rebin(rebin);
+  histo_Zjets.Rebin(rebin);
+  histo_WZ.Rebin(rebin);
+  histo_TZq.Rebin(rebin);
+  histo_ZZ.Rebin(rebin);
+  histo_TTbar.Rebin(rebin);
+  
+  histo_Sig_JES_up.Rebin(rebin);
+  histo_WZ_JES_up.Rebin(rebin);
+  histo_TZq_JES_up.Rebin(rebin);
+  histo_ZZ_JES_up.Rebin(rebin);
+  histo_TTbar_JES_up.Rebin(rebin);
+  
+  histo_Sig_JES_down.Rebin(rebin);
+  histo_WZ_JES_down.Rebin(rebin);
+  histo_TZq_JES_down.Rebin(rebin);
+  histo_ZZ_JES_down.Rebin(rebin);
+  histo_TTbar_JES_down.Rebin(rebin);
+
+  histo_Sig_JER_up.Rebin(rebin);
+  histo_WZ_JER_up.Rebin(rebin);
+  histo_TZq_JER_up.Rebin(rebin);
+  histo_ZZ_JER_up.Rebin(rebin);
+  histo_TTbar_JER_up.Rebin(rebin);
+  
+  histo_Sig_JER_down.Rebin(rebin);
+  histo_WZ_JER_down.Rebin(rebin);
+  histo_TZq_JER_down.Rebin(rebin);
+  histo_ZZ_JER_down.Rebin(rebin);
+  histo_TTbar_JER_down.Rebin(rebin);
+ 
+  histo_Sig_BTag_up.Rebin(rebin);
+  histo_WZ_BTag_up.Rebin(rebin);
+  histo_TZq_BTag_up.Rebin(rebin);
+  histo_ZZ_BTag_up.Rebin(rebin);
+  histo_TTbar_BTag_up.Rebin(rebin);
+  
+  histo_Sig_BTag_down.Rebin(rebin);
+  histo_WZ_BTag_down.Rebin(rebin);
+  histo_TZq_BTag_down.Rebin(rebin);
+  histo_ZZ_BTag_down.Rebin(rebin);
+  histo_TTbar_BTag_down.Rebin(rebin);
+  
+  histo_Sig_PU_up.Rebin(rebin);
+  histo_WZ_PU_up.Rebin(rebin);
+  histo_TZq_PU_up.Rebin(rebin);
+  histo_ZZ_PU_up.Rebin(rebin);
+  histo_TTbar_PU_up.Rebin(rebin);
+  
+  histo_Sig_PU_down.Rebin(rebin);
+  histo_WZ_PU_down.Rebin(rebin);
+  histo_TZq_PU_down.Rebin(rebin);
+  histo_ZZ_PU_down.Rebin(rebin);
+  histo_TTbar_PU_down.Rebin(rebin);
+  
+  histo_Sig_Lept_up.Rebin(rebin);
+  histo_WZ_Lept_up.Rebin(rebin);
+  histo_TZq_Lept_up.Rebin(rebin);
+  histo_ZZ_Lept_up.Rebin(rebin);
+  histo_TTbar_Lept_up.Rebin(rebin);
+  
+  histo_Sig_Lept_down.Rebin(rebin);
+  histo_WZ_Lept_down.Rebin(rebin);
+  histo_TZq_Lept_down.Rebin(rebin);
+  histo_ZZ_Lept_down.Rebin(rebin);
+  histo_TTbar_Lept_down.Rebin(rebin);
+  
+  histo_Sig_Mtop_up.Rebin(rebin);
+  histo_Sig_Mtop_down.Rebin(rebin);
+
+  histo_Sig_PDF_up.Rebin(rebin);
+  histo_Sig_PDF_down.Rebin(rebin);
+  histo_WZ_PDF_up.Rebin(rebin);
+  histo_WZ_PDF_down.Rebin(rebin);
+
+  histo_Sig_Scale_up.Rebin(rebin);
+  histo_Sig_Scale_down.Rebin(rebin);
+  histo_WZ_Scale_up.Rebin(rebin);
+  histo_WZ_Scale_down.Rebin(rebin);
+
+  histo_Sig_Match_up.Rebin(rebin);
+  histo_Sig_Match_down.Rebin(rebin);
+  histo_WZ_Match_up.Rebin(rebin);
+  histo_WZ_Match_down.Rebin(rebin);
+  histo_TZq_Match_up.Rebin(rebin);
+  histo_TZq_Match_down.Rebin(rebin);
+
+  for (unsigned int i=0;i<xsections.size();i++)
+  {
+    histo_newSig[i]           -> Rebin(rebin); 
+    histo_newSig_JES_up[i]    -> Rebin(rebin); 
+    histo_newSig_JES_down[i]  -> Rebin(rebin); 
+    histo_newSig_JER_up[i]    -> Rebin(rebin); 
+    histo_newSig_JER_down[i]  -> Rebin(rebin); 
+    histo_newSig_BTag_up[i]   -> Rebin(rebin); 
+    histo_newSig_BTag_down[i] -> Rebin(rebin); 
+    histo_newSig_PU_up[i]     -> Rebin(rebin); 
+    histo_newSig_PU_down[i]   -> Rebin(rebin); 
+    histo_newSig_Lept_up[i]   -> Rebin(rebin); 
+    histo_newSig_Lept_down[i] -> Rebin(rebin); 
+    histo_newSig_Mtop_up[i]   -> Rebin(rebin); 
+    histo_newSig_Mtop_down[i] -> Rebin(rebin); 
+    histo_newSig_PDF_up[i]    -> Rebin(rebin); 
+    histo_newSig_PDF_down[i]  -> Rebin(rebin); 
+    histo_newSig_Scale_up[i]  -> Rebin(rebin); 
+    histo_newSig_Scale_down[i]-> Rebin(rebin); 
+    histo_newSig_Match_up[i]  -> Rebin(rebin); 
+    histo_newSig_Match_down[i]-> Rebin(rebin); 
+  }
+
+
   //----------------------------------------------------------------------------------------
   //   STEP 8 : Saving histograms
   //----------------------------------------------------------------------------------------
