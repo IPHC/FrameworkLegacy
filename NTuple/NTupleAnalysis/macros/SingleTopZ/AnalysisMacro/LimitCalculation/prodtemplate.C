@@ -13,13 +13,15 @@
 using namespace std;
 
 
+static bool nomatching_scale_singal = false;
+
 void prodtemplate(std::string signalname, 
                   std::string outputname,
                   bool WZ_PRIVATE, 
                   bool WZ_SYS,
                   bool TZq_SYS,
                   bool doJES, bool doJER, bool doBTag, bool doPU, bool doLept, 
-                  bool doTopMass, bool doPDF, bool doScale, bool doMatch);
+                  bool doTopMass, bool doPDF, bool doScale, bool doMatch, bool doDY);
 
 
 int main(int argc,char *argv[])
@@ -46,10 +48,22 @@ int main(int argc,char *argv[])
   bool doTopMass=true;
   bool doPDF=false; //dfd
   bool doScale=true;
-  bool doMatch=false;
-
+  bool doMatch=true;
+  bool doDY=true;
   std::string signalname="zut";
-  std::string outputname="NewFileToBeUsedForThetaWithAutoNamingConvention_allpoints.root";
+  std::string outputname;
+  
+  if(signalname == "kut"){
+  
+    doScale=false;
+    doMatch=false;
+    std::cout << "WARNING : for KUT, scale/match uncertainty disable " << std::endl;
+  }
+  
+  if(signalname == "zut" ) outputname="ThetaFile_zut.root";
+  if(signalname == "zct" ) outputname="ThetaFile_zct.root";
+  if(signalname == "kut" ) outputname="ThetaFile_kut.root";
+  if(signalname == "kct" ) outputname="ThetaFile_kct.root";
 
   for (unsigned int i=0;i<arguments.size();i++)
   {
@@ -68,6 +82,7 @@ int main(int argc,char *argv[])
     else if (arguments[i]=="doPDF=false")      doPDF=false;
     else if (arguments[i]=="doScale=false")    doScale=false;
     else if (arguments[i]=="doMatch=false")    doMatch=false;
+    else if (arguments[i]=="doDY=false")       doDY=false;
     else if (arguments[i]=="signal=zut")       signalname="zut";
     else if (arguments[i]=="signal=zct")       signalname="zct";
     else if (arguments[i]=="signal=kut")       signalname="kut";
@@ -96,7 +111,7 @@ int main(int argc,char *argv[])
   std::cout << " doPDF     =" << doPDF      << "   doScale=" << doScale << "   doMatch  =" << doMatch   << std::endl; 
   std::cout << "--------------------------------------" << std::endl;
 
-  prodtemplate(signalname,outputname,WZ_PRIVATE, WZ_SYS, TZq_SYS, doJES, doJER, doBTag, doPU, doLept, doTopMass, doPDF, doScale, doMatch);
+  prodtemplate(signalname,outputname,WZ_PRIVATE, WZ_SYS, TZq_SYS, doJES, doJER, doBTag, doPU, doLept, doTopMass, doPDF, doScale, doMatch, doDY);
 
 
   return 0;
@@ -109,12 +124,12 @@ void prodtemplate(std::string signalname, std::string outputname,
                   bool WZ_SYS,
                   bool TZq_SYS,
                   bool doJES, bool doJER, bool doBTag, bool doPU, bool doLept, 
-                  bool doTopMass, bool doPDF, bool doScale, bool doMatch)
+                  bool doTopMass, bool doPDF, bool doScale, bool doMatch, bool doDY)
 {
   // Initializing scale factors
   double WZscaleFactor = 0.;
-  if (WZ_PRIVATE) WZscaleFactor = 0.82;
-  else WZscaleFactor = 0.82;
+  if (WZ_PRIVATE) WZscaleFactor = 1.0;
+  else WZscaleFactor = 1.0;
   double TZqscaleFactor  = 1.0;
   //  double datasf          = 4.0;
   double ZjetscaleFactor = 1.0;
@@ -133,59 +148,76 @@ void prodtemplate(std::string signalname, std::string outputname,
   std::cout << "Opening ROOT files ..." << std::endl;
 
   // Opening file  
-  TFile * nomFile       = new TFile(("inputFiles/TMVApp_"+signalname+"_nom.root").c_str());
+  TFile * nomFile       = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_nom.root").c_str());
   if (!nomFile->IsOpen()) return;
 
-  TFile * nomJES_up     = new TFile(("inputFiles/TMVApp_"+signalname+"_JESup.root").c_str());
+  TFile * nomJES_up     = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_JESup.root").c_str());
   if (!nomJES_up->IsOpen()) return;
 
-  TFile * nomJES_down   = new TFile(("inputFiles/TMVApp_"+signalname+"_JESdown.root").c_str()  );
+  TFile * nomJES_down   = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_JESdown.root").c_str()  );
   if (!nomJES_down->IsOpen()) return;
 
-  TFile * nomJER        = new TFile(("inputFiles/TMVApp_"+signalname+"_JER.root").c_str()      );
+  TFile * nomJER        = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_JER.root").c_str()      );
   if (!nomJER->IsOpen()) return;
 
-  TFile * nomLeptUp     = new TFile(("inputFiles/TMVApp_"+signalname+"_LeptSFup.root").c_str()   );
+  TFile * nomLeptUp     = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_LeptSFup.root").c_str()   );
   if (!nomLeptUp->IsOpen()) return;
 
-  TFile * nomLeptDown   = new TFile(("inputFiles/TMVApp_"+signalname+"_LeptSFdown.root").c_str()   );
+  TFile * nomLeptDown   = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_LeptSFdown.root").c_str()   );
   if (!nomLeptDown->IsOpen()) return;
 
-  TFile * nomPU_up      = new TFile(("inputFiles/TMVApp_"+signalname+"_PUup.root").c_str()     );
+  TFile * nomPU_up      = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_PUup.root").c_str()     );
   if (!nomPU_up->IsOpen()) return;
 
-  TFile * nomPU_down    = new TFile(("inputFiles/TMVApp_"+signalname+"_PUdown.root").c_str()   );
+  TFile * nomPU_down    = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_PUdown.root").c_str()   );
   if (!nomPU_down->IsOpen()) return;
 
-  TFile * nomBTag_up    = new TFile(("inputFiles/TMVApp_"+signalname+"_btagup.root").c_str()   );
+  TFile * nomBTag_up    = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_btagup.root").c_str()   );
   if (!nomBTag_up->IsOpen()) return;
 
-  TFile * nomBTag_down  = new TFile(("inputFiles/TMVApp_"+signalname+"_btagdown.root").c_str() );
+  TFile * nomBTag_down  = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_btagdown.root").c_str() );
   if (!nomBTag_down->IsOpen()) return;
 
-  TFile * nomScale_up   = new TFile(("inputFiles/TMVApp_"+signalname+"_Scaleup.root").c_str()    );
+  TFile * nomScale_up   = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_Scaleup.root").c_str()    );
   if (!nomScale_up->IsOpen()) return;
 
-  TFile * nomScale_down = new TFile(("inputFiles/TMVApp_"+signalname+"_Scaledown.root").c_str()  );
+  TFile * nomScale_down = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_Scaledown.root").c_str()  );
   if (!nomScale_down->IsOpen()) return;
 
-  TFile * nomMatch_up   = new TFile(("inputFiles/TMVApp_"+signalname+"_Matchup.root").c_str()     );
+  TFile * nomMatch_up   = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_Matchup.root").c_str()     );
   if (!nomMatch_up->IsOpen()) return;
 
-  TFile * nomMatch_down = new TFile(("inputFiles/TMVApp_"+signalname+"_Matchdown.root").c_str()   );
+  TFile * nomMatch_down = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_Matchdown.root").c_str()   );
   if (!nomMatch_down->IsOpen()) return;
 
-  TFile * nomMtop_up    = new TFile(("inputFiles/TMVApp_"+signalname+"_Mtopup.root").c_str()   );
+  TFile * nomMtop_up    = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_Mtopup.root").c_str()   );
   if (!nomMtop_up->IsOpen()) return;
 
-  TFile * nomMtop_down  = new TFile(("inputFiles/TMVApp_"+signalname+"_Mtopdown.root").c_str() );
+  TFile * nomMtop_down  = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_Mtopdown.root").c_str() );
   if (!nomMtop_down->IsOpen()) return;
 
-  TFile * nomPDF_up     = new TFile(("inputFiles/TMVApp_"+signalname+"_PDFup.root").c_str()   );
+  //TFile * nomPDF_up     = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_PDFup.root").c_str()   );
+  TFile * nomPDF_up     = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_nom.root").c_str()   );
   if (!nomPDF_up->IsOpen()) return;
 
-  TFile * nomPDF_down   = new TFile(("inputFiles/TMVApp_"+signalname+"_PDFdown.root").c_str() );
+  //TFile * nomPDF_down   = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_PDFdown.root").c_str() );
+  TFile * nomPDF_down   = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_nom.root").c_str() );
   if (!nomPDF_down->IsOpen()) return;
+  
+  
+  
+  TFile * nomDY_up    = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_DYUp.root").c_str()   );
+  if (!nomDY_up->IsOpen()) return;
+
+  TFile * nomDY_down  = new TFile(("../TMVA/HistoBDToutput/TMVApp_"+signalname+"_DYDown.root").c_str() );
+  if (!nomDY_down->IsOpen()) return;
+
+
+  
+  
+  
+  
+  
   
   //nominal templates 
   TH1F histo_Data;
@@ -283,7 +315,111 @@ void prodtemplate(std::string signalname, std::string outputname,
   TH1F histo_TZq_Match_up;
   TH1F histo_TZq_Match_down;
   
+  //templates for DY
+  TH1F histo_Zjets_DY_up;
+  TH1F histo_Zjets_DY_down;
+   
+  //nominal templates 
+   histo_Data.Sumw2();
+   histo_Zjets.Sumw2();
+   histo_ZjetsMC.Sumw2();
+   histo_WZ .Sumw2();
+   histo_TZq.Sumw2();
+   histo_Sig.Sumw2();
+   histo_TTbar.Sumw2();
+   histo_ZZ.Sumw2();       
   
+  //templates for JES
+    histo_TTbar_JES_up.Sumw2();
+    histo_TTbar_JES_down.Sumw2();
+    histo_ZZ_JES_up.Sumw2();
+    histo_ZZ_JES_down.Sumw2();
+    histo_WZ_JES_up.Sumw2();
+    histo_WZ_JES_down.Sumw2();
+    histo_TZq_JES_up.Sumw2();
+    histo_TZq_JES_down.Sumw2();
+    histo_Sig_JES_up.Sumw2();
+    histo_Sig_JES_down.Sumw2();
+  
+  //templates for JER
+    histo_TTbar_JER_up.Sumw2();
+    histo_ZZ_JER_up.Sumw2();
+    histo_WZ_JER_up.Sumw2();
+    histo_TZq_JER_up.Sumw2();
+    histo_Sig_JER_up.Sumw2();
+    histo_TTbar_JER_down.Sumw2();
+    histo_ZZ_JER_down.Sumw2();
+    histo_WZ_JER_down.Sumw2();
+    histo_TZq_JER_down.Sumw2();
+    histo_Sig_JER_down.Sumw2();
+  
+  //templates for BTag
+    histo_TTbar_BTag_up.Sumw2();
+    histo_TTbar_BTag_down.Sumw2();
+    histo_ZZ_BTag_up.Sumw2();
+    histo_ZZ_BTag_down.Sumw2();
+    histo_WZ_BTag_up.Sumw2();
+    histo_WZ_BTag_down.Sumw2();
+    histo_TZq_BTag_up.Sumw2();
+    histo_TZq_BTag_down.Sumw2();
+    histo_Sig_BTag_up.Sumw2();
+    histo_Sig_BTag_down.Sumw2();
+  
+  //templates for PU
+    histo_TTbar_PU_up.Sumw2();
+    histo_TTbar_PU_down.Sumw2();
+    histo_ZZ_PU_up.Sumw2();
+    histo_ZZ_PU_down.Sumw2();
+    histo_WZ_PU_up.Sumw2();
+    histo_WZ_PU_down.Sumw2();
+    histo_TZq_PU_up.Sumw2();
+    histo_TZq_PU_down.Sumw2();
+    histo_Sig_PU_up.Sumw2();
+    histo_Sig_PU_down.Sumw2();
+  
+  //templates for LeptSF
+    histo_TTbar_Lept_up.Sumw2();
+    histo_TTbar_Lept_down.Sumw2();
+    histo_ZZ_Lept_up.Sumw2();
+    histo_ZZ_Lept_down.Sumw2();
+    histo_WZ_Lept_up.Sumw2();
+    histo_WZ_Lept_down.Sumw2();
+    histo_TZq_Lept_up.Sumw2();
+    histo_TZq_Lept_down.Sumw2();
+    histo_Sig_Lept_up.Sumw2();
+    histo_Sig_Lept_down.Sumw2();
+
+  //templates for mtop
+   histo_Sig_Mtop_up.Sumw2();
+   histo_Sig_Mtop_down.Sumw2();
+
+  //templates for pdf
+   histo_Sig_PDF_up.Sumw2();
+   histo_Sig_PDF_down.Sumw2();
+   histo_WZ_PDF_up.Sumw2();
+   histo_WZ_PDF_down.Sumw2();
+   histo_TZq_PDF_up.Sumw2();
+   histo_TZq_PDF_down.Sumw2();
+
+  //templates for scale
+   histo_Sig_Scale_up.Sumw2();
+   histo_Sig_Scale_down.Sumw2();
+   histo_WZ_Scale_up.Sumw2();
+   histo_WZ_Scale_down.Sumw2();
+
+  //templates for match
+   histo_Sig_Match_up.Sumw2();
+   histo_Sig_Match_down.Sumw2();
+   histo_WZ_Match_up.Sumw2();
+   histo_WZ_Match_down.Sumw2();
+   histo_TZq_Match_up.Sumw2();
+   histo_TZq_Match_down.Sumw2();
+   
+   
+  //templates for DY
+   histo_Zjets_DY_up.Sumw2();
+   histo_Zjets_DY_down.Sumw2();
+
   //----------------------------------------------------------------------------------------
   //   STEP 2 : Getting histograms from ROOT files
   //----------------------------------------------------------------------------------------
@@ -505,6 +641,28 @@ void prodtemplate(std::string signalname, std::string outputname,
     histo_TZq_Match_down.Scale(TZqscaleFactor);  
   }
 
+
+
+
+
+  // template for DY up
+  std::cout << " - DY up" << std::endl;
+  nomDY_up->cd();
+  histo_Zjets_DY_up = *(TH1F*)nomDY_up->Get("MVA_BDT_DataZjets" );
+  
+  // template for DY down
+  std::cout << " - DY down" << std::endl;
+  nomDY_down->cd();
+  histo_Zjets_DY_down = *(TH1F*)nomDY_down->Get("MVA_BDT_DataZjets");
+
+
+  histo_Zjets_DY_up.Scale(histo_Zjets.Integral()/histo_Zjets_DY_up.Integral());
+  histo_Zjets_DY_down.Scale(histo_Zjets.Integral()/histo_Zjets_DY_down.Integral());
+
+
+
+
+
   // template for PDF up
   std::cout << " - PDF up" << std::endl;
   nomPDF_up->cd();
@@ -607,27 +765,30 @@ void prodtemplate(std::string signalname, std::string outputname,
     if ( histo_TZq_Lept_down.GetBinContent(k)    <=0 ) histo_TZq_Lept_down.SetBinContent(  k,1e-6);  
     if ( histo_Sig_Lept_down.GetBinContent(k)    <=0 ) histo_Sig_Lept_down.SetBinContent(  k,1e-6);
 
-    if (histo_Sig_Mtop_up.GetBinContent(k) <=0 ) histo_Sig_Mtop_up.SetBinContent(k,1e-6);
+    if (histo_Sig_Mtop_up.GetBinContent(k)   <=0 ) histo_Sig_Mtop_up.SetBinContent(k,1e-6);
     if (histo_Sig_Mtop_down.GetBinContent(k) <=0 ) histo_Sig_Mtop_down.SetBinContent(k,1e-6);
 
-    if (histo_Sig_PDF_up.GetBinContent(k) <=0 ) histo_Sig_PDF_up.SetBinContent(k,1e-6);
+    if (histo_Sig_PDF_up.GetBinContent(k)   <=0 ) histo_Sig_PDF_up.SetBinContent(k,1e-6);
     if (histo_Sig_PDF_down.GetBinContent(k) <=0 ) histo_Sig_PDF_down.SetBinContent(k,1e-6);
-    if (histo_WZ_PDF_up.GetBinContent(k) <=0 ) histo_WZ_PDF_up.SetBinContent(k,1e-6);
-    if (histo_WZ_PDF_down.GetBinContent(k) <=0 ) histo_WZ_PDF_down.SetBinContent(k,1e-6);
-    if (histo_TZq_PDF_up.GetBinContent(k) <=0 ) histo_TZq_PDF_up.SetBinContent(k,1e-6);
+    if (histo_WZ_PDF_up.GetBinContent(k)    <=0 ) histo_WZ_PDF_up.SetBinContent(k,1e-6);
+    if (histo_WZ_PDF_down.GetBinContent(k)  <=0 ) histo_WZ_PDF_down.SetBinContent(k,1e-6);
+    if (histo_TZq_PDF_up.GetBinContent(k)   <=0 ) histo_TZq_PDF_up.SetBinContent(k,1e-6);
     if (histo_TZq_PDF_down.GetBinContent(k) <=0 ) histo_TZq_PDF_down.SetBinContent(k,1e-6);
 
-    if (histo_Sig_Scale_up.GetBinContent(k) <=0 ) histo_Sig_Scale_up.SetBinContent(k,1e-6);
+    if (histo_Sig_Scale_up.GetBinContent(k)   <=0 ) histo_Sig_Scale_up.SetBinContent(k,1e-6);
     if (histo_Sig_Scale_down.GetBinContent(k) <=0 ) histo_Sig_Scale_down.SetBinContent(k,1e-6);
-    if (histo_WZ_Scale_up.GetBinContent(k) <=0 ) histo_WZ_Scale_up.SetBinContent(k,1e-6);
-    if (histo_WZ_Scale_down.GetBinContent(k) <=0 ) histo_WZ_Scale_down.SetBinContent(k,1e-6);
+    if (histo_WZ_Scale_up.GetBinContent(k)    <=0 ) histo_WZ_Scale_up.SetBinContent(k,1e-6);
+    if (histo_WZ_Scale_down.GetBinContent(k)  <=0 ) histo_WZ_Scale_down.SetBinContent(k,1e-6);
 
-    if (histo_Sig_Match_up.GetBinContent(k) <=0 ) histo_Sig_Match_up.SetBinContent(k,1e-6);
+    if (histo_Sig_Match_up.GetBinContent(k)   <=0 ) histo_Sig_Match_up.SetBinContent(k,1e-6);
     if (histo_Sig_Match_down.GetBinContent(k) <=0 ) histo_Sig_Match_down.SetBinContent(k,1e-6);
-    if (histo_WZ_Match_up.GetBinContent(k) <=0 ) histo_WZ_Match_up.SetBinContent(k,1e-6);
-    if (histo_WZ_Match_down.GetBinContent(k) <=0 ) histo_WZ_Match_down.SetBinContent(k,1e-6);
-    if (histo_TZq_Match_up.GetBinContent(k) <=0 ) histo_TZq_Match_up.SetBinContent(k,1e-6);
+    if (histo_WZ_Match_up.GetBinContent(k)    <=0 ) histo_WZ_Match_up.SetBinContent(k,1e-6);
+    if (histo_WZ_Match_down.GetBinContent(k)  <=0 ) histo_WZ_Match_down.SetBinContent(k,1e-6);
+    if (histo_TZq_Match_up.GetBinContent(k)   <=0 ) histo_TZq_Match_up.SetBinContent(k,1e-6);
     if (histo_TZq_Match_down.GetBinContent(k) <=0 ) histo_TZq_Match_down.SetBinContent(k,1e-6);
+
+    if (histo_Zjets_DY_up.GetBinContent(k)   <=0 ) histo_Zjets_DY_up.SetBinContent(k,1e-6);
+    if (histo_Zjets_DY_down.GetBinContent(k) <=0 ) histo_Zjets_DY_down.SetBinContent(k,1e-6);
   }
 
   //----------------------------------------------------------------------------------------
@@ -721,7 +882,11 @@ void prodtemplate(std::string signalname, std::string outputname,
   histo_WZ_Match_down.SetName("MVABDT__WZ__Match__minus");
   histo_TZq_Match_up.SetName("MVABDT__TZq__Match__plus");
   histo_TZq_Match_down.SetName("MVABDT__TZq__Match__minus");
-
+  
+  
+  
+  histo_Zjets_DY_up.SetName("MVABDT__DataZjets__DY__plus");
+  histo_Zjets_DY_down.SetName("MVABDT__DataZjets__DY__minus");
 
   //----------------------------------------------------------------------------------------
   //   STEP 5 : Creating additional histograms related to signal with other xsection values
@@ -882,7 +1047,7 @@ void prodtemplate(std::string signalname, std::string outputname,
   for (int k = 1; k < histo_Sig.GetNbinsX()+1; k++) 
     for (unsigned int i=0;i<xsections.size();i++)
     {
-      histo_newSig[i]           -> SetBinContent(k,xsections[i]*histo_Sig.GetBinContent(k)/histo_Sig.Integral());
+      /*histo_newSig[i]           -> SetBinContent(k,xsections[i]*histo_Sig.GetBinContent(k)/histo_Sig.Integral());
       histo_newSig_JES_up[i]    -> SetBinContent(k,xsections[i]*histo_Sig_JES_up.GetBinContent(k)/histo_Sig_JES_up.Integral());
       histo_newSig_JES_down[i]  -> SetBinContent(k,xsections[i]*histo_Sig_JES_down.GetBinContent(k)/histo_Sig_JES_down.Integral());
       histo_newSig_JER_up[i]    -> SetBinContent(k,xsections[i]*histo_Sig_JER_up.GetBinContent(k)/histo_Sig_JER_up.Integral());
@@ -901,6 +1066,33 @@ void prodtemplate(std::string signalname, std::string outputname,
       histo_newSig_Scale_down[i]-> SetBinContent(k,xsections[i]*histo_Sig_Scale_down.GetBinContent(k)/histo_Sig_Scale_down.Integral());
       histo_newSig_Match_up[i]  -> SetBinContent(k,xsections[i]*histo_Sig_Match_up.GetBinContent(k)/histo_Sig_Match_up.Integral());
       histo_newSig_Match_down[i]-> SetBinContent(k,xsections[i]*histo_Sig_Match_down.GetBinContent(k)/histo_Sig_Match_down.Integral());
+      */
+      
+      
+      histo_newSig[i]           -> SetBinContent(k,xsections[i]*histo_Sig.GetBinContent(k)/histo_Sig.Integral());
+      histo_newSig_JES_up[i]    -> SetBinContent(k,xsections[i]*histo_Sig_JES_up.GetBinContent(k)/histo_Sig.Integral());
+      histo_newSig_JES_down[i]  -> SetBinContent(k,xsections[i]*histo_Sig_JES_down.GetBinContent(k)/histo_Sig.Integral());
+      histo_newSig_JER_up[i]    -> SetBinContent(k,xsections[i]*histo_Sig_JER_up.GetBinContent(k)/histo_Sig.Integral());
+      histo_newSig_JER_down[i]  -> SetBinContent(k,xsections[i]*histo_Sig_JER_down.GetBinContent(k)/histo_Sig.Integral());
+      histo_newSig_BTag_up[i]   -> SetBinContent(k,xsections[i]*histo_Sig_BTag_up.GetBinContent(k)/histo_Sig.Integral());
+      histo_newSig_BTag_down[i] -> SetBinContent(k,xsections[i]*histo_Sig_BTag_down.GetBinContent(k)/histo_Sig.Integral());
+      histo_newSig_PU_up[i]     -> SetBinContent(k,xsections[i]*histo_Sig_PU_up.GetBinContent(k)/histo_Sig.Integral());
+      histo_newSig_PU_down[i]   -> SetBinContent(k,xsections[i]*histo_Sig_PU_down.GetBinContent(k)/histo_Sig.Integral());
+      histo_newSig_Lept_up[i]   -> SetBinContent(k,xsections[i]*histo_Sig_Lept_up.GetBinContent(k)/histo_Sig.Integral());
+      histo_newSig_Lept_down[i] -> SetBinContent(k,xsections[i]*histo_Sig_Lept_down.GetBinContent(k)/histo_Sig.Integral());
+      histo_newSig_Mtop_up[i]   -> SetBinContent(k,xsections[i]*histo_Sig_Mtop_up.GetBinContent(k)/histo_Sig.Integral());
+      histo_newSig_Mtop_down[i] -> SetBinContent(k,xsections[i]*histo_Sig_Mtop_down.GetBinContent(k)/histo_Sig.Integral());
+      histo_newSig_PDF_up[i]    -> SetBinContent(k,xsections[i]*histo_Sig_PDF_up.GetBinContent(k)/histo_Sig.Integral());
+      histo_newSig_PDF_down[i]  -> SetBinContent(k,xsections[i]*histo_Sig_PDF_down.GetBinContent(k)/histo_Sig.Integral());
+      histo_newSig_Scale_up[i]  -> SetBinContent(k,xsections[i]*histo_Sig_Scale_up.GetBinContent(k)/histo_Sig.Integral());
+      histo_newSig_Scale_down[i]-> SetBinContent(k,xsections[i]*histo_Sig_Scale_down.GetBinContent(k)/histo_Sig.Integral());
+      histo_newSig_Match_up[i]  -> SetBinContent(k,xsections[i]*histo_Sig_Match_up.GetBinContent(k)/histo_Sig.Integral());
+      histo_newSig_Match_down[i]-> SetBinContent(k,xsections[i]*histo_Sig_Match_down.GetBinContent(k)/histo_Sig.Integral());
+      
+      
+      
+      
+      
   }
 
   //----------------------------------------------------------------------------------------
@@ -1025,6 +1217,12 @@ void prodtemplate(std::string signalname, std::string outputname,
   histo_WZ_Match_down.Rebin(rebin);
   histo_TZq_Match_up.Rebin(rebin);
   histo_TZq_Match_down.Rebin(rebin);
+  
+  histo_Zjets_DY_up.Rebin(rebin);
+  histo_Zjets_DY_down.Rebin(rebin);
+
+  
+  
 
   for (unsigned int i=0;i<xsections.size();i++)
   {
@@ -1231,7 +1429,7 @@ void prodtemplate(std::string signalname, std::string outputname,
   {
     std::cout << " - Scale up" << std::endl;
     for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Scale_up[i]->Write();
-    histo_Sig_Scale_up.Write();
+    if(!nomatching_scale_singal) histo_Sig_Scale_up.Write();
     if (WZ_SYS) histo_WZ_Scale_up.Write();
   }
 
@@ -1239,7 +1437,7 @@ void prodtemplate(std::string signalname, std::string outputname,
   {
     std::cout << " - Scale down" << std::endl;
     for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Scale_down[i]->Write();
-    histo_Sig_Scale_down.Write();
+    if(!nomatching_scale_singal)histo_Sig_Scale_down.Write();
     if (WZ_SYS) histo_WZ_Scale_down.Write();
   }
 
@@ -1247,7 +1445,7 @@ void prodtemplate(std::string signalname, std::string outputname,
   {
     std::cout << " - Match up" << std::endl;
     for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Match_up[i]->Write();
-    histo_Sig_Match_up.Write();
+    if(!nomatching_scale_singal)histo_Sig_Match_up.Write();
     if (WZ_SYS)  histo_WZ_Match_up.Write();
     if (TZq_SYS) histo_TZq_Match_up.Write();
   }
@@ -1256,11 +1454,20 @@ void prodtemplate(std::string signalname, std::string outputname,
   {
     std::cout << " - Match down" << std::endl;
     for (unsigned int i=0;i<xsections.size();i++) histo_newSig_Match_down[i]->Write();
-    histo_Sig_Match_down.Write();
+    if(!nomatching_scale_singal)histo_Sig_Match_down.Write();
     if (WZ_SYS)  histo_WZ_Match_down.Write();
     if (TZq_SYS) histo_TZq_Match_down.Write();
   }
 
+  if (doDY)
+  {
+    std::cout << " - DY up" << std::endl;
+    histo_Zjets_DY_up.Write();
+    std::cout << " - DY down" << std::endl;
+    histo_Zjets_DY_down.Write();
+  }
+  
+  
   std::cout << "Closing output file ... " << std::endl;
   outputfile->Close();  
 
