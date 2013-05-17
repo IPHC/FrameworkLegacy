@@ -17,6 +17,7 @@
 void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   
   double WZscale = 1.;
+  double TZqscale = 0.27;
   
   
   Int_t stati=0;
@@ -185,6 +186,7 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
    TH1F * histBdt_ZZ        = (TH1F*)filechannel->Get( (theVariable+"_ZZ"       ).Data());
    TH1F * histBdt_Zjets     = (TH1F*)filechannel->Get( (theVariable+"_Zjets"    ).Data());
    TH1F * histBdt_DataZjets = (TH1F*)filechannel->Get( (theVariable+"_DataZjets").Data());  
+   //TH1F * histBdt_DataZjets = (TH1F*)filechannel->Get( (theVariable+"_Zjets").Data());  
    TH1F * histBdt_TTbar     = (TH1F*)filechannel->Get( (theVariable+"_TTbarSig" ).Data());
    TH1F * histBdt_TZq       = (TH1F*)filechannel->Get( (theVariable+"_TZq"      ).Data());
    
@@ -200,22 +202,27 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   
   histBdt_FCNC->Scale(0.1);
   histBdt_Data->SetLineColor(1);
-  
+  int rebin = 1;
   if(theVariable!="NJets" && theVariable!="NBJets"){
-    histBdt_Data->Rebin(2);  
-    histBdt_WZ->Rebin(2);	     
-    histBdt_ZZ->Rebin(2);	     
-    histBdt_TTbar->Rebin(2);	     
-    histBdt_Zjets->Rebin(2);	     
-    histBdt_FCNC->Rebin(2);  
-    histBdt_DataZjets->Rebin(2);
-    histBdt_TZq->Rebin(2);
+    histBdt_Data->Rebin(rebin);  
+    histBdt_WZ->Rebin(rebin);	     
+    histBdt_ZZ->Rebin(rebin);	     
+    histBdt_TTbar->Rebin(rebin);	     
+    histBdt_Zjets->Rebin(rebin);	     
+    histBdt_FCNC->Rebin(rebin);  
+    histBdt_DataZjets->Rebin(rebin);
+    histBdt_TZq->Rebin(rebin);
   }
   
   //histBdt_WZ->Scale(0.905713);
   histBdt_WZ->Scale(WZscale);
   histBdt_WZ->Add(histBdt_ZZ);
+  //histBdt_DataZjets->Add(histBdt_DataZjets, histBdt_TTbar, 1, -0.05*histBdt_DataZjets->Integral()/histBdt_TTbar->Integral());
   histBdt_DataZjets->Scale(histBdt_Zjets->Integral()/histBdt_DataZjets->Integral());
+  
+  histBdt_TZq->Scale(TZqscale);
+  
+  
   
   histBdt_WZ->SetFillColor(13);
   histBdt_DataZjets->SetFillColor(kAzure-2);
@@ -237,7 +244,7 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
 
 
   
-  hs->Draw();
+  hs->Draw("histo");
   hs->GetXaxis()->SetLabelSize(0.);
   hs->SetMaximum(histBdt_Data->GetMaximum()*1.7);
   hs->SetMinimum(0.1);
@@ -254,21 +261,51 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   histBdt_FCNC->SetLineWidth(2.0);
   histBdt_FCNC->SetLineColor(1.);
   histBdt_FCNC->GetXaxis()->SetLabelSize(0.);
-  histBdt_FCNC->Draw("same");
+  histBdt_FCNC->Draw("histosame");
   
-  
+  double theWZscale = 1.0;
+   if(theVertex == "zut") theWZscale = 0.72;
+   if(theVertex == "zct") theWZscale = 0.64; 
+   if(theVertex == "kut") theWZscale = 0.82; 
+   if(theVertex == "kct") theWZscale = 0.90; 
+   
+   double theWZscale_err = 1.;
+   if(theVertex == "zut") theWZscale_err = 0.24;
+   if(theVertex == "zct") theWZscale_err = 0.30; 
+   if(theVertex == "kut") theWZscale_err = 0.23; 
+   if(theVertex == "kct") theWZscale_err = 0.21; 
+   
   
   TH1F* herrorband =  (TH1F*) histBdt_WZ->Clone();
   herrorband->Add(histBdt_DataZjets);
-  for (int ierr=0; ierr<herrorband->GetNbinsX(); ierr++) {
+  herrorband->Add(histBdt_TTbar);
+  herrorband->Add(histBdt_TZq);
+ 
+  
+  
+  for (int ierr=1; ierr<=herrorband->GetNbinsX(); ierr++) {
     double error_all = pow(histBdt_WZ->GetBinError(ierr), 2) // stat
-                        + pow(histBdt_WZ->GetBinContent(ierr)*0.17/WZscale, 2) // syst SF 
+                        + pow(histBdt_WZ->GetBinContent(ierr)*theWZscale_err/theWZscale, 2) // syst SF 
                         + pow(histBdt_DataZjets->GetBinError(ierr), 2) // stat
                         + pow(histBdt_DataZjets->GetBinContent(ierr)*0.30, 2) // syst SF
                         + pow(histBdt_ZZ->GetBinContent(ierr)*0.30, 2) // syst SF 
-                        + pow(histBdt_TTbar->GetBinContent(ierr)*0.30, 2) // syst SF 
-                        + pow(histBdt_TZq->GetBinContent(ierr)*0.30, 2) // syst SF 
-                        + pow(herrorband->GetBinContent(ierr)*0.025, 2); // syst lumi
+                        + pow(histBdt_TTbar->GetBinContent(ierr)*2.60, 2) // syst SF 
+                        + pow(histBdt_TZq->GetBinContent(ierr)*0.50, 2) // syst SF 
+                        + pow(
+				(histBdt_ZZ->GetBinContent(ierr)+histBdt_TTbar->GetBinContent(ierr)+histBdt_TZq->GetBinContent(ierr))
+				
+				*0.025, 2); // syst lumi
+				cout << "error_all 1 " << error_all << endl;
+				cout << "theVariable " << theVariable << endl;
+			if(theVariable == "NBJets" )	{
+			   cout << "in " << endl;
+			  if(ierr == 1) error_all=error_all+pow(histBdt_WZ->GetBinContent(ierr)*0.11, 2); 
+			  if(ierr == 2) error_all=error_all+pow(histBdt_WZ->GetBinContent(ierr)*0.41, 2); 
+			
+			
+			}
+			
+				cout << "error_all 2 " << error_all << endl;	
     herrorband->SetBinError(ierr, sqrt(error_all));
     
   }
@@ -281,6 +318,7 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   thegraph->SetFillColor(1);
   
   thegraph->Draw("e2same");
+  //thegraph->Draw("lsame");
   
   
   
@@ -295,18 +333,29 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   histo_mc->Sumw2();
   histo_ratio->Divide(histo_ratio, histo_mc, 1, 1, "b");
   
-  for (int ierr=0; ierr<histo_ratio->GetNbinsX(); ierr++) {
+  for (int ierr=1; ierr<=histo_ratio->GetNbinsX(); ierr++) {
     
     double num     = histBdt_Data->GetBinContent(ierr);
     double num_err = histBdt_Data->GetBinError(ierr);
     
-    double denom     = herrorband->GetBinContent(ierr);
+    double denom     = histo_mc ->GetBinContent(ierr);
     double denom_err = herrorband->GetBinError(ierr);
+    
+    
     
     double error = pow(
        pow(num_err/denom, 2)+
-       pow(num*num_err/(denom*denom), 2)
+       pow(num*denom_err/(denom*denom), 2)
     , 0.5);
+    if(denom!=0){
+    cout << "***************" << endl;
+    cout << "num   " << num    << " pm " <<num_err  << endl;
+    cout << "denom " <<  denom << " pm " <<denom_err  << endl;
+    cout << "bin content       " << num/denom << endl;
+    cout << "bin content error " <<  error << endl;
+    }
+    if(denom == 0 && num == 0) histo_ratio->SetBinContent(ierr, -10);
+    
     histo_ratio->SetBinError(ierr,error );
   }
   
@@ -461,17 +510,21 @@ void PlotBDToutput(){
    TString thevertex_xut = "xut";
    TString thevertex_xct = "xct";
    
-   TString theFile_zut = "HistoBDToutput/TMVApp_zut_nom.root";
+   //TString theFile_zut = "HistoBDToutput/TMVApp_zut_nom.root";
+   TString theFile_zut = "HistoBDToutput/TMVApp_zut_bdtcutnom.root";
+   //TString theFile_zut = "HistoBDToutput/TMVApp_zut_btagup.root";
+   //TString theFile_zut = "HistoBDToutput/TMVApp_zut_btagdown.root";
    TString theFile_zct = "HistoBDToutput/TMVApp_zct_nom.root";
    TString theFile_kut = "HistoBDToutput/TMVApp_kut_nom.root";
    TString theFile_kct = "HistoBDToutput/TMVApp_kct_nom.root";
    TString theFile_xut = "HistoBDToutput/TMVApp_xut_nom.root";
    TString theFile_xct = "HistoBDToutput/TMVApp_xct_nom.root";
    
-   //PlotBDToutput(thevertex_zut, "MVA_BDT"       , theFile_zut);
+   
+   PlotBDToutput(thevertex_zut, "MVA_BDT"       , theFile_zut);
    //PlotBDToutput(thevertex_zct, "MVA_BDT"       , theFile_zct);
    //PlotBDToutput(thevertex_kut, "MVA_BDT"       , theFile_kut);
-   PlotBDToutput(thevertex_kct, "MVA_BDT"       , theFile_kct);
+   //PlotBDToutput(thevertex_kct, "MVA_BDT"       , theFile_kct);
    
    
    
