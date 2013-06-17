@@ -25,30 +25,30 @@ def get_model(signalname):
     # Note that you can use the same name for a systematic here as for a shape
     # systematic. In this case, the same parameter will be used; shape and rate changes 
     # will be 100% correlated.
-    model.add_lognormal_uncertainty('Zjets_rate', math.log(1.2), 'DataZjets')
-    model.add_lognormal_uncertainty('WZ_rate', math.log(1.3), 'WZ')
+    model.add_lognormal_uncertainty('Zjets_rate', math.log(1.5), 'DataZjets')
+    model.add_lognormal_uncertainty('WZ_rate', math.log(1.2), 'WZ')
     
-    model.add_lognormal_uncertainty('TTbar_rate', math.log(1.3), 'TTbar')
+    model.add_lognormal_uncertainty('TTbar_rate', math.log(1.1), 'TTbar')
     model.add_lognormal_uncertainty('ZZ_rate', math.log(1.3), 'ZZ')
     
-    #model.add_lognormal_uncertainty('norm1', math.log(1.3), 'FCNC_zut05')
-    #model.add_lognormal_uncertainty('norm2', math.log(1.3), 'FCNC_zut10')
-    #model.add_lognormal_uncertainty('norm3', math.log(1.3), 'FCNC_zut20')
-    #model.add_lognormal_uncertainty('norm4', math.log(1.3), 'FCNC_zut30')
-    #model.add_lognormal_uncertainty('norm5', math.log(1.3), 'FCNC_zut50')
-    #model.add_lognormal_uncertainty('norm5', math.log(1.3), 'FCNC_zut57')
+    model.add_lognormal_uncertainty('norm1', math.log(1.3), 'FCNC_zut05')
+    model.add_lognormal_uncertainty('norm2', math.log(1.3), 'FCNC_zut10')
+    model.add_lognormal_uncertainty('norm3', math.log(1.3), 'FCNC_zut20')
+    model.add_lognormal_uncertainty('norm4', math.log(1.3), 'FCNC_zut30')
+    model.add_lognormal_uncertainty('norm5', math.log(1.3), 'FCNC_zut50')
+    model.add_lognormal_uncertainty('norm5', math.log(1.3), 'FCNC_zut74')
 
 	
 	
     # the qcd model is from data, so do not apply a lumi uncertainty on that:
-    #for p in model.processes:
-    #    if p == 'WZ': continue
-    #    if p == 'DataZjets': continue
-        #model.add_lognormal_uncertainty('lumi',    math.log(1.025), p)
-        #model.add_lognormal_uncertainty('Lept',    math.log(1.01) , p)
-        #model.add_lognormal_uncertainty('Trig',    math.log(1.02) , p)
-        #model.add_lognormal_uncertainty('pu',      math.log(1.02) , p)
-        #model.add_lognormal_uncertainty('BTag',    math.log(1.05) , p)
+    for p in model.processes:
+        if p == 'WZ': continue
+        if p == 'DataZjets': continue
+        model.add_lognormal_uncertainty('lumi',    math.log(1.025), p)
+        model.add_lognormal_uncertainty('Lept',    math.log(1.01) , p)
+        model.add_lognormal_uncertainty('Trig',    math.log(1.05) , p)
+        model.add_lognormal_uncertainty('pu',      math.log(1.01) , p)
+        model.add_lognormal_uncertainty('BTag',    math.log(1.01) , p)
         #model.add_lognormal_uncertainty('Brs',     math.log(1.05) , p)
     # Specifying all uncertainties manually can be error-prone. You can also execute
     # a automatically generated file using python's execfile here
@@ -94,7 +94,7 @@ print "Signal processes : " + str(xsections2)
 plot_exp, plot_obs = cls_limits(model, signal_processes = xsections2)
 
 #plot_exp, plot_obs = cls_limits(model, ts_column = ['lr'], signal_processes = [['FCNC_zut']])
-#plot_exp, plot_obs = cls_limits(model, signal_processes = [['FCNC_zut05'],['FCNC_zut10'],['FCNC_zut20'],['FCNC_zut30'],['FCNC_zut50'],['FCNC_zut57']])
+#plot_exp, plot_obs = cls_limits(model, signal_processes = [['FCNC_zut05'],['FCNC_zut10'],['FCNC_zut20'],['FCNC_zut30'],['FCNC_zut50'],['FCNC_zut74']])
 #plot_exp, plot_obs = cls_limits(model, signal_processes = [['FCNC_zut05'],['FCNC_zut10'],['FCNC_zut20']])
 #plot_exp, plot_obs = cls_limits(model, signal_processes = [['FCNC_zut05']])
 #plot_exp, plot_obs = cls_limits(model, signal_processes = [['FCNC_zut20']])

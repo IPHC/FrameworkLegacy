@@ -68,6 +68,7 @@ void doBDT_FCNC_tZ(TString thevertex, bool doScan,  double Vut=0, double Vct=0, 
     else if(thevertex == "kct") factory = new TMVA::Factory( "BDT_trainning_kct", outputFile,"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
     else if(thevertex == "xut") factory = new TMVA::Factory( "BDT_trainning_xut", outputFile,"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
     else if(thevertex == "xct") factory = new TMVA::Factory( "BDT_trainning_xct", outputFile,"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
+    else if(thevertex == "tZq") factory = new TMVA::Factory( "BDT_trainning_tZq", outputFile,"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
   }else{
     if(thevertex == "zut")      factory = new TMVA::Factory( TString("BDT_trainning_zut")+"_"+sVut+"_"+sVct+"_"+syst, outputFile,"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
     else if(thevertex == "zct") factory = new TMVA::Factory( TString("BDT_trainning_zct")+"_"+sVut+"_"+sVct+"_"+syst, outputFile,"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
@@ -80,7 +81,10 @@ void doBDT_FCNC_tZ(TString thevertex, bool doScan,  double Vut=0, double Vct=0, 
 
    
    //TFile *input_sig1   = TFile::Open( "../../RootFiles/proof_woWZSF.root" );
-   TFile *input_sig1   = TFile::Open( "../../SystProofFiles/proof_nom.root" );
+   TFile *input_sig1   = TFile::Open( "../../SystProofFiles_btadDiscri/proof_nom.root" );
+   
+   
+   
    if(doScan){
      if(thevertex == "zut") input_sig1   = TFile::Open( "FilesBenchmark/TreeMVA_benchmark_"+sVut+"_"+sVct+"_"+syst+"_"+"zqt.root" );
      if(thevertex == "kut") input_sig1   = TFile::Open( "FilesBenchmark/TreeMVA_benchmark_"+sVut+"_"+sVct+"_"+syst+"_"+"kqt.root" );
@@ -97,6 +101,7 @@ void doBDT_FCNC_tZ(TString thevertex, bool doScan,  double Vut=0, double Vct=0, 
    else if(thevertex == "kct") signal1 = (TTree*)input_sig1->Get("Ttree_FCNCkct");
    else if(thevertex == "xut") signal1 = (TTree*)input_sig1->Get("Ttree_FCNCxut");
    else if(thevertex == "xct") signal1 = (TTree*)input_sig1->Get("Ttree_FCNCxct");
+   else if(thevertex == "tZq") signal1 = (TTree*)input_sig1->Get("Ttree_TZq");
    if(doScan){
      if(thevertex == "zut") signal1 = (TTree*)input_sig1->Get( ("TreeMVA_benchmark_"+sVut+"_"+sVct+"_zqt").Data());
      if(thevertex == "kut") signal1 = (TTree*)input_sig1->Get( ("TreeMVA_benchmark_"+sVut+"_"+sVct+"_kqt").Data());
@@ -158,7 +163,7 @@ void doBDT_FCNC_tZ(TString thevertex, bool doScan,  double Vut=0, double Vct=0, 
    //if(doScan) factory->AddSignalTree    ( signal2,            signalWeight2     );
    factory->AddBackgroundTree( background_WZ,     backgroundWeight );
      
-   
+    
    factory->AddVariable("tree_topMass",    'F'); 
    //factory->AddVariable("tree_totMass",    'F');  
    factory->AddVariable("tree_deltaPhilb", 'F');
@@ -173,7 +178,16 @@ void doBDT_FCNC_tZ(TString thevertex, bool doScan,  double Vut=0, double Vct=0, 
    factory->AddVariable("tree_NBJets",         'F');
    factory->AddVariable("tree_deltaRZl",     'F');   
    factory->AddVariable("tree_deltaPhiZmet",  'F');
-   factory->AddVariable("tree_btagDiscri",    'F');  	    
+   
+   factory->AddVariable("tree_btagDiscri",    'F');  
+   
+   /*cout << "WARNING btag discri removed !!!!" << endl;
+   cout << "WARNING btag discri removed !!!!" << endl;
+   cout << "WARNING btag discri removed !!!!" << endl;
+   cout << "WARNING btag discri removed !!!!" << endl;
+   cout << "WARNING btag discri removed !!!!" << endl;
+   cout << "WARNING btag discri removed !!!!" << endl;*/
+	    
    //factory->AddVariable("tree_leptWPt",       'F');  		   
    //factory->AddVariable("tree_leptWEta",      'F');  		   
    factory->AddVariable("tree_leadJetPt",     'F');  	     
@@ -202,8 +216,8 @@ void doBDT_FCNC_tZ(TString thevertex, bool doScan,  double Vut=0, double Vct=0, 
    if(thevertex == "zut")      factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=100:nEventsMin=100:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
    else if(thevertex == "zct") factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=100:nEventsMin=100:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
    else if(thevertex == "kut") factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=100:nEventsMin=100:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
-   else if(thevertex == "kct") factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=100:nEventsMin=400:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
-   else factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=100:nEventsMin=100:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
+   else if(thevertex == "kct") factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=100:nEventsMin=100:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
+   else factory->BookMethod( TMVA::Types::kBDT, "BDT", "!H:!V:NTrees=100:nEventsMin=20:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning:VarTransform=Decorrelate" );
 
 
 
@@ -247,10 +261,12 @@ void trainingBDT_FCNC_tZ(){
    TString thevertex_xut = "xut";
    TString thevertex_xct = "xct";
 
-   doBDT_FCNC_tZ (thevertex_zut, false);
+   //doBDT_FCNC_tZ (thevertex_zut, false);
    //doBDT_FCNC_tZ (thevertex_zct, false);
    //doBDT_FCNC_tZ (thevertex_kut, false);
    //doBDT_FCNC_tZ (thevertex_kct, false);
+   
+   doBDT_FCNC_tZ ("tZq", false);
    
    //doBDT_FCNC_tZ ( thevertex_zct,  false);
    //doBDT_FCNC_tZ ( thevertex_zut,  true, 0., 1., "nom");
@@ -276,6 +292,12 @@ void trainingBDT_FCNC_tZ(){
      } 
    }*/
    
+   /*cout << "WARNING btag discri removed !!!!" << endl;
+   cout << "WARNING btag discri removed !!!!" << endl;
+   cout << "WARNING btag discri removed !!!!" << endl;
+   cout << "WARNING btag discri removed !!!!" << endl;
+   cout << "WARNING btag discri removed !!!!" << endl;
+   cout << "WARNING btag discri removed !!!!" << endl;*/
    
 
 }

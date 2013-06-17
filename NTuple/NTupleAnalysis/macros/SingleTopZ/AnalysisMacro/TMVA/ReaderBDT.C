@@ -19,7 +19,7 @@
 #include "TMVA/MethodCuts.h"
 
 
-
+bool Private = false;
 
 double WZscale = 1.0;
 //static   double WZscale_zut = 1.;
@@ -30,10 +30,13 @@ static   double WZscale_kut = 0.82;
 static   double WZscale_kct = 0.90;
 */
 
-static   double WZscale_zut = 0.72;
-static   double WZscale_zct = 0.64;
-static   double WZscale_kut = 0.82;
-static   double WZscale_kct = 0.90;
+static   double WZscale_zut = 0.927/0.92;
+static   double WZscale_zct = 0.851/0.92;
+static   double WZscale_kut = 1.059/0.92 ;
+static   double WZscale_kct = 1.051/0.92 ;
+ 
+ 
+
 
 /*static   double WZscale_zut = 0.90;
 static   double WZscale_zct = 0.90;
@@ -41,8 +44,10 @@ static   double WZscale_kut = 0.90;
 static   double WZscale_kct = 0.90;
 */
 static   float bdt_BCK_cut = -0.2;
+static   float bdt_BCK_cut_up = -0.2;
  
 static bool   apply_BCK_cut = false;
+static bool   apply_BCK_cut_up = false;
 
 std::map<TString,std::vector<TH1F*> > theHistoMap;
 
@@ -164,11 +169,11 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    TFile *input         = new TFile(stringinput, "read");
    TFile *input_FCNC    = new TFile(stringinput_FCNC, "read");
-   TFile *input_data    = new TFile("../../SystProofFiles/proof_nom.root", "read");
+   TFile *input_data    = new TFile("../../SystProofFiles_btadDiscri//proof_nom.root", "read");
    
    
    //TFile *input_zjets   = new TFile("../../RootFiles/proof_DataZjets_woBkgSF_good.root", "read");
-   TFile *input_zjets   = new TFile("../../SystProofFiles/proof_DYenrichedMetCut35.root", "read");
+   TFile *input_zjets   = new TFile("../../SystProofFiles_btadDiscri//proof_DYenrichedMetCut35.root", "read");
    
    
    //*************************************************
@@ -195,6 +200,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
     if(thevertex == "kct") target= new TFile( ("HistoBDToutput/TMVApp_kct_"+syst+".root").Data(),"RECREATE" );
     if(thevertex == "xut") target= new TFile( ("HistoBDToutput/TMVApp_xut_"+syst+".root").Data(),"RECREATE" );
     if(thevertex == "xct") target= new TFile( ("HistoBDToutput/TMVApp_xct_"+syst+".root").Data(),"RECREATE" );
+    if(thevertex == "tzq") target= new TFile( ("HistoBDToutput/TMVApp_tzq_"+syst+".root").Data(),"RECREATE" );
    }
    else{
    
@@ -204,6 +210,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      if(thevertex == "kct") target= new TFile( ("HistoBDToutput/TMVApp_kct_bdtcut"+syst+".root").Data(),"RECREATE" );
      if(thevertex == "xut") target= new TFile( ("HistoBDToutput/TMVApp_xut_bdtcut"+syst+".root").Data(),"RECREATE" );
      if(thevertex == "xct") target= new TFile( ("HistoBDToutput/TMVApp_xct_bdtcut"+syst+".root").Data(),"RECREATE" );
+     if(thevertex == "tzq") target= new TFile( ("HistoBDToutput/TMVApp_tzq_bdtcut"+syst+".root").Data(),"RECREATE" );
    
    }
    
@@ -335,6 +342,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    reader->AddVariable("tree_NBJets",        &NBJets);	    
    reader->AddVariable("tree_deltaRZl",      &deltaRZl);   
    reader->AddVariable("tree_deltaPhiZmet",  &deltaPhiZmet);
+   
+   
    reader->AddVariable("tree_btagDiscri",    &btagDiscri);     
     		    
    //reader->AddVariable("tree_leptWPt",        &leptWPt);	    
@@ -371,6 +380,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    if(thevertex == "kct") histBdt_FCNC = new TH1F( "MVA_BDT_FCNC_kct",   "MVA_BDT_FCNC_kct", nbin, -1, 1 );
    if(thevertex == "xut") histBdt_FCNC = new TH1F( "MVA_BDT_FCNC_xut",   "MVA_BDT_FCNC_xut", nbin, -1, 1 );
    if(thevertex == "xct") histBdt_FCNC = new TH1F( "MVA_BDT_FCNC_xct",   "MVA_BDT_FCNC_xct", nbin, -1, 1 );
+   //if(thevertex == "xct") histBdt_FCNC = new TH1F( "MVA_BDT_FCNC_xct",   "MVA_BDT_FCNC_xct", nbin, -1, 1 );
    
    //Get the BDT trainning through an xml file, created during the trainning phase
    if(thevertex == "zut") reader->BookMVA( "BDT", "weights/BDT_trainning_zut_BDT.weights.xml" ); 
@@ -379,6 +389,35 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    if(thevertex == "kct") reader->BookMVA( "BDT", "weights/BDT_trainning_kct_BDT.weights.xml" ); 
    if(thevertex == "xut") reader->BookMVA( "BDT", "weights/BDT_trainning_xut_BDT.weights.xml" ); 
    if(thevertex == "xct") reader->BookMVA( "BDT", "weights/BDT_trainning_xct_BDT.weights.xml" ); 
+   if(thevertex == "tzq") reader->BookMVA( "BDT", "weights/BDT_trainning_tZq_BDT.weights.xml" ); 
+   
+   
+   histBdt_Data->Sumw2()        ;
+   histBdt_Zjets->Sumw2()       ;
+   histBdt_WZ->Sumw2()	       ;
+   histBdt_DataZjets->Sumw2()   ;
+   
+   histBdt_TTbarSig->Sumw2()    ;
+   histBdt_Wjets->Sumw2()       ;
+   histBdt_TtW->Sumw2()         ;
+   histBdt_TbartW->Sumw2()      ;
+   histBdt_TtChan->Sumw2()      ;
+   histBdt_TbartChan->Sumw2()   ;
+   histBdt_TsChan->Sumw2()      ;
+   histBdt_TbarsChan->Sumw2()   ;
+   histBdt_TZq->Sumw2()        ;
+   histBdt_ZZ->Sumw2()	       ;
+   histBdt_WW->Sumw2()	       ;
+ 
+   
+   
+   
+   
+   
+   
+   
+   
+   
    
    
    
@@ -424,7 +463,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      
      theTree_DataMu->GetEntry(ievt);
      
-     if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
      histBdt_Data->Fill( reader->EvaluateMVA( "BDT"           ) );
      
      
@@ -494,7 +534,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_DataEG->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_DataEG->GetEntry(ievt);
-     if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
      histBdt_Data->Fill( reader->EvaluateMVA( "BDT"           ) );
      
      
@@ -568,7 +609,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_DataMuEG->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_DataMuEG->GetEntry(ievt);
-     if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
      histBdt_Data->Fill( reader->EvaluateMVA( "BDT"           ) );
      
      
@@ -624,12 +666,12 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    if(syst == "Scaleup")        { theTree_WZ = (TTree*)input->Get("Ttree_WZprivate_scaleup");  }
    else if(syst == "Scaledown") { theTree_WZ = (TTree*)input->Get("Ttree_WZprivate_scaledown");}
    else if(syst == "Matchup")   { theTree_WZ = (TTree*)input->Get("Ttree_WZprivate_matchup");  }
-   else if(syst == "Matchdown") { theTree_WZ = (TTree*)input->Get("Ttree_WZprivate_matchdown");
-   cout << "in matchdown " << endl;}
-   else                        { theTree_WZ = (TTree*)input->Get("Ttree_WZ");}
+   else if(syst == "Matchdown") { theTree_WZ = (TTree*)input->Get("Ttree_WZprivate_matchdown"); cout << "in matchdown " << endl;}
+   else if(Private)             { theTree_WZ = (TTree*)input->Get("Ttree_WZprivate");}
+   else                         { theTree_WZ = (TTree*)input->Get("Ttree_WZ");}
    
-   
-    
+  
+   if(theTree_WZ == 0) cout << "null pointer for theTree_WZ  " << endl;
    theTree_WZ->SetBranchAddress( "tree_totMass",	   &totMass);	
    theTree_WZ->SetBranchAddress( "tree_topMass",     &topMass );
    theTree_WZ->SetBranchAddress( "tree_deltaRlb",	   &deltaRlb);
@@ -655,21 +697,24 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    theTree_WZ->SetBranchAddress("tree_deltaPhiZleptW", &deltaPhiZleptW);
    
    
-   theTree_WZ->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);  
+    theTree_WZ->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);  
    
    
    float nwzEvents_BCKenriched = 0;
    float nwzEvents_BCKenriched_unw = 0;
    //loop on the events and calculate the BDT output
    for (Long64_t ievt=0; ievt<theTree_WZ->GetEntries();ievt++) {    
-     //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
+     if (ievt%100 == 0) std::cout << "--- ... WZ Processing event: " << ievt << std::endl;
      theTree_WZ->GetEntry(ievt);
-     if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
      
+     if(EvtWeight !=EvtWeight)  continue; // check for nan
      
      //cout << reader->EvaluateMVA( "BDT")  <<   "  " << EvtWeight << endl;
      histBdt_WZ->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight*WZscale);
      
+     //if(EvtWeight == nan) cout << "******** found diverging value " << endl;
      
      std::vector<double > theVar;
      theVar.push_back(topMass);
@@ -706,6 +751,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      //reader->EvaluateMVA( "BDT"           ) 
      
    }
+   cout << "712 " << endl;
    //to get the proper normalization
    TTree* theTree_WZ_nom = (TTree*)input_data->Get("Ttree_WZ");
    
@@ -740,15 +786,16 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    for (Long64_t ievt=0; ievt<theTree_WZ_nom->GetEntries();ievt++) { 
      theTree_WZ_nom->GetEntry(ievt); 
-     if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut   ) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
      sumWeight_WZnom +=EvtWeight*WZscale;
    }  
  
    //cout << "sumWeight_WZnom " << sumWeight_WZnom << endl;
    //cout << "histBdt_WZ->Integral() " << histBdt_WZ->Integral() << endl;
-   histBdt_WZ->Scale(sumWeight_WZnom/histBdt_WZ->Integral());
+   //histBdt_WZ->Scale(sumWeight_WZnom/histBdt_WZ->Integral());
    
-   cout << "674  " << endl;
+   
    //-----------------------------------------------------
    //for TTbarSig jets from MC 
    //-----------------------------------------------------
@@ -787,7 +834,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TTbarSig->GetEntries();ievt++) {    
      if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TTbarSig->GetEntry(ievt);
-     if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
+     if(EvtWeight !=EvtWeight)  continue; // check for nan
      histBdt_TTbarSig->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
      
      
@@ -867,7 +916,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_Wjets->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_Wjets->GetEntry(ievt);
-     if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
+     if(EvtWeight !=EvtWeight)  continue; // check for nan
      histBdt_Wjets->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
      
      
@@ -949,7 +1000,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TtW->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TtW->GetEntry(ievt);
-     if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
+     if(EvtWeight !=EvtWeight)  continue; // check for nan
      histBdt_TtW->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight); 
        
      std::vector<double > theVar;
@@ -1033,7 +1086,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TbartW->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TbartW->GetEntry(ievt);
-     if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut)    continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
+     if(EvtWeight !=EvtWeight)  continue; // check for nan
      histBdt_TbartW->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
        
      std::vector<double > theVar;
@@ -1120,7 +1175,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TtChan->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TtChan->GetEntry(ievt);
-     if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
+     if(EvtWeight !=EvtWeight)  continue; // check for nan
      histBdt_TtChan->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight); 
          
      std::vector<double > theVar;
@@ -1199,7 +1256,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TbartChan->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TbartChan->GetEntry(ievt);
-     if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
+     if(EvtWeight !=EvtWeight)  continue; // check for nan
      histBdt_TbartChan->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
          
      std::vector<double > theVar;
@@ -1283,7 +1342,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TsChan->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TsChan->GetEntry(ievt);
-     if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
+     if(EvtWeight !=EvtWeight)  continue; // check for nan
      histBdt_TsChan->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
          
      std::vector<double > theVar;
@@ -1364,7 +1425,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TbarsChan->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TbarsChan->GetEntry(ievt);
-     if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
+     if(EvtWeight !=EvtWeight)  continue; // check for nan
      histBdt_TbarsChan->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
          
      std::vector<double > theVar;
@@ -1448,7 +1511,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TZq->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TZq->GetEntry(ievt);
-     if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
+     if(EvtWeight !=EvtWeight)  continue; // check for nan
      histBdt_TZq->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
          
      std::vector<double > theVar;
@@ -1527,7 +1592,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_ZZ->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_ZZ->GetEntry(ievt);
-     if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
+     if(EvtWeight !=EvtWeight)  continue; // check for nan
      histBdt_ZZ->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
          
      std::vector<double > theVar;
@@ -1612,6 +1679,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_WW->GetEntry(ievt);
      if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
+     if(EvtWeight !=EvtWeight)  continue; // check for nan
      histBdt_WW->Fill( reader->EvaluateMVA( "BDT"),  EvtWeight);
          
      std::vector<double > theVar;
@@ -1701,6 +1770,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_Zjets->GetEntry(ievt);
      if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
+     if(EvtWeight !=EvtWeight)  continue; // check for nan
      histBdt_Zjets ->Fill( reader->EvaluateMVA( "BDT") ,  EvtWeight);
          
      std::vector<double > theVar;
@@ -1783,7 +1854,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_DYToLL_M10_50->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_DYToLL_M10_50->GetEntry(ievt);
-     if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
+     if(EvtWeight !=EvtWeight)  continue; // check for nan
      histBdt_Zjets ->Fill( reader->EvaluateMVA( "BDT") ,  EvtWeight);
      
      std::vector<double > theVar;
@@ -1835,58 +1908,67 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    TTree* theTree_FCNC ;
    
    if(syst == "Matchup"){
-     if(thevertex == "zut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCzut_matchup");
-     if(thevertex == "zct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCzct_matchup");
-     if(thevertex == "kut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCkut_matchup");
-     if(thevertex == "kct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCkct_matchup");
-     if(thevertex == "xut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCxut_matchup");
-     if(thevertex == "xct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCxct_matchup");
+     if(thevertex == "zut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCzut_matchup");
+     if(thevertex == "zct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCzct_matchup");
+     if(thevertex == "kut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCkut_matchup");
+     if(thevertex == "kct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCkct_matchup");
+     if(thevertex == "xut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCxut_matchup");
+     if(thevertex == "xct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCxct_matchup");
    }else if(syst == "Matchdown"){
-     if(thevertex == "zut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCzut_matchdown");
-     if(thevertex == "zct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCzct_matchdown");
-     if(thevertex == "kut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCkut_matchdown");
-     if(thevertex == "kct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCkct_matchdown");
-     if(thevertex == "xut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCxut_matchdown");
-     if(thevertex == "xct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCxct_matchdown");
+     if(thevertex == "zut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCzut_matchdown");
+     if(thevertex == "zct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCzct_matchdown");
+     if(thevertex == "kut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCkut_matchdown");
+     if(thevertex == "kct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCkct_matchdown");
+     if(thevertex == "xut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCxut_matchdown");
+     if(thevertex == "xct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCxct_matchdown");
    }else if(syst == "Scaleup"){
-     if(thevertex == "zut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCzut_scaleup");
-     if(thevertex == "zct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCzct_scaleup");
-     if(thevertex == "kut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCkut_scaleup");
-     if(thevertex == "kct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCkct_scaleup");
-     if(thevertex == "xut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCxut_scaleup");
-     if(thevertex == "xct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCxct_scaleup");
+     if(thevertex == "zut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCzut_scaleup");
+     if(thevertex == "zct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCzct_scaleup");
+     if(thevertex == "kut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCkut_scaleup");
+     if(thevertex == "kct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCkct_scaleup");
+     if(thevertex == "xut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCxut_scaleup");
+     if(thevertex == "xct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCxct_scaleup");
    }else if(syst == "Scaledown"){
-     if(thevertex == "zut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCzut_scaledown");
-     if(thevertex == "zct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCzct_scaledown");
-     if(thevertex == "kut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCkut_scaledown");
-     if(thevertex == "kct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCkct_scaledown");
-     if(thevertex == "xut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCxut_scaledown");
-     if(thevertex == "xct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCxct_scaledown");
+     if(thevertex == "zut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCzut_scaledown");
+     if(thevertex == "zct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCzct_scaledown");
+     if(thevertex == "kut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCkut_scaledown");
+     if(thevertex == "kct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCkct_scaledown");
+     if(thevertex == "xut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCxut_scaledown");
+     if(thevertex == "xct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCxct_scaledown");
    }else if(syst == "Mtopup"){
-     if(thevertex == "zut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCzut_topup");
-     if(thevertex == "zct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCzct_topup");
-     if(thevertex == "kut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCkut_topup");
-     if(thevertex == "kct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCkct_topup");
-     if(thevertex == "xut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCxut_topup");
-     if(thevertex == "xct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCxct_topup");
+     if(thevertex == "zut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCzut_topup");
+     if(thevertex == "zct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCzct_topup");
+     if(thevertex == "kut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCkut_topup");
+     if(thevertex == "kct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCkct_topup");
+     if(thevertex == "xut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCxut_topup");
+     if(thevertex == "xct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCxct_topup");
    }else if(syst == "Mtopdown"){
-     if(thevertex == "zut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCzut_topdown");
-     if(thevertex == "zct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCzct_topdown");
-     if(thevertex == "kut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCkut_topdown");
-     if(thevertex == "kct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCkct_topdown");
-     if(thevertex == "xut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCxut_topdown");
-     if(thevertex == "xct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCxct_topdown");
+     if(thevertex == "zut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCzut_topdown");
+     if(thevertex == "zct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCzct_topdown");
+     if(thevertex == "kut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCkut_topdown");
+     if(thevertex == "kct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCkct_topdown");
+     if(thevertex == "xut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCxut_topdown");
+     if(thevertex == "xct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCxct_topdown");
    }else {
-     if(thevertex == "zut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCzutFullSim");
-     if(thevertex == "zct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCzctFullSim");
-     if(thevertex == "kut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCkutFullSim");
-     if(thevertex == "kct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCkctFullSim");
-     if(thevertex == "xut") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCxutFullSim");
-     if(thevertex == "xct") theTree_FCNC = (TTree*)input->Get("Ttree_FCNCxctFullSim");
+     if(thevertex == "zut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCzutFullSim");
+     if(thevertex == "zct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCzctFullSim");
+     if(thevertex == "kut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCkutFullSim");
+     if(thevertex == "kct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCkctFullSim");
+     if(thevertex == "xut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCxutFullSim");
+     if(thevertex == "xct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCxctFullSim");
+     
+     /*if(thevertex == "zut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCzut");
+     if(thevertex == "zct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCzct");
+     if(thevertex == "kut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCkut");
+     if(thevertex == "kct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCkct");
+     if(thevertex == "xut") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCxut");
+     if(thevertex == "xct") theTree_FCNC = (TTree*)input_FCNC->Get("Ttree_FCNCxct");*/
    }
    
-   
-   
+   float nsignalEvents_BCKenriched=0;
+   float nsignalEvents_BCKenriched_unw=0;
+   if(thevertex != "tzq"){
+   cout << "start reading FCNC " << endl;
    theTree_FCNC->SetBranchAddress( "tree_totMass",	   &totMass);	
    theTree_FCNC->SetBranchAddress( "tree_topMass",     &topMass );
    theTree_FCNC->SetBranchAddress( "tree_deltaRlb",	   &deltaRlb);
@@ -1913,15 +1995,19 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    theTree_FCNC->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);  
    
-   float nsignalEvents_BCKenriched=0;
-   float nsignalEvents_BCKenriched_unw=0;
    
    //loop on the events and calculate the BDT output
    for (Long64_t ievt=0; ievt<theTree_FCNC->GetEntries();ievt++) {    
-     //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
+     if (ievt%100 == 0) std::cout << "--- ... FCNC Processing event: " << ievt << std::endl;
      theTree_FCNC->GetEntry(ievt);
      if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
+     if(EvtWeight !=EvtWeight)  continue; // check for nan
+     
+     
      histBdt_FCNC ->Fill( reader->EvaluateMVA( "BDT") , EvtWeight);
+     
+     //cout << reader->EvaluateMVA( "BDT") << "  " << EvtWeight << endl;
      
      std::vector<double > theVar;
      theVar.push_back(topMass);
@@ -1960,7 +2046,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
   
   
   
-  
+  }
    //-----------------------------------------------------
    //for Z jets from data
    //-----------------------------------------------------
@@ -2004,6 +2090,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_DataMuZjets->GetEntry(ievt);
      if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
      histBdt_DataZjets ->Fill( reader->EvaluateMVA( "BDT") );
      
      std::vector<double > theVar;
@@ -2083,6 +2170,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_DataEGZjets->GetEntry(ievt);
      if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
      histBdt_DataZjets ->Fill( reader->EvaluateMVA( "BDT") );
      
      std::vector<double > theVar;
@@ -2164,6 +2252,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_DataMuEGZjets->GetEntry(ievt);
      if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
+     if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
      histBdt_DataZjets ->Fill( reader->EvaluateMVA( "BDT") );
      
      std::vector<double > theVar;
@@ -2385,26 +2474,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    
    histBdt_Data->Write();
-   histBdt_WZ->Sumw2();
    
    
-   histBdt_Zjets->Sumw2();
-   histBdt_FCNC->Scale(0.1);
   
-   histBdt_FCNC->Sumw2();      
-   histBdt_DataZjets->Sumw2();
-   
-   histBdt_TTbarSig->Sumw2();	 
-   histBdt_Wjets->Sumw2();	 
-   histBdt_TtW->Sumw2();	 
-   histBdt_TbartW->Sumw2();   
-   histBdt_TtChan ->Sumw2();  
-   histBdt_TbartChan->Sumw2();
-   histBdt_TsChan->Sumw2();   
-   histBdt_TbarsChan->Sumw2();
-   histBdt_TZq->Sumw2();	 
-   histBdt_ZZ->Sumw2();	 
-   histBdt_WW->Sumw2();
    
    
    
@@ -2412,9 +2484,9 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    
    histBdt_Zjets->Write();
-   histBdt_FCNC->Scale(0.1);
   
-   histBdt_FCNC->Write();      
+   if(thevertex!= "tzq") histBdt_FCNC->Write();   
+   if(thevertex!= "tzq") histBdt_FCNC->Scale(0.1);   
    histBdt_DataZjets->Write();
    
    histBdt_TTbarSig->Write();	 
@@ -2446,29 +2518,42 @@ void ReaderBDT(){
    TString thevertex_kct = "kct";
    TString thevertex_xut = "xut";
    TString thevertex_xct = "xct";
+   TString thevertex_tzq = "tzq";
    
    
-   ReaderBDT(thevertex_zut, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
-	 "nom");
+	 
 	
+   ReaderBDT(thevertex_zut, 
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+	 "nom");
+   
+   /*
    ReaderBDT(thevertex_zct, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "nom");
  
    ReaderBDT(thevertex_kut,
-        "../../SystProofFiles/proof_nom.root",
-        "../../SystProofFiles/proof_nom.root",
+        "../../SystProofFiles_btadDiscri//proof_nom.root",
+        "../../SystProofFiles_btadDiscri//proof_nom.root",
          "nom");
 
    ReaderBDT(thevertex_kct,
-        "../../SystProofFiles/proof_nom.root",
-        "../../SystProofFiles/proof_nom.root",
+        "../../SystProofFiles_btadDiscri//proof_nom.root",
+        "../../SystProofFiles_btadDiscri//proof_nom.root",
          "nom");
 	
-   
+	*/
+   /*ReaderBDT(thevertex_tzq,
+        "../../SystProofFiles_btadDiscri//proof_nom.root",
+        "../../SystProofFiles_btadDiscri//proof_nom.root",
+         "nom");
+	
+	*/
+	
+	
+   /*
    
    //******************************************
    // for Zut ac
@@ -2477,32 +2562,32 @@ void ReaderBDT(){
    
    //for Jes Up
    ReaderBDT(thevertex_zut, 
-   	"../../SystProofFiles/proof_JESup.root",
-   	"../../SystProofFiles/proof_JESup.root",
+   	"../../SystProofFiles_btadDiscri//proof_JESup.root",
+   	"../../SystProofFiles_btadDiscri//proof_JESup.root",
    	 "JESup");
 	
    //for Jes down
    ReaderBDT(thevertex_zut, 
-   	"../../SystProofFiles/proof_JESdown.root",
-   	"../../SystProofFiles/proof_JESdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_JESdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_JESdown.root",
 	 "JESdown");
 	 
    //for JER 
    ReaderBDT(thevertex_zut, 
-   	"../../SystProofFiles/proof_JER.root",
-   	"../../SystProofFiles/proof_JER.root",
+   	"../../SystProofFiles_btadDiscri//proof_JER.root",
+   	"../../SystProofFiles_btadDiscri//proof_JER.root",
 	 "JER");
 	 
    //for LeptSF 
    ReaderBDT(thevertex_zut, 
-   	"../../SystProofFiles/proof_LeptfSFup.root",
-   	"../../SystProofFiles/proof_LeptfSFup.root",
+   	"../../SystProofFiles_btadDiscri//proof_LeptSFup.root",
+   	"../../SystProofFiles_btadDiscri//proof_LeptSFup.root",
 	 "LeptSFup");
 	 
    //for LeptSF 
    ReaderBDT(thevertex_zut, 
-   	"../../SystProofFiles/proof_LeptfSFdown.root",
-   	"../../SystProofFiles/proof_LeptfSFdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_LeptSFdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_LeptSFdown.root",
 	 "LeptSFdown");
 	 
 
@@ -2510,89 +2595,99 @@ void ReaderBDT(){
    
    //for PU up
    ReaderBDT(thevertex_zut, 
-   	"../../SystProofFiles/proof_PUup.root",
-   	"../../SystProofFiles/proof_PUup.root",
+   	"../../SystProofFiles_btadDiscri//proof_PUup.root",
+   	"../../SystProofFiles_btadDiscri//proof_PUup.root",
 	 "PUup");
    
 	 
    //for PU down
    ReaderBDT(thevertex_zut, 
-   	"../../SystProofFiles/proof_PUdown.root",
-   	"../../SystProofFiles/proof_PUdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_PUdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_PUdown.root",
 	 "PUdown");
    
    
    
    //for btag up
    ReaderBDT(thevertex_zut, 
-   	"../../SystProofFiles/proof_btagUP.root",
-   	"../../SystProofFiles/proof_btagUP.root",
-	 "btagup");
+   	"../../SystProofFiles_btadDiscri//proof_btagUp.root",
+   	"../../SystProofFiles_btadDiscri//proof_btagUp.root",
+	 "btagUp");
    
    
    
    //for btag down
    ReaderBDT(thevertex_zut, 
-   	"../../SystProofFiles/proof_btagDown.root",
-   	"../../SystProofFiles/proof_btagDown.root",
+   	"../../SystProofFiles_btadDiscri//proof_btagDown.root",
+   	"../../SystProofFiles_btadDiscri//proof_btagDown.root",
 	 "btagdown");
   
       
   
    //for match up
    ReaderBDT(thevertex_zut, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Matchup");
    
    
    //for match down
    ReaderBDT(thevertex_zut, 
-   	"../../SystProofFiles/proof_norm_WZmatchdown.root",
-   	"../../SystProofFiles/proof_norm_WZmatchdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Matchdown");
    
    
    //for scale up
    ReaderBDT(thevertex_zut, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Scaleup");
    
    
    //for scale down
    ReaderBDT(thevertex_zut, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Scaledown");
    
    //for top mass up
    ReaderBDT(thevertex_zut, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Mtopup");
    
    
    //for top mass down
    ReaderBDT(thevertex_zut, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Mtopdown");
 
    
    
    //for DY up
    ReaderBDT(thevertex_zut, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "DYUp");
 	 
    //for DY down
    ReaderBDT(thevertex_zut, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "DYDown");
-    
+	 
+	 
+    ReaderBDT(thevertex_zut, 
+   	"../../SystProofFiles_btadDiscri//proof_PDFup.root",
+   	"../../SystProofFiles_btadDiscri//proof_PDFup.root",
+	 "PDFup"); ReaderBDT(thevertex_zut, 
+   	"../../SystProofFiles_btadDiscri//proof_PDFdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_PDFdown.root",
+	 "PDFdown");
+	 
+
    //******************************************
    // for Zct ac
    //******************************************
@@ -2600,32 +2695,32 @@ void ReaderBDT(){
    
    //for Jes Up
    ReaderBDT(thevertex_zct, 
-   	"../../SystProofFiles/proof_JESup.root",
-   	"../../SystProofFiles/proof_JESup.root",
+   	"../../SystProofFiles_btadDiscri//proof_JESup.root",
+   	"../../SystProofFiles_btadDiscri//proof_JESup.root",
    	 "JESup");
 	
    //for Jes down
    ReaderBDT(thevertex_zct, 
-   	"../../SystProofFiles/proof_JESdown.root",
-   	"../../SystProofFiles/proof_JESdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_JESdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_JESdown.root",
 	 "JESdown");
 	 
    //for JER 
    ReaderBDT(thevertex_zct, 
-   	"../../SystProofFiles/proof_JER.root",
-   	"../../SystProofFiles/proof_JER.root",
+   	"../../SystProofFiles_btadDiscri//proof_JER.root",
+   	"../../SystProofFiles_btadDiscri//proof_JER.root",
 	 "JER");
 	 
    //for LeptSF 
    ReaderBDT(thevertex_zct, 
-   	"../../SystProofFiles/proof_LeptfSFup.root",
-   	"../../SystProofFiles/proof_LeptfSFup.root",
+   	"../../SystProofFiles_btadDiscri//proof_LeptSFup.root",
+   	"../../SystProofFiles_btadDiscri//proof_LeptSFup.root",
 	 "LeptSFup");
 	 
    //for LeptSF 
    ReaderBDT(thevertex_zct, 
-   	"../../SystProofFiles/proof_LeptfSFdown.root",
-   	"../../SystProofFiles/proof_LeptfSFdown.root",
+   	"../../SystProofFiles_btadDiscri/proof_LeptSFdown.root",
+   	"../../SystProofFiles_btadDiscri/proof_LeptSFdown.root",
 	 "LeptSFdown");
 	 
 
@@ -2633,89 +2728,100 @@ void ReaderBDT(){
    
    //for PU up
    ReaderBDT(thevertex_zct, 
-   	"../../SystProofFiles/proof_PUup.root",
-   	"../../SystProofFiles/proof_PUup.root",
+   	"../../SystProofFiles_btadDiscri//proof_PUup.root",
+   	"../../SystProofFiles_btadDiscri//proof_PUup.root",
 	 "PUup");
    
 	 
    //for PU down
    ReaderBDT(thevertex_zct, 
-   	"../../SystProofFiles/proof_PUdown.root",
-   	"../../SystProofFiles/proof_PUdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_PUdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_PUdown.root",
 	 "PUdown");
    
    
    
    //for btag up
    ReaderBDT(thevertex_zct, 
-   	"../../SystProofFiles/proof_btagUP.root",
-   	"../../SystProofFiles/proof_btagUP.root",
-	 "btagup");
+   	"../../SystProofFiles_btadDiscri//proof_btagUp.root",
+   	"../../SystProofFiles_btadDiscri//proof_btagUp.root",
+	 "btagUp");
    
    
    
    //for btag down
    ReaderBDT(thevertex_zct, 
-   	"../../SystProofFiles/proof_btagDown.root",
-   	"../../SystProofFiles/proof_btagDown.root",
+   	"../../SystProofFiles_btadDiscri//proof_btagDown.root",
+   	"../../SystProofFiles_btadDiscri//proof_btagDown.root",
 	 "btagdown");
   
       
    
    //for match up
    ReaderBDT(thevertex_zct, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Matchup");
    
    
    //for match down
    ReaderBDT(thevertex_zct, 
-   	"../../SystProofFiles/proof_norm_WZmatchdown.root",
-   	"../../SystProofFiles/proof_norm_WZmatchdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Matchdown");
    
    
    //for scale up
    ReaderBDT(thevertex_zct, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Scaleup");
    
    
    //for scale down
    ReaderBDT(thevertex_zct, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Scaledown");
    
    //for top mass up
    ReaderBDT(thevertex_zct, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Mtopup");
    
    
    //for top mass down
    ReaderBDT(thevertex_zct, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Mtopdown");
 
     
    
    //for DY up
    ReaderBDT(thevertex_zct, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "DYUp");
 	 
    //for DY down
    ReaderBDT(thevertex_zct, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "DYDown");
-   
+     
+   ReaderBDT(thevertex_zct, 
+   	"../../SystProofFiles_btadDiscri//proof_PDFup.root",
+   	"../../SystProofFiles_btadDiscri//proof_PDFup.root",
+	 "PDFup");
+	 
+   ReaderBDT(thevertex_zct, 
+   	"../../SystProofFiles_btadDiscri//proof_PDFdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_PDFdown.root",
+	 "PDFdown"); 
+	 
+
    //******************************************
    // for kut ac
    //******************************************
@@ -2723,32 +2829,32 @@ void ReaderBDT(){
    
    //for Jes Up
    ReaderBDT(thevertex_kut, 
-   	"../../SystProofFiles/proof_JESup.root",
-   	"../../SystProofFiles/proof_JESup.root",
+   	"../../SystProofFiles_btadDiscri//proof_JESup.root",
+   	"../../SystProofFiles_btadDiscri//proof_JESup.root",
    	 "JESup");
 	
    //for Jes down
    ReaderBDT(thevertex_kut, 
-   	"../../SystProofFiles/proof_JESdown.root",
-   	"../../SystProofFiles/proof_JESdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_JESdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_JESdown.root",
 	 "JESdown");
 	 
    //for JER 
    ReaderBDT(thevertex_kut, 
-   	"../../SystProofFiles/proof_JER.root",
-   	"../../SystProofFiles/proof_JER.root",
+   	"../../SystProofFiles_btadDiscri//proof_JER.root",
+   	"../../SystProofFiles_btadDiscri//proof_JER.root",
 	 "JER");
 	 
    //for LeptSF 
    ReaderBDT(thevertex_kut, 
-   	"../../SystProofFiles/proof_LeptfSFup.root",
-   	"../../SystProofFiles/proof_LeptfSFup.root",
+   	"../../SystProofFiles_btadDiscri//proof_LeptSFup.root",
+   	"../../SystProofFiles_btadDiscri//proof_LeptSFup.root",
 	 "LeptSFup");
 	 
    //for LeptSF 
    ReaderBDT(thevertex_kut, 
-   	"../../SystProofFiles/proof_LeptfSFdown.root",
-   	"../../SystProofFiles/proof_LeptfSFdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_LeptSFdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_LeptSFdown.root",
 	 "LeptSFdown");
 	 
 
@@ -2756,88 +2862,101 @@ void ReaderBDT(){
    
    //for PU up
    ReaderBDT(thevertex_kut, 
-   	"../../SystProofFiles/proof_PUup.root",
-   	"../../SystProofFiles/proof_PUup.root",
+   	"../../SystProofFiles_btadDiscri//proof_PUup.root",
+   	"../../SystProofFiles_btadDiscri//proof_PUup.root",
 	 "PUup");
    
 	 
    //for PU down
    ReaderBDT(thevertex_kut, 
-   	"../../SystProofFiles/proof_PUdown.root",
-   	"../../SystProofFiles/proof_PUdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_PUdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_PUdown.root",
 	 "PUdown");
    
    
    
    //for btag up
    ReaderBDT(thevertex_kut, 
-   	"../../SystProofFiles/proof_btagUP.root",
-   	"../../SystProofFiles/proof_btagUP.root",
-	 "btagup");
+   	"../../SystProofFiles_btadDiscri//proof_btagUp.root",
+   	"../../SystProofFiles_btadDiscri//proof_btagUp.root",
+	 "btagUp");
    
    
    
    //for btag down
    ReaderBDT(thevertex_kut, 
-   	"../../SystProofFiles/proof_btagDown.root",
-   	"../../SystProofFiles/proof_btagDown.root",
+   	"../../SystProofFiles_btadDiscri//proof_btagDown.root",
+   	"../../SystProofFiles_btadDiscri//proof_btagDown.root",
 	 "btagdown");
   
       
    
    //for match up
    ReaderBDT(thevertex_kut, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Matchup");
    
    
    //for match down
    ReaderBDT(thevertex_kut, 
-   	"../../SystProofFiles/proof_norm_WZmatchdown.root",
-   	"../../SystProofFiles/proof_norm_WZmatchdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Matchdown");
    
    
    //for scale up
    ReaderBDT(thevertex_kut, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri/proof_nom.root",
 	 "Scaleup");
    
    
    //for scale down
    ReaderBDT(thevertex_kut, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Scaledown");
    
    //for top mass up
    ReaderBDT(thevertex_kut, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Mtopup");
    
    
    //for top mass down
    ReaderBDT(thevertex_kut, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Mtopdown");
 
    
    //for DY up
    ReaderBDT(thevertex_kut, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "DYUp");
 	 
    //for DY down
    ReaderBDT(thevertex_kut, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "DYDown");
-   
+   	
+ 	
+   ReaderBDT(thevertex_kut, 
+   	"../../SystProofFiles_btadDiscri//proof_PDFup.root",
+   	"../../SystProofFiles_btadDiscri//proof_PDFup.root",
+	 "PDFup");
+	 
+   ReaderBDT(thevertex_kut, 
+   	"../../SystProofFiles_btadDiscri//proof_PDFdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_PDFdown.root",
+	 "PDFdown");
+	 
+	
+  
    //******************************************
    // for kct ac
    //******************************************
@@ -2845,32 +2964,32 @@ void ReaderBDT(){
    
    //for Jes Up
    ReaderBDT(thevertex_kct, 
-   	"../../SystProofFiles/proof_JESup.root",
-   	"../../SystProofFiles/proof_JESup.root",
+   	"../../SystProofFiles_btadDiscri//proof_JESup.root",
+   	"../../SystProofFiles_btadDiscri//proof_JESup.root",
    	 "JESup");
 	
    //for Jes down
    ReaderBDT(thevertex_kct, 
-   	"../../SystProofFiles/proof_JESdown.root",
-   	"../../SystProofFiles/proof_JESdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_JESdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_JESdown.root",
 	 "JESdown");
 	 
    //for JER 
    ReaderBDT(thevertex_kct, 
-   	"../../SystProofFiles/proof_JER.root",
-   	"../../SystProofFiles/proof_JER.root",
+   	"../../SystProofFiles_btadDiscri//proof_JER.root",
+   	"../../SystProofFiles_btadDiscri//proof_JER.root",
 	 "JER");
 	 
    //for LeptSF 
    ReaderBDT(thevertex_kct, 
-   	"../../SystProofFiles/proof_LeptfSFup.root",
-   	"../../SystProofFiles/proof_LeptfSFup.root",
+   	"../../SystProofFiles_btadDiscri//proof_LeptSFup.root",
+   	"../../SystProofFiles_btadDiscri//proof_LeptSFup.root",
 	 "LeptSFup");
 	 
    //for LeptSF 
    ReaderBDT(thevertex_kct, 
-   	"../../SystProofFiles/proof_LeptfSFdown.root",
-   	"../../SystProofFiles/proof_LeptfSFdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_LeptSFdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_LeptSFdown.root",
 	 "LeptSFdown");
 	 
 
@@ -2878,92 +2997,242 @@ void ReaderBDT(){
    
    //for PU up
    ReaderBDT(thevertex_kct, 
-   	"../../SystProofFiles/proof_PUup.root",
-   	"../../SystProofFiles/proof_PUup.root",
+   	"../../SystProofFiles_btadDiscri//proof_PUup.root",
+   	"../../SystProofFiles_btadDiscri//proof_PUup.root",
 	 "PUup");
    
 	 
    //for PU down
    ReaderBDT(thevertex_kct, 
-   	"../../SystProofFiles/proof_PUdown.root",
-   	"../../SystProofFiles/proof_PUdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_PUdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_PUdown.root",
 	 "PUdown");
    
    
    
    //for btag up
    ReaderBDT(thevertex_kct, 
-   	"../../SystProofFiles/proof_btagUP.root",
-   	"../../SystProofFiles/proof_btagUP.root",
-	 "btagup");
+   	"../../SystProofFiles_btadDiscri//proof_btagUp.root",
+   	"../../SystProofFiles_btadDiscri//proof_btagUp.root",
+	 "btagUp");
    
    
    
    //for btag down
    ReaderBDT(thevertex_kct, 
-   	"../../SystProofFiles/proof_btagDown.root",
-   	"../../SystProofFiles/proof_btagDown.root",
+   	"../../SystProofFiles_btadDiscri//proof_btagDown.root",
+   	"../../SystProofFiles_btadDiscri//proof_btagDown.root",
 	 "btagdown");
   
       
    
    //for match up
    ReaderBDT(thevertex_kct, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Matchup");
    
    
    //for match down
    ReaderBDT(thevertex_kct, 
-   	"../../SystProofFiles/proof_norm_WZmatchdown.root",
-   	"../../SystProofFiles/proof_norm_WZmatchdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Matchdown");
    
    
    //for scale up
    ReaderBDT(thevertex_kct, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Scaleup");
    
    
    //for scale down
    ReaderBDT(thevertex_kct, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Scaledown");
    
    //for top mass up
    ReaderBDT(thevertex_kct, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Mtopup");
    
    
    //for top mass down
    ReaderBDT(thevertex_kct, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "Mtopdown");
 
    //for top mass up
    ReaderBDT(thevertex_kct, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "DYup");
    
    
    //for DY up
    ReaderBDT(thevertex_kct, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "DYUp");
 	 
    //for DY down
    ReaderBDT(thevertex_kct, 
-   	"../../SystProofFiles/proof_nom.root",
-   	"../../SystProofFiles/proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
 	 "DYDown");
+   ReaderBDT(thevertex_kct, 
+   	"../../SystProofFiles_btadDiscri//proof_PDFup.root",
+   	"../../SystProofFiles_btadDiscri//proof_PDFup.root",
+	 "PDFup");
+	 
+   ReaderBDT(thevertex_kct, 
+   	"../../SystProofFiles_btadDiscri//proof_PDFdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_PDFdown.root",
+	 "PDFdown"); 
+	
+   */
+
+   //******************************************
+   // for tzq ac
+   //******************************************
+ /*
    
+   //for Jes Up
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_JESup.root",
+   	"../../SystProofFiles_btadDiscri//proof_JESup.root",
+   	 "JESup");
+	
+   //for Jes down
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_JESdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_JESdown.root",
+	 "JESdown");
+	 
+   //for JER 
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_JER.root",
+   	"../../SystProofFiles_btadDiscri//proof_JER.root",
+	 "JER");
+	 
+   //for LeptSF 
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_LeptSFup.root",
+   	"../../SystProofFiles_btadDiscri//proof_LeptSFup.root",
+	 "LeptSFup");
+	 
+   //for LeptSF 
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_LeptSFdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_LeptSFdown.root",
+	 "LeptSFdown");
+	 
+
+   
+   
+   //for PU up
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_PUup.root",
+   	"../../SystProofFiles_btadDiscri//proof_PUup.root",
+	 "PUup");
+   
+	 
+   //for PU down
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_PUdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_PUdown.root",
+	 "PUdown");
+   
+   
+   
+   //for btag up
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_btagUp.root",
+   	"../../SystProofFiles_btadDiscri//proof_btagUp.root",
+	 "btagUp");
+   
+   
+   
+   //for btag down
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_btagDown.root",
+   	"../../SystProofFiles_btadDiscri//proof_btagDown.root",
+	 "btagdown");
+  
+      
+   
+   //for match up
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+	 "Matchup");
+   
+   
+   //for match down
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+	 "Matchdown");
+   
+   
+   //for scale up
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+	 "Scaleup");
+   
+   
+   //for scale down
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+	 "Scaledown");
+   
+   //for top mass up
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+	 "Mtopup");
+   
+   
+   //for top mass down
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+	 "Mtopdown");
+
+   //for top mass up
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+	 "DYup");
+   
+   
+   //for DY up
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+	 "DYUp");
+	 
+   //for DY down
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+   	"../../SystProofFiles_btadDiscri//proof_nom.root",
+	 "DYDown");
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_PDFup.root",
+   	"../../SystProofFiles_btadDiscri//proof_PDFup.root",
+	 "PDFup");
+	 
+   ReaderBDT(thevertex_tzq, 
+   	"../../SystProofFiles_btadDiscri//proof_PDFdown.root",
+   	"../../SystProofFiles_btadDiscri//proof_PDFdown.root",
+	 "PDFdown"); 
+	
+   
+*/
 }

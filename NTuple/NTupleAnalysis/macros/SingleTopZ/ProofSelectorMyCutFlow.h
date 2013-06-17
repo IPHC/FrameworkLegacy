@@ -31,6 +31,11 @@
 #include "Tools/interface/JetCorrector.h"
 #include "Tools/interface/BtagHardcodedConditions.h"
 
+
+#include "Tools/interface/PDFReweighter.h"
+
+
+
 #include <TFile.h>
 #include <TTree.h>
 #include <TBranch.h>
@@ -116,7 +121,8 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector <double > SF_Fake;
   
   
-  
+  bool doBTagCVScorr ;
+  int doBTagCSV_syst;
   
   //Here define Scale Factors
   //SF_trigger applied for mumu
@@ -146,9 +152,13 @@ class ProofSelectorMyCutFlow : public TSelector {
   
   TRandom rand;
   
+  double themetcut;
+  
+  bool doPDF ;
+  int pdftype ;
+  PDFReweighter pdf; 
   
   
- 
   
   double sumSFlept_mumumu;
   double sumSFlept_mumue;
@@ -283,6 +293,50 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<TH1F> NBJet_eee_afterjetsel;
   
   
+  
+  
+  std::vector<TH1F> NBJet_mumumu_afterjetsel_bjets;
+  std::vector<TH1F> NBJet_mumue_afterjetsel_bjets ;
+  std::vector<TH1F> NBJet_eemu_afterjetsel_bjets  ;
+  std::vector<TH1F> NBJet_eee_afterjetsel_bjets	 ;
+  
+  
+  std::vector<TH1F> NBJet_mumumu_afterjetsel_cjets;
+  std::vector<TH1F> NBJet_mumue_afterjetsel_cjets ;
+  std::vector<TH1F> NBJet_eemu_afterjetsel_cjets  ;
+  std::vector<TH1F> NBJet_eee_afterjetsel_cjets	 ;
+  
+  
+  std::vector<TH1F> NBJet_mumumu_afterjetsel_ljets;
+  std::vector<TH1F> NBJet_mumue_afterjetsel_ljets ;
+  std::vector<TH1F> NBJet_eemu_afterjetsel_ljets  ;
+  std::vector<TH1F> NBJet_eee_afterjetsel_ljets	 ;
+  
+  
+  
+ 
+  
+  
+  
+  
+  
+  
+  
+  
+  std::vector<TH1F> BJetDiscri_mumumu_afterjetsel_bjets;
+  std::vector<TH1F> BJetDiscri_mumue_afterjetsel_bjets;
+  std::vector<TH1F> BJetDiscri_eemu_afterjetsel_bjets;
+  std::vector<TH1F> BJetDiscri_eee_afterjetsel_bjets;
+  
+  std::vector<TH1F> BJetDiscri_mumumu_afterjetsel_cjets;
+  std::vector<TH1F> BJetDiscri_mumue_afterjetsel_cjets;
+  std::vector<TH1F> BJetDiscri_eemu_afterjetsel_cjets;
+  std::vector<TH1F> BJetDiscri_eee_afterjetsel_cjets;
+  
+  std::vector<TH1F> BJetDiscri_mumumu_afterjetsel_ljets;
+  std::vector<TH1F> BJetDiscri_mumue_afterjetsel_ljets;
+  std::vector<TH1F> BJetDiscri_eemu_afterjetsel_ljets;
+  std::vector<TH1F> BJetDiscri_eee_afterjetsel_ljets;
   
   std::vector<TH1F> NBJet_mumumu_afterleptsel_mWT110;
   std::vector<TH1F> NBJet_mumue_afterleptsel_mWT110;
@@ -717,6 +771,109 @@ class ProofSelectorMyCutFlow : public TSelector {
   std::vector<double>  GetNvertexWeight(TString datasetName);
   
   std::vector<double>  TableToVector(double * theTable, int size);
+  
+  
+  
+double functionDiscriLjet(double CVSvalue){
+  
+  double a = 0.958359;
+  double b = 1.06131;
+  double c = -1.9045;
+  double d = 0.884829;
+  
+  double corrected_cvs = a*CVSvalue +b*pow(CVSvalue,2)  +c*pow(CVSvalue,3) +d*pow(CVSvalue,4) ;
+      return corrected_cvs;
+}
+
+double functionDiscriCjet(double CVSvalue){
+  double a = 1.11389;
+  double b = -0.538485;
+  double c = 0.428048;
+  double d = 0;
+  double corrected_cvs = a*CVSvalue +b*pow(CVSvalue,2)  +c*pow(CVSvalue,3) +d*pow(CVSvalue,4) ;
+      return corrected_cvs;
+}
+
+double functionDiscriBjet(double CVSvalue){
+  double a = 0.942535;
+  double b = -0.264954;
+  double c = 0.328049;
+  double d = 0;
+  double corrected_cvs = a*CVSvalue +b*pow(CVSvalue,2)  +c*pow(CVSvalue,3) +d*pow(CVSvalue,4) ;
+      return corrected_cvs;
+}
+
+  
+    
+double functionDiscriLjet_up(double CVSvalue){
+  
+  double a = 1.01955;
+double b = 1.06079;
+double c = -2.02085;
+double d = 0.940512;
+
+  double corrected_cvs = a*CVSvalue +b*pow(CVSvalue,2)  +c*pow(CVSvalue,3) +d*pow(CVSvalue,4) ;
+      return corrected_cvs;
+}
+
+double functionDiscriCjet_up(double CVSvalue){
+double a = 1.12734;
+double b = -0.374471;
+double c = 0.24919;
+double d = 0;
+
+  double corrected_cvs = a*CVSvalue +b*pow(CVSvalue,2)  +c*pow(CVSvalue,3) +d*pow(CVSvalue,4) ;
+      return corrected_cvs;
+}
+
+double functionDiscriBjet_up(double CVSvalue){
+double a = 1.12734;
+double b = -0.374471;
+double c = 0.24919;
+double d = 0;
+
+  double corrected_cvs = a*CVSvalue +b*pow(CVSvalue,2)  +c*pow(CVSvalue,3) +d*pow(CVSvalue,4) ;
+      return corrected_cvs;
+}
+
+  
+  
+  
+    
+double functionDiscriLjet_down(double CVSvalue){
+  double a = 0.979725;
+double b = 0.528246;
+double c = -0.838917;
+double d = 0.330947;
+
+  
+  double corrected_cvs = a*CVSvalue +b*pow(CVSvalue,2)  +c*pow(CVSvalue,3) +d*pow(CVSvalue,4) ;
+      return corrected_cvs;
+}
+
+double functionDiscriCjet_down(double CVSvalue){
+double a = 1.01008;
+double b = -0.422312;
+double c = 0.418221;
+double d = 0;
+
+
+  double corrected_cvs = a*CVSvalue +b*pow(CVSvalue,2)  +c*pow(CVSvalue,3) +d*pow(CVSvalue,4) ;
+      return corrected_cvs;
+}
+
+double functionDiscriBjet_down(double CVSvalue){
+
+double a = 0.777746;
+double b = -0.209792;
+double c = 0.440256;
+double d = 0;
+
+  double corrected_cvs = a*CVSvalue +b*pow(CVSvalue,2)  +c*pow(CVSvalue,3) +d*pow(CVSvalue,4) ;
+      return corrected_cvs;
+}
+
+  
   
   
   

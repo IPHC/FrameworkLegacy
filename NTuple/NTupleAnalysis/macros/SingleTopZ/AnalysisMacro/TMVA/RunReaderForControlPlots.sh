@@ -5,7 +5,7 @@
 VAR_FILE=TMVA_variables.txt
 CODE=ReaderBDT.C
 OUTPUTROOT=TMVApp.root
-THEVERTEX="kut"
+THEVERTEX="zut"
 ###########################
 
 mkdir BDTControlPlots
@@ -22,13 +22,14 @@ do
  VARTOREMOVE=`cat $VAR_FILE | sed -n ${I}p`
  VARTOREMOVEROOT=`echo $VARTOREMOVE | awk -F_ '{print $2}'`
  echo $VARTOREMOVE
+ rm -rf $CODE
 # cat ${CODE}.save | sed  -e "/AddVariable(\"$VARTOREMOVE\"/d" -e "s/weights/weights_$VARTOREMOVE/" -e "s/$OUTPUT/${OUTPUT}_${VARTOREMOVE}/" >> $CODE
  cat ${CODE}.save | sed  -e "/AddVariable(\"$VARTOREMOVE\"/d" -e "s/weights/weights_$VARTOREMOVE/" -e "s/$OUTPUT/${OUTPUT}_${VARTOREMOVE}/" >> $CODE
  #cp $CODE ${CODE}_${VARTOREMOVE} # for debugging
  # RUN ROOT
  root -l -b -q $CODE+
- echo "root -l -b -q PlotBDToutput.C\(\"$THEVERTEX\",\"${VARTOREMOVEROOT}_BDTcut\",\"HistoBDToutput/TMVApp_${VARTOREMOVE}_${THEVERTEX}_nom.root\"\)"
- root -l -b -q PlotBDToutput.C\(\"$THEVERTEX\",\"${VARTOREMOVEROOT}_BDTcut\",\"HistoBDToutput/TMVApp_${VARTOREMOVE}_${THEVERTEX}_nom.root\"\)
+ echo "root -l -b -q PlotBDToutput.C\(\"$THEVERTEX\",\"${VARTOREMOVEROOT}_BDTcut\",\"HistoBDToutput/TMVApp_${VARTOREMOVE}_${THEVERTEX}_bdtcutnom.root\"\)"
+ root -l -b -q PlotBDToutput.C\(\"$THEVERTEX\",\"${VARTOREMOVEROOT}_BDTcut\",\"HistoBDToutput/TMVApp_${VARTOREMOVE}_${THEVERTEX}_bdtcutnom.root\"\)
 done
 
 mv -f $CODE.save $CODE

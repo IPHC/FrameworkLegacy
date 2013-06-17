@@ -8,7 +8,7 @@
 // example of how to run this selector.
 //
 //////////////////////////////////////////////////////////
-
+ 
 #include <TCanvas.h>
 #include <TFrame.h>
 #include <TPaveText.h>
@@ -79,8 +79,8 @@ ProofSelectorMyCutFlow::ProofSelectorMyCutFlow()
   SF_WZ.push_back(0.70); //eee
   
   
-  applyWZ_finalSel = false;
-  SF_WZ_finalSel = 0.93; // 4 channels combined
+  applyWZ_finalSel = true;
+  SF_WZ_finalSel = 0.92; // 4 channels combined
   
   
   applyLeptonSF  = true;
@@ -103,7 +103,17 @@ ProofSelectorMyCutFlow::ProofSelectorMyCutFlow()
   
   useNonIsoWcand = false;
   looseIso = 0.4; //0.4
+  themetcut = 35;
   rand.SetSeed(102994949);
+  
+  
+  doPDF = false;
+  //pdftype =0 ;
+  pdftype =1  ;
+ 
+  doBTagCVScorr = true;
+  //pdf.Initialize();
+   doBTagCSV_syst = 0;
 
 }
 
@@ -419,6 +429,47 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   MyhistoManager.CreateHisto(NBJet_eee_afterjetsel   , "NBJet_eee_afterjetsel"   , datasetName,"NBjets", "Entries",2,-0.5,1.5);	
   
   
+  
+  
+  
+  MyhistoManager.CreateHisto(NBJet_mumumu_afterjetsel_bjets, "NBJet_mumumu_afterjetsel_bjets", datasetName,"NBjets", "Entries",2,-0.5,1.5);
+  MyhistoManager.CreateHisto(NBJet_mumue_afterjetsel_bjets , "NBJet_mumue_afterjetsel_bjets" , datasetName,"NBjets", "Entries",2,-0.5,1.5);
+  MyhistoManager.CreateHisto(NBJet_eemu_afterjetsel_bjets  , "NBJet_eemu_afterjetsel_bjets"  , datasetName,"NBjets", "Entries",2,-0.5,1.5);
+  MyhistoManager.CreateHisto(NBJet_eee_afterjetsel_bjets   , "NBJet_eee_afterjetsel_bjets"   , datasetName,"NBjets", "Entries",2,-0.5,1.5);	
+  
+  
+  MyhistoManager.CreateHisto(NBJet_mumumu_afterjetsel_cjets, "NBJet_mumumu_afterjetsel_cjets", datasetName,"NBjets", "Entries",2,-0.5,1.5);
+  MyhistoManager.CreateHisto(NBJet_mumue_afterjetsel_cjets , "NBJet_mumue_afterjetsel_cjets" , datasetName,"NBjets", "Entries",2,-0.5,1.5);
+  MyhistoManager.CreateHisto(NBJet_eemu_afterjetsel_cjets  , "NBJet_eemu_afterjetsel_cjets"  , datasetName,"NBjets", "Entries",2,-0.5,1.5);
+  MyhistoManager.CreateHisto(NBJet_eee_afterjetsel_cjets   , "NBJet_eee_afterjetsel_cjets"   , datasetName,"NBjets", "Entries",2,-0.5,1.5);	
+  
+  
+  MyhistoManager.CreateHisto(NBJet_mumumu_afterjetsel_ljets, "NBJet_mumumu_afterjetsel_ljets", datasetName,"NBjets", "Entries",2,-0.5,1.5);
+  MyhistoManager.CreateHisto(NBJet_mumue_afterjetsel_ljets , "NBJet_mumue_afterjetsel_ljets" , datasetName,"NBjets", "Entries",2,-0.5,1.5);
+  MyhistoManager.CreateHisto(NBJet_eemu_afterjetsel_ljets  , "NBJet_eemu_afterjetsel_ljets"  , datasetName,"NBjets", "Entries",2,-0.5,1.5);
+  MyhistoManager.CreateHisto(NBJet_eee_afterjetsel_ljets   , "NBJet_eee_afterjetsel_ljets"   , datasetName,"NBjets", "Entries",2,-0.5,1.5);	
+  
+  
+  
+  
+  MyhistoManager.CreateHisto(BJetDiscri_mumumu_afterjetsel_bjets, "BJetDiscri_mumumu_afterjetsel_bjets", datasetName,"BjetsDiscri", "Entries",100, 0, 1.);
+  MyhistoManager.CreateHisto(BJetDiscri_mumue_afterjetsel_bjets , "BJetDiscri_mumue_afterjetsel_bjets" , datasetName,"BjetsDiscri", "Entries",100, 0, 1.);
+  MyhistoManager.CreateHisto(BJetDiscri_eemu_afterjetsel_bjets  , "BJetDiscri_eemu_afterjetsel_bjets"  , datasetName,"BjetsDiscri", "Entries",100, 0, 1.);
+  MyhistoManager.CreateHisto(BJetDiscri_eee_afterjetsel_bjets   , "BJetDiscri_eee_afterjetsel_bjets"   , datasetName,"BjetsDiscri", "Entries",100, 0, 1.);
+  
+  
+  
+  MyhistoManager.CreateHisto(BJetDiscri_mumumu_afterjetsel_cjets, "BJetDiscri_mumumu_afterjetsel_cjets", datasetName,"BjetsDiscri", "Entries",100, 0, 1.);
+  MyhistoManager.CreateHisto(BJetDiscri_mumue_afterjetsel_cjets , "BJetDiscri_mumue_afterjetsel_cjets" , datasetName,"BjetsDiscri", "Entries",100, 0, 1.);
+  MyhistoManager.CreateHisto(BJetDiscri_eemu_afterjetsel_cjets  , "BJetDiscri_eemu_afterjetsel_cjets"  , datasetName,"BjetsDiscri", "Entries",100, 0, 1.);
+  MyhistoManager.CreateHisto(BJetDiscri_eee_afterjetsel_cjets   , "BJetDiscri_eee_afterjetsel_cjets"   , datasetName,"BjetsDiscri", "Entries",100, 0, 1.);
+ 
+  
+  MyhistoManager.CreateHisto(BJetDiscri_mumumu_afterjetsel_ljets, "BJetDiscri_mumumu_afterjetsel_ljets", datasetName,"BjetsDiscri", "Entries",100, 0, 1.);
+  MyhistoManager.CreateHisto(BJetDiscri_mumue_afterjetsel_ljets , "BJetDiscri_mumue_afterjetsel_ljets" , datasetName,"BjetsDiscri", "Entries",100, 0, 1.);
+  MyhistoManager.CreateHisto(BJetDiscri_eemu_afterjetsel_ljets  , "BJetDiscri_eemu_afterjetsel_ljets"  , datasetName,"BjetsDiscri", "Entries",100, 0, 1.);
+  MyhistoManager.CreateHisto(BJetDiscri_eee_afterjetsel_ljets   , "BJetDiscri_eee_afterjetsel_ljets"   , datasetName,"BjetsDiscri", "Entries",100, 0, 1.);
+ 
   
   
   
@@ -824,23 +875,23 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
 
    
     string mcfile;
-    //if( datasetName == "FCNCkut" ) // FastSim, in-time PU only
-    //   mcfile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUMC_InTime_Fall11.root");
-    // else
+    if( datasetName == "FCNCkut"  || datasetName == "FCNCkct"  || datasetName == "FCNCzut"  || datasetName == "FCNCzct") // FastSim, in-time PU only
+      mcfile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUMC_InTime_Fall11.root");
+     else
        mcfile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PU3DMC_Fall11_JLA.root");
     fexists(mcfile, true);
     
     string datafile;
-    /*if( datasetName == "FCNCkut" ) {
+    if( datasetName == "FCNCkut"|| datasetName == "FCNCkct"  || datasetName == "FCNCzut"  || datasetName == "FCNCzct" ) {
       if( !IReweight_puDown && !IReweight_puUp ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_observed_68mb.root");
       if( IReweight_puDown ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_observed_64.6mb.root");
       if( IReweight_puUp ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_observed_71.4mb.root");
     }
-    else {*/
+    else {
       if( !IReweight_puDown && !IReweight_puUp ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_68mb.root");
       if( IReweight_puDown ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_64.6mb.root");
       if( IReweight_puUp ) datafile = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/macros/data/PUData2011_71.4mb.root");
-    //}
+    }
     fexists(datafile, true);
  
  
@@ -855,6 +906,7 @@ void ProofSelectorMyCutFlow::SlaveBegin(TTree * tree)
   
   JEC_L2L3Residuals.LoadCorrections();
 
+  if(doPDF) pdf.Initialize();
   //************************************
   
   //cout << "618 " <<  endl;
@@ -967,9 +1019,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
    
   double weightITypeMC_save = Luminosity*dataset->Xsection()/dataset->getNSkimmedEvent();
   double weightITypeMC=0;
-  
-  
-  
+   
   //*****************************************************************
   // Loop over the datasets (lepton pairs which triggered the events)
   //*****************************************************************
@@ -1135,7 +1185,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
     }
     else if ( datasetName=="WZ" || datasetName=="WW" || datasetName=="ZZ"  || datasetName=="VV"
      || datasetName=="WZprivate" || datasetName=="WZprivate_scaleup"|| datasetName=="WZprivate_scaledown"
-     || datasetName=="WZprivate_matchup" || datasetName=="WZprivate_down" 
+     || datasetName=="WZprivate_matchup" || datasetName=="WZprivate_matchdown" 
     
     ) { 
       ITypeMC = 5; IsSignal = false;  Dweight[ITypeMC]= weightITypeMC; 
@@ -2231,7 +2281,9 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	      if(isData) MyhistoManager.FillHisto(NBJet_mumumu_afterjetsel ,  "NBJet_mumumu_afterjetsel",NBtaggedJets, datasetName, IsSignal, Dweight[ITypeMC]);
               else{
 	        MyhistoManager.FillHisto(NBJet_mumumu_afterjetsel ,  "NBJet_mumumu_afterjetsel",0, datasetName, IsSignal, weightb[1]*Dweight[ITypeMC]);
-	        MyhistoManager.FillHisto(NBJet_mumumu_afterjetsel ,  "NBJet_mumumu_afterjetsel",1, datasetName, IsSignal, weightb[2]*Dweight[ITypeMC]);	        
+	        MyhistoManager.FillHisto(NBJet_mumumu_afterjetsel ,  "NBJet_mumumu_afterjetsel",1, datasetName, IsSignal, weightb[2]*Dweight[ITypeMC]);	
+		
+		       
 	      }
 	      
 	      MyhistoManager.FillHisto(LeptZPt_mumumu_afterjetsel,  "LeptZPt_mumumu_afterjetsel", lept1.Pt(), datasetName, IsSignal, Dweight[ITypeMC]);
@@ -2424,10 +2476,43 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	    //--------- starts b-tag Data --------------
 	    //------------------------------------------
 	    //------------------------------------------
-	    if(NBtaggedJets >=0  &&  NBtaggedJets <=1 && isData//&&
+	      double btagdiscri = selJets[0].bTag["combinedSecondaryVertexBJetTags"];
+	      if(btagdiscri<0) btagdiscri = 0;
+	    if( abs(selJets[0].partonFlavour) == 5){
+	      if( IChannel == 0 && cand3leptonChannel == "mumumu") MyhistoManager.FillHisto(BJetDiscri_mumumu_afterjetsel_bjets, "BJetDiscri_mumumu_afterjetsel_bjets" ,  btagdiscri,datasetName, IsSignal, Dweight[ITypeMC]);
+              if( IChannel == 1 && cand3leptonChannel == "mumue" ) MyhistoManager.FillHisto(BJetDiscri_mumue_afterjetsel_bjets , "BJetDiscri_mumue_afterjetsel_bjets"  ,  btagdiscri,datasetName, IsSignal, Dweight[ITypeMC]);
+              if( IChannel == 2 && cand3leptonChannel == "eemu"  ) MyhistoManager.FillHisto(BJetDiscri_eemu_afterjetsel_bjets  , "BJetDiscri_eemu_afterjetsel_bjets"   ,  btagdiscri,datasetName, IsSignal, Dweight[ITypeMC]);
+              if( IChannel == 3 && cand3leptonChannel == "eee"   ) MyhistoManager.FillHisto(BJetDiscri_eee_afterjetsel_bjets   , "BJetDiscri_eee_afterjetsel_bjets"    ,  btagdiscri,datasetName, IsSignal, Dweight[ITypeMC]);
+	     }
+	    if( abs(selJets[0].partonFlavour) ==4 ){
+	      if( IChannel == 0 && cand3leptonChannel == "mumumu") MyhistoManager.FillHisto(BJetDiscri_mumumu_afterjetsel_cjets, "BJetDiscri_mumumu_afterjetsel_cjets" ,  btagdiscri,datasetName, IsSignal, Dweight[ITypeMC]);
+              if( IChannel == 1 && cand3leptonChannel == "mumue" ) MyhistoManager.FillHisto(BJetDiscri_mumue_afterjetsel_cjets , "BJetDiscri_mumue_afterjetsel_cjets"  ,  btagdiscri,datasetName, IsSignal, Dweight[ITypeMC]);
+              if( IChannel == 2 && cand3leptonChannel == "eemu"  ) MyhistoManager.FillHisto(BJetDiscri_eemu_afterjetsel_cjets  , "BJetDiscri_eemu_afterjetsel_cjets"   ,  btagdiscri,datasetName, IsSignal, Dweight[ITypeMC]);
+              if( IChannel == 3 && cand3leptonChannel == "eee"   ) MyhistoManager.FillHisto(BJetDiscri_eee_afterjetsel_cjets   , "BJetDiscri_eee_afterjetsel_cjets"    ,  btagdiscri,datasetName, IsSignal, Dweight[ITypeMC]);
+	     }
+	     
+	     if( abs(selJets[0].partonFlavour) <4 ){
+	      if( IChannel == 0 && cand3leptonChannel == "mumumu") MyhistoManager.FillHisto(BJetDiscri_mumumu_afterjetsel_ljets, "BJetDiscri_mumumu_afterjetsel_ljets" ,  btagdiscri,datasetName, IsSignal, Dweight[ITypeMC]);
+              if( IChannel == 1 && cand3leptonChannel == "mumue" ) MyhistoManager.FillHisto(BJetDiscri_mumue_afterjetsel_ljets , "BJetDiscri_mumue_afterjetsel_ljets"  ,  btagdiscri,datasetName, IsSignal, Dweight[ITypeMC]);
+              if( IChannel == 2 && cand3leptonChannel == "eemu"  ) MyhistoManager.FillHisto(BJetDiscri_eemu_afterjetsel_ljets  , "BJetDiscri_eemu_afterjetsel_ljets"   ,  btagdiscri,datasetName, IsSignal, Dweight[ITypeMC]);
+              if( IChannel == 3 && cand3leptonChannel == "eee"   ) MyhistoManager.FillHisto(BJetDiscri_eee_afterjetsel_ljets   , "BJetDiscri_eee_afterjetsel_ljets"    ,  btagdiscri,datasetName, IsSignal, Dweight[ITypeMC]);
+	     }
+	     
+	     
+	     
+	     
+	     
+	    if(
+	      (NBtaggedJets >=0  &&  NBtaggedJets <=1 && isData && !useNonIsoWcand ) ||
+	      (NBtaggedJets >=0  &&  NBtaggedJets <=1 && isData && useNonIsoWcand && theMET < themetcut)
+	      
+	      
+	      //&&
               //fabs(lept3.DeltaPhi(selJets[idxBtag].p4))  > 0.5 &&
               //lept3.DeltaR(  selJets[idxBtag].p4) > 0.5
 	      ){
+	    
+	    
 	    
 	   // if(!isData)  Dweight[ITypeMC]*= (1-weightb[3]-weightb[4]);
 	    
@@ -2538,8 +2623,8 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
               if( IChannel == 2 && cand3leptonChannel == "eemu"  ) MyhistoManager.FillHisto(Mt_eemu_afterbjetsel  , "Mt_eemu_afterbjetsel"   , transTop.Mt() ,datasetName, IsSignal, Dweight[ITypeMC]);
               if( IChannel == 3 && cand3leptonChannel == "eee"   ) MyhistoManager.FillHisto(Mt_eee_afterbjetsel   , "Mt_eee_afterbjetsel"    , transTop.Mt() ,datasetName, IsSignal, Dweight[ITypeMC]);
 	       //cout << "line 1103" << endl;
-	      
-	      
+
+
 
 	      // Use b jet for top mass computation
 	      topCand = neutrino + lept3 + selJets[idxBtag].p4 ;
@@ -2570,7 +2655,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 
   	      tree_deltaRZl     = (lept1+lept2).DeltaR(lept3);
   	      tree_deltaPhiZmet = (lept1+lept2).DeltaPhi(metP4);
-  	      tree_btagDiscri   = selJets[0].bTag["combinedSecondaryVertexBJetTags"];
+  	      tree_btagDiscri   = btagdiscri;
   	      tree_NJets        = float(selJets.size());
 	      
 	      
@@ -2689,21 +2774,82 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	      double sumweight = weightb[1];
 	      double therand = rand.Uniform();
 	      
+		   double btagCorrDiscri = 0;
 	      //fixme
+	      if(!doBTagCVScorr){
+	        if( weightb[1] > 0 && therand  <  weightb[1]                                     ) {NBtaggedJets = 0;}
+	        sumweight+=weightb[2];
+	        if( weightb[2] > 0 && therand  >= (sumweight-weightb[2]) && therand < sumweight  ) {NBtaggedJets = 1;}
+	        sumweight+=weightb[3];
+	        if( weightb[3] > 0 && therand  >= (sumweight-weightb[3]) && therand < sumweight  ) {NBtaggedJets = 2;}
+	        sumweight+=weightb[4];
+	        if( weightb[4] > 0 && therand  >= (sumweight-weightb[4])                         )  NBtaggedJets = 3;
+		
+		btagCorrDiscri = functionDiscriLjet(selJets[0].bTag["combinedSecondaryVertexBJetTags"]);
+		
+	      }else{
+	         NBtaggedJets = 0;
+		 for(unsigned int ijet = 0; ijet < selJets.size(); ijet++){
+    	         //cout << "jet flavor " << int(selJets[ijet].partonFlavour) << endl;
+    	           if(abs(selJets[ijet].partonFlavour)==5 ){
+	           // cout << "found b jet " << int(selJets[ijet].partonFlavour) << endl;
+	             foundASelBjet = true;
+	           }
+		   
+		   
+    	           if ( AlgoBtag==0 &&  selJets[ijet].bTag["trackCountingHighEffBJetTags"]	  >= btagDiscriCut)  NBtaggedJets++;
+    	           if ( AlgoBtag==1 &&  selJets[ijet].bTag["simpleSecondaryVertexHighEffBJetTags"] >= btagDiscriCut) NBtaggedJets++;
+    	           if ( AlgoBtag==2 &&  selJets[ijet].bTag["trackCountingHighPurBJetTags"]	  >= btagDiscriCut)  NBtaggedJets++;
+    	           if ( AlgoBtag==3 &&  selJets[ijet].bTag["simpleSecondaryVertexHighPurBJetTags"] >= btagDiscriCut) NBtaggedJets++;
+    	           if ( AlgoBtag==4 &&  selJets[ijet].bTag["jetProbabilityBJetTags"]  	          >= btagDiscriCut)  NBtaggedJets++;
+    	           if ( AlgoBtag==5 &&  selJets[ijet].bTag["jetBProbabilityBJetTags"] 	          >= btagDiscriCut)  NBtaggedJets++;
+		   
+		   
+		   if(abs(selJets[ijet].partonFlavour) == 5){ 
+		      if(doBTagCSV_syst == 0) btagCorrDiscri = functionDiscriBjet(     selJets[ijet].bTag["combinedSecondaryVertexBJetTags"]);
+		      if(doBTagCSV_syst == 1) btagCorrDiscri = functionDiscriBjet_up(  selJets[ijet].bTag["combinedSecondaryVertexBJetTags"]);
+		      if(doBTagCSV_syst == 2) btagCorrDiscri = functionDiscriBjet_down(selJets[ijet].bTag["combinedSecondaryVertexBJetTags"]);
+				}
+		   if(abs(selJets[ijet].partonFlavour) == 4) {
+		      if(doBTagCSV_syst == 0) btagCorrDiscri = functionDiscriCjet(     selJets[ijet].bTag["combinedSecondaryVertexBJetTags"]);
+		      if(doBTagCSV_syst == 1) btagCorrDiscri = functionDiscriCjet_up(  selJets[ijet].bTag["combinedSecondaryVertexBJetTags"]);
+		      if(doBTagCSV_syst == 2) btagCorrDiscri = functionDiscriCjet_down(selJets[ijet].bTag["combinedSecondaryVertexBJetTags"]);
+				}
+		   if(abs(selJets[ijet].partonFlavour) < 4) {
+		     if(doBTagCSV_syst == 0) btagCorrDiscri = functionDiscriLjet(     selJets[ijet].bTag["combinedSecondaryVertexBJetTags"]);
+		     if(doBTagCSV_syst == 1) btagCorrDiscri = functionDiscriLjet_up(  selJets[ijet].bTag["combinedSecondaryVertexBJetTags"]);
+		     if(doBTagCSV_syst == 2) btagCorrDiscri = functionDiscriLjet_down(selJets[ijet].bTag["combinedSecondaryVertexBJetTags"]);
+		   }
+		 		
+		 		
+    	           if ( AlgoBtag==6 &&  btagCorrDiscri      >= btagDiscriCut){
+   		    NBtaggedJets++;
+   		    idxBtag = ijet;
+    	           }
+   	         } 
+	       }
 	      
-	      if( weightb[1] > 0 && therand  <  weightb[1]                                     ) {NBtaggedJets = 0;}
-	      sumweight+=weightb[2];
-	      if( weightb[2] > 0 && therand  >= (sumweight-weightb[2]) && therand < sumweight  ) {NBtaggedJets = 1;}
-	      sumweight+=weightb[3];
-	      if( weightb[3] > 0 && therand  >= (sumweight-weightb[3]) && therand < sumweight  ) {NBtaggedJets = 2;}
-	      sumweight+=weightb[4];
-	      if( weightb[4] > 0 && therand  >= (sumweight-weightb[4])                         )  NBtaggedJets = 3;
 	      
 	      
-	      
+	      if(abs(selJets[0].partonFlavour) == 5   && selJets.size() == 1){
+	          MyhistoManager.FillHisto(NBJet_mumumu_afterjetsel_bjets ,  "NBJet_mumumu_afterjetsel_bjets",0, datasetName, IsSignal, weightb[1]*Dweight[ITypeMC]);
+	          MyhistoManager.FillHisto(NBJet_mumumu_afterjetsel_bjets ,  "NBJet_mumumu_afterjetsel_bjets",1, datasetName, IsSignal, weightb[2]*Dweight[ITypeMC]);	
+		}
+		if(abs(selJets[0].partonFlavour) == 4 && selJets.size() == 1){
+	          MyhistoManager.FillHisto(NBJet_mumumu_afterjetsel_cjets ,  "NBJet_mumumu_afterjetsel_cjets",0, datasetName, IsSignal, weightb[1]*Dweight[ITypeMC]);
+	          MyhistoManager.FillHisto(NBJet_mumumu_afterjetsel_cjets ,  "NBJet_mumumu_afterjetsel_cjets",1, datasetName, IsSignal, weightb[2]*Dweight[ITypeMC]);	
+		}
+		if(abs(selJets[0].partonFlavour) <=3  && selJets.size() == 1){
+	          MyhistoManager.FillHisto(NBJet_mumumu_afterjetsel_ljets ,  "NBJet_mumumu_afterjetsel_ljets",0, datasetName, IsSignal, weightb[1]*Dweight[ITypeMC]);
+	          MyhistoManager.FillHisto(NBJet_mumumu_afterjetsel_ljets ,  "NBJet_mumumu_afterjetsel_ljets",1, datasetName, IsSignal, weightb[2]*Dweight[ITypeMC]);	
+		}
 	   
-	    //fixme
-	      if(NBtaggedJets >=0  &&  NBtaggedJets <=1){
+	      //fixme
+	      if(
+	        (NBtaggedJets >=0  &&  NBtaggedJets <=1 && !useNonIsoWcand ) ||
+		(NBtaggedJets >=0  &&  NBtaggedJets <=1 &&  useNonIsoWcand && theMET < themetcut)
+		
+		){
 	      //if(NBtaggedJets >=0  &&  NBtaggedJets <=100000){
 	    
 	    
@@ -2716,7 +2862,7 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 	    if(IChannel == 1 && cand3leptonChannel == "mumue" ) MyhistoManager.FillHisto( mWT_mumue_afterbjetsel,  "mWT_mumue_afterbjetsel" , mTW, datasetName, IsSignal, Dweight[ITypeMC]);
 	    if(IChannel == 2 && cand3leptonChannel == "eemu"  ) MyhistoManager.FillHisto( mWT_eemu_afterbjetsel,   "mWT_eemu_afterbjetsel"  , mTW, datasetName, IsSignal, Dweight[ITypeMC]);
 	    if(IChannel == 3 && cand3leptonChannel == "eee"   ) MyhistoManager.FillHisto( mWT_eee_afterbjetsel,    "mWT_eee_afterbjetsel"   , mTW, datasetName, IsSignal, Dweight[ITypeMC]);
-
+            
 	
 	    double nlept = selMuons.size()+selElectrons.size();
 	    if(nlept>=4) nlept = 4;   
@@ -2797,7 +2943,20 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 
               //if( IChannel == 0 && cand3leptonChannel == "mumumu")      
                 //   cout<<"RUN "<<event->general.runNb<<" EVT "<<event->general.eventNb<<endl;
+		
+	      if(doPDF && !isData){
 	      
+    	         UncertaintyType result = pdf.Calculate(event->mc); 
+    	         std::cout << "weight : mean=" << result.Mean << " - max=" << result.Max << " - min=" << result.Min << std::endl; 
+
+    	         /*if(pdftype == 0)  Dweight[ITypeMC]= Dweight[ITypeMC]*(result.Min/result.Mean);
+    	         if(pdftype == 1)  Dweight[ITypeMC]= Dweight[ITypeMC]*(result.Max/result.Mean);*/
+		 
+    	         if(pdftype == 0 && result.Mean!=0)  Dweight[ITypeMC]= Dweight[ITypeMC]*(result.Min/result.Mean);
+    	         if(pdftype == 1 && result.Mean!=0)  Dweight[ITypeMC]= Dweight[ITypeMC]*(result.Max/result.Mean);
+		 
+ 	      }  
+
  	      if( IChannel == 0 && cand3leptonChannel == "mumumu") MyhistoManager.FillHisto(CutFlow_mumumu, "CutFlow_mumumu", 4, datasetName, IsSignal, Dweight[ITypeMC]);
  	      if( IChannel == 1 && cand3leptonChannel == "mumue" ) MyhistoManager.FillHisto(CutFlow_mumue,  "CutFlow_mumue" , 4, datasetName, IsSignal, Dweight[ITypeMC]);
  	      if( IChannel == 2 && cand3leptonChannel == "eemu"  ) MyhistoManager.FillHisto(CutFlow_eemu,   "CutFlow_eemu"  , 4, datasetName, IsSignal, Dweight[ITypeMC]);
@@ -2816,15 +2975,17 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
               if( IChannel == 2 && cand3leptonChannel == "eemu"  ) MyhistoManager.FillHisto(Mt_eemu_afterbjetsel  , "Mt_eemu_afterbjetsel"   , transTop.Mt() ,datasetName, IsSignal, Dweight[ITypeMC]);
               if( IChannel == 3 && cand3leptonChannel == "eee"   ) MyhistoManager.FillHisto(Mt_eee_afterbjetsel   , "Mt_eee_afterbjetsel"    , transTop.Mt() ,datasetName, IsSignal, Dweight[ITypeMC]);
 	       //cout << "line 1103" << endl;
-	      
-	      
-
+	       
+	  
 	      // Use b jet for top mass computation
 	      topCand = neutrino + lept3 + selJets[idxBtag].p4 ;
-	      
-	      
+	      std::cout << "*******************  evt nb " << event->general.eventNb  <<  cand3leptonChannel  << "  IChannel " << IChannel << std::endl;
+	      std::cout << "x1 " <<  event->mc.x.first <<   "  x2 " <<  event->mc.x.second  << " Q_scale " << event->mc.Q_scale << endl;
+		
+	      //cout << "Dweight[ITypeMC] 1 " << Dweight[ITypeMC] << endl;
 	      tree_EvtWeight  = Dweight[ITypeMC];
 	      
+	      //cout << "Dweight[ITypeMC] 2 " << Dweight[ITypeMC] << endl;
 	      
               tree_topMass    = topCand.M();
               tree_totMass    = (topCand + (lept1+lept2)).M();
@@ -2842,16 +3003,16 @@ Bool_t ProofSelectorMyCutFlow::Process(Long64_t entry)
 
   	      tree_deltaRZl     = (lept1+lept2).DeltaR(lept3);
   	      tree_deltaPhiZmet = (lept1+lept2).DeltaPhi(metP4);
-  	      tree_btagDiscri   = selJets[0].bTag["combinedSecondaryVertexBJetTags"];
+  	      tree_btagDiscri   = btagCorrDiscri;//btagdiscri; //selJets[0].bTag["combinedSecondaryVertexBJetTags"];
   	      tree_NJets        = float(selJets.size());
 	      
 	      
-	      if(!isData){
+	      /*if(!isData){
 	        double thrand = rand.Uniform();
 		NBtaggedJets = 0;
 	        if( thrand > weightb[1] ) NBtaggedJets = 1;
 		
-	      }
+	      }*/
 	      
 	      tree_NBJets       = float(NBtaggedJets);
 	     
@@ -3378,7 +3539,42 @@ void ProofSelectorMyCutFlow::SlaveTerminate()
   MyhistoManager.WriteMyHisto(NBJet_eee_afterleptsel_mWT110,    "all");
   
   
+  MyhistoManager.WriteMyHisto(NBJet_mumumu_afterjetsel_bjets, "all");
+  MyhistoManager.WriteMyHisto(NBJet_mumue_afterjetsel_bjets,  "all"); 
+  MyhistoManager.WriteMyHisto(NBJet_eemu_afterjetsel_bjets,   "all");  
+  MyhistoManager.WriteMyHisto(NBJet_eee_afterjetsel_bjets,    "all");   
+
+
+  MyhistoManager.WriteMyHisto(NBJet_mumumu_afterjetsel_cjets, "all");
+  MyhistoManager.WriteMyHisto(NBJet_mumue_afterjetsel_cjets,  "all"); 
+  MyhistoManager.WriteMyHisto(NBJet_eemu_afterjetsel_cjets,   "all");  
+  MyhistoManager.WriteMyHisto(NBJet_eee_afterjetsel_cjets,    "all");   
+
+
+  MyhistoManager.WriteMyHisto(NBJet_mumumu_afterjetsel_ljets, "all");
+  MyhistoManager.WriteMyHisto(NBJet_mumue_afterjetsel_ljets,  "all"); 
+  MyhistoManager.WriteMyHisto(NBJet_eemu_afterjetsel_ljets,   "all");  
+  MyhistoManager.WriteMyHisto(NBJet_eee_afterjetsel_ljets ,   "all");  
+
   
+  
+  MyhistoManager.WriteMyHisto(BJetDiscri_mumumu_afterjetsel_bjets,    "all");
+  MyhistoManager.WriteMyHisto(BJetDiscri_mumue_afterjetsel_bjets,     "all");
+  MyhistoManager.WriteMyHisto(BJetDiscri_eemu_afterjetsel_bjets,      "all");
+  MyhistoManager.WriteMyHisto(BJetDiscri_eee_afterjetsel_bjets,       "all");
+  
+  
+  
+  MyhistoManager.WriteMyHisto(BJetDiscri_mumumu_afterjetsel_cjets,    "all");
+  MyhistoManager.WriteMyHisto(BJetDiscri_mumue_afterjetsel_cjets,     "all");
+  MyhistoManager.WriteMyHisto(BJetDiscri_eemu_afterjetsel_cjets,      "all");
+  MyhistoManager.WriteMyHisto(BJetDiscri_eee_afterjetsel_cjets,       "all");
+  
+  
+  MyhistoManager.WriteMyHisto(BJetDiscri_mumumu_afterjetsel_ljets,    "all");
+  MyhistoManager.WriteMyHisto(BJetDiscri_mumue_afterjetsel_ljets,     "all");
+  MyhistoManager.WriteMyHisto(BJetDiscri_eemu_afterjetsel_ljets,      "all");
+  MyhistoManager.WriteMyHisto(BJetDiscri_eee_afterjetsel_ljets,       "all");
   
   
   

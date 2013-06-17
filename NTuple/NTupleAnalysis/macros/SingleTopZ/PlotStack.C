@@ -37,7 +37,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
 
   TString filename;
   //filename="backup_outputProof20-12-12_10-03-23_noSFapplied_Zenriched/proof_merged_noSF_Zenriched.root"; 
-  filename="RootFiles/proof_woWZSF.root";
+  filename="backup_outputProof04-06-13_20-20/proof_merged.root";
   
   
   TString channel;
@@ -743,7 +743,7 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   
   
   if(plotname =="MET_" ){
-    int bins = 5;
+    int bins = 1;
     hmc->Rebin(bins);
     histo_VV->Rebin(bins);
     histo_Wjets->Rebin(bins);
@@ -1217,8 +1217,8 @@ void PlotStack(TString plotname, TString namechan, TString selection, bool setlo
   }
   
   TString end_name;
-  if(setlogy) end_name="_Logy.pdf";
-  else end_name=".pdf"; 
+  if(setlogy) end_name="_Logy.gif";
+  else end_name=".gif"; 
   TString ratname;
   if (ratio) ratname="_r";
   else ratname="_r";

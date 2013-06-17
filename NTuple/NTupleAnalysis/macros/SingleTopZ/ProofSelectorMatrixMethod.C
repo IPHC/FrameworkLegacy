@@ -998,7 +998,7 @@ void ProofSelectorMatrixMethod::ApplySelectionAndFillHistos(IPHCTree::NTEvent *e
       // apply lepton selection
       //*****************************************************************    
       
-      if( (WmuCand.size()+ZmumuCand.size()+WeCand.size()+ZeeCand.size()) == 3) {
+      if( (WmuCand.size()+ZmumuCand.size()+WeCand.size()+ZeeCand.size()) == 3 && met.p2.Pt() > 25) {
       
         //cout<<"Wmu "<<WmuCand.size()<<" Zmu "<<ZmumuCand.size()<<"  We "<<WeCand.size()<<" Ze "<<ZeeCand.size()<<endl;
        
@@ -1020,7 +1020,7 @@ void ProofSelectorMatrixMethod::ApplySelectionAndFillHistos(IPHCTree::NTEvent *e
         // select Z candidate
         //*****************************************************************    
 	
-	
+	 
 	
 	TLorentzVector dilept;
 	TLorentzVector lept1, lept2, lept3;

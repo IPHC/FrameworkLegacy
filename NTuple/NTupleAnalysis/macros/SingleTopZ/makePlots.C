@@ -21,8 +21,8 @@
    for (int k=0; k<2; k++) {
     // loop for ratio plot
 
-    PlotStack("NVtx_",jchan,"_aftertrigsel", i, k);
-    PlotStack("NVtx_",jchan,"_afterleptsel", i, k);
+    //PlotStack("NVtx_",jchan,"_aftertrigsel", i, k);
+    //PlotStack("NVtx_",jchan,"_afterleptsel", i, k);
 
     // plot met after btag
     //PlotStack("Mt_",jchan,"_afterbjetsel", i, k);
@@ -36,7 +36,7 @@
     PlotStack("InvM_ll_",jchan,"_afterleptsel_lowbin", i, k);
     PlotStack("InvM_ll_",jchan,"_afterjetsel", i, k);
     PlotStack("InvM_ll_",jchan,"_afterleptsel", i, k);*/
-    PlotStack("InvM_ll_",jchan,"_afterbjetsel", i, k);
+    //PlotStack("InvM_ll_",jchan,"_afterbjetsel", i, k);
     
     /*PlotStack("LeptPt_",jchan,"_afterleptsel", i, k);
     PlotStack("LeptPt_",jchan,"_afterjetsel", i, k);
@@ -44,7 +44,7 @@
     
     //PlotStack("LeptPt_",jchan,"_afterbjetsel", i, k);
     
-    //PlotStack("NBJet_",jchan,"_afterbjetsel", i, k);
+    PlotStack("NBJet_",jchan,"_afterjetsel", i, k);
     
     
     //PlotStack("LeptZPt_",jchan,"_afterleptsel", i, k);
@@ -63,7 +63,7 @@
     
     //PlotStack("HT_",jchan,"_afterleptsel", i, k);
     //PlotStack("HT_",jchan,"_afterjetsel", i, k);
-    //PlotStack("HT_",jchan,"_afterbjetsel", i, k);
+   // PlotStack("HT_",jchan,"_afterbjetsel", i, k);
     //PlotStack("HT_",jchan,"_afterbjetveto", i, k);
     
     
@@ -86,9 +86,9 @@
     //PlotStack("RecoPtZ_",jchan,"_afterleptsel", i, k);
      
      
-     
+    /* 
     PlotStack("mWT_",jchan,"_afterleptsel",i,k);
-    //PlotStack("mWT_",jchan,"_afterjetsel",i,k);
+    PlotStack("mWT_",jchan,"_afterjetsel",i,k);*/
     //PlotStack("mWT_",jchan,"_afterbjetsel",i,k);
     
     //PlotStack("NJet_",jchan,"_afterbsel",i,k);
@@ -101,6 +101,8 @@
     //PlotStack("Nvtx_",jchan,"_afterleptsel",i,k);
     
     //PlotStack("DijetInvM_", jchan,"_afterleptsel_inZpeak",i,k);
+    
+    //PlotStacl("", jchan, "afterjetsel", i, k);
     
     
    } // end loop k
