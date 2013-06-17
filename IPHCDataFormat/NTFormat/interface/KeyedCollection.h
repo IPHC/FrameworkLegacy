@@ -73,6 +73,9 @@ namespace IPHCTree
     virtual void PrintInfo(std::ostream & os = std::cout) const
     { Dump(os); }
 
+    //Add a new element
+    virtual void Add(const std::string& name,const T& value);
+
     /// Fill the Collection with a std::map
     void Fill(const std::map<std::string, T>& data);
 
@@ -143,6 +146,16 @@ namespace IPHCTree
       os << " : " << Get(*it) << std::endl;
     }
   }
+
+  // -------------------------------------------------------------------------
+  // Fill
+  // -------------------------------------------------------------------------
+  template <class T>
+  void KeyedCollection<T>::Add(const std::string& name,const T& value)
+  {
+    names_.insert(name);
+    values_.push_back(value);
+  } 
 
 
   // -------------------------------------------------------------------------

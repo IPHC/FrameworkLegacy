@@ -105,7 +105,8 @@ void NTTransient::readmode_SetGenParticleFamily(const IPHCTree::NTEvent* event)
 // ---------------------------------------------------------------------------
 void NTTransient::readmode_SetKeyedCollectionName(const IPHCTree::NTEvent* event)
 {
-  if (!event->descriptor.jet_p4HLT.empty() || !event->descriptor.jet_others.empty() || !event->descriptor.jet_HeavyTag.empty() )
+  if (!event->descriptor.jet_p4HLT.empty() || !event->descriptor.jet_others.empty() || !event->descriptor.jet_HeavyTag.empty() || 
+      !event->descriptor.jet_ID.empty() || !event->descriptor.jet_bTag.empty()  )
   {
     for (unsigned int i=0;i<event->jets.names_.size();i++)
       for (unsigned int j=0;j<event->jets.collections_[i].size();j++)

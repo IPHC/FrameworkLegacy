@@ -23,6 +23,7 @@
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include <FWCore/Framework/interface/Run.h>
+#include "FWCore/Framework/interface/LuminosityBlock.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "DataFormats/Common/interface/TriggerResults.h"
@@ -41,6 +42,7 @@
 #include "DataFormats/PatCandidates/interface/Tau.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
+#include "DataFormats/Common/interface/MergeableCounter.h"
 
 //--------------------ROOT includes
 #include "TTree.h"
@@ -66,6 +68,9 @@ public:
    ~NTupleProducer ();
 
 private:
+  
+  void   endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
+  void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
   virtual void beginJob ();
   virtual void analyze (const edm::Event &, const edm::EventSetup &);
   virtual void endJob ();
@@ -80,6 +85,7 @@ private:
 
   TH1F * theNormHisto;
   TH1F * theNormHistoByTMEME;
+  TH1F * numberOfEventsBeforeMTSkimmer;
 
   SkimTopDiLepton top_filter;
   FillNTuple ntuple_filler;

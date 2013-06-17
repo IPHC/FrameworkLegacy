@@ -108,15 +108,16 @@ void MTTransient::readmode_SetGenParticleFamily(const IPHCTree::MTEvent* event)
 // ---------------------------------------------------------------------------
 void MTTransient::readmode_SetKeyedCollectionName(const IPHCTree::MTEvent* event)
 {
-  if (!event->descriptor.jet_p4HLT.empty() || !event->descriptor.jet_others.empty() || !event->descriptor.jet_bTag.empty() || !event->descriptor.jet_HeavyTag.empty())
+  if (!event->descriptor.jet_p4HLT.empty() || !event->descriptor.jet_others.empty() || !event->descriptor.jet_ID.empty() || !event->descriptor.jet_bTag.empty() || !event->descriptor.jet_HeavyTag.empty())
   {
     for (unsigned int i=0;i<event->jets.names_.size();i++)
       for (unsigned int j=0;j<event->jets.collections_[i].size();j++)
       {
-        event->jets.collections_[i][j].p4HLT.names_  = event->descriptor.jet_p4HLT; 
-        event->jets.collections_[i][j].bTag.names_   = event->descriptor.jet_bTag; 
-        event->jets.collections_[i][j].HeavyTag.names_   = event->descriptor.jet_HeavyTag; 
-        event->jets.collections_[i][j].others.names_ = event->descriptor.jet_others; 
+        event->jets.collections_[i][j].p4HLT.names_    = event->descriptor.jet_p4HLT; 
+        event->jets.collections_[i][j].ID.names_       = event->descriptor.jet_ID; 
+        event->jets.collections_[i][j].bTag.names_     = event->descriptor.jet_bTag; 
+        event->jets.collections_[i][j].HeavyTag.names_ = event->descriptor.jet_HeavyTag; 
+        event->jets.collections_[i][j].others.names_   = event->descriptor.jet_others; 
       }
   }
 
@@ -196,6 +197,12 @@ void MTTransient::writemode_SetKeyedCollectionName(IPHCTree::MTEvent* event)
       {
         if ( event->descriptor.jet_p4HLT.empty() ) event->descriptor.jet_p4HLT = event->jets.collections_[i][j].p4HLT.names_;
         else if (event->descriptor.jet_p4HLT != event->jets.collections_[i][j].p4HLT.names_) TRANSIENT_TRIGGERERROR("jets","p4HLT");
+      }
+
+      if (!event->jets.collections_[i][j].ID.names_.empty())
+      {
+        if ( event->descriptor.jet_ID.empty() ) event->descriptor.jet_ID = event->jets.collections_[i][j].ID.names_;
+        else if (event->descriptor.jet_ID != event->jets.collections_[i][j].ID.names_) TRANSIENT_TRIGGERERROR("jets","ID");
       }
 
       if (!event->jets.collections_[i][j].bTag.names_.empty())

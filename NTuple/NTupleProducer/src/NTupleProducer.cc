@@ -24,6 +24,8 @@ NTupleProducer::NTupleProducer (const edm::ParameterSet & iConfig)
   theNormHistoByTMEME = fs->make<TH1F> ("theNormHistoByTMEME",
                                         "theNormHistoByTMEME", 
                                         22223, -0.5, 22222.5);
+  numberOfEventsBeforeMTSkimmer = fs->make<TH1F> ("numberOfEventsBeforeMTSkimmer", 
+                                            "numberOfEventsBeforeMTSkimmer", 1, 0.5, 1.5);
   // Declaring the global info
   TTree* preoutput = fs->make<TTree> ("SampleInfo", "");
   IPHCTree::NTSampleInfo* sampleInfo = new IPHCTree::NTSampleInfo();
@@ -125,6 +127,7 @@ void NTupleProducer::analyze (const edm::Event & iEvent,
   // -------------------------------------
   // Saving event info into histo
   // -------------------------------------
+  
   theNormHisto->Fill(1);
   theNormHistoByTMEME->Fill(minitree->mc.TMEME);
 
@@ -154,7 +157,26 @@ void NTupleProducer::analyze (const edm::Event & iEvent,
   IPHCTree::NTTransient::InitializeBeforeWriting(ntuple);
   output->Fill ();
   if (verbose > 0) std::cout << "--> the event is successfully stored into the ntuple.";
-  std::cout << std::endl;
+  if (verbose > 0) std::cout << std::endl;
+}
+
+void NTupleProducer::beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&)
+{
+
+}
+
+void NTupleProducer::endLuminosityBlock(edm::LuminosityBlock const& lumi, edm::EventSetup const&)
+{
+    edm::Handle<edm::MergeableCounter> nEventsProcessedForLumi;
+    lumi.getByLabel("MiniTreeSkimming",nEventsProcessedForLumi);
+
+    if (!nEventsProcessedForLumi.isValid()) return;
+
+    numberOfEventsBeforeMTSkimmer->Fill(1,nEventsProcessedForLumi->value);
+    numberOfEventsBeforeMTSkimmer->SetEntries(
+                            numberOfEventsBeforeMTSkimmer->GetEntries()
+                           +nEventsProcessedForLumi->value);
+
 }
 
 
