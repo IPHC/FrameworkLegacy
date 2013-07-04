@@ -39,16 +39,16 @@ static   double WZscale_kct = 1.051/0.92 ;
  
  
 static   float bdt_BCK_cut    = 0.1;
-static   float bdt_BCK_cut_up = 0.0;
+static   float bdt_BCK_cut_up = 0.1;
  
-static bool   apply_BCK_cut    = false;
+static bool   apply_BCK_cut    = true;
 static bool   apply_BCK_cut_up = false;
 
 static bool   applyMWTcut = true;
 static double mWTcut = 20;
 std::map<TString,std::vector<TH1F*> > theHistoMap;
 
-
+static int chan = -1;
 
 void fillHisto(TString sample, std::vector<double> theVar, int ievt, double weight=1){
    
@@ -186,7 +186,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    cout << "WZscale " << WZscale << endl;
    
-   if(!apply_BCK_cut && !apply_BCK_cut_up){
+   if(!apply_BCK_cut && !apply_BCK_cut_up && chan == -1){
    
     if(thevertex == "zut") target= new TFile( ("HistoBDToutput/TMVApp_zut_"+syst+".root").Data(),"RECREATE" );
     if(thevertex == "zct") target= new TFile( ("HistoBDToutput/TMVApp_zct_"+syst+".root").Data(),"RECREATE" );
@@ -217,6 +217,30 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      if(thevertex == "xct") target= new TFile( ("HistoBDToutput/TMVApp_xct_bdtcutup_"+syst+".root").Data(),"RECREATE" );
      if(thevertex == "tzq") target= new TFile( ("HistoBDToutput/TMVApp_tzq_bdtcutup_"+syst+".root").Data(),"RECREATE" );
    
+   }
+   else if(chan == 0){
+     if(thevertex == "zut") target= new TFile( ("HistoBDToutput/TMVApp_zut_mumumu_"+syst+".root").Data(),"RECREATE" );
+     if(thevertex == "zct") target= new TFile( ("HistoBDToutput/TMVApp_zct_mumumu_"+syst+".root").Data(),"RECREATE" );
+     if(thevertex == "kut") target= new TFile( ("HistoBDToutput/TMVApp_kut_mumumu_"+syst+".root").Data(),"RECREATE" );
+     if(thevertex == "kct") target= new TFile( ("HistoBDToutput/TMVApp_kct_mumumu_"+syst+".root").Data(),"RECREATE" );   
+   }
+   else if(chan == 1){
+     if(thevertex == "zut") target= new TFile( ("HistoBDToutput/TMVApp_zut_mumue_"+syst+".root").Data(),"RECREATE" );
+     if(thevertex == "zct") target= new TFile( ("HistoBDToutput/TMVApp_zct_mumue_"+syst+".root").Data(),"RECREATE" );
+     if(thevertex == "kut") target= new TFile( ("HistoBDToutput/TMVApp_kut_mumue_"+syst+".root").Data(),"RECREATE" );
+     if(thevertex == "kct") target= new TFile( ("HistoBDToutput/TMVApp_kct_mumue_"+syst+".root").Data(),"RECREATE" );   
+   }
+   else if(chan == 2){
+     if(thevertex == "zut") target= new TFile( ("HistoBDToutput/TMVApp_zut_eemu_"+syst+".root").Data(),"RECREATE" );
+     if(thevertex == "zct") target= new TFile( ("HistoBDToutput/TMVApp_zct_eemu_"+syst+".root").Data(),"RECREATE" );
+     if(thevertex == "kut") target= new TFile( ("HistoBDToutput/TMVApp_kut_eemu_"+syst+".root").Data(),"RECREATE" );
+     if(thevertex == "kct") target= new TFile( ("HistoBDToutput/TMVApp_kct_eemu_"+syst+".root").Data(),"RECREATE" );   
+   }
+   else if(chan == 3){
+     if(thevertex == "zut") target= new TFile( ("HistoBDToutput/TMVApp_zut_eee_"+syst+".root").Data(),"RECREATE" );
+     if(thevertex == "zct") target= new TFile( ("HistoBDToutput/TMVApp_zct_eee_"+syst+".root").Data(),"RECREATE" );
+     if(thevertex == "kut") target= new TFile( ("HistoBDToutput/TMVApp_kut_eee_"+syst+".root").Data(),"RECREATE" );
+     if(thevertex == "kct") target= new TFile( ("HistoBDToutput/TMVApp_kct_eee_"+syst+".root").Data(),"RECREATE" );   
    }
    
    std::vector<TString> samples;
@@ -466,6 +490,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    theTree_DataMu->SetBranchAddress("tree_deltaPhiZleptW", &deltaPhiZleptW);   
    theTree_DataMu->SetBranchAddress("tree_met", &met);	
    if(applyMWTcut)theTree_DataMu->SetBranchAddress("tree_mTW", &mWT);	
+   theTree_DataMu->SetBranchAddress("tree_Channel", &Channel);
+    
     
     cout << "line 392 " << endl;	
    //loop on the events and calculate the BDT output
@@ -475,7 +501,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
      
      theTree_DataMu->GetEntry(ievt);
      
-     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut && applyMWTcut) continue;
      
      if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
@@ -569,13 +595,16 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    //theTree_DataEG->SetBranchAddress("tree_deltaRZleptW",   &deltaRZleptW);     
    theTree_DataEG->SetBranchAddress("tree_deltaPhiZleptW", &deltaPhiZleptW); 
    theTree_DataEG->SetBranchAddress("tree_met", &met);	
-   if(applyMWTcut)theTree_DataEG->SetBranchAddress("tree_mTW", &mWT);		
+   if(applyMWTcut)theTree_DataEG->SetBranchAddress("tree_mTW", &mWT);
+   theTree_DataEG->SetBranchAddress("tree_Channel", &Channel);		
    
    cout << "line 645 " <<endl;
    //loop on the events and calculate the BDT output
    for (Long64_t ievt=0; ievt<theTree_DataEG->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_DataEG->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
      if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
@@ -667,7 +696,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    //theTree_DataMuEG->SetBranchAddress("tree_deltaRZleptW",	&deltaRZleptW);     
    theTree_DataMuEG->SetBranchAddress("tree_deltaPhiZleptW", &deltaPhiZleptW);
    theTree_DataMuEG->SetBranchAddress("tree_met", &met);	
-   if(applyMWTcut)theTree_DataMuEG->SetBranchAddress("tree_mTW", &mWT);		
+   if(applyMWTcut)theTree_DataMuEG->SetBranchAddress("tree_mTW", &mWT);	
+   theTree_DataMuEG->SetBranchAddress("tree_Channel", &Channel);			
 
    
    
@@ -677,6 +707,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_DataMuEG->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_DataMuEG->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
      if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
@@ -789,7 +821,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    theTree_WZ->SetBranchAddress("tree_leadJetEta",	&leadJetEta);	      
    //theTree_WZ->SetBranchAddress("tree_deltaRZleptW",	&deltaRZleptW);     
    theTree_WZ->SetBranchAddress("tree_deltaPhiZleptW", &deltaPhiZleptW);	
-   if(applyMWTcut)theTree_WZ->SetBranchAddress("tree_mTW", &mWT);	
+   if(applyMWTcut)theTree_WZ->SetBranchAddress("tree_mTW", &mWT);
+   theTree_WZ->SetBranchAddress("tree_Channel", &Channel);		
    
    
     theTree_WZ->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);  
@@ -803,6 +836,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_WZ->GetEntries();ievt++) {    
      if (ievt%1000 == 0) std::cout << "--- ... WZ Processing event: " << ievt << std::endl;
      theTree_WZ->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      sumWZ_nocut +=  EvtWeight*WZscale;
      if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
@@ -882,12 +917,14 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    	
    if(applyMWTcut)theTree_WZ_nom->SetBranchAddress("tree_mTW", &mWT);	
    
-   theTree_WZ_nom->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);  
+   theTree_WZ_nom->SetBranchAddress( "tree_EvtWeight",  &EvtWeight); 
+   theTree_WZ_nom->SetBranchAddress("tree_Channel", &Channel);		 
      
    double sumWeight_WZnom=0;
    
    for (Long64_t ievt=0; ievt<theTree_WZ_nom->GetEntries();ievt++) { 
      theTree_WZ_nom->GetEntry(ievt); 
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      //if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut   ) continue;
      //if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
@@ -931,6 +968,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    if(applyMWTcut)theTree_TTbarSig->SetBranchAddress("tree_mTW", &mWT);	
    
    theTree_TTbarSig->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);  
+   theTree_TTbarSig->SetBranchAddress("tree_Channel", &Channel);		 
    
    float nTTbarSigEvents_BCKenriched = 0;
    float nTTbarSigEvents_BCKenriched_unw = 0;
@@ -938,6 +976,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TTbarSig->GetEntries();ievt++) {    
      if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TTbarSig->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
      if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
@@ -1015,7 +1055,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    
    if(applyMWTcut)theTree_Wjets->SetBranchAddress("tree_mTW", &mWT);
-   theTree_Wjets->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);  
+   theTree_Wjets->SetBranchAddress( "tree_EvtWeight",  &EvtWeight); 
+   theTree_Wjets->SetBranchAddress("tree_Channel", &Channel);	 
    
    float nWjetsEvents_BCKenriched = 0;
    float nWjetsEvents_BCKenriched_unw = 0;
@@ -1023,6 +1064,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_Wjets->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_Wjets->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
      if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
@@ -1103,6 +1146,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    if(applyMWTcut)theTree_TtW->SetBranchAddress("tree_mTW", &mWT);
    theTree_TtW->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);  
+   theTree_TtW->SetBranchAddress("tree_Channel", &Channel);	 
    
    float nTtWEvents_BCKenriched = 0;
    float nTtWEvents_BCKenriched_unw = 0;
@@ -1110,6 +1154,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TtW->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TtW->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
      if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
@@ -1191,7 +1237,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    if(applyMWTcut)theTree_TbartW->SetBranchAddress("tree_mTW", &mWT);
    
-   theTree_TbartW->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);  
+   theTree_TbartW->SetBranchAddress( "tree_EvtWeight",  &EvtWeight); 
+   theTree_TbartW->SetBranchAddress("tree_Channel", &Channel);	  
    
    float nTbartWEvents_BCKenriched = 0;
    float nTbartWEvents_BCKenriched_unw = 0;
@@ -1199,6 +1246,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TbartW->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TbartW->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut)    continue;
      if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
@@ -1283,7 +1332,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    if(applyMWTcut)theTree_TtChan->SetBranchAddress("tree_mTW", &mWT);
    
-   theTree_TtChan->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);  
+   theTree_TtChan->SetBranchAddress( "tree_EvtWeight",  &EvtWeight); 
+   theTree_TtChan->SetBranchAddress("tree_Channel", &Channel);	   
    
    float nTtChanEvents_BCKenriched = 0;
    float nTtChanEvents_BCKenriched_unw = 0;
@@ -1291,6 +1341,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TtChan->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TtChan->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
      if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
@@ -1367,7 +1419,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    if(applyMWTcut)theTree_TbartChan->SetBranchAddress("tree_mTW", &mWT);
    
-   theTree_TbartChan->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);  
+   theTree_TbartChan->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);
+   theTree_TbartChan->SetBranchAddress("tree_Channel", &Channel);	     
    
    float nTbartChanEvents_BCKenriched = 0;
    float nTbartChanEvents_BCKenriched_unw = 0;
@@ -1375,6 +1428,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TbartChan->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TbartChan->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
      if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
@@ -1456,7 +1511,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    if(applyMWTcut)theTree_TsChan->SetBranchAddress("tree_mTW", &mWT);
    
-   theTree_TsChan->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);  
+   theTree_TsChan->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);
+   theTree_TsChan->SetBranchAddress("tree_Channel", &Channel);	     
    
    float nTsChanEvents_BCKenriched = 0;
    float nTsChanEvents_BCKenriched_unw = 0;
@@ -1464,6 +1520,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TsChan->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TsChan->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
      if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
@@ -1542,7 +1600,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    
    if(applyMWTcut)theTree_TbarsChan->SetBranchAddress("tree_mTW", &mWT);
-   theTree_TbarsChan->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);  
+   theTree_TbarsChan->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);
+   theTree_TbarsChan->SetBranchAddress("tree_Channel", &Channel);	       
    
    float nTbarsChanEvents_BCKenriched = 0;
    float nTbarsChanEvents_BCKenriched_unw = 0;
@@ -1550,6 +1609,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TbarsChan->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TbarsChan->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
      if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
@@ -1631,7 +1692,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    
    if(applyMWTcut)theTree_TZq->SetBranchAddress("tree_mTW", &mWT);
-   theTree_TZq->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);  
+   theTree_TZq->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);
+   theTree_TZq->SetBranchAddress("tree_Channel", &Channel);	    
    
    float nTZqEvents_BCKenriched = 0;
    float nTZqEvents_BCKenriched_unw = 0;
@@ -1639,6 +1701,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TZq->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TZq->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
      if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
@@ -1715,7 +1779,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    
    if(applyMWTcut)theTree_ZZ->SetBranchAddress("tree_mTW", &mWT);
-   theTree_ZZ->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);  
+   theTree_ZZ->SetBranchAddress( "tree_EvtWeight",  &EvtWeight); 
+   theTree_ZZ->SetBranchAddress("tree_Channel", &Channel);	     
    
    float nZZEvents_BCKenriched = 0;
    float nZZEvents_BCKenriched_unw = 0;
@@ -1723,6 +1788,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_ZZ->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_ZZ->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
      if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
@@ -1805,7 +1872,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    if(applyMWTcut) theTree_WW->SetBranchAddress("tree_mTW", &mWT);
    
-   theTree_WW->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);  
+   theTree_WW->SetBranchAddress( "tree_EvtWeight",  &EvtWeight); 
+   theTree_WW->SetBranchAddress("tree_Channel", &Channel);	     
    
    float nWWEvents_BCKenriched = 0;
    float nWWEvents_BCKenriched_unw = 0;
@@ -1813,6 +1881,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_WW->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_WW->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
      if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
@@ -1893,7 +1963,7 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    if(applyMWTcut) theTree_Zjets->SetBranchAddress("tree_mTW", &mWT);
    theTree_Zjets->SetBranchAddress( "tree_EvtWeight",  &EvtWeight); 
-   theTree_Zjets->SetBranchAddress( "tree_Channel",  &Channel);    
+   theTree_Zjets->SetBranchAddress( "tree_Channel",  &Channel);  
    
    
    float mcexpectedZ = 0;
@@ -1909,6 +1979,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_Zjets->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_Zjets->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      totexpectedZjets += EvtWeight;
      if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
@@ -1997,6 +2069,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_DYToLL_M10_50->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_DYToLL_M10_50->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      totexpectedZjets += EvtWeight;
      if(apply_BCK_cut    && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
@@ -2140,12 +2214,15 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    if(applyMWTcut) theTree_FCNC->SetBranchAddress("tree_mTW", &mWT);
    theTree_FCNC->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);  
+   theTree_FCNC->SetBranchAddress( "tree_Channel",  &Channel);  
    
    
    //loop on the events and calculate the BDT output
    for (Long64_t ievt=0; ievt<theTree_FCNC->GetEntries();ievt++) {    
      if (ievt%100 == 0) std::cout << "--- ... FCNC Processing event: " << ievt << std::endl;
      theTree_FCNC->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
      if(apply_BCK_cut_up && reader->EvaluateMVA( "BDT") < bdt_BCK_cut_up) continue;
@@ -2239,6 +2316,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_DataMuZjets->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_DataMuZjets->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      totexpectedZjets_data++;
      if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
@@ -2325,6 +2404,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_DataEGZjets->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_DataEGZjets->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      totexpectedZjets_data++;
      if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
@@ -2411,6 +2492,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_DataMuEGZjets->GetEntries();ievt++) {    
      //if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_DataMuEGZjets->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      totexpectedZjets_data++;
      if(apply_BCK_cut && reader->EvaluateMVA( "BDT") > bdt_BCK_cut) continue;
@@ -2497,7 +2580,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    
    if(applyMWTcut)theTree_TTbarSigZjets->SetBranchAddress("tree_mTW", &mWT);	
    
-   theTree_TTbarSigZjets->SetBranchAddress( "tree_EvtWeight",  &EvtWeight);  
+   theTree_TTbarSigZjets->SetBranchAddress( "tree_EvtWeight",  &EvtWeight); 
+   theTree_TTbarSigZjets->SetBranchAddress( "tree_Channel",  &Channel);    
    
    float nTTbarSigZjetsEvents_BCKenriched = 0;
    float nTTbarSigZjetsEvents_BCKenriched_unw = 0;
@@ -2505,6 +2589,8 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    for (Long64_t ievt=0; ievt<theTree_TTbarSigZjets->GetEntries();ievt++) {    
      if (ievt%10 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
      theTree_TTbarSigZjets->GetEntry(ievt);
+     
+     if(chan != Channel && chan != -1) continue;
      if(mWT < mWTcut&& applyMWTcut) continue;
      totexpectedTTbarZjets+=EvtWeight;
      
@@ -2577,17 +2663,12 @@ void ReaderBDT(TString thevertex, TString stringinput, TString stringinput_FCNC 
    cout << "number of signal events " << histBdt_FCNC->Integral() << endl;
    
    
-   if(syst == "DYup"){
+   if(syst == "DYUp"){
       totexpectedZjets_data -= 2*totexpectedTTbarZjets;
       histBdt_DataZjets->Add(histBdt_DataZjets, histBdt_TTbarSigZjets, 1, -2);
       histBdt_DataZjets->Scale( totexpectedZjets/totexpectedZjets_data);
    }
-   else if(syst == "DYdown"){
-      //totexpectedZjets_data -= 2*totexpectedTTbarZjets;
-      //histBdt_DataZjets->Add(histBdt_DataZjets, histBdt_TTbarSigZjets, 1, -2);
-      //histBdt_DataZjets->Scale( totexpectedZjets/totexpectedZjets_data);
-   }
-   if(syst != "DYup" && syst != "DYdown") {
+   if(syst != "DYUp" && syst != "DYDown") {
       totexpectedZjets_data -= totexpectedTTbarZjets;
       histBdt_DataZjets->Add(histBdt_DataZjets, histBdt_TTbarSigZjets, 1, -1);
       histBdt_DataZjets->Scale( totexpectedZjets/totexpectedZjets_data);
@@ -2634,6 +2715,14 @@ void ReaderBDT(){
    TString thevertex_xut = "xut";
    TString thevertex_xct = "xct";
    TString thevertex_tzq = "tzq";
+   
+   
+   /*
+  ReaderBDT(thevertex_zut, 
+    "../../SystRootFiles_2013_07_01/proof_nobtagcorr.root",
+    "../../SystRootFiles_2013_07_01/proof_nobtagcorr.root",
+     "nobtagcorr");
+   */
    
    
 	
@@ -2774,15 +2863,19 @@ void ReaderBDT(){
    
 	 
     ReaderBDT(thevertex_zut, 
-   	"../../SystRootFiles_2013_07_01/proof_PDFup.root",
-   	"../../SystRootFiles_2013_07_01/proof_PDFup.root",
+   	//"../../SystRootFiles_2013_07_01/proof_PDFup.root",
+   	//"../../SystRootFiles_2013_07_01/proof_PDFup.root",
+   	"../../SystProofFiles_btadDiscri_update/proof_PDFup.root",
+   	"../../SystProofFiles_btadDiscri_update/proof_PDFup.root",
 	 "PDFup"); 
     
     ReaderBDT(thevertex_zut, 
-   	"../../SystRootFiles_2013_07_01/proof_PDFdown.root",
-   	"../../SystRootFiles_2013_07_01/proof_PDFdown.root",
+   	//"../../SystRootFiles_2013_07_01/proof_PDFdown.root",
+   	//"../../SystRootFiles_2013_07_01/proof_PDFdown.root",
+   	"../../SystProofFiles_btadDiscri_update/proof_PDFdown.root",
+   	"../../SystProofFiles_btadDiscri_update/proof_PDFdown.root",
 	 "PDFdown");
-	 
+	
 	 
 	 
    //for DY up
@@ -2942,7 +3035,7 @@ void ReaderBDT(){
    	"../../SystRootFiles_2013_07_01/proof_nom.root",
    	"../../SystRootFiles_2013_07_01/proof_nom.root",
 	 "DYDown");
-	 
+	
       //for DY up
    ReaderBDT(thevertex_zct, 
    	"../../SystRootFiles_2013_07_01/proof_nom.root",
@@ -3061,8 +3154,8 @@ void ReaderBDT(){
    
    //for scale up
    ReaderBDT(thevertex_kut, 
-   	"../../SystRootFiles_2013_07_01/roof_nom.root",
-   	"../../SystRootFiles_2013_07_01/roof_nom.root",
+   	"../../SystRootFiles_2013_07_01/proof_nom.root",
+   	"../../SystRootFiles_2013_07_01/proof_nom.root",
 	 "Scaleup");
    
    
