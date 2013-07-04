@@ -12,15 +12,20 @@
 #include <iostream>
 
 static bool doSyst= false;
+static bool doStat= true;
+
+int rebin = 2;
+
+bool savePlot = false;
 bool doBtagUncerOnly   = false;
 bool doPDFUncerOnly    = false;
 bool doJESUncerOnly    = false;
 bool doMatchUncerOnly  = false;
 bool doScaleUncerOnly  = false;
 
+bool doFitZ = true;
 
-
-static bool plotFCNC= true;
+static bool plotFCNC= false;
 
 void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   
@@ -41,6 +46,7 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   
   double WZscale = 1.;
   double TZqscale = 0.27;
+  double ZZscale = 0.06/0.08;
   
   
   Int_t stati=0;
@@ -76,7 +82,7 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   gStyle->SetFrameLineStyle(1);
   gStyle->SetFrameLineWidth(1);
   
-  // For the histo:
+  // For the histo:rebin
   // ROOT . gStyle . SetHistFillColor(1);
   // ROOT . gStyle . SetHistFillStyle(0);
   gStyle->SetHistLineColor(1);
@@ -204,14 +210,15 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
    std::cout << "file " << theFile << std::endl;
    
    
-   TH1F * histBdt_Data      = (TH1F*)filechannel->Get( (theVariable+"_Data"     ).Data());
-   TH1F * histBdt_WZ        = (TH1F*)filechannel->Get( (theVariable+"_WZ"       ).Data());
-   TH1F * histBdt_ZZ        = (TH1F*)filechannel->Get( (theVariable+"_ZZ"       ).Data());
-   TH1F * histBdt_Zjets     = (TH1F*)filechannel->Get( (theVariable+"_Zjets"    ).Data());
-   TH1F * histBdt_DataZjets = (TH1F*)filechannel->Get( (theVariable+"_DataZjets").Data());  
+   TH1F * histBdt_Data      = (TH1F*)((TH1F*)filechannel->Get( (theVariable+"_Data"     ).Data()))->Clone();
+   TH1F * histBdt_WZ        = (TH1F*)((TH1F*)filechannel->Get( (theVariable+"_WZ"       ).Data()))->Clone();
+   TH1F * histBdt_ZZ        = (TH1F*)((TH1F*)filechannel->Get( (theVariable+"_ZZ"       ).Data()))->Clone();
+   TH1F * histBdt_Zjets     = (TH1F*)((TH1F*)filechannel->Get( (theVariable+"_Zjets"    ).Data()))->Clone();
+   TH1F * histBdt_DataZjets = (TH1F*)((TH1F*)filechannel->Get( (theVariable+"_DataZjets").Data()))->Clone();  
    //TH1F * histBdt_DataZjets = (TH1F*)filechannel->Get( (theVariable+"_Zjets").Data());  
-   TH1F * histBdt_TTbar     = (TH1F*)filechannel->Get( (theVariable+"_TTbarSig" ).Data());
-   TH1F * histBdt_TZq       = (TH1F*)filechannel->Get( (theVariable+"_TZq"      ).Data());
+   TH1F * histBdt_TTbar     = (TH1F*)((TH1F*)filechannel->Get( (theVariable+"_TTbarSig" ).Data()))->Clone();
+   TH1F * histBdt_TTbarZjets= (TH1F*)((TH1F*)filechannel->Get( (theVariable+"_TTbarSigZjets" ).Data()))->Clone();
+   TH1F * histBdt_TZq       = (TH1F*)((TH1F*)filechannel->Get( (theVariable+"_TZq"      ).Data()))->Clone();
    
    
    TH1F * histBdt_FCNC ;     
@@ -222,15 +229,17 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
      histBdt_FCNC = (TH1F*)filechannel->Get((theVariable+"_Signal").Data());	 
    } 
   
+  histBdt_ZZ->Scale(ZZscale);
   
-  histBdt_FCNC->Scale(10);
+  //histBdt_FCNC->Scale(10);
+  
   histBdt_Data->SetLineColor(1);
-  int rebin = 1;
   if(theVariable!="NJets" && theVariable!="NBJets"){
     histBdt_Data->Rebin(rebin);  
     histBdt_WZ->Rebin(rebin);	     
     histBdt_ZZ->Rebin(rebin);	     
-    histBdt_TTbar->Rebin(rebin);	     
+    histBdt_TTbar->Rebin(rebin);     
+    histBdt_TTbarZjets->Rebin(rebin);	     
     histBdt_Zjets->Rebin(rebin);	     
     histBdt_FCNC->Rebin(rebin);  
     histBdt_DataZjets->Rebin(rebin);
@@ -238,14 +247,30 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   }
   
   //histBdt_WZ->Scale(0.905713);
+  
   histBdt_WZ->Scale(WZscale);
+  
+  
+  /*
+  histBdt_WZ->Scale(1+2.75079*0.1);     
+  histBdt_ZZ->Scale(1-0.228660*0.3);	
+  histBdt_TZq->Scale(1-0.0967*0.5);
+  histBdt_TTbar->Scale(1-3*0.17996);
+  histBdt_DataZjets->Scale(1-0.3*0.36251);
+  */
+  
+  
+  
   histBdt_WZ->Add(histBdt_ZZ);
   //histBdt_DataZjets->Add(histBdt_DataZjets, histBdt_TTbar, 1, -0.05*histBdt_DataZjets->Integral()/histBdt_TTbar->Integral());
-  histBdt_DataZjets->Scale(histBdt_Zjets->Integral()/histBdt_DataZjets->Integral());
+  if(theVariable != "MVA_BDT") {
+    histBdt_DataZjets->Add(histBdt_DataZjets, histBdt_TTbarZjets, 1, -1);
+    histBdt_DataZjets->Scale(histBdt_Zjets->Integral()/histBdt_DataZjets->Integral());
+  }
   
   histBdt_TZq->Scale(TZqscale);
   
-  
+  cout << histBdt_DataZjets->GetMean() << endl;
   
   histBdt_WZ->SetFillColor(13);
   histBdt_DataZjets->SetFillColor(kAzure-2);
@@ -254,18 +279,30 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   THStack* hs= new THStack();
   
   histBdt_WZ->GetXaxis()->SetLabelSize(0.);
+  
+  
+  
+  
+  
   histBdt_DataZjets->GetXaxis()->SetLabelSize(0.);
   
   histBdt_TTbar->SetFillColor(kRed-7);
   
   
   hs->Add(histBdt_WZ);
-  hs->Add(histBdt_TTbar);
-  hs->Add(histBdt_TZq);
-  hs->Add(histBdt_DataZjets);
+  if(!doFitZ){
+    hs->Add(histBdt_TTbar);
+    hs->Add(histBdt_TZq);
+    hs->Add(histBdt_DataZjets);
+  }else{
+    histBdt_Data->Add(histBdt_TTbar,	  -1.);
+    histBdt_Data->Add(histBdt_TZq,	  -1.);
+    histBdt_Data->Add(histBdt_DataZjets,  -1.);
+  
+  }
 
 
-
+  
   
   hs->Draw("histo");
   hs->GetXaxis()->SetLabelSize(0.);
@@ -283,12 +320,14 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   
   histBdt_FCNC->SetLineWidth(2.0);
   histBdt_FCNC->SetLineColor(1.);
+  //histBdt_FCNC->Scale(0.01);
   histBdt_FCNC->GetXaxis()->SetLabelSize(0.);
   if(plotFCNC) histBdt_FCNC->Draw("histosame");
   
   double theWZscale = 1.0;
    if(theVertex == "zut") theWZscale = 0.72;
-   if(theVertex == "zct") theWZscale = 0.64; 
+   //if(theVertex == "zct") theWZscale = 0.64; 
+   if(theVertex == "zct") theWZscale = 0.64;
    if(theVertex == "kut") theWZscale = 0.82; 
    if(theVertex == "kct") theWZscale = 0.90; 
    
@@ -300,10 +339,11 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
    
   
   TH1F* herrorband =  (TH1F*) histBdt_WZ->Clone();
-  herrorband->Add(histBdt_DataZjets);
-  herrorband->Add(histBdt_TTbar);
-  herrorband->Add(histBdt_TZq);
- 
+  if(!doFitZ){
+    herrorband->Add(histBdt_DataZjets);
+    herrorband->Add(histBdt_TTbar);
+    herrorband->Add(histBdt_TZq);
+  }
   
   TH1F* herrorband_btagup ;
   TH1F* herrorband_btagdown   ;
@@ -330,24 +370,109 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   cout << "histBdt_TZq->Integral()       " << histBdt_TZq->Integral() << endl;
   
   
-  TFile * filebta_btagup   = new TFile("HistoBDToutput/TMVApp_zut_btagUp.root");
-  TFile * filebta_btagdown = new TFile("HistoBDToutput/TMVApp_zut_btagdown.root");
-  //TFile * filebta_norw     = new TFile("HistoBDToutput/TMVApp_zut_noreweight.root");
+  TFile * filebta_btagup;   
+  TFile * filebta_btagdown ;
+  TFile * filebta_norw;
   
-  TFile * filebta_PDFup  = new TFile("HistoBDToutput/TMVApp_zut_PDFup.root");
-  TFile * filebta_PDFdown = new TFile("HistoBDToutput/TMVApp_zut_PDFdown.root");
+  TFile * filebta_PDFup ; 
+  TFile * filebta_PDFdown;
   
-  TFile * filebta_JESup  = new TFile("HistoBDToutput/TMVApp_zut_JESup.root");
-  TFile * filebta_JESdown = new TFile("HistoBDToutput/TMVApp_zut_JESdown.root");
+  TFile * filebta_JESup  ;
+  TFile * filebta_JESdown;
   
-  TFile * filebta_Matchup   = new TFile("HistoBDToutput/TMVApp_zut_Matchup.root");
-  TFile * filebta_Matchdown = new TFile("HistoBDToutput/TMVApp_zut_Matchdown.root");
+  TFile * filebta_Matchup ;  
+  TFile * filebta_Matchdown; 
   
-  TFile * filebta_Scaleup   = new TFile("HistoBDToutput/TMVApp_zut_Scaleup.root");
-  TFile * filebta_Scaledown = new TFile("HistoBDToutput/TMVApp_zut_Scaledown.root");
+  TFile * filebta_Scaleup  ; 
+  TFile * filebta_Scaledown ;
   
+  TFile * filebta_DYup  ; 
+  TFile * filebta_DYdown ;
+
+  
+  if(theVertex == "zut" && doSyst) {
+    filebta_btagup    = new TFile("HistoBDToutput/TMVApp_zut_btagUp.root");
+    filebta_btagdown  = new TFile("HistoBDToutput/TMVApp_zut_btagdown.root");
+    //filebta_norw      = new TFile("HistoBDToutput/TMVApp_zut_noreweight.root");
+  
+    filebta_PDFup     = new TFile("HistoBDToutput/TMVApp_zut_PDFup.root");
+    filebta_PDFdown   = new TFile("HistoBDToutput/TMVApp_zut_PDFdown.root");
+  
+    filebta_JESup     = new TFile("HistoBDToutput/TMVApp_zut_JESup.root");
+    filebta_JESdown   = new TFile("HistoBDToutput/TMVApp_zut_JESdown.root");
+  
+    filebta_Matchup   = new TFile("HistoBDToutput/TMVApp_zut_Matchup.root");
+    filebta_Matchdown = new TFile("HistoBDToutput/TMVApp_zut_Matchdown.root");
+  
+    filebta_Scaleup   = new TFile("HistoBDToutput/TMVApp_zut_Scaleup.root");
+    filebta_Scaledown = new TFile("HistoBDToutput/TMVApp_zut_Scaledown.root");
+  }
+  
+  if(theVertex == "zct"&& doSyst){
+  
+    filebta_btagup    = new TFile("HistoBDToutput/TMVApp_zct_btagUp.root");
+    filebta_btagdown  = new TFile("HistoBDToutput/TMVApp_zct_btagdown.root");
+    filebta_norw      = new TFile("HistoBDToutput/TMVApp_zct_noreweight.root");
+  
+    filebta_PDFup     = new TFile("HistoBDToutput/TMVApp_zct_PDFup.root");
+    filebta_PDFdown   = new TFile("HistoBDToutput/TMVApp_zct_PDFdown.root");
+  
+    filebta_JESup     = new TFile("HistoBDToutput/TMVApp_zct_JESup.root");
+    filebta_JESdown   = new TFile("HistoBDToutput/TMVApp_zct_JESdown.root");
+  
+    filebta_Matchup   = new TFile("HistoBDToutput/TMVApp_zct_Matchup.root");
+    filebta_Matchdown = new TFile("HistoBDToutput/TMVApp_zct_Matchdown.root");
+  
+    filebta_Scaleup   = new TFile("HistoBDToutput/TMVApp_zct_Scaleup.root");
+    filebta_Scaledown = new TFile("HistoBDToutput/TMVApp_zct_Scaledown.root");
+    
+    filebta_DYup   = new TFile("HistoBDToutput/TMVApp_zct_DYUp.root");
+    filebta_DYdown = new TFile("HistoBDToutput/TMVApp_zct_DYDown.root");
+  }
+  
+  if(theVertex == "kut"&& doSyst){
+  
+    filebta_btagup    = new TFile("HistoBDToutput/TMVApp_kut_btagUp.root");
+    filebta_btagdown  = new TFile("HistoBDToutput/TMVApp_kut_btagdown.root");
+    filebta_norw      = new TFile("HistoBDToutput/TMVApp_kut_noreweight.root");
+  
+    filebta_PDFup     = new TFile("HistoBDToutput/TMVApp_kut_PDFup.root");
+    filebta_PDFdown   = new TFile("HistoBDToutput/TMVApp_kut_PDFdown.root");
+  
+    filebta_JESup     = new TFile("HistoBDToutput/TMVApp_kut_JESup.root");
+    filebta_JESdown   = new TFile("HistoBDToutput/TMVApp_kut_JESdown.root");
+  
+    filebta_Matchup   = new TFile("HistoBDToutput/TMVApp_kut_Matchup.root");
+    filebta_Matchdown = new TFile("HistoBDToutput/TMVApp_kut_Matchdown.root");
+  
+    filebta_Scaleup   = new TFile("HistoBDToutput/TMVApp_kut_Scaleup.root");
+    filebta_Scaledown = new TFile("HistoBDToutput/TMVApp_kut_Scaledown.root");
+  }
+
+
+  
+  if(theVertex == "kct"&& doSyst){
+  
+    filebta_btagup    = new TFile("HistoBDToutput/TMVApp_kct_btagUp.root");
+    filebta_btagdown  = new TFile("HistoBDToutput/TMVApp_kct_btagdown.root");
+    filebta_norw      = new TFile("HistoBDToutput/TMVApp_kct_noreweight.root");
+  
+    filebta_PDFup     = new TFile("HistoBDToutput/TMVApp_kct_PDFup.root");
+    filebta_PDFdown   = new TFile("HistoBDToutput/TMVApp_kct_PDFdown.root");
+  
+    filebta_JESup     = new TFile("HistoBDToutput/TMVApp_kct_JESup.root");
+    filebta_JESdown   = new TFile("HistoBDToutput/TMVApp_kct_JESdown.root");
+  
+    filebta_Matchup   = new TFile("HistoBDToutput/TMVApp_kct_Matchup.root");
+    filebta_Matchdown = new TFile("HistoBDToutput/TMVApp_kct_Matchdown.root");
+  
+    filebta_Scaleup   = new TFile("HistoBDToutput/TMVApp_kct_Scaleup.root");
+    filebta_Scaledown = new TFile("HistoBDToutput/TMVApp_kct_Scaledown.root");
+  }
+
+  cout << "4324 " << endl;
    
-  if(!doSyst){
+  if(doStat){
     for (int ierr=1; ierr<=herrorband->GetNbinsX(); ierr++) {
     double error_all = pow(histBdt_WZ->GetBinError(ierr), 2) // stat
                         + pow(histBdt_WZ->GetBinContent(ierr)*theWZscale_err/theWZscale, 2) // syst SF 
@@ -360,8 +485,8 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
 				(histBdt_ZZ->GetBinContent(ierr)+histBdt_TTbar->GetBinContent(ierr)+histBdt_TZq->GetBinContent(ierr))
 				
 				*0.025, 2); // syst lumi
-				cout << "error_all 1 " << error_all << endl;
-				cout << "theVariable " << theVariable << endl;
+				//cout << "error_all 1 " << error_all << endl;
+				//cout << "theVariable " << theVariable << endl;
 			if(theVariable == "NBJets" || theVariable == "NBJets_BDTcut" )	{
 			   cout << "in " << endl;
 			  if(ierr == 1) error_all=error_all+pow(histBdt_WZ->GetBinContent(ierr)*0.11, 2); 
@@ -370,52 +495,68 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
 			
 			}
 			
-				cout << "error_all 2 " << error_all << endl;	
+				//cout << "error_all 2 " << error_all << endl;	
     herrorband->SetBinError(ierr, sqrt(error_all));
     
     }
   }
-  else{
-  
+  if(doSyst){
+    cout << "starts do syst" << endl;
     //------------------------------------------
     //adding btag systematics
     //------------------------------------------
      
-    TH1F * histBdt_WZ_btagup        = (TH1F*)filebta_btagup->Get( (theVariable+"_WZ"       ).Data());
-    TH1F * histBdt_ZZ_btagup        = (TH1F*)filebta_btagup->Get( (theVariable+"_ZZ"       ).Data());
-    TH1F * histBdt_Zjets_btagup     = (TH1F*)filebta_btagup->Get( (theVariable+"_Zjets"    ).Data()); 
-    TH1F * histBdt_TTbar_btagup     = (TH1F*)filebta_btagup->Get( (theVariable+"_TTbarSig" ).Data());
-    TH1F * histBdt_TZq_btagup       = (TH1F*)filebta_btagup->Get( (theVariable+"_TZq"      ).Data());
+    TH1F * histBdt_WZ_btagup        = (TH1F*)((TH1F*)filebta_btagup->Get( (theVariable+"_WZ"       ).Data()))->Clone();
+    TH1F * histBdt_ZZ_btagup        = (TH1F*)((TH1F*)filebta_btagup->Get( (theVariable+"_ZZ"       ).Data()))->Clone();
+    TH1F * histBdt_Zjets_btagup     = (TH1F*)((TH1F*)filebta_btagup->Get( (theVariable+"_Zjets"    ).Data()))->Clone(); 
+    TH1F * histBdt_TTbar_btagup     = (TH1F*)((TH1F*)filebta_btagup->Get( (theVariable+"_TTbarSig" ).Data()))->Clone();
+    TH1F * histBdt_TZq_btagup       = (TH1F*)((TH1F*)filebta_btagup->Get( (theVariable+"_TZq"      ).Data()))->Clone();
+    
+    histBdt_WZ_btagup->Rebin(rebin);   
+    histBdt_ZZ_btagup->Rebin(rebin);   
+    histBdt_Zjets_btagup->Rebin(rebin);
+    histBdt_TTbar_btagup->Rebin(rebin);
+    histBdt_TZq_btagup->Rebin(rebin);  
+    
+    histBdt_WZ_btagup->   Scale((histBdt_WZ->Integral() - histBdt_ZZ->Integral())/histBdt_WZ_btagup->Integral());
     
     
-    histBdt_WZ_btagup->Scale(histBdt_WZ->Integral()/histBdt_WZ_btagup->Integral());
-    histBdt_TTbar_btagup->Scale(histBdt_TTbar->Integral()/histBdt_TTbar_btagup->Integral());
-    histBdt_TZq_btagup->Scale(histBdt_TZq->Integral()/histBdt_TZq_btagup->Integral());
     
-    
-    
+    cout << "******************************* " << endl;
     herrorband_btagup =  (TH1F*) histBdt_WZ_btagup->Clone();
-    herrorband_btagup->Add(histBdt_DataZjets);
-    herrorband_btagup->Add(histBdt_TTbar_btagup);
-    herrorband_btagup->Add(histBdt_TZq_btagup);
     
-    TH1F * histBdt_WZ_btagdown        = (TH1F*)filebta_btagdown->Get( (theVariable+"_WZ"       ).Data());
-    TH1F * histBdt_ZZ_btagdown        = (TH1F*)filebta_btagdown->Get( (theVariable+"_ZZ"       ).Data());
-    TH1F * histBdt_Zjets_btagdown     = (TH1F*)filebta_btagdown->Get( (theVariable+"_Zjets"    ).Data()); 
-    TH1F * histBdt_TTbar_btagdown     = (TH1F*)filebta_btagdown->Get( (theVariable+"_TTbarSig" ).Data());
-    TH1F * histBdt_TZq_btagdown       = (TH1F*)filebta_btagdown->Get( (theVariable+"_TZq"      ).Data());
+    if(!doFitZ){
+      herrorband_btagup->Add(histBdt_DataZjets);
+      herrorband_btagup->Add(histBdt_TTbar_btagup);
+      herrorband_btagup->Add(histBdt_TZq_btagup);
+      herrorband_btagup->Add(histBdt_ZZ_btagup);
+    }
     
+    TH1F * histBdt_WZ_btagdown        = (TH1F*)((TH1F*)filebta_btagdown->Get( (theVariable+"_WZ"       ).Data()))->Clone();
+    TH1F * histBdt_ZZ_btagdown        = (TH1F*)((TH1F*)filebta_btagdown->Get( (theVariable+"_ZZ"       ).Data()))->Clone();
+    TH1F * histBdt_Zjets_btagdown     = (TH1F*)((TH1F*)filebta_btagdown->Get( (theVariable+"_Zjets"    ).Data()))->Clone(); 
+    TH1F * histBdt_TTbar_btagdown     = (TH1F*)((TH1F*)filebta_btagdown->Get( (theVariable+"_TTbarSig" ).Data()))->Clone();
+    TH1F * histBdt_TZq_btagdown       = (TH1F*)((TH1F*)filebta_btagdown->Get( (theVariable+"_TZq"      ).Data()))->Clone();
     
-    histBdt_WZ_btagdown->Scale(histBdt_WZ->Integral()/histBdt_WZ_btagdown->Integral());
-    histBdt_TTbar_btagdown->Scale(histBdt_TTbar->Integral()/histBdt_TTbar_btagdown->Integral());
-    histBdt_TZq_btagdown->Scale(histBdt_TZq->Integral()/histBdt_TZq_btagdown->Integral());
+    histBdt_WZ_btagdown->Rebin(rebin);   
+    histBdt_ZZ_btagdown->Rebin(rebin);   
+    histBdt_Zjets_btagdown->Rebin(rebin);
+    histBdt_TTbar_btagdown->Rebin(rebin);
+    histBdt_TZq_btagdown->Rebin(rebin);  
+    
+    histBdt_WZ_btagdown->Scale((histBdt_WZ->Integral() - histBdt_ZZ->Integral())/histBdt_WZ_btagdown->Integral());
+    //histBdt_TTbar_btagdown->Scale(histBdt_TTbar->Integral()/histBdt_TTbar_btagdown->Integral());
+    //histBdt_TZq_btagdown->Scale(histBdt_TZq->Integral()/histBdt_TZq_btagdown->Integral());
     
     
     
     herrorband_btagdown =  (TH1F*) histBdt_WZ_btagdown->Clone();
-    herrorband_btagdown->Add(histBdt_DataZjets);
-    herrorband_btagdown->Add(histBdt_TTbar_btagdown);
-    herrorband_btagdown->Add(histBdt_TZq_btagdown);
+    if(!doFitZ){
+      herrorband_btagdown->Add(histBdt_DataZjets);
+      herrorband_btagdown->Add(histBdt_TTbar_btagdown);
+      herrorband_btagdown->Add(histBdt_TZq_btagdown);
+      herrorband_btagdown->Add(histBdt_ZZ_btagdown);
+    }
     
     
     /*TH1F * histBdt_WZ_norw        = (TH1F*)filebta_norw->Get( (theVariable+"_WZ"       ).Data());
@@ -435,220 +576,387 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
     //adding PDF systematics
     //------------------------------------------
      
-    TH1F * histBdt_WZ_PDFup        = (TH1F*)filebta_PDFup->Get( (theVariable+"_WZ"       ).Data());
-    TH1F * histBdt_ZZ_PDFup        = (TH1F*)filebta_PDFup->Get( (theVariable+"_ZZ"       ).Data());
-    TH1F * histBdt_Zjets_PDFup     = (TH1F*)filebta_PDFup->Get( (theVariable+"_Zjets"    ).Data()); 
-    TH1F * histBdt_TTbar_PDFup     = (TH1F*)filebta_PDFup->Get( (theVariable+"_TTbarSig" ).Data());
-    TH1F * histBdt_TZq_PDFup       = (TH1F*)filebta_PDFup->Get( (theVariable+"_TZq"      ).Data());
+    TH1F * histBdt_WZ_PDFup        = (TH1F*)((TH1F*)filebta_PDFup->Get( (theVariable+"_WZ"       ).Data()))->Clone();
+    TH1F * histBdt_ZZ_PDFup        = (TH1F*)((TH1F*)filebta_PDFup->Get( (theVariable+"_ZZ"       ).Data()))->Clone();
+    TH1F * histBdt_Zjets_PDFup     = (TH1F*)((TH1F*)filebta_PDFup->Get( (theVariable+"_Zjets"    ).Data()))->Clone(); 
+    TH1F * histBdt_TTbar_PDFup     = (TH1F*)((TH1F*)filebta_PDFup->Get( (theVariable+"_TTbarSig" ).Data()))->Clone();
+    TH1F * histBdt_TZq_PDFup       = (TH1F*)((TH1F*)filebta_PDFup->Get( (theVariable+"_TZq"      ).Data()))->Clone();
     
+    histBdt_WZ_PDFup->Rebin(rebin);   
+    histBdt_ZZ_PDFup->Rebin(rebin);   
+    histBdt_Zjets_PDFup->Rebin(rebin);
+    histBdt_TTbar_PDFup->Rebin(rebin);
+    histBdt_TZq_PDFup->Rebin(rebin); 
     
-    histBdt_WZ_PDFup->Scale(histBdt_WZ->Integral()/histBdt_WZ_PDFup->Integral());
-    histBdt_TTbar_PDFup->Scale(histBdt_TTbar->Integral()/histBdt_TTbar_PDFup->Integral());
-    histBdt_TZq_PDFup->Scale(histBdt_TZq->Integral()/histBdt_TZq_PDFup->Integral());
-
-    
-    cout << "histBdt_WZ_PDFup    " << histBdt_WZ_PDFup->Integral() << endl;
-    cout << "histBdt_TTbar_PDFup " << histBdt_TTbar_PDFup->Integral() << endl;
-    cout << "histBdt_TZq_PDFup   " << histBdt_TZq_PDFup->Integral() << endl;
+    histBdt_WZ_PDFup->Scale((histBdt_WZ->Integral() - histBdt_ZZ->Integral())/histBdt_WZ_PDFup->Integral());
     
     
     
     herrorband_PDFup =  (TH1F*) histBdt_WZ_PDFup->Clone();
-    cout << "herrorband_PDFup->Integral() 1 " << herrorband_PDFup->Integral() << endl;
-    herrorband_PDFup->Add(histBdt_DataZjets);
-    herrorband_PDFup->Add(histBdt_TTbar_PDFup);
-    herrorband_PDFup->Add(histBdt_TZq_PDFup);
-    cout << "herrorband_PDFup->Integral() 2 "  << herrorband_PDFup->Integral()<< endl;
+    if(!doFitZ){
+      herrorband_PDFup->Add(histBdt_DataZjets);
+      herrorband_PDFup->Add(histBdt_TTbar_PDFup);
+      herrorband_PDFup->Add(histBdt_TZq_PDFup);
+      herrorband_PDFup->Add(histBdt_ZZ_PDFup);
+    }
     
     
     
+    TH1F * histBdt_WZ_PDFdown        = (TH1F*)((TH1F*)filebta_PDFdown->Get( (theVariable+"_WZ"       ).Data()))->Clone();
+    TH1F * histBdt_ZZ_PDFdown        = (TH1F*)((TH1F*)filebta_PDFdown->Get( (theVariable+"_ZZ"       ).Data()))->Clone();
+    TH1F * histBdt_Zjets_PDFdown     = (TH1F*)((TH1F*)filebta_PDFdown->Get( (theVariable+"_Zjets"    ).Data()))->Clone(); 
+    TH1F * histBdt_TTbar_PDFdown     = (TH1F*)((TH1F*)filebta_PDFdown->Get( (theVariable+"_TTbarSig" ).Data()))->Clone();
+    TH1F * histBdt_TZq_PDFdown       = (TH1F*)((TH1F*)filebta_PDFdown->Get( (theVariable+"_TZq"      ).Data()))->Clone();
     
-    TH1F * histBdt_WZ_PDFdown        = (TH1F*)filebta_PDFdown->Get( (theVariable+"_WZ"       ).Data());
-    TH1F * histBdt_ZZ_PDFdown        = (TH1F*)filebta_PDFdown->Get( (theVariable+"_ZZ"       ).Data());
-    TH1F * histBdt_Zjets_PDFdown     = (TH1F*)filebta_PDFdown->Get( (theVariable+"_Zjets"    ).Data()); 
-    TH1F * histBdt_TTbar_PDFdown     = (TH1F*)filebta_PDFdown->Get( (theVariable+"_TTbarSig" ).Data());
-    TH1F * histBdt_TZq_PDFdown       = (TH1F*)filebta_PDFdown->Get( (theVariable+"_TZq"      ).Data());
+    histBdt_WZ_PDFdown->Rebin(rebin);   
+    histBdt_ZZ_PDFdown->Rebin(rebin);   
+    histBdt_Zjets_PDFdown->Rebin(rebin);
+    histBdt_TTbar_PDFdown->Rebin(rebin);
+    histBdt_TZq_PDFdown->Rebin(rebin); 
     
-    
-    histBdt_WZ_PDFdown->Scale(histBdt_WZ->Integral()/histBdt_WZ_PDFdown->Integral());
-    histBdt_TTbar_PDFdown->Scale(histBdt_TTbar->Integral()/histBdt_TTbar_PDFdown->Integral());
-    histBdt_TZq_PDFdown->Scale(histBdt_TZq->Integral()/histBdt_TZq_PDFdown->Integral());
+    histBdt_WZ_PDFdown->Scale((histBdt_WZ->Integral() - histBdt_ZZ->Integral())/histBdt_WZ_PDFdown->Integral());
     
     herrorband_PDFdown =  (TH1F*) histBdt_WZ_PDFdown->Clone();
-    herrorband_PDFdown->Add(histBdt_DataZjets);
-    herrorband_PDFdown->Add(histBdt_TTbar_PDFdown);
-    herrorband_PDFdown->Add(histBdt_TZq_PDFdown);
+    if(!doFitZ){
+      herrorband_PDFdown->Add(histBdt_DataZjets);
+      herrorband_PDFdown->Add(histBdt_TTbar_PDFdown);
+      herrorband_PDFdown->Add(histBdt_TZq_PDFdown);
+      herrorband_PDFdown->Add(histBdt_ZZ_PDFdown);
+    }
     
     //------------------------------------------
     //adding JES systematics
     //------------------------------------------
     
      
-    TH1F * histBdt_WZ_JESup        = (TH1F*)filebta_JESup->Get( (theVariable+"_WZ"       ).Data());
-    TH1F * histBdt_ZZ_JESup        = (TH1F*)filebta_JESup->Get( (theVariable+"_ZZ"       ).Data());
-    TH1F * histBdt_Zjets_JESup     = (TH1F*)filebta_JESup->Get( (theVariable+"_Zjets"    ).Data()); 
-    TH1F * histBdt_TTbar_JESup     = (TH1F*)filebta_JESup->Get( (theVariable+"_TTbarSig" ).Data());
-    TH1F * histBdt_TZq_JESup       = (TH1F*)filebta_JESup->Get( (theVariable+"_TZq"      ).Data());
-    
-    histBdt_WZ_JESup->Scale(histBdt_WZ->Integral()/histBdt_WZ_JESup->Integral());
+    TH1F * histBdt_WZ_JESup        = (TH1F*)((TH1F*)filebta_JESup->Get( (theVariable+"_WZ"       ).Data()))->Clone();
+    TH1F * histBdt_ZZ_JESup        = (TH1F*)((TH1F*)filebta_JESup->Get( (theVariable+"_ZZ"       ).Data()))->Clone();
+    TH1F * histBdt_Zjets_JESup     = (TH1F*)((TH1F*)filebta_JESup->Get( (theVariable+"_Zjets"    ).Data()))->Clone(); 
+    TH1F * histBdt_TTbar_JESup     = (TH1F*)((TH1F*)filebta_JESup->Get( (theVariable+"_TTbarSig" ).Data()))->Clone();
+    TH1F * histBdt_TZq_JESup       = (TH1F*)((TH1F*)filebta_JESup->Get( (theVariable+"_TZq"      ).Data()))->Clone();
+       
+    histBdt_WZ_JESup->Rebin(rebin);   
+    histBdt_ZZ_JESup->Rebin(rebin);   
+    histBdt_Zjets_JESup->Rebin(rebin);
+    histBdt_TTbar_JESup->Rebin(rebin);
+    histBdt_TZq_JESup->Rebin(rebin); 
+
+    histBdt_WZ_JESup->Scale((histBdt_WZ->Integral() - histBdt_ZZ->Integral())/histBdt_WZ_JESup->Integral());
     
     herrorband_JESup =  (TH1F*) histBdt_WZ_JESup->Clone();
-    herrorband_JESup->Add(histBdt_DataZjets);
-    herrorband_JESup->Add(histBdt_TTbar_JESup);
-    herrorband_JESup->Add(histBdt_TZq_JESup);
+    if(!doFitZ){
+      herrorband_JESup->Add(histBdt_DataZjets);
+      herrorband_JESup->Add(histBdt_TTbar_JESup);
+      herrorband_JESup->Add(histBdt_TZq_JESup);
+      herrorband_JESup->Add(histBdt_ZZ_JESup);
+    }
     
-    TH1F * histBdt_WZ_JESdown        = (TH1F*)filebta_JESdown->Get( (theVariable+"_WZ"       ).Data());
-    TH1F * histBdt_ZZ_JESdown        = (TH1F*)filebta_JESdown->Get( (theVariable+"_ZZ"       ).Data());
-    TH1F * histBdt_Zjets_JESdown     = (TH1F*)filebta_JESdown->Get( (theVariable+"_Zjets"    ).Data()); 
-    TH1F * histBdt_TTbar_JESdown     = (TH1F*)filebta_JESdown->Get( (theVariable+"_TTbarSig" ).Data());
-    TH1F * histBdt_TZq_JESdown       = (TH1F*)filebta_JESdown->Get( (theVariable+"_TZq"      ).Data());
+    TH1F * histBdt_WZ_JESdown        = (TH1F*)((TH1F*)filebta_JESdown->Get( (theVariable+"_WZ"       ).Data()))->Clone();
+    TH1F * histBdt_ZZ_JESdown        = (TH1F*)((TH1F*)filebta_JESdown->Get( (theVariable+"_ZZ"       ).Data()))->Clone();
+    TH1F * histBdt_Zjets_JESdown     = (TH1F*)((TH1F*)filebta_JESdown->Get( (theVariable+"_Zjets"    ).Data()))->Clone(); 
+    TH1F * histBdt_TTbar_JESdown     = (TH1F*)((TH1F*)filebta_JESdown->Get( (theVariable+"_TTbarSig" ).Data()))->Clone();
+    TH1F * histBdt_TZq_JESdown       = (TH1F*)((TH1F*)filebta_JESdown->Get( (theVariable+"_TZq"      ).Data()))->Clone();
     
-    histBdt_WZ_JESdown->Scale(histBdt_WZ->Integral()/histBdt_WZ_JESdown->Integral());
+    histBdt_WZ_JESdown->Rebin(rebin);   
+    histBdt_ZZ_JESdown->Rebin(rebin);   
+    histBdt_Zjets_JESdown->Rebin(rebin);
+    histBdt_TTbar_JESdown->Rebin(rebin);
+    histBdt_TZq_JESdown->Rebin(rebin); 
+
+    histBdt_WZ_JESdown->Scale((histBdt_WZ->Integral() - histBdt_ZZ->Integral())/histBdt_WZ_JESdown->Integral());
     
     herrorband_JESdown =  (TH1F*) histBdt_WZ_JESdown->Clone();
-    herrorband_JESdown->Add(histBdt_DataZjets);
-    herrorband_JESdown->Add(histBdt_TTbar_JESdown);
-    herrorband_JESdown->Add(histBdt_TZq_JESdown);
+    if(!doFitZ){
+      herrorband_JESdown->Add(histBdt_DataZjets);
+      herrorband_JESdown->Add(histBdt_TTbar_JESdown);
+      herrorband_JESdown->Add(histBdt_TZq_JESdown);
+      herrorband_JESdown->Add(histBdt_ZZ_JESdown);
+    }
     
     //------------------------------------------
     //adding Match systematics
     //------------------------------------------
     
      
-    TH1F * histBdt_WZ_Matchup        = (TH1F*)filebta_Matchup->Get( (theVariable+"_WZ"       ).Data());
-    TH1F * histBdt_ZZ_Matchup        = (TH1F*)filebta_Matchup->Get( (theVariable+"_ZZ"       ).Data());
-    TH1F * histBdt_Zjets_Matchup     = (TH1F*)filebta_Matchup->Get( (theVariable+"_Zjets"    ).Data()); 
-    TH1F * histBdt_TTbar_Matchup     = (TH1F*)filebta_Matchup->Get( (theVariable+"_TTbarSig" ).Data());
-    TH1F * histBdt_TZq_Matchup       = (TH1F*)filebta_Matchup->Get( (theVariable+"_TZq"      ).Data());
+    TH1F * histBdt_WZ_Matchup        = (TH1F*)((TH1F*)filebta_Matchup->Get( (theVariable+"_WZ"       ).Data()))->Clone();
+    TH1F * histBdt_ZZ_Matchup        = (TH1F*)((TH1F*)filebta_Matchup->Get( (theVariable+"_ZZ"       ).Data()))->Clone();
+    TH1F * histBdt_Zjets_Matchup     = (TH1F*)((TH1F*)filebta_Matchup->Get( (theVariable+"_Zjets"    ).Data()))->Clone(); 
+    TH1F * histBdt_TTbar_Matchup     = (TH1F*)((TH1F*)filebta_Matchup->Get( (theVariable+"_TTbarSig" ).Data()))->Clone();
+    TH1F * histBdt_TZq_Matchup       = (TH1F*)((TH1F*)filebta_Matchup->Get( (theVariable+"_TZq"      ).Data()))->Clone();
+      
+    histBdt_WZ_Matchup->Rebin(rebin);   
+    histBdt_ZZ_Matchup->Rebin(rebin);   
+    histBdt_Zjets_Matchup->Rebin(rebin);
+    histBdt_TTbar_Matchup->Rebin(rebin);
+    histBdt_TZq_Matchup->Rebin(rebin); 
+
     
-    
-    //cout << "histBdt_WZ_Matchup->Integral() " << histBdt_WZ_Matchup->Integral() << endl;
-    histBdt_WZ_Matchup->Scale(histBdt_WZ->Integral()/histBdt_WZ_Matchup->Integral());
-    //cout << "histBdt_WZ->Integral() " << histBdt_WZ->Integral() << endl;
-    //cout << "histBdt_WZ_Matchup->Integral() " << histBdt_WZ_Matchup->Integral() << endl;
-    
+    histBdt_WZ_Matchup->Scale((histBdt_WZ->Integral() - histBdt_ZZ->Integral())/histBdt_WZ_Matchup->Integral());
     
     herrorband_Matchup =  (TH1F*) histBdt_WZ_Matchup->Clone();
-    herrorband_Matchup->Add(histBdt_DataZjets);
-    herrorband_Matchup->Add(histBdt_TTbar);
-    herrorband_Matchup->Add(histBdt_TZq);
+    if(!doFitZ){
+      herrorband_Matchup->Add(histBdt_DataZjets);
+      herrorband_Matchup->Add(histBdt_TTbar);
+      herrorband_Matchup->Add(histBdt_TZq);
+      herrorband_Matchup->Add(histBdt_ZZ_Matchup);
+    }
     
-    TH1F * histBdt_WZ_Matchdown        = (TH1F*)filebta_Matchdown->Get( (theVariable+"_WZ"       ).Data());
-    TH1F * histBdt_ZZ_Matchdown        = (TH1F*)filebta_Matchdown->Get( (theVariable+"_ZZ"       ).Data());
-    TH1F * histBdt_Zjets_Matchdown     = (TH1F*)filebta_Matchdown->Get( (theVariable+"_Zjets"    ).Data()); 
-    TH1F * histBdt_TTbar_Matchdown     = (TH1F*)filebta_Matchdown->Get( (theVariable+"_TTbarSig" ).Data());
-    TH1F * histBdt_TZq_Matchdown       = (TH1F*)filebta_Matchdown->Get( (theVariable+"_TZq"      ).Data());
+    TH1F * histBdt_WZ_Matchdown        = (TH1F*)((TH1F*)filebta_Matchdown->Get( (theVariable+"_WZ"       ).Data()))->Clone();
+    TH1F * histBdt_ZZ_Matchdown        = (TH1F*)((TH1F*)filebta_Matchdown->Get( (theVariable+"_ZZ"       ).Data()))->Clone();
+    TH1F * histBdt_Zjets_Matchdown     = (TH1F*)((TH1F*)filebta_Matchdown->Get( (theVariable+"_Zjets"    ).Data()))->Clone(); 
+    TH1F * histBdt_TTbar_Matchdown     = (TH1F*)((TH1F*)filebta_Matchdown->Get( (theVariable+"_TTbarSig" ).Data()))->Clone();
+    TH1F * histBdt_TZq_Matchdown       = (TH1F*)((TH1F*)filebta_Matchdown->Get( (theVariable+"_TZq"      ).Data()))->Clone();
     
+    histBdt_WZ_Matchdown->Rebin(rebin);   
+    histBdt_ZZ_Matchdown->Rebin(rebin);   
+    histBdt_Zjets_Matchdown->Rebin(rebin);
+    histBdt_TTbar_Matchdown->Rebin(rebin);
+    histBdt_TZq_Matchdown->Rebin(rebin); 
     
-    histBdt_WZ_Matchdown->Scale(histBdt_WZ->Integral()/histBdt_WZ_Matchdown->Integral());
+    //cout << "histBdt_WZ_Matchdown->Integral() " << histBdt_WZ_Matchdown->Integral() << endl;
+    histBdt_WZ_Matchdown->Scale((histBdt_WZ->Integral() - histBdt_ZZ->Integral())/histBdt_WZ_Matchdown->Integral());
+    //cout << "histBdt_WZ->Integral() " << histBdt_WZ->Integral() << endl;
+    //cout << "histBdt_WZ_Matchdown->Integral() " << histBdt_WZ_Matchdown->Integral() << endl;
     
     herrorband_Matchdown =  (TH1F*) histBdt_WZ_Matchdown->Clone();
-    herrorband_Matchdown->Add(histBdt_DataZjets);
-    herrorband_Matchdown->Add(histBdt_TTbar);
-    herrorband_Matchdown->Add(histBdt_TZq);
+    if(!doFitZ){
+      herrorband_Matchdown->Add(histBdt_DataZjets);
+      herrorband_Matchdown->Add(histBdt_TTbar);
+      herrorband_Matchdown->Add(histBdt_TZq);
+      herrorband_Matchdown->Add(histBdt_ZZ_Matchdown);
+    }  
     
     
     //------------------------------------------
     //adding Scale systematics
     //------------------------------------------
     
-    TFile * filebta_Scaleup   = new TFile("HistoBDToutput/TMVApp_zut_Scaleup.root");
-    TFile * filebta_Scaledown = new TFile("HistoBDToutput/TMVApp_zut_Scaledown.root");
      
-    TH1F * histBdt_WZ_Scaleup        = (TH1F*)filebta_Scaleup->Get( (theVariable+"_WZ"       ).Data());
-    TH1F * histBdt_ZZ_Scaleup        = (TH1F*)filebta_Scaleup->Get( (theVariable+"_ZZ"       ).Data());
-    TH1F * histBdt_Zjets_Scaleup     = (TH1F*)filebta_Scaleup->Get( (theVariable+"_Zjets"    ).Data()); 
-    TH1F * histBdt_TTbar_Scaleup     = (TH1F*)filebta_Scaleup->Get( (theVariable+"_TTbarSig" ).Data());
-    TH1F * histBdt_TZq_Scaleup       = (TH1F*)filebta_Scaleup->Get( (theVariable+"_TZq"      ).Data());
+    TH1F * histBdt_WZ_Scaleup        = (TH1F*)((TH1F*)filebta_Scaleup->Get( (theVariable+"_WZ"       ).Data()))->Clone();
+    TH1F * histBdt_ZZ_Scaleup        = (TH1F*)((TH1F*)filebta_Scaleup->Get( (theVariable+"_ZZ"       ).Data()))->Clone();
+    TH1F * histBdt_Zjets_Scaleup     = (TH1F*)((TH1F*)filebta_Scaleup->Get( (theVariable+"_Zjets"    ).Data()))->Clone(); 
+    TH1F * histBdt_TTbar_Scaleup     = (TH1F*)((TH1F*)filebta_Scaleup->Get( (theVariable+"_TTbarSig" ).Data()))->Clone();
+    TH1F * histBdt_TZq_Scaleup       = (TH1F*)((TH1F*)filebta_Scaleup->Get( (theVariable+"_TZq"      ).Data()))->Clone();
     
-    histBdt_WZ_Scaleup->Scale(histBdt_WZ->Integral()/histBdt_WZ_Scaleup->Integral());
+    histBdt_WZ_Scaleup->Rebin(rebin);   
+    histBdt_ZZ_Scaleup->Rebin(rebin);   
+    histBdt_Zjets_Scaleup->Rebin(rebin);
+    histBdt_TTbar_Scaleup->Rebin(rebin);
+    histBdt_TZq_Scaleup->Rebin(rebin); 
+    
+    
+    histBdt_WZ_Scaleup->Scale((histBdt_WZ->Integral() - histBdt_ZZ->Integral())/histBdt_WZ_Scaleup->Integral());
     
     herrorband_Scaleup =  (TH1F*) histBdt_WZ_Scaleup->Clone();
-    herrorband_Scaleup->Add(histBdt_DataZjets);
-    herrorband_Scaleup->Add(histBdt_TTbar);
-    herrorband_Scaleup->Add(histBdt_TZq);
+    if(!doFitZ){
+      herrorband_Scaleup->Add(histBdt_DataZjets);
+      herrorband_Scaleup->Add(histBdt_TTbar);
+      herrorband_Scaleup->Add(histBdt_TZq);
+    }
     
-    TH1F * histBdt_WZ_Scaledown        = (TH1F*)filebta_Scaledown->Get( (theVariable+"_WZ"       ).Data());
-    TH1F * histBdt_ZZ_Scaledown        = (TH1F*)filebta_Scaledown->Get( (theVariable+"_ZZ"       ).Data());
-    TH1F * histBdt_Zjets_Scaledown     = (TH1F*)filebta_Scaledown->Get( (theVariable+"_Zjets"    ).Data()); 
-    TH1F * histBdt_TTbar_Scaledown     = (TH1F*)filebta_Scaledown->Get( (theVariable+"_TTbarSig" ).Data());
-    TH1F * histBdt_TZq_Scaledown       = (TH1F*)filebta_Scaledown->Get( (theVariable+"_TZq"      ).Data());
+    TH1F * histBdt_WZ_Scaledown        = (TH1F*)((TH1F*)filebta_Scaledown->Get( (theVariable+"_WZ"       ).Data()))->Clone();
+    TH1F * histBdt_ZZ_Scaledown        = (TH1F*)((TH1F*)filebta_Scaledown->Get( (theVariable+"_ZZ"       ).Data()))->Clone();
+    TH1F * histBdt_Zjets_Scaledown     = (TH1F*)((TH1F*)filebta_Scaledown->Get( (theVariable+"_Zjets"    ).Data()))->Clone(); 
+    TH1F * histBdt_TTbar_Scaledown     = (TH1F*)((TH1F*)filebta_Scaledown->Get( (theVariable+"_TTbarSig" ).Data()))->Clone();
+    TH1F * histBdt_TZq_Scaledown       = (TH1F*)((TH1F*)filebta_Scaledown->Get( (theVariable+"_TZq"      ).Data()))->Clone();
+
+
+     cout << "check nbin **********************  " << endl;
+     cout << "histBdt_WZ_btagup->GetNbinsX()    " << histBdt_WZ_btagup->GetNbinsX()   << endl;
+     cout << "histBdt_WZ_btagdown->GetNbinsX()  " << histBdt_WZ_btagdown->GetNbinsX() << endl;
+     cout << "histBdt_WZ_PDFup ->GetNbinsX()    " << histBdt_WZ_PDFup->GetNbinsX()    << endl;
+     cout << "histBdt_WZ_PDFdown->GetNbinsX()   " << histBdt_WZ_PDFdown->GetNbinsX()  << endl;
+     cout << "histBdt_WZ_JESup->GetNbinsX()     " << histBdt_WZ_JESup->GetNbinsX()    << endl;
+     cout << "histBdt_WZ_JESdown->GetNbinsX()   " << histBdt_WZ_JESdown->GetNbinsX()  << endl;
+     cout << "histBdt_WZ_Matchup->GetNbinsX()   " << histBdt_WZ_Matchup->GetNbinsX()  << endl;
+     cout << "histBdt_WZ_Matchdown->GetNbinsX() " << histBdt_WZ_Matchdown->GetNbinsX() << endl;
+     cout << "histBdt_WZ_Scaleup->GetNbinsX()   " << histBdt_WZ_Scaleup->GetNbinsX()   << endl;
+     cout << "histBdt_WZ_Scaledown->GetNbinsX() " << histBdt_WZ_Scaledown ->GetNbinsX()<< endl;
     
-    histBdt_WZ_Scaledown->Scale(histBdt_WZ->Integral()/histBdt_WZ_Scaledown->Integral());
+    
+    
+    /*histBdt_WZ_Scaledown->Rebin(rebin);   
+    histBdt_ZZ_Scaledown->Rebin(rebin);   
+    histBdt_Zjets_Scaledown->Rebin(rebin);
+    histBdt_TTbar_Scaledown->Rebin(rebin);
+    histBdt_TZq_Scaledown->Rebin(rebin); 
+    */
+    histBdt_WZ_Scaledown->Scale((histBdt_WZ->Integral() - histBdt_ZZ->Integral())/histBdt_WZ_Scaledown->Integral());
+    
+    
     
     herrorband_Scaledown =  (TH1F*) histBdt_WZ_Scaledown->Clone();
-    herrorband_Scaledown->Add(histBdt_DataZjets);
-    herrorband_Scaledown->Add(histBdt_TTbar);
-    herrorband_Scaledown->Add(histBdt_TZq);
+    if(!doFitZ){
+      herrorband_Scaledown->Add(histBdt_DataZjets);
+      herrorband_Scaledown->Add(histBdt_TTbar);
+      herrorband_Scaledown->Add(histBdt_TZq);
+      herrorband_Scaledown->Add(histBdt_ZZ_Scaledown);
+    }
+      cout << "end do syst" << endl;
+      
+      
+     cout << "check pointer ********************* " << endl;
+     cout << "histBdt_WZ_btagdown  " << histBdt_WZ_btagdown << endl;
+     cout << "histBdt_WZ_PDFup     " << histBdt_WZ_PDFup << endl;
+     cout << "histBdt_WZ_PDFdown   " << histBdt_WZ_PDFdown << endl;
+     cout << "histBdt_WZ_JESup     " << histBdt_WZ_JESup << endl;
+     cout << "histBdt_WZ_JESdown   " << histBdt_WZ_JESdown << endl;
+     cout << "histBdt_WZ_Matchup   " << histBdt_WZ_Matchup << endl;
+     cout << "histBdt_WZ_Matchdown " << histBdt_WZ_Matchdown << endl;
+     cout << "histBdt_WZ_Scaleup   " << histBdt_WZ_Scaleup << endl;
+     cout << "histBdt_WZ_Scaledown " << histBdt_WZ_Scaledown << endl;
+     
+     
+     
+    TH1F * histBdt_DataZjets_DYUp        = (TH1F*)((TH1F*)filebta_DYup->Get( (theVariable+"_DataZjets"       ).Data()))->Clone();
+    TH1F * histBdt_DataZjets_DYDown      = (TH1F*)((TH1F*)filebta_DYdown->Get( (theVariable+"_DataZjets"       ).Data()))->Clone();
+    cout << "808" << endl;
+    histBdt_DataZjets_DYUp->Scale(histBdt_DataZjets->Integral()/histBdt_DataZjets_DYUp->Integral());  
+    histBdt_DataZjets_DYDown ->Scale(histBdt_DataZjets->Integral()/histBdt_DataZjets_DYDown->Integral());
+     cout << "811" << endl;
     
+      for(unsigned int i=1; i<herrorband->GetNbinsX(); i++){
+  
+     
+        double newValue = histBdt_DataZjets->GetBinContent(i)*
+     	pow(histBdt_DataZjets_DYDown->GetBinContent(i)/histBdt_DataZjets->GetBinContent(i), 0.413819);
+     
+        histBdt_DataZjets->SetBinContent(i, newValue);
+  
+  }
+
+     
+     
   }
   
   
   
   
+  cout << "755 " << endl;
   
-  
-  
-
+ 
   TGraphAsymmErrors *thegraph = new TGraphAsymmErrors(herrorband);
   thegraph->SetFillStyle(3005);
   thegraph->SetFillColor(1);
-  if(doSyst){
-    for(int i=0; i<herrorband->GetNbinsX(); i++){
+  
+  cout << "***************************" << endl;
+  if(doSyst) cout << "herrorband_btagup->Integral() " << herrorband_btagup->Integral() << endl;
+  cout << "herrorband->Integral()        " << herrorband->Integral() << endl;
+  cout << "***************************" << endl;
+  
+  
+  for(int i=1; i<=herrorband->GetNbinsX(); i++){
+    
+      double theYup_error  = 0;
+      double theYdown_error = 0;
+    
+      double thevar=0;
+
+    
+    if(doSyst){
+    
+      theYup_error = pow(thegraph->GetErrorY(i)/2., 2);
+      theYdown_error = pow(thegraph->GetErrorY(i)/2., 2);
+    
+      double thevar=0;
+      //cout << "**********************   i"<< i << endl;
+      //cout << "thevar 1 " << thevar << endl;
+      
+      
+      if(herrorband_btagup->GetNbinsX() != herrorband->GetNbinsX()) cout << "different binning " << endl;
+      thevar = (herrorband_btagup->GetBinContent(i+1)-herrorband->GetBinContent(i+1));
+      if(thevar > 0) theYup_error  +=pow(thevar, 2);
+      else theYdown_error+=pow( thevar, 2);
+      //cout << "thevar 2 " << thevar << endl;
     
     
-    
-    
-    double theYup_error = pow(thegraph->GetErrorY(i)/2., 2);
-    double theYdown_error = pow(thegraph->GetErrorY(i)/2., 2);
-    
-    double thevar=0;
-    
-    thevar = (herrorband_btagup->GetBinContent(i+1)-herrorband->GetBinContent(i+1));
-    if(thevar > 0) theYup_error  +=pow(thevar, 2);
-    else theYdown_error+=pow( thevar, 2);
-    
-    
-    
-    thevar = (herrorband_PDFup->GetBinContent(i+1)-herrorband->GetBinContent(i+1));
-    if(thevar > 0) theYup_error  +=pow(thevar, 2);
-    else theYdown_error+=pow( thevar, 2); 
-    thevar = (herrorband_JESup->GetBinContent(i+1)-herrorband->GetBinContent(i+1));
-    if(thevar > 0) theYup_error  +=pow(thevar, 2);
-    else theYdown_error+=pow( thevar, 2); 
-    
-    thevar = (herrorband_Matchup->GetBinContent(i+1)-herrorband->GetBinContent(i+1));
-    if(thevar > 0) theYup_error  +=pow(thevar, 2);
-    else theYdown_error+=pow( thevar, 2);
+      if(herrorband_PDFup->GetNbinsX() != herrorband->GetNbinsX()) cout << "different binning " << endl;
+      thevar = (herrorband_PDFup->GetBinContent(i+1)-herrorband->GetBinContent(i+1));
+      if(thevar > 0) theYup_error  +=pow(thevar, 2);
+      else theYdown_error+=pow( thevar, 2); 
+      //cout << "thevar 3 " << thevar << endl;
+      
+      if(herrorband_JESup->GetNbinsX() != herrorband->GetNbinsX()) cout << "different binning " << endl;
+      thevar = (herrorband_JESup->GetBinContent(i+1)-herrorband->GetBinContent(i+1));
+      if(thevar > 0) theYup_error  +=pow(thevar, 2);
+      else theYdown_error+=pow( thevar, 2); 
+      //cout << "thevar 4 " << thevar << endl;
+      
+      
+      
+      if(herrorband_Matchup->GetNbinsX() != herrorband->GetNbinsX()) cout << "different binning " << endl;
+      thevar = (herrorband_Matchup->GetBinContent(i+1)-herrorband->GetBinContent(i+1));
+      if(thevar > 0) theYup_error  +=pow(thevar, 2);
+      else theYdown_error+=pow( thevar, 2);
+      //cout << "thevar 5 " << thevar << endl;
      
-    thevar = (herrorband_Scaleup->GetBinContent(i+1)-herrorband->GetBinContent(i+1));
-    if(thevar > 0) theYup_error  +=pow(thevar, 2);
-    else theYdown_error+=pow( thevar, 2);
+      if(herrorband_Scaleup->GetNbinsX() != herrorband->GetNbinsX()) cout << "different binning " << endl;
+      thevar = (herrorband_Scaleup->GetBinContent(i+1)-herrorband->GetBinContent(i+1));
+      if(thevar > 0) theYup_error  +=pow(thevar, 2);
+      else theYdown_error+=pow( thevar, 2);
+      //cout << "thevar 6 " << thevar << endl;
   
     
-    thevar = (herrorband_btagdown->GetBinContent(i+1)-herrorband->GetBinContent(i+1)) ;
-    if(thevar > 0) theYup_error  +=pow(thevar, 2);
-    else theYdown_error+=pow( thevar, 2);
-    thevar = (herrorband_PDFdown->GetBinContent(i+1)-herrorband->GetBinContent(i+1)) ;
-    if(thevar > 0) theYup_error  +=pow(thevar, 2);
-    else theYdown_error+=pow( thevar, 2); 
-    thevar = (herrorband_JESdown->GetBinContent(i+1)-herrorband->GetBinContent(i+1))  ;
-    if(thevar > 0) theYup_error  +=pow(thevar, 2);
-    else theYdown_error+=pow( thevar, 2);
-    thevar = (herrorband_Matchdown->GetBinContent(i+1)-herrorband->GetBinContent(i+1));
-    if(thevar > 0) theYup_error  +=pow(thevar, 2);
-    else theYdown_error+=pow( thevar, 2);
-    thevar = (herrorband_Scaledown->GetBinContent(i+1)-herrorband->GetBinContent(i+1));
-    if(thevar > 0) theYup_error  +=pow(thevar, 2);
-    else theYdown_error+=pow( thevar, 2);
     
-    thegraph->SetPointEYhigh( i, pow(theYup_error, 0.5));
-    thegraph->SetPointEYlow( i, pow(theYdown_error, 0.5));
     
+    
+      if(herrorband_btagdown->GetNbinsX() != herrorband->GetNbinsX()) cout << "different binning " << endl;
+      thevar = (herrorband_btagdown->GetBinContent(i+1)-herrorband->GetBinContent(i+1)) ;
+      if(thevar > 0) theYup_error  +=pow(thevar, 2);
+      else theYdown_error+=pow( thevar, 2);
+      //cout << "thevar 7 " << thevar << endl;
+      
+      if(herrorband_PDFdown->GetNbinsX() != herrorband->GetNbinsX()) cout << "different binning " << endl;
+      thevar = (herrorband_PDFdown->GetBinContent(i+1)-herrorband->GetBinContent(i+1)) ;
+      if(thevar > 0) theYup_error  +=pow(thevar, 2);
+      else theYdown_error+=pow( thevar, 2); 
+      //cout << "thevar 8 " << thevar << endl;
+      
+      if(herrorband_JESdown->GetNbinsX() != herrorband->GetNbinsX()) cout << "different binning " << endl;
+      thevar = (herrorband_JESdown->GetBinContent(i+1)-herrorband->GetBinContent(i+1))  ;
+      if(thevar > 0) theYup_error  +=pow(thevar, 2);
+      else theYdown_error+=pow( thevar, 2);
+      //cout << "thevar 9 " << thevar << endl;
+      
+      if(herrorband_Matchdown->GetNbinsX() != herrorband->GetNbinsX()) cout << "different binning " << endl;
+      thevar = (herrorband_Matchdown->GetBinContent(i+1)-herrorband->GetBinContent(i+1));
+      if(thevar > 0) theYup_error  +=pow(thevar, 2);
+      else theYdown_error+=pow( thevar, 2);
+      //cout << "thevar 10 " << thevar << endl;
+      
+      if(herrorband_Scaledown->GetNbinsX() != herrorband->GetNbinsX()) cout << "different binning " << endl;
+      thevar = (herrorband_Scaledown->GetBinContent(i+1)-herrorband->GetBinContent(i+1));
+      if(thevar > 0) theYup_error  +=pow(thevar, 2);
+      else theYdown_error+=pow( thevar, 2);
+      //cout << "thevar 11 " << thevar << endl;
+    
+    
+     }
+     if(doStat){
+    
+        thevar = herrorband->GetBinError(i);
+        theYup_error  +=pow(thevar, 2);
+        theYdown_error+=pow( thevar, 2);
+      
+     }
+    
+    
+    
+    
+    
+    
+    thegraph->SetPointEYhigh( i-1, pow(theYup_error, 0.5));
+    thegraph->SetPointEYlow( i-1, pow(theYdown_error, 0.5));
+    
+    
+    //cout << "tot theYup_error   " <<  pow(theYup_error, 0.5)<< endl;
+    //cout << "tot theYdown_error " << pow(theYdown_error, 0.5) << endl;
 
 	
-    }
   }
+  
+  cout << "880" << endl;
+  
   thegraph->Draw("e2same");
   //thegraph->Draw("lsame");
   /*if(doBtagUncerOnly) {
@@ -656,43 +964,95 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
     herrorband_norw->Draw("hsame");
   }*/
   
+  //if(doSyst) herrorband_btagup->SetLineColor(2);
+  //herrorband_btagup->SetLineWidth(2);
+  
+  //herrorband_btagup->Draw("same");
+  herrorband->SetMarkerStyle(21) ;
+  herrorband->SetMarkerSize(1.2) ;
+  //herrorband->Draw("epsame");
+  
+  
+  //herrorband_Scaledown->Draw();
+  //herrorband->Draw("same");
   
   
   TH1F * histo_ratio = (TH1F*) histBdt_Data->Clone();
   TH1F * histo_mc    = (TH1F*) histBdt_WZ->Clone();
-  histo_mc->Add(histBdt_DataZjets);
-  histo_mc->Add(histBdt_TTbar);
-  histo_mc->Add(histBdt_TZq);
+  if(!doFitZ){
+    histo_mc->Add(histBdt_DataZjets);
+    histo_mc->Add(histBdt_TTbar);
+    histo_mc->Add(histBdt_TZq);
+  }
+  
+  
   histo_ratio->Sumw2();
   histo_mc->Sumw2();
+  
   histo_ratio->Divide(histo_ratio, histo_mc, 1, 1, "b");
+  
+  /*for(unsigned int i=1; i<=histBdt_WZ->GetNbinsX(); i++){
+    
+    histo_ratio->SetBinError(i, 10000*thegraph->GetErrorY(i-1));
+    
+  }*/  
+  for (int ierr=1; ierr<=histo_ratio->GetNbinsX(); ierr++) {
+    double denom         = histo_mc ->GetBinContent(ierr);
+    double num     = histBdt_Data->GetBinContent(ierr);
+    if(denom <= 0 || num <= 0) histo_ratio->SetBinContent(ierr, 0);
+    if(denom <= 0 || num <= 0) histo_ratio->SetBinError(ierr, 1000);
+  }
+  TGraphAsymmErrors *theRatio = new TGraphAsymmErrors(histo_ratio);
+  
+  
+  cout << "926" << endl;
   
   for (int ierr=1; ierr<=histo_ratio->GetNbinsX(); ierr++) {
     
     double num     = histBdt_Data->GetBinContent(ierr);
     double num_err = histBdt_Data->GetBinError(ierr);
     
-    double denom     = histo_mc ->GetBinContent(ierr);
-    double denom_err = herrorband->GetBinError(ierr);
+    
+    if(histBdt_Data->GetBinContent(ierr) == -1) num_err = 1000000;
+    
+    double denom         = histo_mc ->GetBinContent(ierr);
+    double denom_err     = herrorband->GetBinError(ierr);
+    double denom_errUp   = thegraph->GetErrorYhigh(ierr-1);
+    double denom_errDown = thegraph->GetErrorYlow(ierr-1);
     
     
-    
-    double error = pow(
+    double errorUp = pow(
        pow(num_err/denom, 2)+
-       pow(num*denom_err/(denom*denom), 2)
+       pow(num*denom_errUp/(denom*denom), 2)
     , 0.5);
-    if(denom!=0){
-    /*cout << "***************" << endl;
-    cout << "num   " << num    << " pm " <<num_err  << endl;
-    cout << "denom " <<  denom << " pm " <<denom_err  << endl;
-    cout << "bin content       " << num/denom << endl;
-    cout << "bin content error " <<  error << endl;*/
-    }
-    if(denom == 0 && num == 0) histo_ratio->SetBinContent(ierr, -10);
     
-    histo_ratio->SetBinError(ierr,error );
+    
+    double errorDown = pow(
+       pow(num_err/denom, 2)+
+       pow(num*denom_errDown/(denom*denom), 2)
+    , 0.5);
+    
+    //cout << "errorUp   " << errorUp << endl;
+    //cout << "errorDown " <<  errorDown<< endl;
+    
+    
+    //histo_ratio->SetBinError(ierr, error );
+    theRatio->SetPointEYhigh( ierr-1, errorDown);
+    theRatio->SetPointEYlow(  ierr-1, errorUp);
+    
+    //cout << "get error check " << theRatio->GetErrorYhigh(ierr-1) << endl;
+    //cout << "get value check " << histo_ratio->GetBinContent(ierr) << endl;
+    
+    cout << "********* i "  << (float(ierr)/histo_ratio->GetNbinsX())*2. -1 << endl;
+    cout << "num " << num  << " pm " << num_err << endl;
+    cout << "denom " <<  denom << endl;
+    cout << "ratio " <<  num/denom << endl;
+    if(num > 0) histo_ratio->SetBinError(ierr-1, errorUp);
+    else histo_ratio->SetBinError(ierr-1, 1000);
+    
   }
   
+  cout << "970" << endl;
   /*
   cout << theVariable << endl;
   cout << theVariable << endl;
@@ -789,11 +1149,21 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   //histo_ratio->GetYaxis()->SetNdivisions(5);
   //ratio.Draw("e")
   
-  histo_ratio->SetMinimum(0.0);
-  histo_ratio->SetMaximum(2.0);
-  histo_ratio->Draw("E1X0");
-
+  histo_ratio->SetMinimum(-1.0);
+  histo_ratio->SetMaximum(3.0);
+  histo_ratio->Draw("p");
   
+  
+  
+  
+  theRatio->SetMarkerSize(1.2);
+  //theRatio->Draw("ep");
+  
+  
+  if(doFitZ && theVariable == "Zpt") {
+    //theRatio->Fit("pol1");
+    histo_ratio->Fit("pol1");
+  }
   
   TLatex *latex = new TLatex();
   latex->SetNDC();
@@ -858,11 +1228,10 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   qw->SetTextFont(42);
   qw->Draw();
   
-  
-  
+  if(savePlot){
   c1->SaveAs( ("plots/"+theVariable+"_"+theVertex+".pdf").Data());
   c1->SaveAs( ("plots/"+theVariable+"_"+theVertex+".gif").Data());
-  
+  }
   
 }
   
@@ -880,24 +1249,9 @@ void PlotBDToutput(){
    TString thevertex_xct = "xct";
    
    TString theFile_zut = "HistoBDToutput/TMVApp_zut_nom.root";
-   
-   //TString theFile_zut_btagup   = "HistoBDToutput/TMVApp_zut_btagup.root";
-   //TString theFile_zut_btagdown = "HistoBDToutput/TMVApp_zut_btagdown.root";
-   
    TString theFile_zct = "HistoBDToutput/TMVApp_zct_nom.root";
    TString theFile_kut = "HistoBDToutput/TMVApp_kut_nom.root";
    TString theFile_kct = "HistoBDToutput/TMVApp_kct_nom.root";
-   //TString theFile_zut = "HistoBDToutput/TMVApp_zut_bdtcutnom.root";
-   //TString theFile_zut = "HistoBDToutput/TMVApp_zut_btagup.root";
-   //TString theFile_zut = "HistoBDToutput/TMVApp_zut_btagdown.root";
-   
-   //PlotBDToutput(thevertex_zut, "btagDiscri"    , theFile_zut);
-   //PlotBDToutput(thevertex_zut, "btagDiscri"    , theFile_zut_btagup);
-   //PlotBDToutput(thevertex_zut, "btagDiscri"    , theFile_zut_btagdown);
-   
-   //PlotBDToutput(thevertex_zut, "NBJets"        , theFile_zut); 
-   //PlotBDToutput(thevertex_zut, "NBJets"        , theFile_zut_btagup); 
-    //PlotBDToutput(thevertex_zut, "NBJets"        , theFile_zut_btagdown); 
    
     
 /*TString theFile_zct = "HistoBDToutput/TMVApp_zct_nom.root";
@@ -905,16 +1259,27 @@ void PlotBDToutput(){
    TString theFile_kct = "HistoBDToutput/TMVApp_kct_nom.root";
    TString theFile_xut = "HistoBDToutput/TMVApp_xut_nom.root";
    TString theFile_xct = "HistoBDToutput/TMVApp_xct_nom.root";*/
-   //PlotBDToutput(thevertex_zut, "NBJets"        , theFile_zut);  
-   /*
-   PlotBDToutput(thevertex_zut, "MVA_BDT"       , theFile_zut);
-   PlotBDToutput(thevertex_zct, "MVA_BDT"       , theFile_zct);
-   PlotBDToutput(thevertex_kut, "MVA_BDT"       , theFile_kut);
-   PlotBDToutput(thevertex_kct, "MVA_BDT"       , theFile_kct);
-   */
+   
+   
+   //PlotBDToutput(thevertex_zut, "NJets"        , theFile_zut); 
+   //PlotBDToutput(thevertex_zut, "NBJets"        , theFile_zut); 
+   //PlotBDToutput(thevertex_zut, "Zpt"           , theFile_zut);
+   
+   
+   //PlotBDToutput(thevertex_zut, "MVA_BDT"       , theFile_zut); 
+   //PlotBDToutput(thevertex_zct, "MVA_BDT"       , theFile_zct);
+   //PlotBDToutput(thevertex_kut, "MVA_BDT"       , theFile_kut);
+   //PlotBDToutput(thevertex_kct, "MVA_BDT"       , theFile_kct);
+   
+   //PlotBDToutput(thevertex_zut, "topMass"       , theFile_zut);
+   
+   
+   PlotBDToutput(thevertex_zut, "Zpt"           , "HistoBDToutput/TMVApp_zut_bdtcutnom.root");
+   //PlotBDToutput(thevertex_kct, "btagDiscri"    , theFile_kct); 
+   //PlotBDToutput(thevertex_kct, "NBJets"        , theFile_zut); 
+   
    
    /*
-   
    PlotBDToutput(thevertex_zut, "topMass"       , theFile_zut);
    //PlotBDToutput(thevertex_zut, "totMass"       , theFile_zut);
    PlotBDToutput(thevertex_zut, "deltaPhilb"    , theFile_zut);
@@ -935,8 +1300,8 @@ void PlotBDToutput(){
    PlotBDToutput(thevertex_zut, "leadJetPt"     , theFile_zut);	      
    PlotBDToutput(thevertex_zut, "leadJetEta"    , theFile_zut);         
    PlotBDToutput(thevertex_zut, "deltaPhiZleptW", theFile_zut);
-   */
    
+   */
    /*PlotBDToutput(thevertex_zct, "topMass"       , theFile_zct);
    PlotBDToutput(thevertex_zct, "totMass"       , theFile_zct);
    PlotBDToutput(thevertex_zct, "deltaPhilb"    , theFile_zct);
