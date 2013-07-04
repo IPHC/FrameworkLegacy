@@ -23,9 +23,10 @@ bool doJESUncerOnly    = false;
 bool doMatchUncerOnly  = false;
 bool doScaleUncerOnly  = false;
 
-bool doFitZ = true;
+bool doFitZ = false;
 
 static bool plotFCNC= false;
+static int chan= -1;
 
 void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   
@@ -1002,6 +1003,8 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
     if(denom <= 0 || num <= 0) histo_ratio->SetBinContent(ierr, 0);
     if(denom <= 0 || num <= 0) histo_ratio->SetBinError(ierr, 1000);
   }
+  
+  
   TGraphAsymmErrors *theRatio = new TGraphAsymmErrors(histo_ratio);
   
   
@@ -1013,13 +1016,15 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
     double num_err = histBdt_Data->GetBinError(ierr);
     
     
-    if(histBdt_Data->GetBinContent(ierr) == -1) num_err = 1000000;
+    //if(histBdt_Data->GetBinContent(ierr) == -1) num_err = 1000000;
     
     double denom         = histo_mc ->GetBinContent(ierr);
     double denom_err     = herrorband->GetBinError(ierr);
     double denom_errUp   = thegraph->GetErrorYhigh(ierr-1);
     double denom_errDown = thegraph->GetErrorYlow(ierr-1);
     
+    
+    if(histBdt_Data->GetBinContent(ierr) == 1 ) num_err = 3;
     
     double errorUp = pow(
        pow(num_err/denom, 2)+
@@ -1045,10 +1050,14 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
     
     cout << "********* i "  << (float(ierr)/histo_ratio->GetNbinsX())*2. -1 << endl;
     cout << "num " << num  << " pm " << num_err << endl;
-    cout << "denom " <<  denom << endl;
+    cout << "denom " <<  denom << " pm " << denom_errUp << endl;
+    cout << "denom " <<  denom << " pm " << denom_errDown << endl;
     cout << "ratio " <<  num/denom << endl;
-    if(num > 0) histo_ratio->SetBinError(ierr-1, errorUp);
-    else histo_ratio->SetBinError(ierr-1, 1000);
+    
+    histo_ratio->SetBinError(ierr-1, errorUp);
+    
+    //if(num > 0) histo_ratio->SetBinError(ierr-1, errorUp);
+    //else histo_ratio->SetBinError(ierr-1, 1000);
     
   }
   
@@ -1151,13 +1160,14 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   
   histo_ratio->SetMinimum(-1.0);
   histo_ratio->SetMaximum(3.0);
-  histo_ratio->Draw("p");
+  histo_ratio->SetLineColor(0);
+  histo_ratio->Draw("ep");
   
   
   
   
   theRatio->SetMarkerSize(1.2);
-  //theRatio->Draw("ep");
+  theRatio->Draw("ep");
   
   
   if(doFitZ && theVariable == "Zpt") {
@@ -1177,7 +1187,11 @@ void PlotBDToutput(TString theVertex, TString theVariable, TString theFile){
   latex2->DrawLatex(0.87, 0.95, "4.9 fb^{-1} at #sqrt{s} = 7 TeV");
 
   TString info_data = "eee, #mu#mu#mu, e#mu#mu, ee#mu channels";; 
- 
+  
+  if(chan == 0) info_data= "#mu#mu#mu channel";
+  if(chan == 1) info_data= "e#mu#mu channel";
+  if(chan == 2) info_data= " ee#mu channel";
+  if(chan == 3) info_data= "eee channel";
   
   //text2 = new TLatex(0.15,0.8, info_data);
   TLatex * text2 = new TLatex(0.45,0.98, info_data);
@@ -1273,11 +1287,19 @@ void PlotBDToutput(){
    
    //PlotBDToutput(thevertex_zut, "topMass"       , theFile_zut);
    
+   if(chan == 0) PlotBDToutput(thevertex_zut, "MVA_BDT"       , "HistoBDToutput/TMVApp_zut_mumumu_nom.root"); 
+   if(chan == 1) PlotBDToutput(thevertex_zut, "MVA_BDT"       , "HistoBDToutput/TMVApp_zut_mumue_nom.root"); 
+   if(chan == 2) PlotBDToutput(thevertex_zut, "MVA_BDT"       , "HistoBDToutput/TMVApp_zut_eemu_nom.root"); 
+   if(chan == 3) PlotBDToutput(thevertex_zut, "MVA_BDT"       , "HistoBDToutput/TMVApp_zut_eee_nom.root"); 
    
-   PlotBDToutput(thevertex_zut, "Zpt"           , "HistoBDToutput/TMVApp_zut_bdtcutnom.root");
+   //PlotBDToutput(thevertex_zut, "Zpt"           , "HistoBDToutput/TMVApp_zut_bdtcutnom.root");
+   //PlotBDToutput(thevertex_zut, "Zpt"           , "HistoBDToutput/TMVApp_zut_WZZptdown.root");
    //PlotBDToutput(thevertex_kct, "btagDiscri"    , theFile_kct); 
    //PlotBDToutput(thevertex_kct, "NBJets"        , theFile_zut); 
    
+   //PlotBDToutput(thevertex_kct, "btagDiscri"    , "HistoBDToutput/TMVApp_zut_noom.root"); 
+   //PlotBDToutput(thevertex_kct, "btagDiscri"    , "HistoBDToutput/TMVApp_zut_nobtagcorr.root"); 
+   //PlotBDToutput(thevertex_kct, "NBJets"        , "HistoBDToutput/TMVApp_zut_nom.root");
    
    /*
    PlotBDToutput(thevertex_zut, "topMass"       , theFile_zut);
