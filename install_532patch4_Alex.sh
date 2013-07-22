@@ -8,23 +8,10 @@ echo "#           [ CMSSW_5_3_2_patch4 ]           #"
 echo "##############################################"
 echo " "
 
-REPO=UserCode/SusyIPHC
-
-echo " "
-echo "> Installing IPHC framework"
-echo "  from CVS repository $REPO"
+echo " CMSSW folder = $CMSSW_BASE/src"
 echo " "
 
 cd $CMSSW_BASE/src
-mkdir IPHCDataFormat
-mkdir MiniTree
-mkdir NTuple
-#mkdir ProdConfig
-
-cvs co -d IPHCDataFormat $REPO/IPHCDataFormat
-cvs co -d MiniTree $REPO/MiniTree
-cvs co -d NTuple $REPO/NTuple
-#cvs co -d ProdConfig $REPO/ProdConfig
 
 echo " "
 echo "> Installing CMSSW packages"
