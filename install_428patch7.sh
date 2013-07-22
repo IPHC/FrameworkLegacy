@@ -1,22 +1,17 @@
 #!/bin/bash
-echo "Installing IPHC framework from CVS repository"
-echo "----------------------------------------------"
+
+echo " "
+echo "##############################################"
+echo "#                  Warning                   #"
+echo "#   this script assume that you're using     #"
+echo "#           [ CMSSW_4_2_8_patch7 ]           #"
+echo "##############################################"
+echo " "
+
+echo " CMSSW folder = $CMSSW_BASE/src"
+echo " "
 
 cd $CMSSW_BASE/src
-mkdir IPHCDataFormat
-mkdir MiniTree
-mkdir NTuple
-mkdir marco
-cvs co -d IPHCDataFormat UserCode/SusyIPHC/IPHCDataFormat
-cvs co -d MiniTree UserCode/SusyIPHC/MiniTree
-cvs co -d NTuple UserCode/SusyIPHC/NTuple
-cvs co -d marco UserCode/SusyIPHC/marco
-
-
-#Put the recipe here !!!
-echo "Get PAT recipies"
-
-
 
 #
 echo "PAT RECIPE For 428_patch7!"
